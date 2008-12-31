@@ -78,12 +78,23 @@ namespace ml
 	}
     }
 
+    void setShaderIndex( unsigned int index )
+    {
+      shaderIndex = index;
+    }
+
+    unsigned int getShaderIndex() const
+    {
+      return shaderIndex;
+    }
+
     void print() const;
 
   protected:
     unsigned int bytesPerIndex;
     unsigned int numIndex;
     unsigned int dataIndex;
+    unsigned int shaderIndex;
 
     unsigned int *indexI;
     unsigned short *indexS;

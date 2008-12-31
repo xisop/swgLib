@@ -515,7 +515,7 @@ unsigned int msh::readGeometrySIDX( std::istream &file, unsigned int bytesPerInd
 
     unsigned int num;
     file.read( (char *)&num, sizeof( num ) );
-    std::cout << "Num: " << num << std::endl;
+    std::cout << "Num matrix/index/triangle sets: " << num << std::endl;
     
     for( unsigned int j = 0; j < num; ++j )
     {
@@ -541,6 +541,7 @@ unsigned int msh::readGeometrySIDX( std::istream &file, unsigned int bytesPerInd
       if( vertexData.size() > 0 )
 	{
 	  std::cout << "Index data: " << (vertexData.size()-1) << std::endl;
+	  mvi->setShaderIndex( shaderList.size() -1 );
 	  mvi->setDataIndex( vertexData.size()-1 );
 	}
       
@@ -582,6 +583,7 @@ unsigned int msh::readGeometryINDX( std::istream &file, unsigned int &bytesPerIn
     if( vertexData.size() > 0 )
       {
 	std::cout << "Index data: " << (vertexData.size()-1) << std::endl;
+	mvi->setShaderIndex( shaderList.size() -1 );
 	mvi->setDataIndex( vertexData.size()-1 );
       }
 
