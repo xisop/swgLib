@@ -465,6 +465,10 @@ unsigned int sht::readTXM( std::istream &file )
 	  {
 	    //specularTextureName = fullTextureName;
 	  }
+	else if( textureTag == "LACD" )
+	  {
+	    //specularTextureName = fullTextureName;
+	  }
 	else
 	  {
 	    std::cout << "Unknown texture tag: " << textureTag << std::endl;
@@ -672,6 +676,10 @@ unsigned int sht::readTCSS( std::istream &file )
 	    //specularTextureUnit = texUnit;
 	  }
 	else if( texName == "0PER" )
+	  {
+	    //specularTextureUnit = texUnit;
+	  }
+	else if( texName == "LACD" )
 	  {
 	    //specularTextureUnit = texUnit;
 	  }
