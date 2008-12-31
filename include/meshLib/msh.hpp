@@ -91,7 +91,14 @@ namespace ml
 
     std::string getShader( unsigned int index ) const
     {
-      return shaderList[index];
+      if( index < shaderList.size() )
+	{
+	  return shaderList[index];
+	}
+      else
+	{
+	  return std::string("");
+	}
     }
 
     void getBoundingSphere( float &centerX, float &centerY, float &centerZ,
