@@ -58,6 +58,21 @@ namespace ml
       Z = v[2];
     }
 
+    float getX() const
+    {
+      return v[0];
+    }
+
+    float getY() const
+    {
+      return v[1];
+    }
+
+    float getZ() const
+    {
+      return v[2];
+    }
+
     void set( const float &X, const float &Y, const float &Z )
     {
       v[0] = X;
