@@ -37,6 +37,10 @@
 
 namespace ml
 {
+  enum maxTextures {
+    MAX_TEXTURES = 8
+  };
+
   class msh : public base
   {
   public:
