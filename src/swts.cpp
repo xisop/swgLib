@@ -77,6 +77,10 @@ unsigned int swts::readSWTS( std::istream &file, std::string path )
 	    {
 	      total += readDTST( file );
 	    }
+	  else if( type == "DRTS" )
+	    {
+	      total += readDRTS( file );
+	    }
 	  else
 	    {
 	      std::cout << "Unexpected form: " << type << std::endl;
@@ -160,6 +164,66 @@ unsigned int swts::readDTST( std::istream &file )
     else
     {
         std::cout << "FAILED in reading DTST" << std::endl;
+        std::cout << "Read " << total << " out of " << dtstSize
+                  << std::endl;
+    }
+
+    return total;
+}
+
+unsigned int swts::readDRTS( std::istream &file )
+{
+    unsigned int total = 0;
+
+    std::string form;
+    unsigned int dtstSize;
+    std::string type;
+
+    total += readFormHeader( file, form, dtstSize, type );
+    dtstSize += 8; // Add size of FORM and size fields.
+    if( form != "FORM" || type != "DRTS" )
+    {
+        std::cout << "Expected Form of type DRTS: " << type << std::endl;
+        exit( 0 );
+    }
+    std::cout << "Found " << form << " " << type << std::endl;
+
+    unsigned int size;
+    total += readRecordHeader( file, type, size );
+    if( type != "0000" )
+    {
+        std::cout << "Expected record of type 0000: " << type << std::endl;
+        exit( 0 );
+    }
+    std::cout << "Found " << type << std::endl;
+    
+    if( size != 12 )
+      {
+	std::cout << "Expected size of 12: " << size << std::endl;
+      }
+
+    unsigned int x;
+    file.read( (char *)&x, sizeof( x ) );
+    total += sizeof( x );
+    std::cout << x << std::endl;
+
+    float y;
+    file.read( (char *)&y, sizeof( y ) );
+    total += sizeof( y );
+    std::cout << y << std::endl;
+
+    float z;
+    file.read( (char *)&z, sizeof( z ) );
+    total += sizeof( z );
+    std::cout << z << std::endl;
+
+    if( dtstSize == total )
+    {
+        std::cout << "Finished reading DRTS" << std::endl;
+    }
+    else
+    {
+        std::cout << "FAILED in reading DRTS" << std::endl;
         std::cout << "Read " << total << " out of " << dtstSize
                   << std::endl;
     }

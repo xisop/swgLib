@@ -64,6 +64,7 @@ namespace ml
   protected:
     unsigned int readNAME( std::istream &file );
     unsigned int readDTST( std::istream &file );
+    unsigned int readDRTS( std::istream &file );
     unsigned int readTEXT( std::istream &file );
 
   private:
