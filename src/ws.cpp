@@ -218,7 +218,7 @@ unsigned int ws::readWS( std::istream &file )
     total += readOTNL( file );
 
 
-    std::list< wsNode >::iterator node;
+    std::vector< wsNode >::iterator node;
     for( node = nodes.begin(); node != nodes.end(); ++node )
     {
 	node->objectFilename = objectNames[node->objectIndex];
@@ -644,4 +644,16 @@ void wsNode::print()
     std::cout << "CRC: 0x" << std::hex << crc << std::dec << std::endl;
     std::cout << "level: " << level << std::endl;
     std::cout << std::endl;
+}
+
+wsNode &ws::getObjectNode( unsigned int i )
+{
+  if( i < nodes.size() )
+    {
+      return nodes[i];
+    }
+  else
+    {
+      return nodes[nodes.size() - 1];
+    }
 }

@@ -38,6 +38,12 @@ namespace ml
   class wsNode
   {
   public:
+    std::string getObjectFilename() const
+    {
+      return objectFilename;
+    }
+
+    //protected:
   
     unsigned int read( std::istream &file );
     unsigned int write( std::ofstream &file );
@@ -82,6 +88,13 @@ namespace ml
     unsigned int createWS( std::ofstream &outfile );
     bool canWrite() const { return true; }
 
+    unsigned int getNumObjectNodes() const
+    {
+      return nodes.size();
+    }
+
+    wsNode &getObjectNode( unsigned int i );
+
   protected:
     unsigned int readNODS( std::istream &file );
     unsigned int readNODE( std::istream &file, unsigned int level );
@@ -91,10 +104,10 @@ namespace ml
     unsigned int writeNODE( std::ofstream &outfile );
     unsigned int writeOTNL( std::ofstream &outfile );
 	
-    std::list< wsNode > nodes;
+    std::vector< wsNode > nodes;
     std::vector< std::string > objectNames;
   private:
-    std::list< wsNode >::iterator currentNode;
+    std::vector< wsNode >::iterator currentNode;
     unsigned int maxObjectIndex;
   };
 }
