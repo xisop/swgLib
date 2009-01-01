@@ -43,6 +43,21 @@ namespace ml
       return objectFilename;
     }
 
+    float getX() const
+    {
+      return x;
+    }
+
+    float getY() const
+    {
+      return y;
+    }
+
+    float getZ() const
+    {
+      return z;
+    }
+
     //protected:
   
     unsigned int read( std::istream &file );
