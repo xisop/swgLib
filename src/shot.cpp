@@ -59,9 +59,17 @@ unsigned int shot::readSHOT( std::istream &file )
     }
     std::cout << "Found SHOT form" << std::endl;
 
-    total += readDERV( file, shotBaseObjectFilename );
-
+    // Peek at next record, but keep file at same place.
+    unsigned int position = file.tellg();
     unsigned int size;
+    readFormHeader( file, form, size, type );
+    file.seekg( position, std::ios_base::beg );
+    
+    if( "DERV" == form )
+      {
+	total += readDERV( file, shotBaseObjectFilename );
+      }
+
     total += readFormHeader( file, form, size, type );
     if( form != "FORM" )
     {

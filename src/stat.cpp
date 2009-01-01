@@ -59,7 +59,16 @@ unsigned int stat::readSTAT( std::istream &file )
     }
     std::cout << "Found STAT form" << std::endl;
 
-    total += readDERV( file, statBaseObjectFilename );
+    // Peek at next record, but keep file at same place.
+    unsigned int position = file.tellg();
+    unsigned int size;
+    readFormHeader( file, form, size, type );
+    file.seekg( position, std::ios_base::beg );
+    
+    if( "DERV" == form )
+      {
+	total += readDERV( file, statBaseObjectFilename );
+      }
 
     unsigned int size0000;
     total += readFormHeader( file, form, size0000, type );
