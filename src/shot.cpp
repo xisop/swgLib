@@ -64,8 +64,8 @@ unsigned int shot::readSHOT( std::istream &file )
     unsigned int size;
     readFormHeader( file, form, size, type );
     file.seekg( position, std::ios_base::beg );
-    
-    if( "DERV" == form )
+
+    if( "DERV" == type )
       {
 	total += readDERV( file, shotBaseObjectFilename );
       }

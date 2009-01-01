@@ -65,7 +65,7 @@ unsigned int stat::readSTAT( std::istream &file )
     readFormHeader( file, form, size, type );
     file.seekg( position, std::ios_base::beg );
     
-    if( "DERV" == form )
+    if( "DERV" == type )
       {
 	total += readDERV( file, statBaseObjectFilename );
       }
