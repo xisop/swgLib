@@ -73,6 +73,11 @@ namespace ml
       return rz;
     }
 
+    unsigned int getID() const
+    {
+      return nodeID;
+    }
+
     //protected:
   
     unsigned int read( std::istream &file );
@@ -88,7 +93,8 @@ namespace ml
     float ry;
     float rz;
   
-    unsigned int u1;
+    //unsigned int u1;
+    float u1;
   
     float x;
     float y;
