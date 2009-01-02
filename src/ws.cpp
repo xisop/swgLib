@@ -636,7 +636,7 @@ void wsNode::print()
     std::cout << "Rotation about X(deg): " << rx * RAD2DEG << std::endl;
     std::cout << "Rotation about Y(deg): " << ry * RAD2DEG << std::endl;
     std::cout << "Rotation about Z(deg): " << rz * RAD2DEG << std::endl;
-    std::cout << "Unknown 1: 0x" << std::hex << u1 << std::dec << std::endl;
+    std::cout << "Unknown 1: " << u1 << std::dec << std::endl;
     std::cout << "X(m): " << x << std::endl;
     std::cout << "Y(m): " << y << std::endl;
     std::cout << "Z(m): " << z << std::endl;
