@@ -1573,6 +1573,10 @@ int readRecord(
     {
 	readUnknown( file, size );
     }
+    else if( "CNCF" == group )
+    {
+	readUnknown( file, size );
+    }
     else
     {
 	std::cout << "Unknown KEYWORD: " << group << std::endl;
