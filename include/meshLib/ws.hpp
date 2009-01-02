@@ -58,6 +58,21 @@ namespace ml
       return z;
     }
 
+    float getXRot() const
+    {
+      return rx;
+    }
+
+    float getYRot() const
+    {
+      return ry;
+    }
+
+    float getZRot() const
+    {
+      return rz;
+    }
+
     //protected:
   
     unsigned int read( std::istream &file );
