@@ -58,19 +58,24 @@ namespace ml
       return z;
     }
 
-    float getXRot() const
+    float getQuatX() const
     {
-      return rx;
+      return qx;
     }
 
-    float getYRot() const
+    float getQuatY() const
     {
-      return ry;
+      return qy;
     }
 
-    float getZRot() const
+    float getQuatZ() const
     {
-      return rz;
+      return qz;
+    }
+
+    float getQuatW() const
+    {
+      return qw;
     }
 
     unsigned int getID() const
@@ -104,12 +109,10 @@ namespace ml
     unsigned int objectIndex;
     unsigned int positionInParent;
   
-    float rx;
-    float ry;
-    float rz;
-  
-    //unsigned int u1;
-    float u1;
+    float qx;
+    float qy;
+    float qz;
+    float qw;
   
     float x;
     float y;

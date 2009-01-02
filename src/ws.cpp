@@ -80,32 +80,29 @@ unsigned int ws::readMetaFile( std::istream &infile )
       infile >> node.positionInParent;
       //std::cout << node.positionInParent << std::endl;
 
-      // rx
+      // qx
       infile.getline( temp, 512, ':' );
       if( infile.eof() ) { break; };
-      infile >> node.rx;
-      node.rx *= DEG2RAD;
+      infile >> node.qx;
       //std::cout << node.rx << std::endl;
 
-      // ry
+      // qy
       infile.getline( temp, 512, ':' );
       if( infile.eof() ) { break; };
-      infile >> node.ry;
-      node.ry *= DEG2RAD;
-      //std::cout << node.ry << std::endl;
+      infile >> node.qy;
+      //std::cout << node.qy << std::endl;
 
-      // rz
+      // qz
       infile.getline( temp, 512, ':' );
       if( infile.eof() ) { break; };
-      infile >> node.rz;
-      node.rz *= DEG2RAD;
-      //std::cout << node.rz << std::endl;
+      infile >> node.qz;
+      //std::cout << node.qz << std::endl;
 
-      // Unknown 1
+      // qw
       infile.getline( temp, 512, ':' );
       if( infile.eof() ) { break; };
-      infile >> node.u1;
-      //std::cout << node.u1 << std::endl;
+      infile >> node.qw;
+      //std::cout << node.qw << std::endl;
 
       // x
       infile.getline( temp, 512, ':' );
@@ -550,17 +547,17 @@ unsigned int wsNode::read( std::istream &file )
     file.read( (char *)&positionInParent, sizeof( positionInParent ) );
     total += sizeof( positionInParent );
 
-    file.read( (char *)&rx, sizeof( rx ) );
-    total += sizeof( rx );
+    file.read( (char *)&qx, sizeof( qx ) );
+    total += sizeof( qx );
 
-    file.read( (char *)&ry, sizeof( ry ) );
-    total += sizeof( ry );
+    file.read( (char *)&qy, sizeof( qy ) );
+    total += sizeof( qy );
 
-    file.read( (char *)&rz, sizeof( rz ) );
-    total += sizeof( rz );
+    file.read( (char *)&qz, sizeof( qz ) );
+    total += sizeof( qz );
 
-    file.read( (char *)&u1, sizeof( u1 ) );
-    total += sizeof( u1 );
+    file.read( (char *)&qw, sizeof( qw ) );
+    total += sizeof( qw );
 
     file.read( (char *)&x, sizeof( x ) );
     total += sizeof( x );
@@ -596,17 +593,17 @@ unsigned int wsNode::write( std::ofstream &file )
     file.write( (char *)&positionInParent, sizeof( positionInParent ) );
     total += sizeof( positionInParent );
 
-    file.write( (char *)&rx, sizeof( rx ) );
-    total += sizeof( rx );
+    file.write( (char *)&qx, sizeof( qx ) );
+    total += sizeof( qx );
 
-    file.write( (char *)&ry, sizeof( ry ) );
-    total += sizeof( ry );
+    file.write( (char *)&qy, sizeof( qy ) );
+    total += sizeof( qy );
 
-    file.write( (char *)&rz, sizeof( rz ) );
-    total += sizeof( rz );
+    file.write( (char *)&qz, sizeof( qz ) );
+    total += sizeof( qz );
 
-    file.write( (char *)&u1, sizeof( u1 ) );
-    total += sizeof( u1 );
+    file.write( (char *)&qw, sizeof( qw ) );
+    total += sizeof( qw );
 
     file.write( (char *)&x, sizeof( x ) );
     total += sizeof( x );
@@ -633,10 +630,10 @@ void wsNode::print()
     std::cout << "Object index: " << objectIndex << std::endl;
     std::cout << "Object filename: " << objectFilename << std::endl;
     std::cout << "Position in parent: " << positionInParent << std::endl;
-    std::cout << "Rotation about X(deg): " << rx * RAD2DEG << std::endl;
-    std::cout << "Rotation about Y(deg): " << ry * RAD2DEG << std::endl;
-    std::cout << "Rotation about Z(deg): " << rz * RAD2DEG << std::endl;
-    std::cout << "Unknown 1: " << u1 << std::dec << std::endl;
+    std::cout << "Rotation Quaternion X: " << qx << std::endl;
+    std::cout << "Rotation Quaternion Y: " << qy << std::endl;
+    std::cout << "Rotation Quaternion Z: " << qz << std::endl;
+    std::cout << "Rotation Quaternion W: " << qw << std::endl;
     std::cout << "X(m): " << x << std::endl;
     std::cout << "Y(m): " << y << std::endl;
     std::cout << "Z(m): " << z << std::endl;
