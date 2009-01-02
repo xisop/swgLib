@@ -78,6 +78,21 @@ namespace ml
       return nodeID;
     }
 
+    unsigned int getParentID() const
+    {
+      return parentNodeID;
+    }
+
+    unsigned int getObjectIndex() const
+    {
+      return objectIndex;
+    }
+
+    unsigned int getPositionInParent() const
+    {
+      return positionInParent;
+    }
+
     //protected:
   
     unsigned int read( std::istream &file );
