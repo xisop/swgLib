@@ -659,7 +659,7 @@ unsigned int prto::readCELLDATA( std::istream &file,
     std::cout << "Num portals in this cell: " << numCellPortals << std::endl;
 
     unsigned char u1;
-    file.read( (char*)&u1ex, sizeof( u1 ) );
+    file.read( (char*)&u1, sizeof( u1 ) );
     newCell.setUnknown1( u1 );
     total += sizeof( u1 );
     std::cout << "???: " << (unsigned int)u1 << std::endl;
