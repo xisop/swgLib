@@ -1165,12 +1165,27 @@ unsigned int trn::readASCN( std::istream &file )
 	std::cerr << "Expected record of type DATA: " << type << std::endl;
 	exit( 0 );
     }
-    std::cerr << "Found DATA record" << std::endl;
+    std::cerr << "Found ASCNDATA record" << std::endl;
 
     std::cout << "<record>" << std::endl;
     std::cout << "<type> " << type << "</type>" << std::endl;
+#if 1
+    unsigned int u1;
+    file.read( (char *)&u1, sizeof( u1 ) );
+    total += sizeof( u1 );
 
+    unsigned int u2;
+    file.read( (char *)&u2, sizeof( u2 ) );
+    total += sizeof( u2 );
+
+    float u3;
+    file.read( (char *)&u3, sizeof( u3 ) );
+    total += sizeof( u3 );
+
+    std::cout << u1 << " " << u2 << " " << u3 << std::endl;
+#else
     total += readUnknown( file, size );
+#endif
 
     std::cout << "</record>" << std::endl;
     std::cout << "</form>" << std::endl;
