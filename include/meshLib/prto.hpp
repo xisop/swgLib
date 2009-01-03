@@ -4,7 +4,7 @@
  *  \author Kenneth R. Sewell III
 
  meshLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006,2007 Kenneth R. Sewell III
+ Copyright (C) 2006-2009 Kenneth R. Sewell III
 
  This file is part of meshLib.
 
@@ -46,6 +46,29 @@ namespace ml
       return isOfType( file, "PRTO" );
     }
     unsigned int readPRTO( std::istream &file, std::string path="" );
+
+    unsigned int getNumCells() const
+    {
+      return numCells;
+    }
+    
+    unsigned int getNumPortals() const
+    {
+      return numPortals;
+    }
+    
+
+    cell &getCell( unsigned int i )
+    {
+      if( i < numCells )
+	{
+	  return cells[i];
+	}
+      else
+	{
+	  return cells[ numCells-1 ];
+	}
+    }
 
   protected:
     unsigned int readDATA( std::istream &file );

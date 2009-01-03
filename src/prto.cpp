@@ -4,7 +4,7 @@
  *  \author Kenneth R. Sewell III
 
  meshLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006,2007 Kenneth R. Sewell III
+ Copyright (C) 2006-2009 Kenneth R. Sewell III
 
  This file is part of meshLib.
 
@@ -652,30 +652,36 @@ unsigned int prto::readCELLDATA( std::istream &file,
 	      << dataSize-8 << " bytes"
 	      << std::endl;
 
+    ml::cell newCell;
+
     file.read( (char*)&numCellPortals, sizeof( numCellPortals ) );
     total += sizeof( numCellPortals );
     std::cout << "Num portals in this cell: " << numCellPortals << std::endl;
 
-    unsigned char y;
-    file.read( (char*)&y, sizeof( y ) );
-    total += sizeof( y );
-    std::cout << "???: " << (unsigned int)y << std::endl;
+    unsigned char u1;
+    file.read( (char*)&u1ex, sizeof( u1 ) );
+    newCell.setUnknown1( u1 );
+    total += sizeof( u1 );
+    std::cout << "???: " << (unsigned int)u1 << std::endl;
 
     char temp[255];
     std::string cellName;
     file.getline( temp, 255, 0 );
     cellName = temp;
+    newCell.setName( cellName );
     total += cellName.size() + 1;
     std::cout << "Cell name: " << cellName << std::endl;
 
     std::string cellModel;
     file.getline( temp, 255, 0 );
     cellModel = temp;
+    newCell.setModelFilename( cellModel );
     total += cellModel.size() + 1;
     std::cout << "Cell model: " << cellModel << std::endl;
 
     unsigned char hasFloor;
     file.read( (char*)&hasFloor, sizeof( hasFloor ) );
+    newCell.setHasFloor( 0 < hasFloor );
     total += sizeof( hasFloor );
     std::cout << "Has floor: " << (unsigned int)hasFloor << std::endl;
 
@@ -684,21 +690,23 @@ unsigned int prto::readCELLDATA( std::istream &file,
 	std::string cellFloor;
 	file.getline( temp, 255, 0 );
 	cellFloor = temp;
+	newCell.setFloorFilename( cellFloor );
 	total += cellFloor.size() + 1;
 	std::cout << "Cell floor: " << cellFloor << std::endl;
       }
-
+    
     if( dataSize == total )
-    {
+      {
+	cells.push_back( newCell );
 	std::cout << "Finished reading DATA" << std::endl;
-    }
+      }
     else
-    {
+      {
 	std::cout << "FAILED in reading DATA" << std::endl;
 	std::cout << "Read " << total << " out of " << dataSize
                   << std::endl;
-    }
-
+      }
+    
     return total;
 }
 
