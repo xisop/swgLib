@@ -150,6 +150,20 @@ unsigned int sbot::readSBOTXXXX( std::istream &file )
 		      << std::endl;
 	  }
       }
+    else if( property == "portalLayoutFilename" )
+      {
+	file.read( (char *)&enabled, 1 ); ++total;
+	if( enabled > 0 )
+	  {
+	    file.getline( temp, 255, 0 );
+	    portalLayoutFilename = temp;
+	    total += portalLayoutFilename.size() + 1;
+	    
+	    std::cout << property << ": "
+		      << portalLayoutFilename
+		      << std::endl;
+	  }
+      }
     else
       {
 	std::cout << "Unknown: " << property << std::endl;

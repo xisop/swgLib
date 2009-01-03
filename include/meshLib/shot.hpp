@@ -45,12 +45,22 @@ namespace ml
     unsigned int readSHOT( std::istream &file );
     void print() const;
   
-    std::string getAppearanceFilename() const
+    void setAppearanceFilename( const std::string &filename )
+    {
+      appearanceFilename = filename;
+    }
+  
+    const std::string &getAppearanceFilename() const
     {
       return appearanceFilename;
     }
   
-    std::string getPortalLayoutFilename() const
+    void setPortalLayoutFilename( const std::string &filename )
+    {
+      portalLayoutFilename = filename;
+    }
+  
+    const std::string &getPortalLayoutFilename() const
     {
       return portalLayoutFilename;
     }
@@ -60,7 +70,6 @@ namespace ml
     unsigned int readPCNT( std::istream &file, unsigned int &num );
     unsigned int readXXXX( std::istream &file );
   
-  private:
     unsigned int numAttributes;
     std::string shotBaseObjectFilename;
 
