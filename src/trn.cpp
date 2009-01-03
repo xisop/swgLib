@@ -237,7 +237,7 @@ unsigned int trn::readTGEN( std::istream &file )
     return total;
 }
 
-// Water maps?
+// Water or weight maps?
 unsigned int trn::readWMAP( std::istream &file )
 {
     unsigned int total = 0;
@@ -383,10 +383,9 @@ unsigned int trn::readSFAM( std::istream &file )
 
 
     unsigned int x;
-   
     file.read( (char*)&x, sizeof( x ) );
     total += sizeof( x );
-    std::cout << x << std::endl;;
+    std::cout << "Shader family number: " << x << std::endl;;
 
     char temp[255];
     file.getline( temp, 255, 0 );
@@ -1033,7 +1032,16 @@ unsigned int trn::readIHDR( std::istream &file )
     std::cout << "<record>" << std::endl;
     std::cout << "<type> " << type << "</type>" << std::endl;
 
-    total += readUnknown( file, size );
+    unsigned int u1;
+    file.read( (char *)&u1, sizeof( u1 ) );
+    total += sizeof( u1 );
+
+    char temp[255];
+    file.read( temp, size-sizeof(u1) );
+    std::string dataString( temp );
+    total += dataString.size() + 1;
+
+    std::cout << u1 << " " << dataString << std::endl;
 
     std::cout << "</record>" << std::endl;
     std::cout << "</form>" << std::endl;
@@ -1071,7 +1079,31 @@ unsigned int trn::readADTA( std::istream &file )
     std::cout << "<record>" << std::endl;
     std::cout << "<type> " << type << "</type>" << std::endl;
 
+#if 1
+    unsigned int u1;
+    file.read( (char *)&u1, sizeof( u1 ) );
+    total += sizeof( u1 );
+
+    unsigned int u2;
+    file.read( (char *)&u2, sizeof( u2 ) );
+    total += sizeof( u2 );
+
+    unsigned int u3;
+    file.read( (char *)&u3, sizeof( u3 ) );
+    total += sizeof( u3 );
+
+    char temp[255];
+    file.read( temp, adtaSize-(sizeof(u1)+sizeof(u2)+sizeof(u3) ) );
+    std::string dataString( temp );
+    total += dataString.size() + 1;
+
+    std::cout << u1 << " "
+	      << u2 << " "
+	      << u3 << " '"
+	      << dataString << "'" << std::endl;
+#else
     total += readUnknown( file, adtaSize );
+#endif
     
     std::cout << "</record>" << std::endl;
 
