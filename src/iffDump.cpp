@@ -206,7 +206,6 @@ int readGeometryDATA( std::ifstream &file,
 		      << (unsigned int)color[2] << " "
 		      << (unsigned int)color[3] << " ";
 
-
 	    // Tex coords 0
 	    file.read( (char *)&s, sizeof( s ) );
 	    std::cout << s << " ";
@@ -240,6 +239,53 @@ int readGeometryDATA( std::ifstream &file,
 	    std::cout << ny << " ";
 	    file.read( (char *)&nz, sizeof( nz ) );
 	    std::cout << nz << " ";
+
+	    // Tex coords 0
+	    file.read( (char *)&s, sizeof( s ) );
+	    std::cout << s << " ";
+	    file.read( (char *)&t, sizeof( t ) );
+	    std::cout << t << " ";
+
+	    // Tex coords 1
+	    file.read( (char *)&s, sizeof( s ) );
+	    std::cout << s << " ";
+	    file.read( (char *)&t, sizeof( t ) );
+	    std::cout << t << " ";
+
+	    // Tex coords 2
+	    file.read( (char *)&s, sizeof( s ) );
+	    std::cout << s << " ";
+	    file.read( (char *)&t, sizeof( t ) );
+	    std::cout << t << std::endl;
+	}
+    }
+    else if( bytesPerVertex == 52 )
+    {
+	float x, y, z;
+	float nx, ny, nz;
+	float s, t;
+	for( unsigned int i = 0; i < numVerts; ++i )
+	{
+	    file.read( (char *)&x, sizeof( x ) );
+	    std::cout << x << " ";
+	    file.read( (char *)&y, sizeof( y ) );
+	    std::cout << y << " ";
+	    file.read( (char *)&z, sizeof( z ) );
+	    std::cout << z << " ";
+
+	    file.read( (char *)&nx, sizeof( nx ) );
+	    std::cout << nx << " ";
+	    file.read( (char *)&ny, sizeof( ny ) );
+	    std::cout << ny << " ";
+	    file.read( (char *)&nz, sizeof( nz ) );
+	    std::cout << nz << " ";
+
+	    unsigned char color[4];
+	    file.read( (char *)color, 4 );
+	    std::cout << (unsigned int)color[0] << " "
+		      << (unsigned int)color[1] << " "
+		      << (unsigned int)color[2] << " "
+		      << (unsigned int)color[3] << " ";
 
 	    // Tex coords 0
 	    file.read( (char *)&s, sizeof( s ) );
