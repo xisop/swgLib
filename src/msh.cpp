@@ -632,6 +632,7 @@ unsigned int msh::readGeometryDATA( std::istream &file,
 		  << bytesPerVertex
 		  << std::endl;
 	file.seekg( size, std::ios_base::cur );
+	exit( 0 );
       }
 
 #if 0
@@ -941,6 +942,92 @@ unsigned int msh::readGeometryDATA( std::istream &file,
 	    file.read( (char *)&nz, sizeof( nz ) );
 	    std::cout << nz << " ";
 	    normals->push_back(osg::Vec3(nx, ny, nz));
+
+	    // Texture coords st
+	    file.read( (char *)&s, sizeof( s ) );
+	    std::cout << s << " ";
+	    file.read( (char *)&t, sizeof( t ) );
+	    std::cout << t << " ";
+	    texcoords->push_back(osg::Vec2(s, t));
+
+	    // Tangent vector xyz?
+	    file.read( (char *)&tx, sizeof( tx ) );
+	    std::cout << tx << " ";
+	    file.read( (char *)&ty, sizeof( ty ) );
+	    std::cout << ty << " ";
+	    file.read( (char *)&tz, sizeof( tz ) );
+	    std::cout << tz << " ";
+
+	    // Unknown
+	    file.read( (char *)&junk, sizeof( junk ) );
+	    std::cout << junk << std::endl;
+
+	    colors->push_back( osg::Vec4( 1.0, 1.0, 1.0, 1.0 ) );
+	}
+
+	geom->setVertexArray(coords);
+	
+	geom->setNormalArray(normals);
+	geom->setNormalBinding(osg::Geometry::BIND_PER_VERTEX);
+
+	geom->setColorArray( colors );
+	geom->setColorBinding(osg::Geometry::BIND_PER_VERTEX);
+
+	for( unsigned int i = 0; i < 10; ++i )
+	{
+	    if( shader.coordMapping[i] == 0 )
+	    {
+		geom->setTexCoordArray(i, texcoords);
+		std::cout << "Assigned tex coords 0 to tex unit "
+			  << i << std::endl;
+	    }
+	}
+    }
+    else if( 52 == bytesPerVertex )
+    {
+	osg::Vec3Array* coords = new osg::Vec3Array;
+	osg::Vec2Array* texcoords = new osg::Vec2Array;
+	osg::Vec3Array* normals = new osg::Vec3Array;
+
+	osg::Vec4Array* colors = new osg::Vec4Array;
+
+	float x, y, z;
+	float nx, ny, nz;
+	float s, t;
+	float tx, ty, tz;
+	float junk;
+	std::cout.width( 8 );
+	for( unsigned int i = 0; i < numVerts; ++i )
+	{
+	    // Vertex xyz
+	    file.read( (char *)&x, sizeof( x ) );
+	    std::cout << x << " ";
+	    file.read( (char *)&y, sizeof( y ) );
+	    std::cout << y << " ";
+	    file.read( (char *)&z, sizeof( z ) );
+	    std::cout << z << " ";
+	    coords->push_back(osg::Vec3(x, y, z));
+
+	    // Normal vector xyz
+	    file.read( (char *)&nx, sizeof( nx ) );
+	    std::cout << nx << " ";
+	    file.read( (char *)&ny, sizeof( ny ) );
+	    std::cout << ny << " ";
+	    file.read( (char *)&nz, sizeof( nz ) );
+	    std::cout << nz << " ";
+	    normals->push_back(osg::Vec3(nx, ny, nz));
+
+	    file.read( (char *)&r, sizeof( r ) );
+	    std::cout << (unsigned int)r << " ";
+	    file.read( (char *)&g, sizeof( g ) );
+	    std::cout << (unsigned int)g << " ";
+	    file.read( (char *)&b, sizeof( b ) );
+	    std::cout << (unsigned int)b << " ";
+	    file.read( (char *)&a, sizeof( a ) );
+	    std::cout << (unsigned int)a << " ";
+	    colors->push_back(
+		osg::Vec4( r/255.0, g/255.0, b/255.0, a/255.0 )
+		);
 
 	    // Texture coords st
 	    file.read( (char *)&s, sizeof( s ) );

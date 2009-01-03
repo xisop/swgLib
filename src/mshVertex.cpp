@@ -180,6 +180,30 @@ void mshVertex::print() const
       std::cout << " ( ??? " << x[11] << " ) ";
 
       break;
+    case 52:
+      {
+	// RGBA Color
+	unsigned char *y =
+	  reinterpret_cast<unsigned char *>( data + ( sizeof( float ) * 6 ) );
+	std::cout << " ( " << (unsigned int)(y[0]) << ", ";
+	std::cout << (unsigned int)(y[1]) << " ";
+	std::cout << (unsigned int)(y[2]) << " ";
+	std::cout << (unsigned int)(y[3]) << ") ";
+      }
+
+      // Tex coords 1
+      std::cout << " ( " << x[6] << ", ";
+      std::cout << x[7] << " ) ";
+
+      // Tangent?
+      std::cout << " ( " << x[8] << ", ";
+      std::cout << x[9] << ", ";
+      std::cout << x[10] << " ) ";
+
+      // Unknown
+      std::cout << " ( ??? " << x[11] << " ) ";
+
+      break;
     case 56:
       // Tex coords 1
       std::cout << " ( " << x[6] << ", ";
@@ -315,6 +339,10 @@ void mshVertex::getTexCoords( unsigned int &numPairs, float *coords ) const
       memcpy( coords, v+7, sizeof( float ) * 2 * numPairs );
       break;
     case 48:
+      numPairs = 1;
+      memcpy( coords, v+6, sizeof( float ) * 2 * numPairs );
+      break;
+    case 52:
       numPairs = 1;
       memcpy( coords, v+6, sizeof( float ) * 2 * numPairs );
       break;
