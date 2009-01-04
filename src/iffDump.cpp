@@ -3,7 +3,7 @@
  *  \author Kenneth R. Sewell III
 
  meshLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006,2007 Kenneth R. Sewell III
+ Copyright (C) 2006-2009 Kenneth R. Sewell III
 
  This file is part of meshLib.
 
@@ -93,7 +93,7 @@ int readGeometryDATA( std::ifstream &file,
 
     std::cout << std::fixed;
     std::cout << "Bytes per vertex: " << bytesPerVertex << std::endl;
-    if( bytesPerVertex == 32 )
+    if( 32 == bytesPerVertex )
     {
 	unsigned int numData = size/32;
 	std::cout << "Num vertices: " << numData << std::endl;
@@ -120,7 +120,7 @@ int readGeometryDATA( std::ifstream &file,
 	    std::cout << t << std::endl;
 	}
     }
-    else if( bytesPerVertex == 36 )
+    else if( 36 == bytesPerVertex )
     {
 	float x, y, z;
 	float nx, ny, nz;
@@ -150,7 +150,7 @@ int readGeometryDATA( std::ifstream &file,
 	    std::cout << t << std::endl;
 	}
     }
-    else if( bytesPerVertex == 40 )
+    else if( 40 == bytesPerVertex )
     {
 	float x, y, z;
 	float nx, ny, nz;
@@ -219,7 +219,7 @@ int readGeometryDATA( std::ifstream &file,
 	    std::cout << t << std::endl;
 	}
     }
-    else if( bytesPerVertex == 48 )
+    else if( 48 == bytesPerVertex )
     {
 	float x, y, z;
 	float nx, ny, nz;
@@ -259,7 +259,7 @@ int readGeometryDATA( std::ifstream &file,
 	    std::cout << t << std::endl;
 	}
     }
-    else if( bytesPerVertex == 52 )
+    else if( 52 == bytesPerVertex )
     {
 	float x, y, z;
 	float nx, ny, nz;
@@ -306,7 +306,7 @@ int readGeometryDATA( std::ifstream &file,
 	    std::cout << t << std::endl;
 	}
     }
-    else if( bytesPerVertex == 56 )
+    else if( 56 == bytesPerVertex )
     {
 	float x, y, z;
 	float nx, ny, nz;
@@ -346,7 +346,7 @@ int readGeometryDATA( std::ifstream &file,
 	    std::cout << t << std::endl;
 	}
     }
-    else if( bytesPerVertex == 60 )
+    else if( 60 == bytesPerVertex )
     {
 	float x, y, z;
 	float nx, ny, nz;
@@ -368,7 +368,6 @@ int readGeometryDATA( std::ifstream &file,
 		      << (unsigned int)color[2] << " "
 		      << (unsigned int)color[3] << " ";
 
-
 	    // Tex coords 0
 	    file.read( (char *)&s, sizeof( s ) );
 	    std::cout << s << " ";
@@ -394,7 +393,7 @@ int readGeometryDATA( std::ifstream &file,
 	    std::cout << t << std::endl;
 	}
     }
-    else if( bytesPerVertex == 64 )
+    else if( 64 == bytesPerVertex )
     {
 	float x, y, z;
 	float nx, ny, nz;
@@ -408,6 +407,59 @@ int readGeometryDATA( std::ifstream &file,
 	    file.read( (char *)&nx, sizeof( nx ) );
 	    file.read( (char *)&ny, sizeof( ny ) );
 	    file.read( (char *)&nz, sizeof( nz ) );
+
+	    // Tex coords 0
+	    file.read( (char *)&s, sizeof( s ) );
+	    std::cout << s << " ";
+	    file.read( (char *)&t, sizeof( t ) );
+	    std::cout << t << " ";
+
+	    // Tex coords 1
+	    file.read( (char *)&s, sizeof( s ) );
+	    std::cout << s << " ";
+	    file.read( (char *)&t, sizeof( t ) );
+	    std::cout << t << " ";
+
+	    // Tex coords 2
+	    file.read( (char *)&s, sizeof( s ) );
+	    std::cout << s << " ";
+	    file.read( (char *)&t, sizeof( t ) );
+	    std::cout << t << " ";
+
+	    // Tex coords 3
+	    file.read( (char *)&s, sizeof( s ) );
+	    std::cout << s << " ";
+	    file.read( (char *)&t, sizeof( t ) );
+	    std::cout << t << " ";
+
+	    // Tex coords 4
+	    file.read( (char *)&s, sizeof( s ) );
+	    std::cout << s << " ";
+	    file.read( (char *)&t, sizeof( t ) );
+	    std::cout << t << std::endl;
+	}
+    }
+    else if( 68 == bytesPerVertex )
+    {
+	float x, y, z;
+	float nx, ny, nz;
+	float s, t;
+	for( unsigned int i = 0; i < numVerts; ++i )
+	{
+	    file.read( (char *)&x, sizeof( x ) );
+	    file.read( (char *)&y, sizeof( y ) );
+	    file.read( (char *)&z, sizeof( z ) );
+
+	    file.read( (char *)&nx, sizeof( nx ) );
+	    file.read( (char *)&ny, sizeof( ny ) );
+	    file.read( (char *)&nz, sizeof( nz ) );
+
+	    unsigned char color[4];
+	    file.read( (char *)color, 4 );
+	    std::cout << (unsigned int)color[0] << " "
+		      << (unsigned int)color[1] << " "
+		      << (unsigned int)color[2] << " "
+		      << (unsigned int)color[3] << " ";
 
 	    // Tex coords 0
 	    file.read( (char *)&s, sizeof( s ) );
