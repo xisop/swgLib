@@ -3,7 +3,7 @@
  *  \file   mshVertex.cpp
  *  \author Kenneth R. Sewell III
 
- Copyright (C) 2006,2007 Kenneth R. Sewell III
+ Copyright (C) 2006-2009 Kenneth R. Sewell III
 
  This file is part of meshLib.
 
@@ -375,7 +375,7 @@ void mshVertex::getTexCoords( unsigned int &numPairs, float *coords ) const
       break;
     case 52:
       numPairs = 1;
-      memcpy( coords, v+6, sizeof( float ) * 2 * numPairs );
+      memcpy( coords, v+7, sizeof( float ) * 2 * numPairs );
       break;
     case 56:
       numPairs = 3;
@@ -391,7 +391,7 @@ void mshVertex::getTexCoords( unsigned int &numPairs, float *coords ) const
       break;
     case 68:
       numPairs = 4;
-      memcpy( coords, v+6, sizeof( float ) * 2 * numPairs );
+      memcpy( coords, v+7, sizeof( float ) * 2 * numPairs );
       break;
     case 72:
       numPairs = 5;
