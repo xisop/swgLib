@@ -585,6 +585,11 @@ unsigned int prto::readCPST( std::istream &file )
 			       x2, y2, z2
 			       );
 	  }
+	else if( "XCYL" == type )
+	  {
+	    std::cout << "******************** Need to handle XCYL ****************" << std::endl;
+	    total += readUnknown( file, size+8 );
+	  }
 	else
 	  {
 	    std::cout << "Unexpected type: " << type << std::endl;
