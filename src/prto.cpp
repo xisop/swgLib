@@ -565,7 +565,31 @@ unsigned int prto::readCPST( std::istream &file )
 
     while( total < cpstSize )
       {
-	total += readCMSH( file );
+	// Peek at next record, but keep file at same place.
+        long position = file.tellg();
+        readFormHeader( file, form, size, type );
+        file.seekg( position, std::ios_base::beg );
+
+	if( "CMSH" == type )
+	  {
+	    total += readCMSH( file );
+	  }
+	else if( "EXBX" == type )
+	  {
+	    float cx, cy, cz, radius;
+	    float x1, y1, z1;
+	    float x2, y2, z2;
+	    total += readEXBX( file,
+			       cx, cy, cz, radius,
+			       x1, y1, z1,
+			       x2, y2, z2
+			       );
+	  }
+	else
+	  {
+	    std::cout << "Unexpected type: " << type << std::endl;
+	    exit( 0 );
+	  }
       }
 
     if( cpstSize == total )
