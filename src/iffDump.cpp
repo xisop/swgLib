@@ -107,10 +107,12 @@ int readGeometryDATA( std::ifstream &file,
 	    file.read( (char *)&x, sizeof( x ) );
 	    file.read( (char *)&y, sizeof( y ) );
 	    file.read( (char *)&z, sizeof( z ) );
+	    std::cout << x << " " << y << " " << z << " ";
 
 	    file.read( (char *)&nx, sizeof( nx ) );
 	    file.read( (char *)&ny, sizeof( ny ) );
 	    file.read( (char *)&nz, sizeof( nz ) );
+	    std::cout << nx << " " << ny << " " << nz << " ";
 
 	    // Tex coords 0
 	    // Tex coords 0
@@ -130,10 +132,12 @@ int readGeometryDATA( std::ifstream &file,
 	    file.read( (char *)&x, sizeof( x ) );
 	    file.read( (char *)&y, sizeof( y ) );
 	    file.read( (char *)&z, sizeof( z ) );
+	    std::cout << x << " " << y << " " << z << " ";
 
 	    file.read( (char *)&nx, sizeof( nx ) );
 	    file.read( (char *)&ny, sizeof( ny ) );
 	    file.read( (char *)&nz, sizeof( nz ) );
+	    std::cout << nx << " " << ny << " " << nz << " ";
 
 	    unsigned char color[4];
 	    file.read( (char *)color, 4 );
@@ -158,18 +162,14 @@ int readGeometryDATA( std::ifstream &file,
 	for( unsigned int i = 0; i < numVerts; ++i )
 	{
 	    file.read( (char *)&x, sizeof( x ) );
-	    std::cout << x << " ";
 	    file.read( (char *)&y, sizeof( y ) );
-	    std::cout << y << " ";
 	    file.read( (char *)&z, sizeof( z ) );
-	    std::cout << z << " ";
+	    std::cout << x << " " << y << " " << z << " ";
 
 	    file.read( (char *)&nx, sizeof( nx ) );
-	    std::cout << nx << " ";
 	    file.read( (char *)&ny, sizeof( ny ) );
-	    std::cout << ny << " ";
 	    file.read( (char *)&nz, sizeof( nz ) );
-	    std::cout << nz << " ";
+	    std::cout << nx << " " << ny << " " << nz << " ";
 
 	    // Tex coords 0
 	    file.read( (char *)&s, sizeof( s ) );
@@ -194,10 +194,12 @@ int readGeometryDATA( std::ifstream &file,
 	    file.read( (char *)&x, sizeof( x ) );
 	    file.read( (char *)&y, sizeof( y ) );
 	    file.read( (char *)&z, sizeof( z ) );
+	    std::cout << x << " " << y << " " << z << " ";
 
 	    file.read( (char *)&nx, sizeof( nx ) );
 	    file.read( (char *)&ny, sizeof( ny ) );
 	    file.read( (char *)&nz, sizeof( nz ) );
+	    std::cout << nx << " " << ny << " " << nz << " ";
 
 	    unsigned char color[4];
 	    file.read( (char *)color, 4 );
@@ -227,18 +229,14 @@ int readGeometryDATA( std::ifstream &file,
 	for( unsigned int i = 0; i < numVerts; ++i )
 	{
 	    file.read( (char *)&x, sizeof( x ) );
-	    std::cout << x << " ";
 	    file.read( (char *)&y, sizeof( y ) );
-	    std::cout << y << " ";
 	    file.read( (char *)&z, sizeof( z ) );
-	    std::cout << z << " ";
+	    std::cout << x << " " << y << " " << z << " ";
 
 	    file.read( (char *)&nx, sizeof( nx ) );
-	    std::cout << nx << " ";
 	    file.read( (char *)&ny, sizeof( ny ) );
-	    std::cout << ny << " ";
 	    file.read( (char *)&nz, sizeof( nz ) );
-	    std::cout << nz << " ";
+	    std::cout << nx << " " << ny << " " << nz << " ";
 
 	    // Tex coords 0
 	    file.read( (char *)&s, sizeof( s ) );
@@ -267,18 +265,14 @@ int readGeometryDATA( std::ifstream &file,
 	for( unsigned int i = 0; i < numVerts; ++i )
 	{
 	    file.read( (char *)&x, sizeof( x ) );
-	    std::cout << x << " ";
 	    file.read( (char *)&y, sizeof( y ) );
-	    std::cout << y << " ";
 	    file.read( (char *)&z, sizeof( z ) );
-	    std::cout << z << " ";
+	    std::cout << x << " " << y << " " << z << " ";
 
 	    file.read( (char *)&nx, sizeof( nx ) );
-	    std::cout << nx << " ";
 	    file.read( (char *)&ny, sizeof( ny ) );
-	    std::cout << ny << " ";
 	    file.read( (char *)&nz, sizeof( nz ) );
-	    std::cout << nz << " ";
+	    std::cout << nx << " " << ny << " " << nz << " ";
 
 	    unsigned char color[4];
 	    file.read( (char *)color, 4 );
@@ -316,10 +310,12 @@ int readGeometryDATA( std::ifstream &file,
 	    file.read( (char *)&x, sizeof( x ) );
 	    file.read( (char *)&y, sizeof( y ) );
 	    file.read( (char *)&z, sizeof( z ) );
+	    std::cout << x << " " << y << " " << z << " ";
 
 	    file.read( (char *)&nx, sizeof( nx ) );
 	    file.read( (char *)&ny, sizeof( ny ) );
 	    file.read( (char *)&nz, sizeof( nz ) );
+	    std::cout << nx << " " << ny << " " << nz << " ";
 
 	    // Tex coords 0
 	    file.read( (char *)&s, sizeof( s ) );
@@ -356,10 +352,12 @@ int readGeometryDATA( std::ifstream &file,
 	    file.read( (char *)&x, sizeof( x ) );
 	    file.read( (char *)&y, sizeof( y ) );
 	    file.read( (char *)&z, sizeof( z ) );
+	    std::cout << x << " " << y << " " << z << " ";
 
 	    file.read( (char *)&nx, sizeof( nx ) );
 	    file.read( (char *)&ny, sizeof( ny ) );
 	    file.read( (char *)&nz, sizeof( nz ) );
+	    std::cout << nx << " " << ny << " " << nz << " ";
 
 	    unsigned char color[4];
 	    file.read( (char *)color, 4 );
@@ -403,10 +401,12 @@ int readGeometryDATA( std::ifstream &file,
 	    file.read( (char *)&x, sizeof( x ) );
 	    file.read( (char *)&y, sizeof( y ) );
 	    file.read( (char *)&z, sizeof( z ) );
+	    std::cout << x << " " << y << " " << z << " ";
 
 	    file.read( (char *)&nx, sizeof( nx ) );
 	    file.read( (char *)&ny, sizeof( ny ) );
 	    file.read( (char *)&nz, sizeof( nz ) );
+	    std::cout << nx << " " << ny << " " << nz << " ";
 
 	    // Tex coords 0
 	    file.read( (char *)&s, sizeof( s ) );
@@ -449,10 +449,12 @@ int readGeometryDATA( std::ifstream &file,
 	    file.read( (char *)&x, sizeof( x ) );
 	    file.read( (char *)&y, sizeof( y ) );
 	    file.read( (char *)&z, sizeof( z ) );
+	    std::cout << x << " " << y << " " << z << " ";
 
 	    file.read( (char *)&nx, sizeof( nx ) );
 	    file.read( (char *)&ny, sizeof( ny ) );
 	    file.read( (char *)&nz, sizeof( nz ) );
+	    std::cout << nx << " " << ny << " " << nz << " ";
 
 	    unsigned char color[4];
 	    file.read( (char *)color, 4 );
@@ -484,6 +486,60 @@ int readGeometryDATA( std::ifstream &file,
 	    std::cout << s << " ";
 	    file.read( (char *)&t, sizeof( t ) );
 	    std::cout << t << " ";
+
+	    // Tex coords 4
+	    file.read( (char *)&s, sizeof( s ) );
+	    std::cout << s << " ";
+	    file.read( (char *)&t, sizeof( t ) );
+	    std::cout << t << std::endl;
+	}
+    }
+    else if( 72 == bytesPerVertex )
+    {
+	float x, y, z;
+	float nx, ny, nz;
+	float s, t;
+	for( unsigned int i = 0; i < numVerts; ++i )
+	{
+	    file.read( (char *)&x, sizeof( x ) );
+	    file.read( (char *)&y, sizeof( y ) );
+	    file.read( (char *)&z, sizeof( z ) );
+	    std::cout << x << " " << y << " " << z << " ";
+
+	    file.read( (char *)&nx, sizeof( nx ) );
+	    file.read( (char *)&ny, sizeof( ny ) );
+	    file.read( (char *)&nz, sizeof( nz ) );
+	    std::cout << nx << " " << ny << " " << nz << " ";
+
+	    // Tex coords 0
+	    file.read( (char *)&s, sizeof( s ) );
+	    std::cout << s << " ";
+	    file.read( (char *)&t, sizeof( t ) );
+	    std::cout << t << " ";
+
+	    // Tex coords 1
+	    file.read( (char *)&s, sizeof( s ) );
+	    std::cout << s << " ";
+	    file.read( (char *)&t, sizeof( t ) );
+	    std::cout << t << " ";
+
+	    // Tex coords 2
+	    file.read( (char *)&s, sizeof( s ) );
+	    std::cout << s << " ";
+	    file.read( (char *)&t, sizeof( t ) );
+	    std::cout << t << " ";
+
+	    // Tex coords 3
+	    file.read( (char *)&s, sizeof( s ) );
+	    std::cout << s << " ";
+	    file.read( (char *)&t, sizeof( t ) );
+	    std::cout << t << " ";
+
+	    // Tex coords 4
+	    file.read( (char *)&s, sizeof( s ) );
+	    std::cout << s << " ";
+	    file.read( (char *)&t, sizeof( t ) );
+	    std::cout << t << std::endl;
 
 	    // Tex coords 4
 	    file.read( (char *)&s, sizeof( s ) );
@@ -801,7 +857,7 @@ int readRecord(
     }
     else if( "INDX" == group )
     {
-#if 1
+#if 0
       readUnknown( file, size );
 #else
       readGeometryINDX( file, size );
