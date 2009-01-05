@@ -56,17 +56,10 @@ unsigned int trn::readTRN( std::istream &file )
     }
     std::cerr << "Found PTAT form" << std::endl;
 
-    std::cout << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << std::endl;
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
-
     // Child form of PTAT ( Level 1 )
     unsigned int size;
     total += readFormHeader( file, form, size, type );
     std::cerr << "Found form: " << form << std::endl;
-
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
 
     total += readTRNDATA( file );
 
@@ -75,9 +68,6 @@ unsigned int trn::readTRN( std::istream &file )
 
     // DATA before WMAP and SMAP
     total += readMapDATA( file );
-
-    std::cout << "</form>" << std::endl; // Level 1
-    std::cout << "</form>" << std::endl; // Level 0
 
     if( ptatSize == total )
     {
@@ -109,14 +99,10 @@ unsigned int trn::readTRNDATA( std::istream &file )
     }
     std::cerr << "Found DATA record" << std::endl;
 
-    std::cout << "<record>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
-
-#if 1
     char temp[255];
     file.getline( temp, 255, 0 );
     std::string name( temp );
-    std::cout << "<name> " << name << "</name>" << std::endl;
+    std::cout << name << std::endl;
     total += name.size() + 1;
 
     float x1, x2;
@@ -150,7 +136,7 @@ unsigned int trn::readTRNDATA( std::istream &file )
 
     file.getline( temp, 255, 0 );
     std::string waterShader( temp );
-    std::cout << "<shader> " << waterShader << "</shader>" << std::endl;
+    std::cout << waterShader << std::endl;
     total += waterShader.size() + 1;
 
     float x;
@@ -160,11 +146,6 @@ unsigned int trn::readTRNDATA( std::istream &file )
 	total += sizeof( x );
 	std::cout << x << std::endl;
     }
-#else
-    file.seekg( size, std::ios_base::cur );
-#endif
-
-    std::cout << "</record>" << std::endl;
 
     size += 8;
     if( size == total )
@@ -198,9 +179,6 @@ unsigned int trn::readTGEN( std::istream &file )
     }
     std::cerr << "Found TGEN form" << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
-
     unsigned int size;
     total += readFormHeader( file, form, size, type );
     size += 8;
@@ -211,18 +189,12 @@ unsigned int trn::readTGEN( std::istream &file )
     }
     std::cerr << "Found FORM: " << type << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
-
     total += readSGRP( file );
     total += readFGRP( file );
     total += readRGRP( file );
     total += readEGRP( file );
     total += readMGRP( file );
     total += readLYRS( file );
-
-    std::cout << "</form>" << std::endl; // FORM
-    std::cout << "</form>" << std::endl; // TGEN
 
     if( tgenSize == total )
     {
@@ -262,9 +234,6 @@ unsigned int trn::readWMAP( std::istream &file )
 	exit( 0 );
       }
 
-    std::cout << "<record>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
-
     unsigned char x;
     for( unsigned int i = 0; i < height; ++i )
     {
@@ -281,11 +250,8 @@ unsigned int trn::readWMAP( std::istream &file )
     }
     std::cout << std::endl;
 
-    //file.seekg( wmapSize, std::ios_base::cur );
     total += wmapSize;
     
-    std::cout << "</record>" << std::endl;
-
     wmapSize += 8;
     if( wmapSize == total )
     {
@@ -325,9 +291,6 @@ unsigned int trn::readSMAP( std::istream &file )
 	exit( 0 );
       }
 
-    std::cout << "<record>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
-
     unsigned char x;
     for( unsigned int i = 0; i < height; ++i )
     {
@@ -346,8 +309,6 @@ unsigned int trn::readSMAP( std::istream &file )
 
     total += smapSize;
 
-    std::cout << "</record>" << std::endl;
-    
     smapSize += 8;
     if( smapSize == total )
     {
@@ -378,10 +339,6 @@ unsigned int trn::readSFAM( std::istream &file )
     }
     std::cerr << "Found SFAM record of size: " << sfamSize << std::endl;
 
-    std::cout << "<record>" << std::endl;
-    std::cout << "<type>" << type << "</type>" << std::endl;
-
-
     unsigned int x;
     file.read( (char*)&x, sizeof( x ) );
     total += sizeof( x );
@@ -390,12 +347,12 @@ unsigned int trn::readSFAM( std::istream &file )
     char temp[255];
     file.getline( temp, 255, 0 );
     std::string name( temp );
-    std::cout << "<name>" << name << "</name>" << std::endl;
+    std::cout << name << std::endl;
     total += name.size() + 1;
 
     file.getline( temp, 255, 0 );
     std::string name2( temp );
-    std::cout << "<name>" << name2 << "</name>" << std::endl;
+    std::cout << name2 << std::endl;
     total += name2.size() + 1;
 
     // Color color...
@@ -417,14 +374,14 @@ unsigned int trn::readSFAM( std::istream &file )
     unsigned int numLayers;
     file.read( (char*)&numLayers, sizeof( numLayers ) );
     total += sizeof( numLayers );
-    std::cout << "<numLayers>" << numLayers << "</numLayers>" << std::endl;
+    std::cout << "numLayers: " << numLayers << std::endl;
 
 
     for( unsigned int layer = 0; layer < numLayers; ++layer )
       {
 	file.getline( temp, 255, 0 );
 	std::string name3( temp );
-	std::cout << "<name>" << name3 << "</name>" << std::endl;
+	std::cout << name3 << std::endl;
 	total += name3.size() + 1;
 	
 	float u1;
@@ -433,8 +390,6 @@ unsigned int trn::readSFAM( std::istream &file )
 	std::cout << u1 << std::endl;
       }
 
-    std::cout << "</record>" << std::endl;
-    
     sfamSize += 8;
     if( sfamSize == total )
     {
@@ -462,9 +417,6 @@ unsigned int trn::readMapDATA( std::istream &file )
     formSize += 8;
     std::cerr << "Found form: " << type << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
-
     // DATA
     unsigned int size;
     total += readRecordHeader( file, type, size );
@@ -474,9 +426,6 @@ unsigned int trn::readMapDATA( std::istream &file )
 	exit( 0 );
     }
     std::cerr << "Found DATA record of size: " << size << std::endl;
-
-    std::cout << "<record>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
 
     float x1, x2;
     file.read( (char*)&x1, sizeof( x1 ) );
@@ -490,15 +439,11 @@ unsigned int trn::readMapDATA( std::istream &file )
     std::cout << "      Map height: " << height << std::endl;
     std::cout << "       Map width: " << width << std::endl;
 
-    std::cout << "</record>" << std::endl;
-
     // WMAP
     total += readWMAP( file );
 
     // SMAP
     total += readSMAP( file );
-
-    std::cout << "</form>" << std::endl;
 
     if( formSize == total )
     {
@@ -530,9 +475,6 @@ unsigned int trn::readSGRP( std::istream &file )
     }
     std::cerr << "Found SGRP form" << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
-
     unsigned int size;
     total += readFormHeader( file, form, size, type );
     size += 8;
@@ -543,17 +485,11 @@ unsigned int trn::readSGRP( std::istream &file )
     }
     std::cerr << "Found FORM: " << type << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
-
     while( total < size-12 )
       {
 	total += readSFAM( file );
       }
 
-    std::cout << "</form>" << std::endl;
-    std::cout << "</form>" << std::endl;
-    
     if( sgrpSize == total )
     {
 	std::cerr << "Finished reading SGRP" << std::endl;
@@ -584,9 +520,6 @@ unsigned int trn::readFGRP( std::istream &file )
     }
     std::cerr << "Found FGRP form" << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
-
     unsigned int size;
     total += readFormHeader( file, form, size, type );
     size += 8;
@@ -597,15 +530,9 @@ unsigned int trn::readFGRP( std::istream &file )
     }
     std::cerr << "Found FORM: " << type << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
+    total += readUnknown( file, size-total );
+    total += readUnknown( file, fgrpSize-total );
 
-    file.seekg( size-12, std::ios_base::cur );
-    total += size-12;
-
-    std::cout << "</form>" << std::endl;
-    std::cout << "</form>" << std::endl;
-    
     if( fgrpSize == total )
     {
 	std::cerr << "Finished reading FGRP" << std::endl;
@@ -636,9 +563,6 @@ unsigned int trn::readRGRP( std::istream &file )
     }
     std::cerr << "Found RGRP form" << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
-
     unsigned int size;
     total += readFormHeader( file, form, size, type );
     size += 8;
@@ -649,14 +573,12 @@ unsigned int trn::readRGRP( std::istream &file )
     }
     std::cerr << "Found FORM: " << type << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
 
-    file.seekg( size-12, std::ios_base::cur );
-    total += size-12;
+    total += readUnknown( file, size-total );
+    total += readUnknown( file, rgrpSize-total );
 
-    std::cout << "</form>" << std::endl;
-    std::cout << "</form>" << std::endl;
+
+
     
     if( rgrpSize == total )
     {
@@ -688,8 +610,6 @@ unsigned int trn::readEGRP( std::istream &file )
     }
     std::cerr << "Found EGRP form" << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
 
     unsigned int size;
     total += readFormHeader( file, form, size, type );
@@ -701,14 +621,12 @@ unsigned int trn::readEGRP( std::istream &file )
     }
     std::cerr << "Found FORM: " << type << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
 
-    file.seekg( size-12, std::ios_base::cur );
-    total += size-12;
+    total += readUnknown( file, size-total );
+    total += readUnknown( file, egrpSize-total );
 
-    std::cout << "</form>" << std::endl;
-    std::cout << "</form>" << std::endl;
+
+
     
     if( egrpSize == total )
     {
@@ -740,8 +658,6 @@ unsigned int trn::readMGRP( std::istream &file )
     }
     std::cerr << "Found MGRP form" << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
 
     unsigned int size;
     total += readFormHeader( file, form, size, type );
@@ -753,14 +669,12 @@ unsigned int trn::readMGRP( std::istream &file )
     }
     std::cerr << "Found FORM: " << type << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
 
-    file.seekg( size-12, std::ios_base::cur );
-    total += size-12;
+    total += readUnknown( file, size-total );
+    total += readUnknown( file, mgrpSize-total );
 
-    std::cout << "</form>" << std::endl;
-    std::cout << "</form>" << std::endl;
+
+
     
     if( mgrpSize == total )
     {
@@ -792,15 +706,13 @@ unsigned int trn::readLYRS( std::istream &file )
     }
     std::cerr << "Found LYRS form" << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
 
     while( total < lyrsSize )
     {
 	total += readLAYR( file );
     }
     
-    std::cout << "</form>" << std::endl;
+
 
     if( lyrsSize == total )
     {
@@ -832,8 +744,6 @@ unsigned int trn::readLAYR( std::istream &file )
     }
     std::cerr << "Found LAYR form" << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
 
     unsigned int size;
     total += readFormHeader( file, form, size, type );
@@ -844,8 +754,6 @@ unsigned int trn::readLAYR( std::istream &file )
     }
     std::cerr << "Found 0003 form" << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
 
     total += readIHDR( file );
     total += readADTA( file );
@@ -973,8 +881,8 @@ unsigned int trn::readLAYR( std::istream &file )
         }
     }
 
-    std::cout << "</form>" << std::endl;
-    std::cout << "</form>" << std::endl;
+
+
 
     if( layrSize == total )
     {
@@ -1006,8 +914,6 @@ unsigned int trn::readIHDR( std::istream &file )
     }
     std::cerr << "Found IHDR form" << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
 
     unsigned int size;
     total += readFormHeader( file, form, size, type );
@@ -1018,8 +924,6 @@ unsigned int trn::readIHDR( std::istream &file )
     }
     std::cerr << "Found 0001 form" << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
 
     total += readRecordHeader( file, type, size );
     if( type != "DATA" )
@@ -1029,8 +933,8 @@ unsigned int trn::readIHDR( std::istream &file )
     }
     std::cerr << "Found DATA record" << std::endl;
 
-    std::cout << "<record>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
+
+
 
     unsigned int u1;
     file.read( (char *)&u1, sizeof( u1 ) );
@@ -1044,8 +948,8 @@ unsigned int trn::readIHDR( std::istream &file )
     std::cout << u1 << " " << dataString << std::endl;
 
     std::cout << "</record>" << std::endl;
-    std::cout << "</form>" << std::endl;
-    std::cout << "</form>" << std::endl;
+
+
 
     if( ihdrSize == total )
     {
@@ -1076,8 +980,8 @@ unsigned int trn::readADTA( std::istream &file )
     }
     std::cerr << "Found ADTA record" << std::endl;
 
-    std::cout << "<record>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
+
+
 
 #if 1
     unsigned int u1;
@@ -1139,8 +1043,6 @@ unsigned int trn::readASCN( std::istream &file )
     }
     std::cerr << "Found ASCN form" << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
 
     // FORM 0001
     unsigned int size;
@@ -1152,8 +1054,6 @@ unsigned int trn::readASCN( std::istream &file )
     }
     std::cerr << "Found 0001 form" << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
 
     // IHDR
     total += readIHDR( file );
@@ -1167,8 +1067,8 @@ unsigned int trn::readASCN( std::istream &file )
     }
     std::cerr << "Found ASCNDATA record" << std::endl;
 
-    std::cout << "<record>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
+
+
 #if 1
     unsigned int u1;
     file.read( (char *)&u1, sizeof( u1 ) );
@@ -1188,8 +1088,8 @@ unsigned int trn::readASCN( std::istream &file )
 #endif
 
     std::cout << "</record>" << std::endl;
-    std::cout << "</form>" << std::endl;
-    std::cout << "</form>" << std::endl;
+
+
     
     if( ascnSize == total )
     {
@@ -1222,8 +1122,6 @@ unsigned int trn::readAENV( std::istream &file )
     }
     std::cerr << "Found AENV form" << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
 
     // FORM 0001
     unsigned int size;
@@ -1235,8 +1133,6 @@ unsigned int trn::readAENV( std::istream &file )
     }
     std::cerr << "Found 0000 form" << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
 
     // IHDR
     total += readIHDR( file );
@@ -1250,14 +1146,11 @@ unsigned int trn::readAENV( std::istream &file )
     }
     std::cerr << "Found DATA record" << std::endl;
 
-    std::cout << "<record>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
-
     total += readUnknown( file, size );
 
     std::cout << "</record>" << std::endl;
-    std::cout << "</form>" << std::endl;
-    std::cout << "</form>" << std::endl;
+
+
     
     if( aenvSize == total )
     {
@@ -1290,13 +1183,10 @@ unsigned int trn::readBREC( std::istream &file )
     }
     std::cerr << "Found BREC form" << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
 
-    file.seekg( brecSize-12, std::ios_base::cur );
-    total += brecSize-12;
+    total += readUnknown( file, brecSize-total );
     
-    std::cout << "</form>" << std::endl;
+
 
     if( brecSize == total )
     {
@@ -1328,13 +1218,10 @@ unsigned int trn::readAHFR( std::istream &file )
     }
     std::cerr << "Found AHFR form" << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
 
-    file.seekg( ahfrSize-12, std::ios_base::cur );
-    total += ahfrSize-12;
+    total += readUnknown( file, ahfrSize-total );
 
-    std::cout << "</form>" << std::endl;
+
 
     if( ahfrSize == total )
     {
@@ -1366,13 +1253,10 @@ unsigned int trn::readFFRA( std::istream &file )
     }
     std::cerr << "Found FFRA form" << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
 
-    file.seekg( ffraSize-12, std::ios_base::cur );
-    total += ffraSize-12;
+    total += readUnknown( file, ffraSize-total );
     
-    std::cout << "</form>" << std::endl;
+
 
     if( ffraSize == total )
     {
@@ -1404,13 +1288,10 @@ unsigned int trn::readACCN( std::istream &file )
     }
     std::cerr << "Found ACCN form" << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
 
-    file.seekg( accnSize-12, std::ios_base::cur );
-    total += accnSize-12;
+    total += readUnknown( file, accnSize-total );
     
-    std::cout << "</form>" << std::endl;
+
 
     if( accnSize == total )
     {
@@ -1442,13 +1323,10 @@ unsigned int trn::readBPLN( std::istream &file )
     }
     std::cerr << "Found BPLN form" << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
 
-    file.seekg( bplnSize-12, std::ios_base::cur );
-    total += bplnSize-12;
+    total += readUnknown( file, bplnSize-total );
     
-    std::cout << "</form>" << std::endl;
+
 
     if( bplnSize == total )
     {
@@ -1480,13 +1358,10 @@ unsigned int trn::readBPOL( std::istream &file )
     }
     std::cerr << "Found BPOL form" << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
 
-    file.seekg( bpolSize-12, std::ios_base::cur );
-    total += bpolSize-12;
+    total += readUnknown( file, bpolSize-total );
     
-    std::cout << "</form>" << std::endl;
+
 
     if( bpolSize == total )
     {
@@ -1518,13 +1393,10 @@ unsigned int trn::readASRP( std::istream &file )
     }
     std::cerr << "Found ASRP form" << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
 
-    file.seekg( asrpSize-12, std::ios_base::cur );
-    total += asrpSize-12;
+    total += readUnknown( file, asrpSize-total );
     
-    std::cout << "</form>" << std::endl;
+
 
     if( asrpSize == total )
     {
@@ -1556,13 +1428,10 @@ unsigned int trn::readAEXC( std::istream &file )
     }
     std::cerr << "Found AEXC form" << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
 
-    file.seekg( aexcSize-12, std::ios_base::cur );
-    total += aexcSize-12;
+    total += readUnknown( file, aexcSize-total );
     
-    std::cout << "</form>" << std::endl;
+
 
     if( aexcSize == total )
     {
@@ -1594,13 +1463,10 @@ unsigned int trn::readBCIR( std::istream &file )
     }
     std::cerr << "Found BCIR form" << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
 
-    file.seekg( bcirSize-12, std::ios_base::cur );
-    total += bcirSize-12;
+    total += readUnknown( file, bcirSize-total );
     
-    std::cout << "</form>" << std::endl;
+
 
     if( bcirSize == total )
     {
@@ -1758,13 +1624,10 @@ unsigned int trn::readAHTR( std::istream &file )
     }
     std::cerr << "Found AHTR form" << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
 
-    file.seekg( ahtrSize-12, std::ios_base::cur );
-    total += ahtrSize-12;
+    total += readUnknown( file, ahtrSize-total );
     
-    std::cout << "</form>" << std::endl;
+
 
     if( ahtrSize == total )
     {
@@ -1796,13 +1659,10 @@ unsigned int trn::readACRF( std::istream &file )
     }
     std::cerr << "Found ACRF form" << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
 
-    file.seekg( acrfSize-12, std::ios_base::cur );
-    total += acrfSize-12;
+    total += readUnknown( file, acrfSize-total );
     
-    std::cout << "</form>" << std::endl;
+
 
     if( acrfSize == total )
     {
@@ -1834,13 +1694,10 @@ unsigned int trn::readFSLP( std::istream &file )
     }
     std::cerr << "Found FSLP form" << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
 
-    file.seekg( fslpSize-12, std::ios_base::cur );
-    total += fslpSize-12;
+    total += readUnknown( file, fslpSize-total );
     
-    std::cout << "</form>" << std::endl;
+
 
     if( fslpSize == total )
     {
@@ -1872,13 +1729,10 @@ unsigned int trn::readAFSC( std::istream &file )
     }
     std::cerr << "Found AFSC form" << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
 
-    file.seekg( afscSize-12, std::ios_base::cur );
-    total += afscSize-12;
+    total += readUnknown( file, afscSize-total );
     
-    std::cout << "</form>" << std::endl;
+
 
     if( afscSize == total )
     {
@@ -1910,13 +1764,10 @@ unsigned int trn::readFSHD( std::istream &file )
     }
     std::cerr << "Found FSHD form" << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
 
-    file.seekg( fshdSize-12, std::ios_base::cur );
-    total += fshdSize-12;
+    total += readUnknown( file, fshdSize-total );
     
-    std::cout << "</form>" << std::endl;
+
 
     if( fshdSize == total )
     {
@@ -1948,13 +1799,10 @@ unsigned int trn::readAFDN( std::istream &file )
     }
     std::cerr << "Found AFDN form" << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
 
-    file.seekg( afdnSize-12, std::ios_base::cur );
-    total += afdnSize-12;
+    total += readUnknown( file, afdnSize-total );
     
-    std::cout << "</form>" << std::endl;
+
 
     if( afdnSize == total )
     {
@@ -1986,13 +1834,10 @@ unsigned int trn::readAFSN( std::istream &file )
     }
     std::cerr << "Found AFSN form" << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
 
-    file.seekg( afsnSize-12, std::ios_base::cur );
-    total += afsnSize-12;
+    total += readUnknown( file, afsnSize-total );
     
-    std::cout << "</form>" << std::endl;
+
 
    if( afsnSize == total )
     {
@@ -2024,13 +1869,10 @@ unsigned int trn::readAFDF( std::istream &file )
     }
     std::cerr << "Found AFDF form" << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
 
-    file.seekg( afdfSize-12, std::ios_base::cur );
-    total += afdfSize-12;
+    total += readUnknown( file, afdfSize-total );
     
-    std::cout << "</form>" << std::endl;
+
 
     if( afdfSize == total )
     {
@@ -2062,13 +1904,10 @@ unsigned int trn::readACRH( std::istream &file )
     }
     std::cerr << "Found ACRH form" << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
 
-    file.seekg( acrhSize-12, std::ios_base::cur );
-    total += acrhSize-12;
+    total += readUnknown( file, acrhSize-total );
     
-    std::cout << "</form>" << std::endl;
+
 
     if( acrhSize == total )
     {
@@ -2100,13 +1939,10 @@ unsigned int trn::readAROA( std::istream &file )
     }
     std::cerr << "Found AROA form" << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
 
-    file.seekg( aroaSize-12, std::ios_base::cur );
-    total += aroaSize-12;
+    total += readUnknown( file, aroaSize-total );
     
-    std::cout << "</form>" << std::endl;
+
 
     if( aroaSize == total )
     {
@@ -2138,13 +1974,10 @@ unsigned int trn::readFDIR( std::istream &file )
     }
     std::cerr << "Found FDIR form" << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
 
-    file.seekg( fdirSize-12, std::ios_base::cur );
-    total += fdirSize-12;
+    total += readUnknown( file, fdirSize-total );
     
-    std::cout << "</form>" << std::endl;
+
 
     if( fdirSize == total )
     {
