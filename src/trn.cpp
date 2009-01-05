@@ -521,15 +521,81 @@ unsigned int trn::readFFAM( std::istream &file, const std::string &debugString )
   total += sizeof( u1 );
   std::cout << u1 << std::endl;
 
-#if 1
   char temp[255];
   std::string name;
   file.getline( temp, 255, 0 );
   name = temp;
   std::cout << name << std::endl;
   total += name.size() + 1;
-#endif
-  total += readUnknown( file, size-total );
+
+  unsigned short u2;
+  file.read( (char *)&u2, sizeof( u2 ) );
+  total += sizeof( u2 );
+  std::cout << u2 << std::endl;
+
+  file.read( (char *)&u2, sizeof( u2 ) );
+  total += sizeof( u2 );
+  std::cout << u2 << std::endl;
+
+  file.read( (char *)&u2, sizeof( u2 ) );
+  total += sizeof( u2 );
+  std::cout << u2 << std::endl;
+
+  unsigned char u3;
+  file.read( (char *)&u3, sizeof( u3 ) );
+  total += sizeof( u3 );
+  std::cout << (unsigned int)u3 << std::endl;
+
+  file.read( (char *)&u1, sizeof( u1 ) );
+  total += sizeof( u1 );
+  std::cout << u1 << std::endl;
+
+  unsigned int numApt;
+  file.read( (char *)&numApt, sizeof( numApt ) );
+  total += sizeof( numApt );
+  std::cout << "numApt: " << numApt << std::endl;
+
+  for( unsigned int i = 0; i < numApt; ++i )
+    {
+      std::string aptName;
+      file.getline( temp, 255, 0 );
+      aptName = temp;
+      std::cout << aptName << std::endl;
+      total += aptName.size() + 1;
+	  
+      float u4;
+      file.read( (char *)&u4, sizeof( u4 ) );
+      total += sizeof( u4 );
+      std::cout << u4 << std::endl;
+	  
+      file.read( (char *)&u1, sizeof( u1 ) );
+      total += sizeof( u1 );
+      std::cout << u1 << std::endl;
+
+      file.read( (char *)&u4, sizeof( u4 ) );
+      total += sizeof( u4 );
+      std::cout << u4 << std::endl;
+
+      file.read( (char *)&u4, sizeof( u4 ) );
+      total += sizeof( u4 );
+      std::cout << u4 << std::endl;
+
+      file.read( (char *)&u1, sizeof( u1 ) );
+      total += sizeof( u1 );
+      std::cout << u1 << std::endl;
+
+      file.read( (char *)&u1, sizeof( u1 ) );
+      total += sizeof( u1 );
+      std::cout << u1 << std::endl;
+
+      file.read( (char *)&u4, sizeof( u4 ) );
+      total += sizeof( u4 );
+      std::cout << u4 << std::endl;
+
+      file.read( (char *)&u4, sizeof( u4 ) );
+      total += sizeof( u4 );
+      std::cout << u4 << std::endl;
+    }
   
   if( size == total )
     {
