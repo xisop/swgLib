@@ -89,8 +89,8 @@ namespace ml
 				  float &radius
 				  );
     static unsigned int readXCYL( std::istream &file,
-				  float &cx, float &cy, float &cz,
-				  float &radius
+				  float &u1, float &u2, float &u3,
+				  float &u4, float &u5
 				  );
     static unsigned int readSPHR( std::istream &file,
 				  float &cx, float &cy, float &cz,

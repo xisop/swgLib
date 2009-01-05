@@ -434,8 +434,8 @@ unsigned int base::readEXBX( std::istream &file,
 }
 
 unsigned int base::readXCYL( std::istream &file,
-			     float &cx, float &cy, float &cz,
-			     float &radius
+			     float &u1, float &u2, float &u3,
+			     float &u4, float &u5
 			     )
 {
   unsigned int total = 0;
@@ -462,7 +462,7 @@ unsigned int base::readXCYL( std::istream &file,
     }
   std::cout << "Found 0000 form" << std::endl;
 
-  total += base::readCYLN( file, cx, cy, cz, radius );
+  total += base::readCYLN( file, u1, u2, u3, u4, u5 );
 
   if( total == xcylSize )
     {
