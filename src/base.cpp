@@ -185,7 +185,7 @@ unsigned int base::readUnknown( std::istream &file,
       file.read( (char*)&data, 1 );
       if(
 	 ( data >= '.' && data <= 'z' )
-	 || ( data == '\\' )
+	 || ( data == '\\' ) || ( data == ' ' )
 	 )
         {
 	  std::cout << data;
