@@ -291,6 +291,53 @@ unsigned int base::readSPHR( std::istream &file,
   return total;
 }
 
+unsigned int base::readCYLN( std::istream &file,
+			     float &u1, float &u2, float &u3,
+			     float &u4, float &u5
+			     )
+{
+  unsigned int total = 0;
+
+  std::string form;
+  unsigned int size;
+  std::string type;
+
+  total += readRecordHeader( file, type, size );
+  size += 8; // Size of header
+  if( type != "CYLN" )
+    {
+      std::cout << "Expected record of type CYLN: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << "Found CYLN record" << std::endl;
+
+  // Read 
+  file.read( (char*)&u1, sizeof( u1 ) );
+  file.read( (char*)&u2, sizeof( u2 ) );
+  file.read( (char*)&u3, sizeof( u3 ) );
+  file.read( (char*)&u4, sizeof( u4 ) );
+  file.read( (char*)&u5, sizeof( u5 ) );
+  std::cout << u1 << " "
+	    << u2 << " "
+	    << u3 << " "
+	    << u4 << " "
+	    << u5 << std::endl;
+  total += sizeof( float ) * 5;
+
+  if( total == size )
+    {
+      std::cout << "Finished reading CYLN." << std::endl;
+    }
+  else
+    {
+      std::cout << "Error reading CYLN!" << std::endl;
+      std::cout << "Read " << total << " out of " << size
+		<< std::endl;
+    }
+
+  return total;
+}
+
 unsigned int base::readEXSP( std::istream &file,
 			     float &cx, float &cy, float &cz,
 			     float &radius
@@ -380,6 +427,51 @@ unsigned int base::readEXBX( std::istream &file,
     {
       std::cout << "Error reading EXBX!" << std::endl;
       std::cout << "Read " << total << " out of " << exbxSize
+		<< std::endl;
+    }
+
+  return total;
+}
+
+unsigned int base::readXCYL( std::istream &file,
+			     float &cx, float &cy, float &cz,
+			     float &radius
+			     )
+{
+  unsigned int total = 0;
+
+  std::string form;
+  unsigned int xcylSize;
+  std::string type;
+
+  total += readFormHeader( file, form, xcylSize, type );
+  xcylSize += 8;
+  if( form != "FORM" || type != "XCYL" )
+    {
+      std::cout << "Expected Form of type XCYL: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << "Found XCYL form" << std::endl;
+
+  unsigned int size;
+  total += readFormHeader( file, form, size, type );
+  if( form != "FORM" || type != "0000" )
+    {
+      std::cout << "Expected Form of type 0000: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << "Found 0000 form" << std::endl;
+
+  total += base::readCYLN( file, cx, cy, cz, radius );
+
+  if( total == xcylSize )
+    {
+      std::cout << "Finished reading XCYL." << std::endl;
+    }
+  else
+    {
+      std::cout << "Error reading XCYL!" << std::endl;
+      std::cout << "Read " << total << " out of " << xcylSize
 		<< std::endl;
     }
 

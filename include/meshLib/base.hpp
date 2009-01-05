@@ -4,7 +4,7 @@
  *  \author Kenneth R. Sewell III
 
  meshLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006,2007 Kenneth R. Sewell III
+ Copyright (C) 2006-2009 Kenneth R. Sewell III
 
  This file is part of meshLib.
 
@@ -88,10 +88,20 @@ namespace ml
 				  float &cx, float &cy, float &cz,
 				  float &radius
 				  );
+    static unsigned int readXCYL( std::istream &file,
+				  float &cx, float &cy, float &cz,
+				  float &radius
+				  );
     static unsigned int readSPHR( std::istream &file,
 				  float &cx, float &cy, float &cz,
 				  float &radius
 				  );
+
+    static unsigned int readCYLN( std::istream &file,
+				  float &u1, float &u2, float &u3,
+				  float &u4, float &u5
+				  );
+
     static unsigned int readBOX( std::istream &file,
 				 float &x1, float &y1, float &z1,
 				 float &x2, float &y2, float &z2
