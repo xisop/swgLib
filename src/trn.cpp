@@ -1632,13 +1632,34 @@ unsigned int trn::readAHCN( std::istream &file )
     }
     std::cerr << "Found AHCN form" << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
+    unsigned int size;
+    total += readFormHeader( file, form, size, type );
+    if( form != "FORM" || type != "0000" )
+    {
+	std::cerr << "Expected Form of type 0000: " << type << std::endl;
+	exit( 0 );
+    }
+    std::cerr << "Found 0000 form" << std::endl;
 
-    file.seekg( ahcnSize-12, std::ios_base::cur );
-    total += ahcnSize-12;
-    
-    std::cout << "</form>" << std::endl;
+    total += readIHDR( file );
+
+    total += readRecordHeader( file, type, size );
+    if( type != "DATA" )
+    {
+	std::cerr << "Expected record of type DATA: " << type << std::endl;
+	exit( 0 );
+    }
+    std::cerr << "Found DATA record" << std::endl;
+
+    unsigned int u1;
+    file.read( (char *)&u1, sizeof( u1 ) );
+    total += sizeof( u1 );
+    std::cout << u1 << std::endl;
+
+    float u2;
+    file.read( (char *)&u2, sizeof( u2 ) );
+    total += sizeof( u2 );
+    std::cout << u2 << std::endl;
 
     if( ahcnSize == total )
     {
