@@ -190,10 +190,13 @@ unsigned int lod::readAPPR( std::istream &file )
 		       x1, y1, z1,
 		       x2, y2, z2 
 		       );
-    
+#if 1
+    total += readUnknown( file, apprSize-total );
+#else
     file.seekg( apprSize-total, std::ios_base::cur );
     total += apprSize-total;
-    
+#endif    
+
     if( apprSize == total )
     {
 	std::cout << "Finished reading APPR" << std::endl;

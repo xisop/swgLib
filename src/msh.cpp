@@ -214,9 +214,12 @@ unsigned int msh::readAPPR( std::istream &file )
 			     );
 
     // Skip next form, size and type...
+#if 1
+    total += readUnknown( file, apprSize-total );
+#else
     file.seekg( apprSize-total, std::ios_base::cur );
     total += apprSize - total;
-
+#endif
     if( total == apprSize )
     {
 	std::cout << "Finished reading APPR." << std::endl;
@@ -421,8 +424,13 @@ unsigned int msh::readGeometry( std::istream &file )
 	std::cout << "Expected INFO record of size 8: " << size << std::endl;
 	exit( 0 );
     }
+
+#if 1
+    total += readUnknown( file, size );
+#else
     file.seekg( size, std::ios_base::cur );
     total += size;
+#endif
 
     // Read VTXA FORM record.
     total += readFormHeader( file, form, size, type );

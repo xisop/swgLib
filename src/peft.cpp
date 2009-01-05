@@ -175,9 +175,13 @@ unsigned int peft::readEMTR( std::istream &file )
 
     total += readPTIM( file );
 
+#if 1
+    total += readUnknown( file, emtrSize - total );
+#else
     // Skip for now...Fix later
     file.seekg( emtrSize - total, std::ios_base::cur );
     total = emtrSize;
+#endif
 
     if( emtrSize == total )
     {

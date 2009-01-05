@@ -297,8 +297,13 @@ unsigned int skmg::readBLT( std::istream &file )
     unsigned int numBLTNorm;
     total += readBLTINFO( file, numBLTPos, numBLTNorm );
 
+#if 1
+    total += readUnknown( file, bltSize-total );
+#else
     file.seekg( bltSize-total, std::ios_base::cur );
     total = bltSize;
+#endif
+
 #if 0
     total += readPOSN( file,  );
     total += readNORM( file );
