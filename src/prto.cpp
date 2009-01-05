@@ -462,6 +462,11 @@ unsigned int prto::readCELL( std::istream &file )
 			       x2, y2, z2
 			       );
 	  }
+	else if( "XCYL" == type )
+	  {
+	    float u1, u2, u3, u4, u5;
+	    total += readXCYL( file, u1, u2, u3, u4, u5 );
+	  }
 	else if( "LGHT" == form )
 	  {
 	    total += readLGHT( file );
