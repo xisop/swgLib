@@ -481,6 +481,10 @@ unsigned int sht::readTXM( std::istream &file )
 	  {
 	    //specularTextureName = fullTextureName;
 	  }
+	else if( textureTag == "NEPO" )
+	  {
+	    //specularTextureName = fullTextureName;
+	  }
 	else
 	  {
 	    std::cout << "Unknown texture tag: " << textureTag << std::endl;
@@ -704,6 +708,10 @@ unsigned int sht::readTCSS( std::istream &file )
 	    //specularTextureUnit = texUnit;
 	  }
 	else if( texName == "PFFM" )
+	  {
+	    //specularTextureUnit = texUnit;
+	  }
+	else if( texName == "NEPO" )
 	  {
 	    //specularTextureUnit = texUnit;
 	  }
