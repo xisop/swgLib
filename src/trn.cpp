@@ -4,7 +4,7 @@
  *  \author Kenneth R. Sewell III
 
  meshLib is used for the parsing and exporting .trn models.
- Copyright (C) 2006,2007 Kenneth R. Sewell III
+ Copyright (C) 2006-2009 Kenneth R. Sewell III
 
  This file is part of meshLib.
 
@@ -398,13 +398,20 @@ unsigned int trn::readSFAM( std::istream &file )
     std::cout << "<name>" << name2 << "</name>" << std::endl;
     total += name2.size() + 1;
 
-    // Next 3 unsigned chars might be a color...
-    unsigned char a;
-    for( unsigned int i = 0; i < 11; ++i )
+    // Color color...
+    unsigned char rgb[3];
+    file.read( (char*)rgb, sizeof( unsigned char ) * 3 );
+    total += sizeof( unsigned char ) * 3;
+    std::cout << "rgb: " << (unsigned int)rgb[0] << ", "
+	      << (unsigned int)rgb[1] << ", "
+	      << (unsigned int)rgb[2] << std::endl;
+
+    for( unsigned int i = 0; i < 2; ++i )
       {
-	file.read( (char*)&a, sizeof( a ) );
-	total += sizeof( a );
-	std::cout << (unsigned int)a << std::endl;
+	float u1;
+	file.read( (char*)&u1, sizeof( u1 ) );
+	total += sizeof( u1 );
+	std::cout << u1 << std::endl;
       }
 
     unsigned int numLayers;
@@ -420,12 +427,10 @@ unsigned int trn::readSFAM( std::istream &file )
 	std::cout << "<name>" << name3 << "</name>" << std::endl;
 	total += name3.size() + 1;
 	
-	for( unsigned int i = 0; i < 4; ++i )
-	  {
-	    file.read( (char*)&a, sizeof( a ) );
-	    total += sizeof( a );
-	    std::cout << (unsigned int)a << std::endl;
-	  }
+	float u1;
+	file.read( (char*)&u1, sizeof( u1 ) );
+	total += sizeof( u1 );
+	std::cout << u1 << std::endl;
       }
 
     std::cout << "</record>" << std::endl;
@@ -541,15 +546,10 @@ unsigned int trn::readSGRP( std::istream &file )
     std::cout << "<form>" << std::endl;
     std::cout << "<type> " << type << "</type>" << std::endl;
 
-    //file.seekg( size-12, std::ios_base::cur );
-    //total += size-12;
-
-
     while( total < size-12 )
       {
 	total += readSFAM( file );
       }
-
 
     std::cout << "</form>" << std::endl;
     std::cout << "</form>" << std::endl;
@@ -1670,13 +1670,42 @@ unsigned int trn::readFHGT( std::istream &file )
     }
     std::cerr << "Found FHGT form" << std::endl;
 
-    std::cout << "<form>" << std::endl;
-    std::cout << "<type> " << type << "</type>" << std::endl;
+    unsigned int size;
+    total += readFormHeader( file, form, size, type );
+    if( form != "FORM" || type != "0002" )
+    {
+	std::cerr << "Expected Form of type 0002: " << type << std::endl;
+	exit( 0 );
+    }
+    std::cerr << "Found 0002 form" << std::endl;
 
-    file.seekg( fhgtSize-12, std::ios_base::cur );
-    total += fhgtSize-12;
-    
-    std::cout << "</form>" << std::endl;
+    total += readIHDR( file );
+
+    total += readRecordHeader( file, type, size );
+    if( type != "DATA" )
+    {
+	std::cerr << "Expected record of type DATA: " << type << std::endl;
+	exit( 0 );
+    }
+    std::cerr << "Found DATA record" << std::endl;
+
+    float u1;
+    file.read( (char *)&u1, sizeof( u1 ) );
+    total += sizeof( u1 );
+    std::cout << u1 << std::endl;
+
+    file.read( (char *)&u1, sizeof( u1 ) );
+    total += sizeof( u1 );
+    std::cout << u1 << std::endl;
+
+    unsigned int u2;
+    file.read( (char *)&u2, sizeof( u2 ) );
+    total += sizeof( u2 );
+    std::cout << u2 << std::endl;
+
+    file.read( (char *)&u1, sizeof( u1 ) );
+    total += sizeof( u1 );
+    std::cout << u1 << std::endl;
 
     if( fhgtSize == total )
     {
