@@ -57,6 +57,9 @@ namespace ml
     unsigned int readLYRS( std::istream &file );
     unsigned int readLAYR( std::istream &file );
 
+    unsigned int readFFAM( std::istream &file, const std::string & );
+    unsigned int readRFAM( std::istream &file, const std::string & );
+
     unsigned int readACCN( std::istream &file );
     unsigned int readACRF( std::istream &file );
     unsigned int readACRH( std::istream &file );

@@ -503,6 +503,47 @@ unsigned int trn::readSGRP( std::istream &file )
     return total;
 }
 
+unsigned int trn::readFFAM( std::istream &file, const std::string &debugString )
+{
+  unsigned int size;
+  std::string type;
+  unsigned int total = readRecordHeader( file, type, size );
+  size += 8;
+  if( type != "FFAM" )
+    {
+      std::cerr << "Expected record of type FFAM: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cerr << "Found FFAM record" << std::endl;
+  
+  unsigned int u1;
+  file.read( (char *)&u1, sizeof( u1 ) );
+  total += sizeof( u1 );
+  std::cout << u1 << std::endl;
+
+#if 1
+  char temp[255];
+  std::string name;
+  file.getline( temp, 255, 0 );
+  name = temp;
+  std::cout << name << std::endl;
+  total += name.size() + 1;
+#endif
+  total += readUnknown( file, size-total );
+  
+  if( size == total )
+    {
+      std::cerr << "Finished reading FFAM" << std::endl;
+    }
+  else
+    {
+      std::cerr << "Failed in reading FFAM" << std::endl;
+      std::cerr << "Read " << total << " out of " << size
+		<< std::endl;
+    }
+  return total;
+}
+
 unsigned int trn::readFGRP( std::istream &file )
 {
     unsigned int total = 0;
@@ -530,8 +571,10 @@ unsigned int trn::readFGRP( std::istream &file )
     }
     std::cerr << "Found FORM: " << type << std::endl;
 
-    total += readUnknown( file, size-total );
-    total += readUnknown( file, fgrpSize-total );
+    while( total < fgrpSize )
+      {
+	total += readFFAM( file, "FGRP" );
+      }
 
     if( fgrpSize == total )
     {
@@ -545,6 +588,35 @@ unsigned int trn::readFGRP( std::istream &file )
     }
     return total;
 }
+
+unsigned int trn::readRFAM( std::istream &file, const std::string &debugString )
+{
+  unsigned int size;
+  std::string type;
+  unsigned int total = readRecordHeader( file, type, size );
+  size += 8;
+  if( type != "RFAM" )
+    {
+      std::cerr << "Expected record of type RFAM: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cerr << "Found RFAM record" << std::endl;
+  
+  total += readUnknown( file, size-8 );
+  
+  if( size == total )
+    {
+      std::cerr << "Finished reading RFAM" << std::endl;
+    }
+  else
+    {
+      std::cerr << "Failed in reading RFAM" << std::endl;
+      std::cerr << "Read " << total << " out of " << size
+		<< std::endl;
+    }
+  return total;
+}
+
 
 unsigned int trn::readRGRP( std::istream &file )
 {
@@ -573,12 +645,10 @@ unsigned int trn::readRGRP( std::istream &file )
     }
     std::cerr << "Found FORM: " << type << std::endl;
 
-
-    total += readUnknown( file, size-total );
-    total += readUnknown( file, rgrpSize-total );
-
-
-
+    while( total < rgrpSize )
+      {
+	total += readRFAM( file, "RGRP" );
+      }
     
     if( rgrpSize == total )
     {
@@ -881,9 +951,6 @@ unsigned int trn::readLAYR( std::istream &file )
         }
     }
 
-
-
-
     if( layrSize == total )
     {
 	std::cerr << "Finished reading LAYR" << std::endl;
@@ -924,7 +991,6 @@ unsigned int trn::readIHDR( std::istream &file )
     }
     std::cerr << "Found 0001 form" << std::endl;
 
-
     total += readRecordHeader( file, type, size );
     if( type != "DATA" )
     {
@@ -932,9 +998,6 @@ unsigned int trn::readIHDR( std::istream &file )
 	exit( 0 );
     }
     std::cerr << "Found DATA record" << std::endl;
-
-
-
 
     unsigned int u1;
     file.read( (char *)&u1, sizeof( u1 ) );
