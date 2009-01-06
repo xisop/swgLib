@@ -303,6 +303,37 @@ unsigned int msh::readMSH( std::istream &file, std::string path )
   return total;
 }
 
+unsigned int msh::readNULL( std::istream &file )
+{
+    unsigned int total = 0;
+
+    std::string form;
+    unsigned int nullSize;
+    std::string type;
+
+    total += readFormHeader( file, form, nullSize, type );
+    nullSize += 8;
+    if( form != "FORM" || type != "NULL" )
+    {
+	std::cout << "Expected Form of type NULL: " << type << std::endl;
+	exit( 0 );
+    }
+    std::cout << "Found NULL form" << std::endl;
+
+    if( total == nullSize )
+    {
+	std::cout << "Finished reading NULL." << std::endl;
+    }
+    else
+    {
+	std::cout << "Error reading NULL!" << std::endl;
+	std::cout << "Read " << total << " out of " << nullSize
+		  << std::endl;
+    }
+    
+    return total;
+}
+
 unsigned int msh::readAPPR( std::istream &file )
 {
     unsigned int total = 0;
@@ -335,6 +366,7 @@ unsigned int msh::readAPPR( std::istream &file )
 
     // Skip next form, size and type...
 #if 1
+    total += readNULL( file );
     total += readUnknown( file, apprSize-total );
 #else
     file.seekg( apprSize-total, std::ios_base::cur );
