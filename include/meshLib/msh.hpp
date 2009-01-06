@@ -141,6 +141,7 @@ namespace ml
 				   unsigned int &bytesPerIndex );
     unsigned int readGeometrySIDX( std::istream &file,
 				   unsigned int bytesPerIndex );
+    unsigned int readHPNT( std::istream &file );
 
   private:
     std::vector<bool> isSHT;

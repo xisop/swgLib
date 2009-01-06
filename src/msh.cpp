@@ -351,6 +351,14 @@ unsigned int msh::readHPTS( std::istream &file )
     }
     std::cout << "Found HPTS form" << std::endl;
 
+    while( total < hptsSize )
+      {
+	total += readHPNT( file );
+      }
+#if 0
+    total += readUnknown( file, hptsSize - total );
+#endif
+
     if( total == hptsSize )
     {
 	std::cout << "Finished reading HPTS." << std::endl;
@@ -389,7 +397,7 @@ unsigned int msh::readFLOR( std::istream &file )
 	exit( 0 );
     }
 
-    total += readUnknown( file, 1 );
+    total += readUnknown( file, size );
 
     if( total == florSize )
     {
@@ -832,3 +840,65 @@ unsigned int msh::readGeometryDATA( std::istream &file,
     return size+8;
 }
 
+unsigned int msh::readHPNT( std::istream &file )
+{
+  unsigned int total = 0;
+
+  unsigned int size;
+  std::string type;
+
+  total += readRecordHeader( file, type, size );
+  size += 8; // Size of header
+  if( type != "HPNT" )
+    {
+      std::cout << "Expected record of type HPNT: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << "Found HPNT record" << std::endl;
+
+  float u1;
+  file.read( (char*)&u1, sizeof( float ) );
+  std::cout << u1 << " ";
+  file.read( (char*)&u1, sizeof( float ) );
+  std::cout << u1 << " ";
+  file.read( (char*)&u1, sizeof( float ) );
+  std::cout << u1 << " ";
+  file.read( (char*)&u1, sizeof( float ) );
+  std::cout << u1 << std::endl;
+  file.read( (char*)&u1, sizeof( float ) );
+  std::cout << u1 << " ";
+  file.read( (char*)&u1, sizeof( float ) );
+  std::cout << u1 << " ";
+  file.read( (char*)&u1, sizeof( float ) );
+  std::cout << u1 << " ";
+  file.read( (char*)&u1, sizeof( float ) );
+  std::cout << u1 << std::endl;
+  file.read( (char*)&u1, sizeof( float ) );
+  std::cout << u1 << " ";
+  file.read( (char*)&u1, sizeof( float ) );
+  std::cout << u1 << " ";
+  file.read( (char*)&u1, sizeof( float ) );
+  std::cout << u1 << " ";
+  file.read( (char*)&u1, sizeof( float ) );
+  std::cout << u1 << std::endl;
+  total += sizeof( float ) * 12;
+
+  char temp[255];
+  file.getline( temp, 255, 0 );
+  std::string name( temp );
+  std::cout << name << std::endl;
+  total += name.size() + 1;
+
+  if( total == size )
+    {
+      std::cout << "Finished reading HPNT." << std::endl;
+    }
+  else
+    {
+      std::cout << "Error reading HPNT!" << std::endl;
+      std::cout << "Read " << total << " out of " << size
+                << std::endl;
+    }
+
+  return total;
+}
