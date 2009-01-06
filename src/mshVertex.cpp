@@ -125,7 +125,7 @@ void mshVertex::print() const
       break;
     case 36:
       {
-	// RGBA Color
+	// ARGB Color
 	unsigned char *y =
 	  reinterpret_cast<unsigned char *>( data + ( sizeof( float ) * 6 ) );
 	std::cout << " ( " << (unsigned int)(y[0]) << ", ";
@@ -149,7 +149,7 @@ void mshVertex::print() const
       break;
     case 44:
       {
-	// RGBA Color
+	// ARGB Color
 	unsigned char *y =
 	  reinterpret_cast<unsigned char *>( data + ( sizeof( float ) * 6 ) );
 	std::cout << " ( " << (unsigned int)(y[0]) << ", ";
@@ -182,7 +182,7 @@ void mshVertex::print() const
       break;
     case 52:
       {
-	// RGBA Color
+	// ARGB Color
 	unsigned char *y =
 	  reinterpret_cast<unsigned char *>( data + ( sizeof( float ) * 6 ) );
 	std::cout << " ( " << (unsigned int)(y[0]) << ", ";
@@ -223,7 +223,7 @@ void mshVertex::print() const
       break;
     case 60:
       {
-	// RGBA Color
+	// ARGB Color
 	unsigned char *y =
 	  reinterpret_cast<unsigned char *>( data + ( sizeof( float ) * 6 ) );
 	std::cout << " ( " << (unsigned int)(y[0]) << ", ";
@@ -272,7 +272,7 @@ void mshVertex::print() const
       break;
     case 68:
       {
-	// RGBA Color
+	// ARGB Color
 	unsigned char *y =
 	  reinterpret_cast<unsigned char *>( data + ( sizeof( float ) * 6 ) );
 	std::cout << " ( " << (unsigned int)(y[0]) << ", ";
@@ -404,6 +404,19 @@ void mshVertex::getTexCoords( unsigned int &numPairs, float *coords ) const
     };
 }
 
+void mshVertex::getColor( unsigned char *argb ) const
+{
+  if( ( 36 == bytesPerVertex )
+      || ( 44 == bytesPerVertex )
+      || ( 52 == bytesPerVertex )
+      || ( 60 == bytesPerVertex )
+      || ( 68 == bytesPerVertex )
+      )
+    {
+      memcpy( argb, data+24, sizeof( unsigned int ) );
+    }
+}
+
 #if 0
 float mshVertex::getX() const
 {
@@ -436,18 +449,4 @@ float mshVertex::getNZ() const
   return static_cast<float>( data+20 );
 }
 
-unsigned int mshVertex::getColor() const
-{
-  if( ( 36 == bytesPerVertex )
-      || ( 44 == bytesPerVertex )
-      )
-    {
-      return static_cast<unsigned int>( data+21 );
-    }
-  else
-    {
-      // Return black
-      return 0x000000ff;
-    }
-}
 #endif

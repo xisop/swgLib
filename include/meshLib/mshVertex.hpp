@@ -72,6 +72,8 @@ namespace ml
     void getNormal( float &nx, float &ny, float &nz ) const;
     void getTexCoords( unsigned int &numPairs, float *coords ) const;
 
+    void getColor( unsigned char *argb ) const;
+
 #if 0
     float getX() const;
     float getY() const;
@@ -80,8 +82,6 @@ namespace ml
     float getNX() const;
     float getNY() const;
     float getNZ() const;
-
-    unsigned int getColor() const;
 
     float getS1() const;
     float getT1() const;
