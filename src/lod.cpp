@@ -104,7 +104,8 @@ unsigned int lod::readLOD( std::istream &file, std::string path )
 	{
 	  if( type == "APPR" )
 	    {
-	      total += readAPPR( file );
+	      total += base::readAPPR( file, cx, cy, cz, radius,
+				       x1, y1, z1, x2, y2, z2 );
 	    }
 	  else if( type == "DATA" )
 	    {
@@ -157,58 +158,6 @@ unsigned int lod::readLOD( std::istream &file, std::string path )
     }
 
   return total;
-}
-
-unsigned int lod::readAPPR( std::istream &file )
-{
-    unsigned int total = 0;
-
-    std::string form;
-    unsigned int apprSize;
-    std::string type;
-
-    total += readFormHeader( file, form, apprSize, type );
-    apprSize += 8;
-    if( form != "FORM" || type != "APPR" )
-    {
-	std::cout << "Expected Form of type APPR: " << type << std::endl;
-	exit( 0 );
-    }
-    std::cout << "Found APPR form" << std::endl;
-
-    unsigned int size;
-    total += readFormHeader( file, form, size, type );
-    size += 8;
-    if( form != "FORM" )
-    {
-	std::cout << "Expected Form: " << form << std::endl;
-	exit( 0 );
-    }
-    std::cout << "Found form: " << type << std::endl;
-
-    total += readEXBX( file, cx, cy, cz, radius,
-		       x1, y1, z1,
-		       x2, y2, z2 
-		       );
-#if 1
-    total += readUnknown( file, apprSize-total );
-#else
-    file.seekg( apprSize-total, std::ios_base::cur );
-    total += apprSize-total;
-#endif    
-
-    if( apprSize == total )
-    {
-	std::cout << "Finished reading APPR" << std::endl;
-    }
-    else
-    {
-	std::cout << "Failed in reading APPR" << std::endl;
-        std::cout << "Read " << total << " out of " << apprSize
-                  << std::endl;
-    }
-
-    return total;
 }
 
 unsigned int lod::readPIVT( std::istream &file )

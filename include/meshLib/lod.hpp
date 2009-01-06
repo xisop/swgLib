@@ -78,7 +78,6 @@ namespace ml
     }
 
   protected:
-    unsigned int readAPPR( std::istream &file );
     unsigned int readPIVT( std::istream &file );
     unsigned int readINFO( std::istream &file );
     unsigned int readRADR( std::istream &file );
