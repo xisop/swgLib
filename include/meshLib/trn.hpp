@@ -41,52 +41,54 @@ namespace ml
     {
       return isOfType( file, "PTAT" );
     }
-    unsigned int readTRN( std::istream &file );
+    unsigned int readTRN( std::istream &file,
+			  const std::string &debugString = "" );
 
   protected:
-    unsigned int readTGEN( std::istream &file );
-    unsigned int readTRNDATA( std::istream &file );
-    unsigned int readMapDATA( std::istream &file );
-    unsigned int readWMAP( std::istream &file );
-    unsigned int readSMAP( std::istream &file );
-    unsigned int readSGRP( std::istream &file );
-    unsigned int readFGRP( std::istream &file );
-    unsigned int readRGRP( std::istream &file );
-    unsigned int readEGRP( std::istream &file );
-    unsigned int readMGRP( std::istream &file );
-    unsigned int readLYRS( std::istream &file );
-    unsigned int readLAYR( std::istream &file );
+    unsigned int readTGEN( std::istream &file, const std::string & );
+    unsigned int readTRNDATA( std::istream &file, const std::string & );
+    unsigned int readMapDATA( std::istream &file, const std::string & );
+    unsigned int readWMAP( std::istream &file, const std::string & );
+    unsigned int readSMAP( std::istream &file, const std::string & );
+    unsigned int readSGRP( std::istream &file, const std::string & );
+    unsigned int readFGRP( std::istream &file, const std::string & );
+    unsigned int readRGRP( std::istream &file, const std::string & );
+    unsigned int readEGRP( std::istream &file, const std::string & );
+    unsigned int readMGRP( std::istream &file, const std::string & );
+    unsigned int readLYRS( std::istream &file, const std::string & );
+    unsigned int readLAYR( std::istream &file, const std::string & );
 
     unsigned int readFFAM( std::istream &file, const std::string & );
     unsigned int readRFAM( std::istream &file, const std::string & );
+    unsigned int readEFAM( std::istream &file, const std::string & );
 
-    unsigned int readACCN( std::istream &file );
-    unsigned int readACRF( std::istream &file );
-    unsigned int readACRH( std::istream &file );
-    unsigned int readADTA( std::istream &file );
-    unsigned int readAENV( std::istream &file );
-    unsigned int readAEXC( std::istream &file );
-    unsigned int readAFDF( std::istream &file );
-    unsigned int readAFDN( std::istream &file );
-    unsigned int readAFSC( std::istream &file );
-    unsigned int readAFSN( std::istream &file );
-    unsigned int readAHCN( std::istream &file );
-    unsigned int readAHFR( std::istream &file );
-    unsigned int readAHTR( std::istream &file );
-    unsigned int readAROA( std::istream &file );
-    unsigned int readASCN( std::istream &file );
-    unsigned int readASRP( std::istream &file );
-    unsigned int readBCIR( std::istream &file );
-    unsigned int readBPLN( std::istream &file );
-    unsigned int readBPOL( std::istream &file );
-    unsigned int readBREC( std::istream &file );
-    unsigned int readFDIR( std::istream &file );
-    unsigned int readFFRA( std::istream &file );
-    unsigned int readFHGT( std::istream &file );
-    unsigned int readFSHD( std::istream &file );
-    unsigned int readFSLP( std::istream &file );
-    unsigned int readIHDR( std::istream &file );
-    unsigned int readSFAM( std::istream &file );
+    unsigned int readACCN( std::istream &file, const std::string & );
+    unsigned int readACRF( std::istream &file, const std::string & );
+    unsigned int readACRH( std::istream &file, const std::string & );
+    unsigned int readADTA( std::istream &file, const std::string & );
+    unsigned int readAENV( std::istream &file, const std::string & );
+    unsigned int readAEXC( std::istream &file, const std::string & );
+    unsigned int readAFDF( std::istream &file, const std::string & );
+    unsigned int readAFDN( std::istream &file, const std::string & );
+    unsigned int readAFSC( std::istream &file, const std::string & );
+    unsigned int readAFSN( std::istream &file, const std::string & );
+    unsigned int readAHCN( std::istream &file, const std::string & );
+    unsigned int readAHFR( std::istream &file, const std::string & );
+    unsigned int readAHTR( std::istream &file, const std::string & );
+    unsigned int readAROA( std::istream &file, const std::string & );
+    unsigned int readASCN( std::istream &file, const std::string & );
+    unsigned int readASRP( std::istream &file, const std::string & );
+    unsigned int readBCIR( std::istream &file, const std::string & );
+    unsigned int readBPLN( std::istream &file, const std::string & );
+    unsigned int readBPOL( std::istream &file, const std::string & );
+    unsigned int readBREC( std::istream &file, const std::string & );
+    unsigned int readFDIR( std::istream &file, const std::string & );
+    unsigned int readFFRA( std::istream &file, const std::string & );
+    unsigned int readFHGT( std::istream &file, const std::string & );
+    unsigned int readFSHD( std::istream &file, const std::string & );
+    unsigned int readFSLP( std::istream &file, const std::string & );
+    unsigned int readIHDR( std::istream &file, const std::string & );
+    unsigned int readSFAM( std::istream &file, const std::string & );
 					  
   private:
     unsigned int height;
