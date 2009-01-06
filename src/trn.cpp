@@ -2027,6 +2027,7 @@ unsigned int trn::readAHTR( std::istream &file, const std::string &debugString )
 
 unsigned int trn::readACRF( std::istream &file, const std::string &debugString )
 {
+  std::string dbgStr = debugString + "ACRF: ";
   unsigned int total = 0;
 
   std::string form;
@@ -2040,13 +2041,23 @@ unsigned int trn::readACRF( std::istream &file, const std::string &debugString )
       std::cout << "Expected Form of type ACRF: " << type << std::endl;
       exit( 0 );
     }
-  std::cout << "Found ACRF form" << std::endl;
+  std::cout << debugString << "Found ACRF form" << std::endl;
 
+  unsigned int size;
+  total += readFormHeader( file, form, size, type );
+  if( form != "FORM" || type != "0001" )
+    {
+      std::cout << "Expected Form of type 0001: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << dbgStr << "Found 0001 form" << std::endl;
+
+  total += readIHDR( file, dbgStr );
   total += readUnknown( file, acrfSize-total );
 
   if( acrfSize == total )
     {
-      std::cout << "Finished reading ACRF" << std::endl;
+      std::cout << debugString << "Finished reading ACRF" << std::endl;
     }
   else
     {
