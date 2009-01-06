@@ -922,8 +922,159 @@ unsigned int trn::readEGRP( std::istream &file, const std::string &debugString )
   return total;
 }
 
+unsigned int trn::readMFRC( std::istream &file, const std::string &debugString )
+{
+  std::string dbgStr = debugString + "MFRC: ";
+  unsigned int mfrcSize;
+  std::string form;
+  std::string type;
+  unsigned int total = readFormHeader( file, form, mfrcSize, type );
+  mfrcSize += 8;
+  if( form != "FORM" || type != "MFRC" )
+    {
+      std::cout << "Expected Form of type MFRC: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << debugString << "Found MFRC form" << std::endl;
+
+  unsigned int size;
+  total += readFormHeader( file, form, size, type );
+  if( form != "FORM" || type != "0001" )
+    {
+      std::cout << "Expected Form of type 0001: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << dbgStr << "Found 0001 form" << std::endl;
+
+  total += readRecordHeader( file, type, size );
+  if( type != "DATA" )
+    {
+      std::cout << "Expected record of type DATA: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << dbgStr << "Found DATA record" << std::endl;
+
+  unsigned int u1;
+  file.read( (char *)&u1, sizeof( u1 ) );
+  total += sizeof( u1 );
+  std::cout << dbgStr << u1 << std::endl;
+
+  float u2;
+  file.read( (char *)&u2, sizeof( u2 ) );
+  total += sizeof( u2 );
+  std::cout << dbgStr << u2 << std::endl;
+
+  file.read( (char *)&u2, sizeof( u2 ) );
+  total += sizeof( u2 );
+  std::cout << dbgStr << u2 << std::endl;
+
+  file.read( (char *)&u2, sizeof( u2 ) );
+  total += sizeof( u2 );
+  std::cout << dbgStr << u2 << std::endl;
+
+  file.read( (char *)&u2, sizeof( u2 ) );
+  total += sizeof( u2 );
+  std::cout << dbgStr << u2 << std::endl;
+
+  file.read( (char *)&u1, sizeof( u1 ) );
+  total += sizeof( u1 );
+  std::cout << dbgStr << u1 << std::endl;
+
+  file.read( (char *)&u2, sizeof( u2 ) );
+  total += sizeof( u2 );
+  std::cout << dbgStr << u2 << std::endl;
+
+  file.read( (char *)&u2, sizeof( u2 ) );
+  total += sizeof( u2 );
+  std::cout << dbgStr << u2 << std::endl;
+
+  file.read( (char *)&u2, sizeof( u2 ) );
+  total += sizeof( u2 );
+  std::cout << dbgStr << u2 << std::endl;
+
+  file.read( (char *)&u2, sizeof( u2 ) );
+  total += sizeof( u2 );
+  std::cout << dbgStr << u2 << std::endl;
+
+  file.read( (char *)&u2, sizeof( u2 ) );
+  total += sizeof( u2 );
+  std::cout << dbgStr << u2 << std::endl;
+
+  file.read( (char *)&u2, sizeof( u2 ) );
+  total += sizeof( u2 );
+  std::cout << dbgStr << u2 << std::endl;
+
+  file.read( (char *)&u2, sizeof( u2 ) );
+  total += sizeof( u2 );
+  std::cout << dbgStr << u2 << std::endl;
+
+  if( mfrcSize == total )
+    {
+      std::cout << debugString << "Finished reading MFRC" << std::endl;
+    }
+  else
+    {
+      std::cout << "Failed in reading MFRC" << std::endl;
+      std::cout << "Read " << total << " out of " << mfrcSize
+		<< std::endl;
+    }
+  return total;
+}
+
+unsigned int trn::readMFAM( std::istream &file, const std::string &debugString )
+{
+  std::string dbgStr = debugString + "MFAM: ";
+  unsigned int mfamSize;
+  std::string form;
+  std::string type;
+  unsigned int total = readFormHeader( file, form, mfamSize, type );
+  mfamSize += 8;
+  if( form != "FORM" || type != "MFAM" )
+    {
+      std::cout << "Expected Form of type MFAM: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << debugString << "Found MFAM form" << std::endl;
+
+  unsigned int size;
+  total += readRecordHeader( file, type, size );
+  if( type != "DATA" )
+    {
+      std::cout << "Expected record of type DATA: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << dbgStr << "Found DATA record" << std::endl;
+
+  unsigned int u1;
+  file.read( (char *)&u1, sizeof( u1 ) );
+  total += sizeof( u1 );
+  std::cout << dbgStr << u1 << std::endl;
+
+  char temp[255];
+  std::string name;
+  file.read( temp, size - 4 );
+  name = temp;
+  std::cout << dbgStr << name << std::endl;
+  total += name.size()+1;
+
+  total += readMFRC( file, dbgStr );
+  
+  if( mfamSize == total )
+    {
+      std::cout << debugString << "Finished reading MFAM" << std::endl;
+    }
+  else
+    {
+      std::cout << "Failed in reading MFAM" << std::endl;
+      std::cout << "Read " << total << " out of " << mfamSize
+		<< std::endl;
+    }
+  return total;
+}
+
 unsigned int trn::readMGRP( std::istream &file, const std::string &debugString )
 {
+  std::string dbgStr = debugString + "MGRP: ";
   unsigned int total = 0;
 
   std::string form;
@@ -937,7 +1088,7 @@ unsigned int trn::readMGRP( std::istream &file, const std::string &debugString )
       std::cout << "Expected Form of type MGRP: " << type << std::endl;
       exit( 0 );
     }
-  std::cout << "Found MGRP form" << std::endl;
+  std::cout << debugString << "Found MGRP form" << std::endl;
 
 
   unsigned int size;
@@ -948,16 +1099,21 @@ unsigned int trn::readMGRP( std::istream &file, const std::string &debugString )
       std::cout << "Expected Form: " << form << std::endl;
       exit( 0 );
     }
-  std::cout << "Found FORM: " << type << std::endl;
+  std::cout << dbgStr << "Found FORM: " << type << std::endl;
 
-
-  total += readUnknown( file, size-total );
+#if 1
+  while( total < mgrpSize )
+    {
+      total += readMFAM( file, dbgStr );
+    }
+#else
   total += readUnknown( file, mgrpSize-total );
+#endif
 
    
   if( mgrpSize == total )
     {
-      std::cout << "Finished reading MGRP" << std::endl;
+      std::cout << debugString << "Finished reading MGRP" << std::endl;
     }
   else
     {

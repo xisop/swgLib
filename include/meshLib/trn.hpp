@@ -61,6 +61,8 @@ namespace ml
     unsigned int readFFAM( std::istream &file, const std::string & );
     unsigned int readRFAM( std::istream &file, const std::string & );
     unsigned int readEFAM( std::istream &file, const std::string & );
+    unsigned int readMFAM( std::istream &file, const std::string & );
+    unsigned int readMFRC( std::istream &file, const std::string & );
 
     unsigned int readACCN( std::istream &file, const std::string & );
     unsigned int readACRF( std::istream &file, const std::string & );
