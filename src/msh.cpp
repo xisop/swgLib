@@ -115,10 +115,34 @@ unsigned int msh::readD3DFVF(
     unsigned int &numTex
     )
 {
-#define D3DFVF_RESERVED0        0x001
-#define D3DFVF_XYZRHW           0x004
-#define D3DFVF_LASTBETA_UBYTE4   0x1000
-#define D3DFVF_LASTBETA_D3DCOLOR 0x8000
+#define D3DFVF_RESERVED0           0x0001
+#define D3DFVF_POSITION_MASK       0x000E
+#define D3DFVF_XYZ                 0x0002
+#define D3DFVF_XYZRHW              0x0004
+#define D3DFVF_XYZB1               0x0006
+#define D3DFVF_XYZB2               0x0008
+#define D3DFVF_XYZB3               0x000a
+#define D3DFVF_XYZB4               0x000c
+#define D3DFVF_XYZB5               0x000e
+#define D3DFVF_XYZW                0x4002
+#define D3DFVF_NORMAL              0x0010
+#define D3DFVF_PSIZE               0x0020
+#define D3DFVF_DIFFUSE             0x0040
+#define D3DFVF_SPECULAR            0x0080
+#define D3DFVF_TEXCOUNT_MASK       0x0f00
+#define D3DFVF_TEXCOUNT_SHIFT           8
+#define D3DFVF_TEX0                0x0000
+#define D3DFVF_TEX1                0x0100
+#define D3DFVF_TEX2                0x0200
+#define D3DFVF_TEX3                0x0300
+#define D3DFVF_TEX4                0x0400
+#define D3DFVF_TEX5                0x0500
+#define D3DFVF_TEX6                0x0600
+#define D3DFVF_TEX7                0x0700
+#define D3DFVF_TEX8                0x0800
+#define D3DFVF_LASTBETA_UBYTE4     0x1000
+#define D3DFVF_LASTBETA_D3DCOLOR   0x8000
+#define D3DFVF_RESERVED2           0x6000
     
     file.read( (char*)&codes, sizeof( codes ) );
     std::bitset <32> bs( codes );
@@ -129,11 +153,107 @@ unsigned int msh::readD3DFVF(
     numTex = (codes >> 8) & 0x0f;
     std::cout << " - Num textures: " << numTex << std::endl;
 
-    if( (codes & D3DFVF_XYZRHW) == D3DFVF_XYZRHW )
+    switch( codes & D3DFVF_POSITION_MASK )
+      {
+      case D3DFVF_XYZ:
+	std::cout << " -Vertex format includes the position of an untransformed vertex." << std::endl;
+	break;
+
+      case D3DFVF_XYZRHW:
+	std::cout << " -Vertex format includes the position of a transformed vertex." << std::endl;
+	break;
+	
+      case D3DFVF_XYZW:
+	std::cout << " -Vertex format contains transformed and clipped (x, y, z, w) data." << std::endl;
+	break;
+
+      case D3DFVF_XYZB1:
+	std::cout << " -Vertex format contains position data, and 1 weighting values to use for multimatrix vertex blending operations." << std::endl;
+	break;
+	
+      case D3DFVF_XYZB2:
+	std::cout << " -Vertex format contains position data, and 2 weighting values to use for multimatrix vertex blending operations." << std::endl;
+	break;
+	
+      case D3DFVF_XYZB3:
+	std::cout << " -Vertex format contains position data, and 3 weighting values to use for multimatrix vertex blending operations." << std::endl;
+	break;
+	
+      case D3DFVF_XYZB4:
+	std::cout << " -Vertex format contains position data, and 4 weighting values to use for multimatrix vertex blending operations." << std::endl;
+	break;
+	
+      case D3DFVF_XYZB5:
+	std::cout << " -Vertex format contains position data, and 5 weighting values to use for multimatrix vertex blending operations." << std::endl;
+	break;
+	
+      }
+
+    if( (codes & D3DFVF_NORMAL) == D3DFVF_NORMAL )
     {
-	std::cout << " - Vertex format includes the position of a transformed"
-		  << " vertex." << std::endl;
+	std::cout << " -Vertex format includes a vertex normal vector."
+		  << std::endl;
     }
+
+    if( (codes & D3DFVF_DIFFUSE) == D3DFVF_DIFFUSE )
+    {
+	std::cout << " -Vertex format includes a diffuse color component."
+		  << std::endl;
+    }
+
+    if( (codes & D3DFVF_SPECULAR) == D3DFVF_SPECULAR )
+    {
+	std::cout << " -Vertex format includes a specular color component."
+		  << std::endl;
+    }
+
+    switch( codes & D3DFVF_TEXCOUNT_MASK )
+      {
+      case D3DFVF_TEX0:
+	std::cout << " -Vertex format includes no tex coords."
+		  << std::endl;
+	break;
+
+      case D3DFVF_TEX1:
+	std::cout << " -Vertex format includes 1 set of tex coords."
+		  << std::endl;
+	break;
+
+      case D3DFVF_TEX2:
+	std::cout << " -Vertex format includes 2 sets of tex coords."
+		  << std::endl;
+	break;
+
+      case D3DFVF_TEX3:
+	std::cout << " -Vertex format includes 3 sets of tex coords."
+		  << std::endl;
+	break;
+
+      case D3DFVF_TEX4:
+	std::cout << " -Vertex format includes 4 sets of tex coords."
+		  << std::endl;
+	break;
+
+      case D3DFVF_TEX5:
+	std::cout << " -Vertex format includes 5 sets of tex coords."
+		  << std::endl;
+	break;
+
+      case D3DFVF_TEX6:
+	std::cout << " -Vertex format includes 6 sets of tex coords."
+		  << std::endl;
+	break;
+
+      case D3DFVF_TEX7:
+	std::cout << " -Vertex format includes 7 sets of tex coords."
+		  << std::endl;
+	break;
+
+      case D3DFVF_TEX8:
+	std::cout << " -Vertex format includes 8 sets of tex coords."
+		  << std::endl;
+	break;
+      }
 
     if( (codes & D3DFVF_LASTBETA_UBYTE4) == D3DFVF_LASTBETA_UBYTE4 )
     {
@@ -347,38 +467,6 @@ unsigned int msh::readGeode( std::istream &file,
     std::string fullShaderName = basePath;
     fullShaderName += shaderName;
     shaderList.push_back( shaderName );
-#if 0
-    std::istream shaderFile( fullShaderName.c_str() );
-    if( shaderFile.is_open() )
-    {
-	cshd *cshader = new cshd;
-	sht *shader = new sht;
-	
-	if( shader->readSHT( shaderFile, basePath ) > 0 )
-	{
-	  delete cshader;
-	  shader->setMaterialName( shaderName );
-	  isSHT.push_back( true );
-	  shtData.push_back( shader );
-	}
-	else if( cshader->readCSHD( shaderFile, basePath ) >= 0 )
-	{
-	  delete shader;
-	  cshader->setMaterialName( shaderName );
-	  isSHT.push_back( false );
-	  cshdData.push_back( cshader );
-	}
-	shaderFile.close();
-    }
-    else
-    {
-        std::cout << "Unable to open file: " << fullShaderName << std::endl;
-
-	// Drop a NULL pointer to keep indexing with vertex vector
-	isSHT.push_back( true );
-	shtData.push_back( NULL );
-    }
-#endif
 
     while( total < geodeSize )
     {
@@ -426,7 +514,17 @@ unsigned int msh::readGeometry( std::istream &file )
     }
 
 #if 1
-    total += readUnknown( file, size );
+    unsigned int u1;
+    file.read( (char*)&u1, sizeof( u1 ) );
+    total += sizeof( u1 );
+    std::cout << u1 << std::endl;
+    
+    unsigned short u2;
+    file.read( (char*)&u2, sizeof( u2 ) );
+    total += sizeof( u2 );
+    std::cout << u2 << std::endl;
+    
+    total += readUnknown( file, size-6 );
 #else
     file.seekg( size, std::ios_base::cur );
     total += size;
