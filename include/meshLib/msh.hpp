@@ -129,6 +129,8 @@ namespace ml
     unsigned int readSPS( std::istream &file );
     unsigned int readAPPR( std::istream &file );
     unsigned int readNULL( std::istream &file );
+    unsigned int readHPTS( std::istream &file );
+    unsigned int readFLOR( std::istream &file );
     unsigned int readGeode( std::istream &file,
 			    const unsigned int nodeNumber );
     unsigned int readGeometry( std::istream &file );

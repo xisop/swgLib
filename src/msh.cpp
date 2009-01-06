@@ -334,6 +334,77 @@ unsigned int msh::readNULL( std::istream &file )
     return total;
 }
 
+unsigned int msh::readHPTS( std::istream &file )
+{
+    unsigned int total = 0;
+
+    std::string form;
+    unsigned int hptsSize;
+    std::string type;
+
+    total += readFormHeader( file, form, hptsSize, type );
+    hptsSize += 8;
+    if( form != "FORM" || type != "HPTS" )
+    {
+	std::cout << "Expected Form of type HPTS: " << type << std::endl;
+	exit( 0 );
+    }
+    std::cout << "Found HPTS form" << std::endl;
+
+    if( total == hptsSize )
+    {
+	std::cout << "Finished reading HPTS." << std::endl;
+    }
+    else
+    {
+	std::cout << "Error reading HPTS!" << std::endl;
+	std::cout << "Read " << total << " out of " << hptsSize
+		  << std::endl;
+    }
+    
+    return total;
+}
+
+unsigned int msh::readFLOR( std::istream &file )
+{
+    std::string form;
+    unsigned int florSize;
+    std::string type;
+
+    unsigned int total = readFormHeader( file, form, florSize, type );
+    florSize += 8;
+    if( form != "FORM" || type != "FLOR" )
+    {
+	std::cout << "Expected Form of type FLOR: " << type << std::endl;
+	exit( 0 );
+    }
+    std::cout << "Found FLOR form" << std::endl;
+
+    // Read DATA record
+    unsigned int size;
+    total += readRecordHeader( file, type, size );
+    if( type != "DATA" || size != 1 )
+    {
+	std::cout << "Expected record of type DATA: " << type << std::endl;
+	exit( 0 );
+    }
+
+    total += readUnknown( file, 1 );
+
+    if( total == florSize )
+    {
+	std::cout << "Finished reading FLOR." << std::endl;
+    }
+    else
+    {
+	std::cout << "Error reading FLOR!" << std::endl;
+	std::cout << "Read " << total << " out of " << florSize
+		  << std::endl;
+    }
+    
+    return total;
+}
+
 unsigned int msh::readAPPR( std::istream &file )
 {
     unsigned int total = 0;
@@ -367,7 +438,8 @@ unsigned int msh::readAPPR( std::istream &file )
     // Skip next form, size and type...
 #if 1
     total += readNULL( file );
-    total += readUnknown( file, apprSize-total );
+    total += readHPTS( file );
+    total += readFLOR( file );
 #else
     file.seekg( apprSize-total, std::ios_base::cur );
     total += apprSize - total;
