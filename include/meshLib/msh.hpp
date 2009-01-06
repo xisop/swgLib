@@ -127,10 +127,6 @@ namespace ml
 			     unsigned int &numTextures );
   
     unsigned int readSPS( std::istream &file );
-    unsigned int readAPPR( std::istream &file );
-    unsigned int readNULL( std::istream &file );
-    unsigned int readHPTS( std::istream &file );
-    unsigned int readFLOR( std::istream &file );
     unsigned int readGeode( std::istream &file,
 			    const unsigned int nodeNumber );
     unsigned int readGeometry( std::istream &file );
@@ -141,8 +137,6 @@ namespace ml
 				   unsigned int &bytesPerIndex );
     unsigned int readGeometrySIDX( std::istream &file,
 				   unsigned int bytesPerIndex );
-    unsigned int readHPNT( std::istream &file );
-
   private:
     std::vector<bool> isSHT;
     std::vector<std::string> shaderList;

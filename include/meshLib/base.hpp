@@ -124,6 +124,22 @@ namespace ml
 				  std::vector<unsigned int> &index
 				  );
 
+    unsigned int readAPPR( std::istream &file,
+			   float &bsX,
+			   float &bsY,
+			   float &bsZ,
+			   float &bsRadius,
+			   float &bbP1X,
+			   float &bbP1Y,
+			   float &bbP1Z,
+			   float &bbP2X,
+			   float &bbP2Y,
+			   float &bbP2Z );
+    unsigned int readNULL( std::istream &file );
+    unsigned int readHPTS( std::istream &file );
+    unsigned int readFLOR( std::istream &file );
+    unsigned int readHPNT( std::istream &file );
+
     static bool fixSlash( std::string &filename );
 
     std::string basePath;
