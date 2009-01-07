@@ -15,6 +15,7 @@ and focus purely on the organization of the MESH form.</br>
 This file format is still being explored, so take this information as
 a guide and realize that some assumptions made here may be incorrect
 or missing details.</br>
+<b>NOTE:</b> All values are little-endian, unless otherwise noted.</br>
 
 </br>
 
@@ -120,13 +121,13 @@ or missing details.</br>
 			      <li>Record:DATA
 				<ul>
 				  <li>Vertex data - <i>(See section
-				  on vertex formats.)</i></li>
+				  on <a href="#vertexdata">vertex formats</a>.)</i></li>
 				</ul>
 			      </li>
 			      <li>Record:INDX
 				<ul>
 				  <li>Vertex indices - <i>(See section
-				      on vertex indices.)</i></li>
+				      on <a href="#vertexindex">vertex indices</a>.)</i></li>
 				</ul>
 			      </li>
 			    </ul>
@@ -145,11 +146,12 @@ or missing details.</br>
   </ul>
 </ul>
 
+<a name="vertexdata"> </a> 
 <hl style="color:black; font-size:20px">Vertex data</hl></br>
 Before reading the vertex data the bytes per vertex needs to be
 computed.</br>
 <ul>
-BPV = (size of vertex DATA record)/numVertices.</br>
+BPV = (vertex DATA record size)/numVertices.</br>
 </ul>
 The observed vertex formats seen are as follows:
 <ul>
@@ -262,6 +264,18 @@ The observed vertex formats seen are as follows:
   </li>
 </ul>
 
+<a name="vertexindex"> </a> 
+<hl style="color:black; font-size:20px">Vertex index</hl></br>
+Before reading the vertex indices the bytes per index needs to be
+computed.</br>
+<ul>
+BPI = (INDX record size - 4)/numIndices.</br>
+</ul>
+After the bpi is computed, the rest of the record is a series of
+unsigned short or unsigned int values that reference the vertices
+defined in the vertex DATA record.</br>
+So index 0,1,2 = triangle 0, index 3,4,5 = triangle 1, ...</br>
+</br>
 
 
 </body>
