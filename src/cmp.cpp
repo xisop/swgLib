@@ -94,13 +94,10 @@ unsigned int cmp::readCMP( std::istream &file, std::string path )
     }
   std::cout << "Found form of type: " << type << std::endl;
 
-  unsigned int position;
   while( total < cmpaSize )
     {
       // Peek at next record, but keep file at same place.
-      position = file.tellg();
-      readFormHeader( file, form, size, type );
-      file.seekg( position, std::ios_base::beg );
+      base::peekHeader( file, form, size, type );
 	
       if( form == "FORM" )
 	{
