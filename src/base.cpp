@@ -734,13 +734,19 @@ unsigned int base::readAPPR( std::istream &file,
 			       bbP1X, bbP1Y, bbP1Z, bbP2X, bbP2Y, bbP2Z
 			       );
 	  }
+	else if( "XCYL" == type )
+	  {
+	    // Needs work.
+	    float u1, u2, u3, u4, u5;
+	    total += readXCYL( file, u1, u2, u3, u4, u5 );
+	  }
 	else if( "NULL" == type )
 	  {
 	    total += readNULL( file );
 	  }
 	else
 	  {
-	    std::cout << "Expected form of type NULL or EXBX: " 
+	    std::cout << "Expected form of type NULL, EXBX or XCYL: " 
 		      << type
 		      <<std::endl;
 	  }
