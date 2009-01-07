@@ -118,6 +118,17 @@ unsigned char base::writeBigEndian( std::ofstream &file,
   return size;
 }
 
+void base::peekHeader( std::istream &file,
+		       std::string &form,
+		       unsigned int &size,
+		       std::string &type ) const
+{
+  // Peek at next record, but keep file at same place.
+  std::streampos position = file.tellg();
+  readFormHeader( file, form, size, type );
+  file.seekg( position, std::ios_base::beg );
+}
+
 unsigned int base::readRecordHeader( std::istream &file,
 				     std::string &type,
 				     unsigned int &size )

@@ -49,6 +49,11 @@ namespace ml
   protected:
     bool isOfType( std::istream &file, const std::string &Type );
 
+    void peekHeader( std::istream &file,
+		     std::string &form,
+		     unsigned int &size,
+		     std::string &type ) const;
+      
     static unsigned int readFormHeader( std::istream &file,
 					std::string &form,
 					unsigned int &size,
