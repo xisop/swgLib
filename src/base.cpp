@@ -724,9 +724,35 @@ unsigned int base::readAPPR( std::istream &file,
 			     bbP1X, bbP1Y, bbP1Z, bbP2X, bbP2Y, bbP2Z
 			     );
 
+    peekHeader( file, form, size,type );
+    if( "FORM" == form )
+      {
+	if( "EXBX" == type )
+	  {
+	    // Read 2nd bounding box - needs work, overwriting previous.
+	    total += readEXBX( file, bsX, bsY, bsZ, bsRadius,
+			       bbP1X, bbP1Y, bbP1Z, bbP2X, bbP2Y, bbP2Z
+			       );
+	  }
+	else if( "NULL" == type )
+	  {
+	    total += readNULL( file );
+	  }
+	else
+	  {
+	    std::cout << "Expected form of type NULL or EXBX: " 
+		      << type
+		      <<std::endl;
+	  }
+      }
+    else
+      {
+	std::cout << "Expected FORM: " << form 
+		  <<std::endl;
+      }
+
     // Skip next form, size and type...
 #if 1
-    total += readNULL( file );
     total += readHPTS( file );
     total += readFLOR( file );
 #else
