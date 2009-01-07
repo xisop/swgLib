@@ -81,10 +81,7 @@ namespace ml
     unsigned int readCELL( std::istream &file );
     unsigned int readCELLDATA( std::istream &file,
 			       unsigned int &numCellPortals );
-    unsigned int readCMSH( std::istream &file );
     unsigned int readLGHT( std::istream &file );
-    unsigned int readCMPT( std::istream &file );
-    unsigned int readCPST( std::istream &file );
     unsigned int readPGRF( std::istream &file );
     unsigned int readMETA( std::istream &file );
     unsigned int readPNOD( std::istream &file );

@@ -49,10 +49,10 @@ namespace ml
   protected:
     bool isOfType( std::istream &file, const std::string &Type );
 
-    void peekHeader( std::istream &file,
-		     std::string &form,
-		     unsigned int &size,
-		     std::string &type ) const;
+    static void peekHeader( std::istream &file,
+			    std::string &form,
+			    unsigned int &size,
+			    std::string &type );
       
     static unsigned int readFormHeader( std::istream &file,
 					std::string &form,
@@ -128,6 +128,9 @@ namespace ml
 				  std::vector<vector3> &vec,
 				  std::vector<unsigned int> &index
 				  );
+    unsigned int readCMSH( std::istream &file );
+    unsigned int readCMPT( std::istream &file );
+    unsigned int readCPST( std::istream &file );
 
     unsigned int readAPPR( std::istream &file,
 			   float &bsX,

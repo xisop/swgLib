@@ -35,14 +35,8 @@ std::string base::getType( std::istream &file )
   unsigned int size;
   std::string type;
     
-  // Get current file position...
-  std::streampos position = file.tellg();
-    
-  // Read first FORM
-  readFormHeader( file, form, size, type );
-    
-  // Reposition file to original location
-  file.seekg( position, std::ios_base::beg );
+  // Peek at next record, but keep file at same place.
+  peekHeader( file, form, size, type );
     
   if( "FORM" == form )
     {
@@ -52,9 +46,6 @@ std::string base::getType( std::istream &file )
     {
       unsigned int x;
       file.read( (char*)&x, sizeof( x ) );
-
-      // Reposition file to original location
-      file.seekg( position, std::ios_base::beg );
 
       // .str string file
       if( x == 0xabcd )
@@ -121,7 +112,7 @@ unsigned char base::writeBigEndian( std::ofstream &file,
 void base::peekHeader( std::istream &file,
 		       std::string &form,
 		       unsigned int &size,
-		       std::string &type ) const
+		       std::string &type )
 {
   // Peek at next record, but keep file at same place.
   std::streampos position = file.tellg();
@@ -173,14 +164,13 @@ unsigned int base::writeFormHeader( std::ofstream &file,
 				    const unsigned int &size,
 				    const std::string &type )
 {
-  unsigned total = 0;
-  total += writeRecordHeader( file,
-			      form,
-			      size );
-
+  unsigned total = writeRecordHeader( file,
+				      form,
+				      size );
+  
   file.write( type.c_str(), 4 );
   total += 4;
-
+  
   return total;
 }
 
@@ -212,13 +202,11 @@ unsigned int base::readBOX( std::istream &file,
 			    float &x2, float &y2, float &z2
 			    )
 {
-  unsigned int total = 0;
-
   std::string form;
   unsigned int size;
   std::string type;
 
-  total += readRecordHeader( file, type, size );
+  unsigned int total = readRecordHeader( file, type, size );
   size += 8; // Size of header
   if( type != "BOX " )
     {
@@ -259,13 +247,11 @@ unsigned int base::readSPHR( std::istream &file,
 			     float &radius
 			     )
 {
-  unsigned int total = 0;
-
   std::string form;
   unsigned int size;
   std::string type;
 
-  total += readRecordHeader( file, type, size );
+  unsigned int total = readRecordHeader( file, type, size );
   size += 8; // Size of header
   if( type != "SPHR" )
     {
@@ -304,13 +290,11 @@ unsigned int base::readCYLN( std::istream &file,
 			     float &u4, float &u5
 			     )
 {
-  unsigned int total = 0;
-
   std::string form;
   unsigned int size;
   std::string type;
 
-  total += readRecordHeader( file, type, size );
+  unsigned int total = readRecordHeader( file, type, size );
   size += 8; // Size of header
   if( type != "CYLN" )
     {
@@ -351,13 +335,11 @@ unsigned int base::readEXSP( std::istream &file,
 			     float &radius
 			     )
 {
-  unsigned int total = 0;
-
   std::string form;
   unsigned int exspSize;
   std::string type;
 
-  total += readFormHeader( file, form, exspSize, type );
+  unsigned int total = readFormHeader( file, form, exspSize, type );
   exspSize += 8;
   if( form != "FORM" || type != "EXSP" )
     {
@@ -398,19 +380,15 @@ unsigned int base::readEXBX( std::istream &file,
 			     float &x2, float &y2, float &z2
 			     )
 {
-  unsigned int total = 0;
-
   std::string form;
   unsigned int exbxSize;
   std::string type;
-
-  std::streampos position = file.tellg();
-  total += readFormHeader( file, form, exbxSize, type );
+  
+  unsigned int total = readFormHeader( file, form, exbxSize, type );
   exbxSize += 8;
   if( form != "FORM" || type != "EXBX" )
     {
       std::cout << "Expected Form of type EXBX: " << type << std::endl;
-      file.seekg( position, std::ios_base::beg );
       return 0;
     }
   std::cout << "Found EXBX form" << std::endl;
@@ -446,13 +424,11 @@ unsigned int base::readXCYL( std::istream &file,
 			     float &u4, float &u5
 			     )
 {
-  unsigned int total = 0;
-
   std::string form;
   unsigned int xcylSize;
   std::string type;
 
-  total += readFormHeader( file, form, xcylSize, type );
+  unsigned int total = readFormHeader( file, form, xcylSize, type );
   xcylSize += 8;
   if( form != "FORM" || type != "XCYL" )
     {
@@ -491,14 +467,12 @@ unsigned int base::readMatrixAndPosition( std::istream &file,
 					  vector3 &position
 					  )
 {
-  unsigned total = 0;
-  
   float x, y, z;
   float v[9];
   
   // First row of matrix
   file.read( (char *)v, sizeof( float ) * 3 );
-  total += sizeof( float ) * 3;
+  unsigned int total = sizeof( float ) * 3;
   
   // X position
   file.read( (char *)&x, sizeof( x ) );
@@ -531,13 +505,11 @@ unsigned int base::readIDTL( std::istream &file,
 			     std::vector<unsigned int> &index
 			     )
 {
-  unsigned int total = 0;
-
   std::string form;
   unsigned int idtlSize;
   std::string type;
 
-  total += readFormHeader( file, form, idtlSize, type );
+  unsigned int total += readFormHeader( file, form, idtlSize, type );
   idtlSize += 8;
   if( form != "FORM" || type != "IDTL" )
     {
@@ -577,13 +549,11 @@ unsigned int base::readVERT( std::istream &file,
 			     std::vector<vector3> &vec
 			     )
 {
-  unsigned int total = 0;
-  
   std::string form;
   unsigned int vertSize;
   std::string type;
   
-  total += readRecordHeader( file, type, vertSize );
+  unsigned int total = readRecordHeader( file, type, vertSize );
   vertSize += 8;
   if( type != "VERT" )
     {
@@ -631,13 +601,11 @@ unsigned int base::readVERT( std::istream &file,
 unsigned int base::readINDX( std::istream &file,
 			     std::vector<unsigned int> &index )
 {
-  unsigned int total = 0;
-
   std::string form;
   unsigned int indxSize;
   std::string type;
 
-  total += readRecordHeader( file, type, indxSize );
+  unsigned int total = readRecordHeader( file, type, indxSize );
   indxSize += 8;
   if( type != "INDX" )
     {
@@ -696,13 +664,11 @@ unsigned int base::readAPPR( std::istream &file,
 			     float &bbP2Z
 			     )
 {
-    unsigned int total = 0;
-
     std::string form;
     unsigned int apprSize;
     std::string type;
 
-    total += readFormHeader( file, form, apprSize, type );
+    unsigned int total = readFormHeader( file, form, apprSize, type );
     apprSize += 8;
     if( form != "FORM" || type != "APPR" )
     {
@@ -724,7 +690,7 @@ unsigned int base::readAPPR( std::istream &file,
 			     bbP1X, bbP1Y, bbP1Z, bbP2X, bbP2Y, bbP2Z
 			     );
 
-    peekHeader( file, form, size,type );
+    peekHeader( file, form, size, type );
     if( "FORM" == form )
       {
 	if( "EXBX" == type )
@@ -740,13 +706,18 @@ unsigned int base::readAPPR( std::istream &file,
 	    float u1, u2, u3, u4, u5;
 	    total += readXCYL( file, u1, u2, u3, u4, u5 );
 	  }
+	else if( "CMPT" == type )
+	  {
+	    // Needs work.
+	    total += readCMPT( file );
+	  }
 	else if( "NULL" == type )
 	  {
 	    total += readNULL( file );
 	  }
 	else
 	  {
-	    std::cout << "Expected form of type NULL, EXBX or XCYL: " 
+	    std::cout << "Expected form of type NULL, EXBX, XCYL or CMPT: " 
 		      << type
 		      <<std::endl;
 	  }
@@ -757,14 +728,9 @@ unsigned int base::readAPPR( std::istream &file,
 		  <<std::endl;
       }
 
-    // Skip next form, size and type...
-#if 1
     total += readHPTS( file );
     total += readFLOR( file );
-#else
-    file.seekg( apprSize-total, std::ios_base::cur );
-    total += apprSize - total;
-#endif
+
     if( total == apprSize )
     {
 	std::cout << "Finished reading APPR." << std::endl;
@@ -781,12 +747,10 @@ unsigned int base::readAPPR( std::istream &file,
 
 unsigned int base::readHPNT( std::istream &file )
 {
-  unsigned int total = 0;
-
   unsigned int size;
   std::string type;
 
-  total += readRecordHeader( file, type, size );
+  unsigned int total = readRecordHeader( file, type, size );
   size += 8; // Size of header
   if( type != "HPNT" )
     {
@@ -844,13 +808,11 @@ unsigned int base::readHPNT( std::istream &file )
 
 unsigned int base::readNULL( std::istream &file )
 {
-    unsigned int total = 0;
-
     std::string form;
     unsigned int nullSize;
     std::string type;
 
-    total += readFormHeader( file, form, nullSize, type );
+    unsigned int total = readFormHeader( file, form, nullSize, type );
     nullSize += 8;
     if( form != "FORM" || type != "NULL" )
     {
@@ -875,13 +837,11 @@ unsigned int base::readNULL( std::istream &file )
 
 unsigned int base::readHPTS( std::istream &file )
 {
-    unsigned int total = 0;
-
     std::string form;
     unsigned int hptsSize;
     std::string type;
 
-    total += readFormHeader( file, form, hptsSize, type );
+    unsigned int total = readFormHeader( file, form, hptsSize, type );
     hptsSize += 8;
     if( form != "FORM" || type != "HPTS" )
     {
@@ -949,6 +909,167 @@ unsigned int base::readFLOR( std::istream &file )
 		  << std::endl;
     }
     
+    return total;
+}
+
+unsigned int base::readCMPT( std::istream &file )
+{
+    std::string form;
+    unsigned int cmptSize;
+    std::string type;
+
+    unsigned int total = readFormHeader( file, form, cmptSize, type );
+    cmptSize += 8;
+    if( form != "FORM" || type != "CMPT" )
+    {
+	std::cout << "Expected Form of type CMPT: " << type << std::endl;
+	exit( 0 );
+    }
+    std::cout << "Found CMPT form" << std::endl;
+
+    unsigned int size;
+    total += readFormHeader( file, form, size, type );
+    if( form != "FORM")
+    {
+	std::cout << "Expected FORM not: " << form << std::endl;
+	exit( 0 );
+    }
+    std::cout << "Found " << form << " " << type
+	      << ": " << size-4 << " bytes"
+	      << std::endl;
+
+    total += readCPST( file );
+
+    if( cmptSize == total )
+    {
+	std::cout << "Finished reading CMPT" << std::endl;
+    }
+    else
+    {
+	std::cout << "FAILED in reading CMPT" << std::endl;
+	std::cout << "Read " << total << " out of " << cmptSize
+                  << std::endl;
+    }
+
+    return total;
+}
+
+unsigned int base::readCPST( std::istream &file )
+{
+    std::string form;
+    unsigned int cpstSize;
+    std::string type;
+
+    unsigned int total = readFormHeader( file, form, cpstSize, type );
+    cpstSize += 8;
+    if( form != "FORM" || type != "CPST" )
+    {
+	std::cout << "Expected Form of type CPST: " << type << std::endl;
+	exit( 0 );
+    }
+    std::cout << "Found CPST form" << std::endl;
+
+    unsigned int size;
+    total += readFormHeader( file, form, size, type );
+    if( form != "FORM")
+    {
+	std::cout << "Expected FORM not: " << form << std::endl;
+	exit( 0 );
+    }
+    std::cout << "Found " << form << " " << type
+	      << ": " << size-4 << " bytes"
+	      << std::endl;
+
+    while( total < cpstSize )
+      {
+	// Peek at next record, but keep file at same place.
+	peekHeader( file, form, size, type );
+
+	if( "CMSH" == type )
+	  {
+	    total += readCMSH( file );
+	  }
+	else if( "EXBX" == type )
+	  {
+	    float cx, cy, cz, radius;
+	    float x1, y1, z1;
+	    float x2, y2, z2;
+	    total += readEXBX( file,
+			       cx, cy, cz, radius,
+			       x1, y1, z1,
+			       x2, y2, z2
+			       );
+	  }
+	else if( "XCYL" == type )
+	  {
+	    float u1, u2, u3, u4, u5;
+	    total += readXCYL( file, u1, u2, u3, u4, u5 );
+	  }
+	else
+	  {
+	    std::cout << "Unexpected type: " << type << std::endl;
+	    exit( 0 );
+	  }
+      }
+
+    if( cpstSize == total )
+    {
+	std::cout << "Finished reading CPST" << std::endl;
+    }
+    else
+    {
+	std::cout << "FAILED in reading CPST" << std::endl;
+	std::cout << "Read " << total << " out of " << cpstSize
+                  << std::endl;
+    }
+
+    return total;
+}
+
+unsigned int base::readCMSH( std::istream &file )
+{
+    std::string form;
+    unsigned int cmshSize;
+    std::string type;
+
+    unsigned int total = readFormHeader( file, form, cmshSize, type );
+    cmshSize += 8;
+    if( form != "FORM" || type != "CMSH" )
+    {
+	std::cout << "Expected Form of type CMSH: " << type << std::endl;
+	exit( 0 );
+    }
+    std::cout << "Found " << form << " " << type
+	      << ": " << cmshSize-12 << " bytes"
+	      << std::endl;
+
+    unsigned int size;
+    total += readFormHeader( file, form, size, type );
+    if( form != "FORM")
+    {
+	std::cout << "Expected FORM not: " << form << std::endl;
+	exit( 0 );
+    }
+    std::cout << "Found " << form << " " << type
+	      << ": " << size-4 << " bytes"
+	      << std::endl;
+
+    std::vector<vector3> vec;
+    std::vector<unsigned int> index;
+
+    total += readIDTL( file, vec, index );
+ 
+    if( cmshSize == total )
+    {
+	std::cout << "Finished reading CMSH" << std::endl;
+    }
+    else
+    {
+	std::cout << "FAILED in reading CMSH" << std::endl;
+	std::cout << "Read " << total << " out of " << cmshSize
+                  << std::endl;
+    }
+
     return total;
 }
 
