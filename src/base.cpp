@@ -1013,6 +1013,11 @@ unsigned int base::readCPST( std::istream &file )
 			       x2, y2, z2
 			       );
 	  }
+	else if( "EXSP" == type )
+	  {
+	    float cx, cy, cz, radius;
+	    total += base::readEXSP( file, cx, cy, cz, radius );
+	  }
 	else if( "XCYL" == type )
 	  {
 	    float u1, u2, u3, u4, u5;
