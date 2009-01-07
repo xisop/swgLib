@@ -509,7 +509,7 @@ unsigned int base::readIDTL( std::istream &file,
   unsigned int idtlSize;
   std::string type;
 
-  unsigned int total += readFormHeader( file, form, idtlSize, type );
+  unsigned int total = readFormHeader( file, form, idtlSize, type );
   idtlSize += 8;
   if( form != "FORM" || type != "IDTL" )
     {
@@ -711,13 +711,18 @@ unsigned int base::readAPPR( std::istream &file,
 	    // Needs work.
 	    total += readCMPT( file );
 	  }
+	else if( "CMSH" == type )
+	  {
+	    // Needs work.
+	    total += readCMSH( file );
+	  }
 	else if( "NULL" == type )
 	  {
 	    total += readNULL( file );
 	  }
 	else
 	  {
-	    std::cout << "Expected form of type NULL, EXBX, XCYL or CMPT: " 
+	    std::cout << "Expected form of type NULL, EXBX, XCYL, CMPT or CMSH: " 
 		      << type
 		      <<std::endl;
 	  }
@@ -890,12 +895,12 @@ unsigned int base::readFLOR( std::istream &file )
     // Read DATA record
     unsigned int size;
     total += readRecordHeader( file, type, size );
-    if( type != "DATA" || size != 1 )
+    if( type != "DATA" )
     {
 	std::cout << "Expected record of type DATA: " << type << std::endl;
 	exit( 0 );
     }
-
+    std::cout << "Size: " << size << std::endl;
     total += readUnknown( file, size );
 
     if( total == florSize )
