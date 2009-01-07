@@ -131,6 +131,7 @@ namespace ml
     unsigned int readCMSH( std::istream &file );
     unsigned int readCMPT( std::istream &file );
     unsigned int readCPST( std::istream &file );
+    unsigned int readDTAL( std::istream &file );
 
     unsigned int readAPPR( std::istream &file,
 			   float &bsX,

@@ -720,6 +720,10 @@ unsigned int base::readAPPR( std::istream &file,
 	  {
 	    total += readNULL( file );
 	  }
+	else if( "DTAL" == type )
+	  {
+	    total += readDTAL( file );
+	  }
 	else
 	  {
 	    std::cout << "Expected form of type NULL, EXBX, XCYL, CMPT or CMSH: " 
@@ -994,6 +998,10 @@ unsigned int base::readCPST( std::istream &file )
 	  {
 	    total += readCMSH( file );
 	  }
+	else if( "CMPT" == type )
+	  {
+	    total += readCMPT( file );
+	  }
 	else if( "EXBX" == type )
 	  {
 	    float cx, cy, cz, radius;
@@ -1072,6 +1080,50 @@ unsigned int base::readCMSH( std::istream &file )
     {
 	std::cout << "FAILED in reading CMSH" << std::endl;
 	std::cout << "Read " << total << " out of " << cmshSize
+                  << std::endl;
+    }
+
+    return total;
+}
+
+unsigned int base::readDTAL( std::istream &file )
+{
+    std::string form;
+    unsigned int dtalSize;
+    std::string type;
+
+    unsigned int total = readFormHeader( file, form, dtalSize, type );
+    dtalSize += 8;
+    if( form != "FORM" || type != "DTAL" )
+    {
+	std::cout << "Expected Form of type DTAL: " << type << std::endl;
+	exit( 0 );
+    }
+    std::cout << "Found " << form << " " << type
+	      << ": " << dtalSize-12 << " bytes"
+	      << std::endl;
+
+    unsigned int size;
+    total += readFormHeader( file, form, size, type );
+    if( form != "FORM")
+    {
+	std::cout << "Expected FORM not: " << form << std::endl;
+	exit( 0 );
+    }
+    std::cout << "Found " << form << " " << type
+	      << ": " << size-4 << " bytes"
+	      << std::endl;
+
+    total += readCPST( file );
+ 
+    if( dtalSize == total )
+    {
+	std::cout << "Finished reading DTAL" << std::endl;
+    }
+    else
+    {
+	std::cout << "FAILED in reading DTAL" << std::endl;
+	std::cout << "Read " << total << " out of " << dtalSize
                   << std::endl;
     }
 
