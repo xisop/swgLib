@@ -41,12 +41,11 @@ cshd::~cshd()
 unsigned int cshd::readCSHD( std::istream &file, std::string path )
 {
   basePath = path;
-  unsigned int total = 0;
   std::string form;
   unsigned int cshdSize;
   std::string type;
 
-  total += readFormHeader( file, form, cshdSize, type );
+  unsigned int total = readFormHeader( file, form, cshdSize, type );
   cshdSize += 8;
   if( form != "FORM" || type != "CSHD" )
     {
@@ -64,13 +63,10 @@ unsigned int cshd::readCSHD( std::istream &file, std::string path )
     }
   std::cout << "Found " << form << " " << type << std::endl;
 
-  unsigned int position;
   while( total < cshdSize )
     {
       // Peek at next record, but keep file at same place.
-      position = file.tellg();
-      readFormHeader( file, form, size, type );
-      file.seekg( position, std::ios_base::beg );
+      base::peekHeader( file, form, size, type );
 
       if( form == "FORM" )
 	{
@@ -115,13 +111,11 @@ unsigned int cshd::readCSHD( std::istream &file, std::string path )
 
 unsigned int cshd::readTFAC( std::istream &file )
 {
-    unsigned int total = 0;
-
     std::string form;
     unsigned int tfacSize;
     std::string type;
 
-    total += readFormHeader( file, form, tfacSize, type );
+    unsigned int total += readFormHeader( file, form, tfacSize, type );
     tfacSize += 8; // Add size of FORM and size fields.
     if( form != "FORM" || type != "TFAC" )
     {
@@ -152,12 +146,10 @@ unsigned int cshd::readTFAC( std::istream &file )
 
 unsigned int cshd::readPAL( std::istream &file )
 {
-    unsigned int total = 0;
-
     unsigned int palSize;
     std::string type;
 
-    total += readRecordHeader( file, type, palSize );
+    unsigned int total = readRecordHeader( file, type, palSize );
     if( type != "PAL " )
     {
         std::cout << "Expected record of type PAL: " << type << std::endl;
@@ -183,15 +175,13 @@ unsigned int cshd::readPAL( std::istream &file )
 
 unsigned int cshd::readTXTR( std::istream &file )
 {
-    unsigned int total = 0;
-
     std::string form;
     unsigned int txtrSize;
     std::string type;
 
     unsigned int position = file.tellg();
 
-    total += readFormHeader( file, form, txtrSize, type );
+    unsigned int total = readFormHeader( file, form, txtrSize, type );
     txtrSize += 8;
     if( form != "FORM" || type != "TXTR" )
     {
@@ -244,15 +234,13 @@ unsigned int cshd::readTXTR( std::istream &file )
 
 unsigned int cshd::readCUST( std::istream &file )
 {
-    unsigned int total = 0;
-
     std::string form;
     unsigned int custSize;
     std::string type;
 
     unsigned int position = file.tellg();
 
-    total += readFormHeader( file, form, custSize, type );
+    unsigned int total = readFormHeader( file, form, custSize, type );
     custSize += 8;
     if( form != "FORM" || type != "CUST" )
     {
@@ -285,12 +273,10 @@ unsigned int cshd::readCUST( std::istream &file )
 
 unsigned int cshd::readTX1D( std::istream &file )
 {
-    unsigned int total = 0;
-
     unsigned int tx1dSize;
     std::string type;
 
-    total += readRecordHeader( file, type, tx1dSize );
+    unsigned int total += readRecordHeader( file, type, tx1dSize );
     if( type != "TX1D" )
     {
         std::cout << "Expected record of type TX1D: " << type << std::endl;
