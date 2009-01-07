@@ -119,10 +119,11 @@ void mshVertex::print() const
   switch( bytesPerVertex )
     {
     case 32:
-      // Tex coords 1
+      // Tex coords 0
       std::cout << " ( " << x[6] << ", ";
       std::cout << x[7] << " ) ";
       break;
+
     case 36:
       {
 	// ARGB Color
@@ -138,6 +139,7 @@ void mshVertex::print() const
       std::cout << " ( " << x[7] << ", ";
       std::cout << x[8] << " ) ";
       break;
+
     case 40:
       // Tex coords 1
       std::cout << " ( " << x[6] << ", ";
@@ -147,6 +149,7 @@ void mshVertex::print() const
       std::cout << " ( " << x[8] << ", ";
       std::cout << x[9] << " ) ";
       break;
+
     case 44:
       {
 	// ARGB Color
@@ -158,28 +161,30 @@ void mshVertex::print() const
 	std::cout << (unsigned int)(y[3]) << ") ";
       }
 
-      // Tex coords 1
+      // Tex coords 0
       std::cout << " ( " << x[7] << ", ";
       std::cout << x[8] << " ) ";
 
-      // Tex coords 2
+      // Tex coords 1
       std::cout << " ( " << x[9] << ", ";
       std::cout << x[10] << " ) ";
       break;
+
     case 48:
-      // Tex coords 1
+      // Tex coords 0
       std::cout << " ( " << x[6] << ", ";
       std::cout << x[7] << " ) ";
 
-      // Tangent?
+      // Tex coords 1
       std::cout << " ( " << x[8] << ", ";
       std::cout << x[9] << ", ";
-      std::cout << x[10] << " ) ";
 
-      // Unknown
-      std::cout << " ( ??? " << x[11] << " ) ";
+      // Tex coords 2
+      std::cout << " ( " << x[10] << ", ";
+      std::cout << x[11] << " ) ";
 
       break;
+
     case 52:
       {
 	// ARGB Color
@@ -191,36 +196,38 @@ void mshVertex::print() const
 	std::cout << (unsigned int)(y[3]) << ") ";
       }
 
-      // Tex coords 1
+      // Tex coords 0
       std::cout << " ( " << x[6] << ", ";
       std::cout << x[7] << " ) ";
 
-      // Tangent?
+      // Tex coords 1
       std::cout << " ( " << x[8] << ", ";
       std::cout << x[9] << ", ";
-      std::cout << x[10] << " ) ";
-
-      // Unknown
-      std::cout << " ( ??? " << x[11] << " ) ";
-
-      break;
-    case 56:
-      // Tex coords 1
-      std::cout << " ( " << x[6] << ", ";
-      std::cout << x[7] << " ) ";
 
       // Tex coords 2
-      std::cout << " ( " << x[8] << ", ";
-      std::cout << x[9] << " ) ";
-
-      // Tex coords 3
       std::cout << " ( " << x[10] << ", ";
       std::cout << x[11] << " ) ";
 
-      // Unknown
-      std::cout << " ( ??? " << x[12] << ", ";
+      break;
+
+    case 56:
+      // Tex coords 0
+      std::cout << " ( " << x[6] << ", ";
+      std::cout << x[7] << " ) ";
+
+      // Tex coords 1
+      std::cout << " ( " << x[8] << ", ";
+      std::cout << x[9] << " ) ";
+
+      // Tex coords 2
+      std::cout << " ( " << x[10] << ", ";
+      std::cout << x[11] << " ) ";
+
+      // Tex coords 3
+      std::cout << " ( " << x[12] << ", ";
       std::cout << x[13] << " ) ";
       break;
+
     case 60:
       {
 	// ARGB Color
@@ -232,44 +239,46 @@ void mshVertex::print() const
 	std::cout << (unsigned int)(y[3]) << ") ";
       }
 
-      // Tex coords 1
+      // Tex coords 0
       std::cout << " ( " << x[7] << ", ";
       std::cout << x[8] << " ) ";
 
-      // Tex coords 2
+      // Tex coords 1
       std::cout << " ( " << x[9] << ", ";
       std::cout << x[10] << " ) ";
 
-      // Tex coords 3
+      // Tex coords 2
       std::cout << " ( " << x[11] << ", ";
       std::cout << x[12] << " ) ";
 
-      // Tex coords 4
+      // Tex coords 3
       std::cout << " ( " << x[13] << ", ";
       std::cout << x[14] << " ) ";
 
       break;
+
     case 64:
-      // Tex coords 1
+      // Tex coords 0
       std::cout << " ( " << x[6] << ", ";
       std::cout << x[7] << " ) ";
 
-      // Tex coords 2
+      // Tex coords 1
       std::cout << " ( " << x[8] << ", ";
       std::cout << x[9] << " ) ";
 
-      // Tex coords 3
+      // Tex coords 2
       std::cout << " ( " << x[10] << ", ";
       std::cout << x[11] << " ) ";
 
-      // Tex coords 4
+      // Tex coords 3
       std::cout << " ( " << x[12] << ", ";
       std::cout << x[13] << " ) ";
 
-      // Unknown
-      std::cout << " ( ??? " << x[14] << ", ";
+      // Tex coords 4
+      std::cout << " ( " << x[14] << ", ";
       std::cout << x[15] << " ) ";
       break;
+
     case 68:
       {
 	// ARGB Color
@@ -281,49 +290,50 @@ void mshVertex::print() const
 	std::cout << (unsigned int)(y[3]) << ") ";
       }
 
-      // Tex coords 1
+      // Tex coords 0
       std::cout << " ( " << x[6] << ", ";
       std::cout << x[7] << " ) ";
 
-      // Tex coords 2
+      // Tex coords 1
       std::cout << " ( " << x[8] << ", ";
       std::cout << x[9] << " ) ";
 
-      // Tex coords 3
+      // Tex coords 2
       std::cout << " ( " << x[10] << ", ";
       std::cout << x[11] << " ) ";
 
-      // Tex coords 4
+      // Tex coords 3
       std::cout << " ( " << x[12] << ", ";
       std::cout << x[13] << " ) ";
 
-      // Unknown
-      std::cout << " ( ??? " << x[14] << ", ";
+      // Tex coords 4
+      std::cout << " ( " << x[14] << ", ";
       std::cout << x[15] << " ) ";
       break;
+
     case 72:
-      // Tex coords 1
+      // Tex coords 0
       std::cout << " ( " << x[6] << ", ";
       std::cout << x[7] << " ) ";
 
-      // Tex coords 2
+      // Tex coords 1
       std::cout << " ( " << x[8] << ", ";
       std::cout << x[9] << " ) ";
 
-      // Tex coords 3
+      // Tex coords 2
       std::cout << " ( " << x[10] << ", ";
       std::cout << x[11] << " ) ";
 
-      // Tex coords 4
+      // Tex coords 3
       std::cout << " ( " << x[12] << ", ";
       std::cout << x[13] << " ) ";
 
-      // Tex coords 5
+      // Tex coords 4
       std::cout << " ( " << x[14] << ", ";
       std::cout << x[15] << " ) ";
 
-      // Unknown
-      std::cout << " ( ??? " << x[16] << ", ";
+      // Tex coords 5
+      std::cout << " ( " << x[16] << ", ";
       std::cout << x[17] << " ) ";
       break;
     };
@@ -417,36 +427,3 @@ void mshVertex::getColor( unsigned char *argb ) const
     }
 }
 
-#if 0
-float mshVertex::getX() const
-{
-  float *f = static_cast<float>( data );
-  return *f;
-}
-
-float mshVertex::getY() const
-{
-  return static_cast<float>( data+4 );
-}
-
-float mshVertex::getZ() const
-{
-  return static_cast<float>( data+8 );
-}
-
-float mshVertex::getNX() const
-{
-  return static_cast<float>( data+12 );
-}
-
-float mshVertex::getNY() const
-{
-  return static_cast<float>( data+16 );
-}
-
-float mshVertex::getNZ() const
-{
-  return static_cast<float>( data+20 );
-}
-
-#endif
