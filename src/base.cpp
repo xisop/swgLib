@@ -36,7 +36,7 @@ std::string base::getType( std::istream &file )
   std::string type;
     
   // Get current file position...
-  unsigned int position = file.tellg();
+  std::streampos position = file.tellg();
     
   // Read first FORM
   readFormHeader( file, form, size, type );
@@ -73,7 +73,7 @@ bool base::isOfType( std::istream &file, const std::string &Type )
   std::string type;
 
   // Get current file position...
-  unsigned int position = file.tellg();
+  std::streampos position = file.tellg();
 
   // Read first FORM
   readFormHeader( file, form, size, type );
@@ -146,10 +146,7 @@ unsigned int base::readFormHeader( std::istream &file,
 				   unsigned int &size,
 				   std::string &type )
 {
-  unsigned total = 0;
-  total += readRecordHeader( file,
-			     form,
-			     size );
+  unsigned total = readRecordHeader( file, form, size );
   char tempType[5];
   file.read( tempType, 4 );
   total += 4;
@@ -396,7 +393,7 @@ unsigned int base::readEXBX( std::istream &file,
   unsigned int exbxSize;
   std::string type;
 
-  unsigned int position = file.tellg();
+  std::streampos position = file.tellg();
   total += readFormHeader( file, form, exbxSize, type );
   exbxSize += 8;
   if( form != "FORM" || type != "EXBX" )
