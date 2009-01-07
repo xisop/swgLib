@@ -115,7 +115,7 @@ unsigned int cshd::readTFAC( std::istream &file )
     unsigned int tfacSize;
     std::string type;
 
-    unsigned int total += readFormHeader( file, form, tfacSize, type );
+    unsigned int total = readFormHeader( file, form, tfacSize, type );
     tfacSize += 8; // Add size of FORM and size fields.
     if( form != "FORM" || type != "TFAC" )
     {
@@ -276,7 +276,7 @@ unsigned int cshd::readTX1D( std::istream &file )
     unsigned int tx1dSize;
     std::string type;
 
-    unsigned int total += readRecordHeader( file, type, tx1dSize );
+    unsigned int total = readRecordHeader( file, type, tx1dSize );
     if( type != "TX1D" )
     {
         std::cout << "Expected record of type TX1D: " << type << std::endl;
