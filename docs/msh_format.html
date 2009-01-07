@@ -1,0 +1,268 @@
+<html>
+<head>
+  <title>SWG mesh file format.</title>
+  <style type="text/css">
+  </style>
+</head>
+<body style="background-color:white" >
+<hl style="color:black; font-size:25px">SWG MESH format</hl></br>
+<hl style="color:black; font-size:15px">by Xunil</hl></br>
+<p style="color:back">
+This file, like most SWG files, is based on
+the <a href="iff_format.html">IFF</a> format.  This
+overview will skip going into detail about the IFF format in general
+and focus purely on the organization of the MESH form.</br>
+This file format is still being explored, so take this information as
+a guide and realize that some assumptions made here may be incorrect
+or missing details.</br>
+
+</br>
+
+<ul>
+  <li>Form:MESH</li>
+  <ul>
+    <li>Form:000# <i>(The # is an ASCII numerical character, not sure
+	of the meaning for the form.)</i></li>
+    <ul>
+      <li>Form:APPR
+      <ul>
+	<li>Form:000#</li>
+	<li>Form:EXBX <i>(Bounding box.)</i>
+	<ul>
+	  <li>Form:000#</li>
+	  <ul>
+	    <li>Form:EXSP <i>(Bounding sphere.)</i>
+	      <ul>
+	      <li>Form:000#
+		  <ul>
+		    <li>Record:SPHR <i>(Sphere)</i>
+		    <ul>
+		      <li>Sphere center xyz - 3 32-bit float.</li>
+		      <li>Sphere radius - 32-bit float.</li>
+		    </ul>
+		    </li>
+		  </ul>
+	      </li>
+	      </ul>
+	    </li>
+	    <li>Record:BOX <i>(Box)</i>
+	    <ul>
+	      <li>First corner xyz - 3 32-bit float.</li>
+	      <li>Second corner xyz - 3 32-bit float.</li>
+	    </ul>
+	    </li>
+	  </ul>
+	</ul>
+	</li>
+	<li>Form:NULL</li>
+	<li>Form:HPTS <i>List of 0 or more attach point records.</i>
+	  <ul>
+	    <li>Record:HPNT <i>Attach point.</i>
+	    <ul>
+	      <li>3 row x 4 col transform matrix - 12 32-bit float.</li>
+	      <li>Null terminated ascii name - remainder of HPNT
+	      record size.</li>
+	    </ul>
+	    </li>
+	  </ul>
+	</li>
+	<li>Form:FLOR
+	  <ul>
+	    <li>Form:DATA
+	      <ul>
+		<li>Unknown - 1 byte</li>
+	      </ul>
+	    </li>
+	  </ul>
+	</li>
+      </ul>
+      </li>
+      <li>Form:SPS
+	<ul>
+	  <li>Form:000#
+	    <ul>
+	      <li>Record:CNT
+		<ul>
+		  <li>numGeode - 32-bit unsigned int.</li>
+		</ul>
+	      </li>
+	      <li>Form:000# <i>(In this case the # is the number of
+	      this geometry subtree)</i>
+		<ul>
+		  <li>Record:NAME
+		    <ul>
+		      <li>Shader Filename - NULL terminated ascii string.</li>
+		    </ul>
+		  </li>
+		  <li>Record:INFO
+		    <ul>
+		      <li>Unknown(num geometry forms?) - 32-bit unsigned int.</li>
+		    </ul>
+		  </li>
+		  <li>Form:000#
+		    <ul>
+		      <li>Record:INFO
+			<ul>
+			  <li>Unknown - 32-bit unsigned int.</li>
+			  <li>Unknown - 16-bit unsigned short.</li>
+			</ul>
+		      </li>
+		      <li>FORM:VTXA
+			<ul>
+			  <li>FORM:000#
+			    <ul>
+			      <li>Record:INFO
+				<ul>
+				  <li>Unknown(FVF flags?) - 32-bit unsigned int.</li>
+				  <li>numVertices - 32-bit unsigned short.</li>
+				</ul>
+			      </li>
+			      <li>Record:DATA
+				<ul>
+				  <li>Vertex data - <i>(See section
+				  on vertex formats.)</i></li>
+				</ul>
+			      </li>
+			      <li>Record:INDX
+				<ul>
+				  <li>Vertex indices - <i>(See section
+				      on vertex indices.)</i></li>
+				</ul>
+			      </li>
+			    </ul>
+			  </li>
+			</ul>
+		      </li>
+		    </ul>
+		  </li>
+		</ul>
+	      </li>
+	    </ul>
+	  </li>
+	</ul>
+      </li>
+    </ul>
+  </ul>
+</ul>
+
+<hl style="color:black; font-size:20px">Vertex data</hl></br>
+Before reading the vertex data the bytes per vertex needs to be
+computed.</br>
+<ul>
+BPV = (size of vertex DATA record)/numVertices.</br>
+</ul>
+The observed vertex formats seen are as follows:
+<ul>
+  <li>32 bpv
+    <ul>
+      <li>position xyz - 3 32-bit floats.</li>
+      <li>normal xyz - 3 32-bit floats.</li>
+      <li>tex coords 0 uv - 2 32-bit floats.</li>
+    </ul>
+  </li>
+  <li>36 bpv
+    <ul>
+      <li>position xyz - 3 32-bit floats.</li>
+      <li>normal xyz - 3 32-bit floats.</li>
+      <li>color argb - 4 unsigned char.</li>
+      <li>tex coords 0 uv - 2 32-bit floats.</li>
+    </ul>
+  </li>
+  <li>40 bpv
+    <ul>
+      <li>position xyz - 3 32-bit floats.</li>
+      <li>normal xyz - 3 32-bit floats.</li>
+      <li>tex coords 0 uv - 2 32-bit floats.</li>
+      <li>tex coords 1 uv - 2 32-bit floats.</li>
+    </ul>
+  </li>
+  <li>44 bpv
+    <ul>
+      <li>position xyz - 3 32-bit floats.</li>
+      <li>normal xyz - 3 32-bit floats.</li>
+      <li>color argb - 4 unsigned char.</li>
+      <li>tex coords 0 uv - 2 32-bit floats.</li>
+      <li>tex coords 1 uv - 2 32-bit floats.</li>
+    </ul>
+  </li>
+  <li>48 bpv
+    <ul>
+      <li>position xyz - 3 32-bit floats.</li>
+      <li>normal xyz - 3 32-bit floats.</li>
+      <li>tex coords 0 uv - 2 32-bit floats.</li>
+      <li>tex coords 1 uv - 2 32-bit floats.</li>
+      <li>tex coords 2 uv - 2 32-bit floats.</li>
+    </ul>
+  </li>
+  <li>52 bpv
+    <ul>
+      <li>position xyz - 3 32-bit floats.</li>
+      <li>normal xyz - 3 32-bit floats.</li>
+      <li>color argb - 4 unsigned char.</li>
+      <li>tex coords 0 uv - 2 32-bit floats.</li>
+      <li>tex coords 1 uv - 2 32-bit floats.</li>
+      <li>tex coords 2 uv - 2 32-bit floats.</li>
+    </ul>
+  </li>
+  <li>56 bpv
+    <ul>
+      <li>position xyz - 3 32-bit floats.</li>
+      <li>normal xyz - 3 32-bit floats.</li>
+      <li>tex coords 0 uv - 2 32-bit floats.</li>
+      <li>tex coords 1 uv - 2 32-bit floats.</li>
+      <li>tex coords 2 uv - 2 32-bit floats.</li>
+      <li>tex coords 3 uv - 2 32-bit floats.</li>
+    </ul>
+  </li>
+  <li>60 bpv
+    <ul>
+      <li>position xyz - 3 32-bit floats.</li>
+      <li>normal xyz - 3 32-bit floats.</li>
+      <li>color argb - 4 unsigned char.</li>
+      <li>tex coords 0 uv - 2 32-bit floats.</li>
+      <li>tex coords 1 uv - 2 32-bit floats.</li>
+      <li>tex coords 2 uv - 2 32-bit floats.</li>
+      <li>tex coords 3 uv - 2 32-bit floats.</li>
+    </ul>
+  </li>
+  <li>64 bpv
+    <ul>
+      <li>position xyz - 3 32-bit floats.</li>
+      <li>normal xyz - 3 32-bit floats.</li>
+      <li>tex coords 0 uv - 2 32-bit floats.</li>
+      <li>tex coords 1 uv - 2 32-bit floats.</li>
+      <li>tex coords 2 uv - 2 32-bit floats.</li>
+      <li>tex coords 3 uv - 2 32-bit floats.</li>
+      <li>tex coords 4 uv - 2 32-bit floats.</li>
+    </ul>
+  </li>
+  <li>68 bpv
+    <ul>
+      <li>position xyz - 3 32-bit floats.</li>
+      <li>normal xyz - 3 32-bit floats.</li>
+      <li>color argb - 4 unsigned char.</li>
+      <li>tex coords 0 uv - 2 32-bit floats.</li>
+      <li>tex coords 1 uv - 2 32-bit floats.</li>
+      <li>tex coords 2 uv - 2 32-bit floats.</li>
+      <li>tex coords 3 uv - 2 32-bit floats.</li>
+      <li>tex coords 4 uv - 2 32-bit floats.</li>
+    </ul>
+  </li>
+  <li>72 bpv
+    <ul>
+      <li>position xyz - 3 32-bit floats.</li>
+      <li>normal xyz - 3 32-bit floats.</li>
+      <li>tex coords 0 uv - 2 32-bit floats.</li>
+      <li>tex coords 1 uv - 2 32-bit floats.</li>
+      <li>tex coords 2 uv - 2 32-bit floats.</li>
+      <li>tex coords 3 uv - 2 32-bit floats.</li>
+      <li>tex coords 4 uv - 2 32-bit floats.</li>
+      <li>tex coords 5 uv - 2 32-bit floats.</li>
+    </ul>
+  </li>
+</ul>
+
+
+
+</body>
+</html>
