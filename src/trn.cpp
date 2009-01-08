@@ -611,20 +611,19 @@ unsigned int trn::readFFAM( std::istream &file, const std::string &debugString )
 
 unsigned int trn::readFGRP( std::istream &file, const std::string &debugString )
 {
-  unsigned int total = 0;
-
+  std::string dbgStr = debugString + "FGRP: ";
   std::string form;
   unsigned int fgrpSize;
   std::string type;
 
-  total += readFormHeader( file, form, fgrpSize, type );
+  unsigned int total = readFormHeader( file, form, fgrpSize, type );
   fgrpSize += 8;
   if( form != "FORM" || type != "FGRP" )
     {
       std::cout << "Expected Form of type FGRP: " << type << std::endl;
       exit( 0 );
     }
-  std::cout << "Found FGRP form" << std::endl;
+  std::cout << debugString << "Found FGRP form" << std::endl;
 
   unsigned int size;
   total += readFormHeader( file, form, size, type );
@@ -634,16 +633,16 @@ unsigned int trn::readFGRP( std::istream &file, const std::string &debugString )
       std::cout << "Expected Form: " << form << std::endl;
       exit( 0 );
     }
-  std::cout << "Found FORM: " << type << std::endl;
+  std::cout << dbgStr << "Found FORM: " << type << std::endl;
 
   while( total < fgrpSize )
     {
-      total += readFFAM( file, "FGRP: " );
+      total += readFFAM( file, dbgStr );
     }
 
   if( fgrpSize == total )
     {
-      std::cout << "Finished reading FGRP" << std::endl;
+      std::cout << debugString << "Finished reading FGRP" << std::endl;
     }
   else
     {
@@ -764,13 +763,12 @@ unsigned int trn::readRFAM( std::istream &file, const std::string &debugString )
 
 unsigned int trn::readRGRP( std::istream &file, const std::string &debugString )
 {
-  unsigned int total = 0;
-
+  std::string dbgStr = debugString + "RGRP: ";
   std::string form;
   unsigned int rgrpSize;
   std::string type;
 
-  total += readFormHeader( file, form, rgrpSize, type );
+  unsigned int total = readFormHeader( file, form, rgrpSize, type );
   rgrpSize += 8;
   if( form != "FORM" || type != "RGRP" )
     {
@@ -791,7 +789,7 @@ unsigned int trn::readRGRP( std::istream &file, const std::string &debugString )
 
   while( total < rgrpSize )
     {
-      total += readRFAM( file, "RGRP: " );
+      total += readRFAM( file, dbgStr );
     }
     
   if( rgrpSize == total )
@@ -873,21 +871,19 @@ unsigned int trn::readEFAM( std::istream &file, const std::string &debugString )
 
 unsigned int trn::readEGRP( std::istream &file, const std::string &debugString )
 {
-  unsigned int total = 0;
-
+  std::string dbgStr = debugString + "EGRP: ";
   std::string form;
   unsigned int egrpSize;
   std::string type;
 
-  total += readFormHeader( file, form, egrpSize, type );
+  unsigned int total = readFormHeader( file, form, egrpSize, type );
   egrpSize += 8;
   if( form != "FORM" || type != "EGRP" )
     {
       std::cout << "Expected Form of type EGRP: " << type << std::endl;
       exit( 0 );
     }
-  std::cout << "Found EGRP form" << std::endl;
-
+  std::cout << debugString << "Found EGRP form" << std::endl;
 
   unsigned int size;
   total += readFormHeader( file, form, size, type );
@@ -897,16 +893,16 @@ unsigned int trn::readEGRP( std::istream &file, const std::string &debugString )
       std::cout << "Expected Form: " << form << std::endl;
       exit( 0 );
     }
-  std::cout << "Found FORM: " << type << std::endl;
+  std::cout << dbgStr << "Found FORM: " << type << std::endl;
 
   while( total < egrpSize )
     {
-      total += readEFAM( file, "EGRP: " );
+      total += readEFAM( file, dbgStr );
     }
     
   if( egrpSize == total )
     {
-      std::cout << "Finished reading EGRP" << std::endl;
+      std::cout << debugString << "Finished reading EGRP" << std::endl;
     }
   else
     {
@@ -1121,32 +1117,28 @@ unsigned int trn::readMGRP( std::istream &file, const std::string &debugString )
 
 unsigned int trn::readLYRS( std::istream &file, const std::string &debugString )
 {
-  unsigned int total = 0;
-
+  std::string dbgStr = debugString + "LYRS: ";
   std::string form;
   unsigned int lyrsSize;
   std::string type;
 
-  total += readFormHeader( file, form, lyrsSize, type );
+  unsigned int total = readFormHeader( file, form, lyrsSize, type );
   lyrsSize += 8;
   if( form != "FORM" || type != "LYRS" )
     {
       std::cout << "Expected Form of type LYRS: " << type << std::endl;
       exit( 0 );
     }
-  std::cout << "Found LYRS form" << std::endl;
-
+  std::cout << debugString << "Found LYRS form" << std::endl;
 
   while( total < lyrsSize )
     {
-      total += readLAYR( file, debugString );
+      total += readLAYR( file, dbgStr );
     }
-    
-
 
   if( lyrsSize == total )
     {
-      std::cout << "Finished reading LYRS" << std::endl;
+      std::cout << debugString << "Finished reading LYRS" << std::endl;
     }
   else
     {
@@ -1159,20 +1151,19 @@ unsigned int trn::readLYRS( std::istream &file, const std::string &debugString )
 
 unsigned int trn::readLAYR( std::istream &file, const std::string &debugString )
 {
-  unsigned int total = 0;
-
+  std::string dbgStr = debugString + "LAYR: ";
   std::string form;
   unsigned int layrSize;
   std::string type;
 
-  total += readFormHeader( file, form, layrSize, type );
+  unsigned int total = readFormHeader( file, form, layrSize, type );
   layrSize += 8;
   if( form != "FORM" || type != "LAYR" )
     {
       std::cout << "Expected Form of type LAYR: " << type << std::endl;
       exit( 0 );
     }
-  std::cout << "Found LAYR form" << std::endl;
+  std::cout << debugString << "Found LAYR form" << std::endl;
 
 
   unsigned int size;
@@ -1182,11 +1173,10 @@ unsigned int trn::readLAYR( std::istream &file, const std::string &debugString )
       std::cout << "Expected Form of type 0003: " << type << std::endl;
       exit( 0 );
     }
-  std::cout << "Found 0003 form" << std::endl;
+  std::cout << dbgStr << "Found 0003 form" << std::endl;
 
-
-  total += readIHDR( file, debugString );
-  total += readADTA( file, debugString );
+  total += readIHDR( file, dbgStr );
+  total += readADTA( file, dbgStr );
 
   unsigned int position;
   while( total < layrSize )
@@ -1200,103 +1190,103 @@ unsigned int trn::readLAYR( std::istream &file, const std::string &debugString )
         {
 	  if( "ACCN" == type  )
 	    {
-	      total += readACCN( file, debugString );
+	      total += readACCN( file, dbgStr );
 	    }
 	  else if( "ACRF" == type  )
 	    {
-	      total += readACRF( file, debugString );
+	      total += readACRF( file, dbgStr );
 	    }
 	  else if( "ACRH" == type  )
 	    {
-	      total += readACRH( file, debugString );
+	      total += readACRH( file, dbgStr );
 	    }
 	  else if( "AENV" == type  )
 	    {
-	      total += readAENV( file, debugString );
+	      total += readAENV( file, dbgStr );
 	    }
 	  else if( "AEXC" == type  )
 	    {
-	      total += readAEXC( file, debugString );
+	      total += readAEXC( file, dbgStr );
 	    }
 	  else if( "AFDF" == type  )
 	    {
-	      total += readAFDF( file, debugString );
+	      total += readAFDF( file, dbgStr );
 	    }
 	  else if( "AFDN" == type  )
 	    {
-	      total += readAFDN( file, debugString );
+	      total += readAFDN( file, dbgStr );
 	    }
 	  else if( "AFSC" == type  )
 	    {
-	      total += readAFSC( file, debugString );
+	      total += readAFSC( file, dbgStr );
 	    }
 	  else if( "AFSN" == type  )
 	    {
-	      total += readAFSN( file, debugString );
+	      total += readAFSN( file, dbgStr );
 	    }
 	  else if( "AHCN" == type  )
 	    {
-	      total += readAHCN( file, debugString );
+	      total += readAHCN( file, dbgStr );
 	    }
 	  else if( "AHFR" == type  )
 	    {
-	      total += readAHFR( file, debugString );
+	      total += readAHFR( file, dbgStr );
 	    }
 	  else if( "AHTR" == type  )
 	    {
-	      total += readAHTR( file, debugString );
+	      total += readAHTR( file, dbgStr );
 	    }
 	  else if( "AROA" == type  )
 	    {
-	      total += readAROA( file, debugString );
+	      total += readAROA( file, dbgStr );
 	    }
 	  else if( "ASCN" == type  )
 	    {
-	      total += readASCN( file, debugString );
+	      total += readASCN( file, dbgStr );
 	    }
 	  else if( "ASRP" == type  )
 	    {
-	      total += readASRP( file, debugString );
+	      total += readASRP( file, dbgStr );
 	    }
 	  else if( "BCIR" == type  )
 	    {
-	      total += readBCIR( file, debugString );
+	      total += readBCIR( file, dbgStr );
 	    }
 	  else if( "BPLN" == type  )
 	    {
-	      total += readBPLN( file, debugString );
+	      total += readBPLN( file, dbgStr );
 	    }
 	  else if( "BPOL" == type  )
 	    {
-	      total += readBPOL( file, debugString );
+	      total += readBPOL( file, dbgStr );
 	    }
 	  else if( "BREC" == type  )
 	    {
-	      total += readBREC( file, debugString );
+	      total += readBREC( file, dbgStr );
 	    }
 	  else if( "FDIR" == type  )
 	    {
-	      total += readFDIR( file, debugString );
+	      total += readFDIR( file, dbgStr );
 	    }
 	  else if( "FFRA" == type  )
 	    {
-	      total += readFFRA( file, debugString );
+	      total += readFFRA( file, dbgStr );
 	    }
 	  else if( "FHGT" == type  )
 	    {
-	      total += readFHGT( file, debugString );
+	      total += readFHGT( file, dbgStr );
 	    }
 	  else if( "FSHD" == type  )
 	    {
-	      total += readFSHD( file, debugString );
+	      total += readFSHD( file, dbgStr );
 	    }
 	  else if( "FSLP" == type  )
 	    {
-	      total += readFSLP( file, debugString );
+	      total += readFSLP( file, dbgStr );
 	    }
 	  else if( "LAYR" == type  )
 	    {
-	      total += readLAYR( file, debugString );
+	      total += readLAYR( file, dbgStr );
 	    }
 	  else
             {
@@ -1313,7 +1303,7 @@ unsigned int trn::readLAYR( std::istream &file, const std::string &debugString )
 
   if( layrSize == total )
     {
-      std::cout << "Finished reading LAYR" << std::endl;
+      std::cout << debugString << "Finished reading LAYR" << std::endl;
     }
   else
     {
@@ -1326,21 +1316,19 @@ unsigned int trn::readLAYR( std::istream &file, const std::string &debugString )
 
 unsigned int trn::readIHDR( std::istream &file, const std::string &debugString )
 {
-  unsigned int total = 0;
-
+  std::string dbgStr = debugString + "IHDR: ";
   std::string form;
   unsigned int ihdrSize;
   std::string type;
 
-  total += readFormHeader( file, form, ihdrSize, type );
+  unsigned int total = readFormHeader( file, form, ihdrSize, type );
   ihdrSize += 8;
   if( form != "FORM" || type != "IHDR" )
     {
       std::cout << "Expected Form of type IHDR: " << type << std::endl;
       exit( 0 );
     }
-  std::cout << "Found IHDR form" << std::endl;
-
+  std::cout << debugString << "Found IHDR form" << std::endl;
 
   unsigned int size;
   total += readFormHeader( file, form, size, type );
@@ -1349,7 +1337,7 @@ unsigned int trn::readIHDR( std::istream &file, const std::string &debugString )
       std::cout << "Expected Form of type 0001: " << type << std::endl;
       exit( 0 );
     }
-  std::cout << "Found 0001 form" << std::endl;
+  std::cout << dbgStr << "Found 0001 form" << std::endl;
 
   total += readRecordHeader( file, type, size );
   if( type != "DATA" )
@@ -1357,7 +1345,7 @@ unsigned int trn::readIHDR( std::istream &file, const std::string &debugString )
       std::cout << "Expected record of type DATA: " << type << std::endl;
       exit( 0 );
     }
-  std::cout << "Found DATA record" << std::endl;
+  std::cout << dbgStr << "Found DATA record" << std::endl;
 
   unsigned int u1;
   file.read( (char *)&u1, sizeof( u1 ) );
@@ -1368,11 +1356,11 @@ unsigned int trn::readIHDR( std::istream &file, const std::string &debugString )
   std::string dataString( temp );
   total += dataString.size() + 1;
 
-  std::cout << u1 << " " << dataString << std::endl;
+  std::cout << dbgStr << u1 << " " << dataString << std::endl;
 
   if( ihdrSize == total )
     {
-      std::cout << "Finished reading IHDR" << std::endl;
+      std::cout << debugString << "Finished reading IHDR" << std::endl;
     }
   else
     {
