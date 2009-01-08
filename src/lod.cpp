@@ -377,12 +377,16 @@ unsigned int lod::readTEST( std::istream &file )
 	      }
 	    else
 	      {
-		total += readUnknown( file, size+8 );
+		std::cout << "Expected Form of type IDTL: "
+			  << type << std::endl;
+		exit( 0 );
 	      }
 	  }
 	else
 	  {
-	    total += readUnknown( file, size+8 );
+	    std::cout << "Expected Form of type IDTL: "
+		      << type << std::endl;
+	    exit( 0 );
 	  }
       }
 
