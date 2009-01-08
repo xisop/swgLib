@@ -1491,22 +1491,19 @@ unsigned int trn::readASCN( std::istream &file, const std::string &debugString )
 unsigned int trn::readAENV( std::istream &file, const std::string &debugString )
 {
   std::string dbgStr = debugString + "AENV: ";
-  unsigned int total = 0;
-
   std::string form;
   unsigned int aenvSize;
   std::string type;
 
   // FORM AENV
-  total += readFormHeader( file, form, aenvSize, type );
+  unsigned int total = readFormHeader( file, form, aenvSize, type );
   aenvSize += 8;
   if( form != "FORM" || type != "AENV" )
     {
       std::cout << "Expected Form of type AENV: " << type << std::endl;
       exit( 0 );
     }
-  std::cout << "Found AENV form" << std::endl;
-
+  std::cout << debugString << "Found AENV form" << std::endl;
 
   // FORM 0001
   unsigned int size;
@@ -1518,9 +1515,8 @@ unsigned int trn::readAENV( std::istream &file, const std::string &debugString )
     }
   std::cout << "Found 0000 form" << std::endl;
 
-
   // IHDR
-  total += readIHDR( file, debugString );
+  total += readIHDR( file, dbgStr );
 
   // DATA
   total += readRecordHeader( file, type, size );
@@ -1529,9 +1525,21 @@ unsigned int trn::readAENV( std::istream &file, const std::string &debugString )
       std::cout << "Expected record of type DATA: " << type << std::endl;
       exit( 0 );
     }
-  std::cout << "Found DATA record" << std::endl;
+  std::cout << dbgStr << "Found DATA record" << std::endl;
 
-  total += readUnknown( file, size );
+  unsigned int u1;
+  file.read( (char *)&u1, sizeof( u1 ) );
+  total += sizeof( u1 );
+  std::cout << dbgStr << u1 << " ";
+
+  file.read( (char *)&u1, sizeof( u1 ) );
+  total += sizeof( u1 );
+  std::cout << u1 << " ";
+
+  float u2;
+  file.read( (char *)&u2, sizeof( u2 ) );
+  total += sizeof( u2 );
+  std::cout << u2 << std::endl;
     
   if( aenvSize == total )
     {
@@ -1583,13 +1591,11 @@ unsigned int trn::readBREC( std::istream &file, const std::string &debugString )
 unsigned int trn::readAHFR( std::istream &file, const std::string &debugString )
 {
   std::string dbgStr = debugString + "AHFR: ";
-  unsigned int total = 0;
-
   std::string form;
   unsigned int ahfrSize;
   std::string type;
 
-  total += readFormHeader( file, form, ahfrSize, type );
+  unsigned int total = readFormHeader( file, form, ahfrSize, type );
   ahfrSize += 8;
   if( form != "FORM" || type != "AHFR" )
     {
@@ -1598,7 +1604,47 @@ unsigned int trn::readAHFR( std::istream &file, const std::string &debugString )
     }
   std::cout << "Found AHFR form" << std::endl;
 
-  total += readUnknown( file, ahfrSize-total );
+  unsigned int size;
+  total += readFormHeader( file, form, size, type );
+  if( form != "FORM" || type != "0003" )
+    {
+      std::cout << "Expected Form of type 0003: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << dbgStr << "Found 0003 form" << std::endl;
+
+  total += readIHDR( file, dbgStr );
+
+  total += readFormHeader( file, form, size, type );
+  if( form != "FORM" || type != "DATA" )
+    {
+      std::cout << "Expected Form of type DATA: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << dbgStr << "Found DATA form" << std::endl;
+
+  // PARM record
+  total += readRecordHeader( file, type, size );
+  if( type != "PARM" )
+    {
+      std::cout << "Expected PARM record: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << dbgStr << "Found PARM record" << std::endl;
+
+  unsigned int u1;
+  file.read( (char*)&u1, sizeof( u1 ) );
+  total += sizeof( u1 );
+  std::cout << dbgStr << u1 << " ";
+
+  file.read( (char*)&u1, sizeof( u1 ) );
+  total += sizeof( u1 );
+  std::cout << u1 << " ";
+
+  float u2;
+  file.read( (char*)&u2, sizeof( u2 ) );
+  total += sizeof( u2 );
+  std::cout << u2 << std::endl;
 
   if( ahfrSize == total )
     {
