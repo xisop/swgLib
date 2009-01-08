@@ -4,7 +4,7 @@
  *  \author Kenneth R. Sewell III
 
  meshLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006,2007 Kenneth R. Sewell III
+ Copyright (C) 2006-2009 Kenneth R. Sewell III
 
  This file is part of meshLib.
 
@@ -67,12 +67,11 @@ bool lod::getChild( unsigned int index,
 unsigned int lod::readLOD( std::istream &file, std::string path )
 {
   basePath = path;
-  unsigned int total = 0;
   std::string form;
   unsigned int dtlaSize;
   std::string type;
 
-  total += readFormHeader( file, form, dtlaSize, type );
+  unsigned int total = readFormHeader( file, form, dtlaSize, type );
   dtlaSize += 8;
   if( form != "FORM" || type != "DTLA" )
     {
@@ -90,15 +89,10 @@ unsigned int lod::readLOD( std::istream &file, std::string path )
     }
   std::cout << "Found form of type: " << type << std::endl;
 
-  //osg::LOD *lodNode = new osg::LOD;
-
-  unsigned int position;
   while( total < dtlaSize )
     {
       // Peek at next record, but keep file at same place.
-      position = file.tellg();
-      readFormHeader( file, form, size, type );
-      file.seekg( position, std::ios_base::beg );
+      base::peakHeader( file, form, size, type );
 	
       if( form == "FORM" )
 	{
@@ -147,8 +141,6 @@ unsigned int lod::readLOD( std::istream &file, std::string path )
   if( dtlaSize == total )
     {
       std::cout << "Finished reading DTLA" << std::endl;
-      //std::cout << "Writing .osg file" << std::endl;
-      //osgDB::writeNodeFile( *lodNode, "temp.osg" );
     }
   else
     {
@@ -162,12 +154,10 @@ unsigned int lod::readLOD( std::istream &file, std::string path )
 
 unsigned int lod::readPIVT( std::istream &file )
 {
-    unsigned int total = 0;
-
     unsigned int size;
     std::string type;
 
-    total += readRecordHeader( file, type, size );
+    unsigned int total = readRecordHeader( file, type, size );
     if( type != "PIVT" )
     {
 	std::cout << "Expected record of type PIVT: " << type << std::endl;
@@ -182,12 +172,10 @@ unsigned int lod::readPIVT( std::istream &file )
 
 unsigned int lod::readINFO( std::istream &file )
 {
-    unsigned int total = 0;
-
     unsigned int size;
     std::string type;
 
-    total += readRecordHeader( file, type, size );
+    unsigned int total = readRecordHeader( file, type, size );
     if( type != "INFO" )
     {
 	std::cout << "Expected record of type INFO: " << type << std::endl;
@@ -224,11 +212,10 @@ unsigned int lod::readINFO( std::istream &file )
 
 unsigned int lod::readCHLD( std::istream &file )
 {
-    unsigned int total = 0;
-
     unsigned int size;
     std::string type;
-    total += readRecordHeader( file, type, size );
+
+    unsigned int total = readRecordHeader( file, type, size );
     size += 8;
     if( type != "CHLD" )
     {
@@ -275,13 +262,11 @@ unsigned int lod::readCHLD( std::istream &file )
 
 unsigned int lod::readChildren( std::istream &file )
 {
-    unsigned int total = 0;
-
     std::string form;
     unsigned int size;
     std::string type;
 
-    total += readFormHeader( file, form, size, type );
+    unsigned int total += readFormHeader( file, form, size, type );
     if( form != "FORM" || type != "DATA" )
     {
 	std::cout << "Expected Form of type DATA: " << type << std::endl;
@@ -299,13 +284,11 @@ unsigned int lod::readChildren( std::istream &file )
 
 unsigned int lod::readRADR( std::istream &file )
 {
-    unsigned int total = 0;
-
     std::string form;
     unsigned int radrSize;
     std::string type;
 
-    total += readFormHeader( file, form, radrSize, type );
+    unsigned int total += readFormHeader( file, form, radrSize, type );
     radrSize += 8;
     if( form != "FORM" || type != "RADR" )
     {
@@ -351,13 +334,11 @@ unsigned int lod::readRADR( std::istream &file )
 
 unsigned int lod::readIDTL( std::istream &file )
 {
-    unsigned int total = 0;
-
     std::string form;
     unsigned int idtlSize;
     std::string type;
 
-    total += readFormHeader( file, form, idtlSize, type );
+    unsigned int total = readFormHeader( file, form, idtlSize, type );
     if( form != "FORM" || type != "IDTL" )
     {
 	std::cout << "Expected Form of type IDTL: " << type << std::endl;
@@ -372,13 +353,11 @@ unsigned int lod::readIDTL( std::istream &file )
 
 unsigned int lod::readTEST( std::istream &file )
 {
-    unsigned int total = 0;
-
     std::string form;
     unsigned int testSize;
     std::string type;
 
-    total += readFormHeader( file, form, testSize, type );
+    unsigned int total = readFormHeader( file, form, testSize, type );
     testSize += 8;
     if( form != "FORM" || type != "TEST" )
     {
@@ -422,13 +401,11 @@ unsigned int lod::readTEST( std::istream &file )
 
 unsigned int lod::readWRIT( std::istream &file )
 {
-    unsigned int total = 0;
-
     std::string form;
     unsigned int writSize;
     std::string type;
 
-    total += readFormHeader( file, form, writSize, type );
+    unsigned int total = readFormHeader( file, form, writSize, type );
     writSize += 8;
     if( form != "FORM" || type != "WRIT" )
     {
