@@ -212,23 +212,23 @@ unsigned int trn::readTGEN( std::istream &file, const std::string &debugString )
 // Water or weight maps?
 unsigned int trn::readWMAP( std::istream &file, const std::string &debugString )
 {
-  unsigned int total = 0;
-
+  std::string dbgStr = debugString + "WMAP: ";
   std::string form;
   unsigned int wmapSize;
   std::string type;
 
-  total += readRecordHeader( file, type, wmapSize );
+  unsigned int total = readRecordHeader( file, type, wmapSize );
   if( type != "WMAP" )
     {
       std::cout << "Expected record of type WMAP: " << type << std::endl;
       exit( 0 );
     }
-  std::cout << "Found WMAP record of size: " << wmapSize << std::endl;
+  std::cout << debugString << "Found WMAP record of size: "
+	    << wmapSize << std::endl;
 
   if( wmapSize != ( height * width ) )
     {
-      std::cout << "WMAP size: " << wmapSize
+      std::cout << dbgStr << "WMAP size: " << wmapSize
 		<< " does not match expected size: "
 		<< ( height * width ) << std::endl;
       exit( 0 );
@@ -269,19 +269,19 @@ unsigned int trn::readWMAP( std::istream &file, const std::string &debugString )
 // Seed maps?
 unsigned int trn::readSMAP( std::istream &file, const std::string &debugString )
 {
-  unsigned int total = 0;
-
+  std::string dbgStr = debugString + "SMAP: ";
   std::string form;
   unsigned int smapSize;
   std::string type;
 
-  total += readRecordHeader( file, type, smapSize );
+  unsigned int total = readRecordHeader( file, type, smapSize );
   if( type != "SMAP" )
     {
       std::cout << "Expected record of type SMAP: " << type << std::endl;
       exit( 0 );
     }
-  std::cout << "Found SMAP record of size: " << smapSize << std::endl;
+  std::cout << debugString << "Found SMAP record of size: " << smapSize
+	    << std::endl;
 
   if( smapSize != ( height * width ) )
     {
@@ -312,7 +312,7 @@ unsigned int trn::readSMAP( std::istream &file, const std::string &debugString )
   smapSize += 8;
   if( smapSize == total )
     {
-      std::cout << "Finished reading SMAP" << std::endl;
+      std::cout << debugString << "Finished reading SMAP" << std::endl;
     }
   else
     {
@@ -403,18 +403,18 @@ unsigned int trn::readSFAM( std::istream &file, const std::string &debugString )
   return total;
 }
 
-unsigned int trn::readMapDATA( std::istream &file, const std::string &debugString )
+unsigned int trn::readMapDATA( std::istream &file,
+			       const std::string &debugString )
 {
-  unsigned int total = 0;
-
+  std::string dbgStr = debugString + "DATA: ";
   std::string form;
   unsigned int formSize;
   std::string type;
 
   // Parent Form of DATA,WMAP and SMAP ( Level 2 )
-  total += readFormHeader( file, form, formSize, type );
+  unsigned int total = readFormHeader( file, form, formSize, type );
   formSize += 8;
-  std::cout << "Found form: " << type << std::endl;
+  std::cout << debugString << "Found form: " << type << std::endl;
 
   // DATA
   unsigned int size;
@@ -424,7 +424,7 @@ unsigned int trn::readMapDATA( std::istream &file, const std::string &debugStrin
       std::cout << "Expected record of type DATA: " << type << std::endl;
       exit( 0 );
     }
-  std::cout << "Found DATA record of size: " << size << std::endl;
+  std::cout << dbgStr << "Found DATA record of size: " << size << std::endl;
 
   float x1, x2;
   file.read( (char*)&x1, sizeof( x1 ) );
@@ -433,16 +433,16 @@ unsigned int trn::readMapDATA( std::istream &file, const std::string &debugStrin
   file.read( (char*)&width, sizeof( width ) );
   total += 16;
 
-  std::cout << "Highest point(?): " << x1 << std::endl;
-  std::cout << " Lowest point(?): " << x2 << std::endl;
-  std::cout << "      Map height: " << height << std::endl;
-  std::cout << "       Map width: " << width << std::endl;
+  std::cout << dbgStr << "Terrain width/height: " << x1 << std::endl;
+  std::cout << dbgStr << " Lowest point(?): " << x2 << std::endl;
+  std::cout << dbgStr << "      Map height: " << height << std::endl;
+  std::cout << dbgStr << "       Map width: " << width << std::endl;
 
   // WMAP
-  total += readWMAP( file, debugString );
+  total += readWMAP( file, dbgStr );
 
   // SMAP
-  total += readSMAP( file, debugString );
+  total += readSMAP( file, dbgStr );
 
   if( formSize == total )
     {
@@ -1638,8 +1638,6 @@ unsigned int trn::readBREC( std::istream &file, const std::string &debugString )
   std::string name( temp );
   std::cout << dbgStr << name << std::endl;
   total += name.size() + 1;
-
-  total += readUnknown( file, brecSize-total );
 
   if( brecSize == total )
     {
