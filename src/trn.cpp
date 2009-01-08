@@ -1373,21 +1373,19 @@ unsigned int trn::readIHDR( std::istream &file, const std::string &debugString )
 
 unsigned int trn::readADTA( std::istream &file, const std::string &debugString )
 {
-  unsigned int total = 0;
-
+  std::string dbgStr = debugString + "ADTA: ";
   std::string form;
   unsigned int adtaSize;
   std::string type;
 
-  total += readRecordHeader( file, type, adtaSize );
+  unsigned int total = readRecordHeader( file, type, adtaSize );
   if( type != "ADTA" )
     {
       std::cout << "Expected record of type ADTA: " << type << std::endl;
       exit( 0 );
     }
-  std::cout << "Found ADTA record" << std::endl;
+  std::cout << debugString << "Found ADTA record" << std::endl;
 
-#if 1
   unsigned int u1;
   file.read( (char *)&u1, sizeof( u1 ) );
   total += sizeof( u1 );
@@ -1405,18 +1403,15 @@ unsigned int trn::readADTA( std::istream &file, const std::string &debugString )
   std::string dataString( temp );
   total += dataString.size() + 1;
 
-  std::cout << u1 << " "
+  std::cout << dbgStr << u1 << " "
 	    << u2 << " "
 	    << u3 << " '"
 	    << dataString << "'" << std::endl;
-#else
-  total += readUnknown( file, adtaSize );
-#endif
 
   adtaSize += 8;
   if( adtaSize == total )
     {
-      std::cout << "Finished reading ADTA" << std::endl;
+      std::cout << debugString << "Finished reading ADTA" << std::endl;
     }
   else
     {
@@ -1429,6 +1424,7 @@ unsigned int trn::readADTA( std::istream &file, const std::string &debugString )
 
 unsigned int trn::readASCN( std::istream &file, const std::string &debugString )
 {
+  std::string dbgStr = debugString + "ASCN: ";
   unsigned int total = 0;
 
   std::string form;
@@ -1498,6 +1494,7 @@ unsigned int trn::readASCN( std::istream &file, const std::string &debugString )
 
 unsigned int trn::readAENV( std::istream &file, const std::string &debugString )
 {
+  std::string dbgStr = debugString + "AENV: ";
   unsigned int total = 0;
 
   std::string form;
@@ -1556,6 +1553,7 @@ unsigned int trn::readAENV( std::istream &file, const std::string &debugString )
 
 unsigned int trn::readBREC( std::istream &file, const std::string &debugString )
 {
+  std::string dbgStr = debugString + "BREC: ";
   unsigned int total = 0;
 
   std::string form;
@@ -1588,6 +1586,7 @@ unsigned int trn::readBREC( std::istream &file, const std::string &debugString )
 
 unsigned int trn::readAHFR( std::istream &file, const std::string &debugString )
 {
+  std::string dbgStr = debugString + "AHFR: ";
   unsigned int total = 0;
 
   std::string form;
@@ -1620,6 +1619,7 @@ unsigned int trn::readAHFR( std::istream &file, const std::string &debugString )
 
 unsigned int trn::readFFRA( std::istream &file, const std::string &debugString )
 {
+  std::string dbgStr = debugString + "FFRA: ";
   unsigned int total = 0;
 
   std::string form;
@@ -1652,6 +1652,7 @@ unsigned int trn::readFFRA( std::istream &file, const std::string &debugString )
 
 unsigned int trn::readACCN( std::istream &file, const std::string &debugString )
 {
+  std::string dbgStr = debugString + "ACCN: ";
   unsigned int total = 0;
 
   std::string form;
@@ -1684,6 +1685,7 @@ unsigned int trn::readACCN( std::istream &file, const std::string &debugString )
 
 unsigned int trn::readBPLN( std::istream &file, const std::string &debugString )
 {
+  std::string dbgStr = debugString + "BPLN: ";
   unsigned int total = 0;
 
   std::string form;
@@ -1716,6 +1718,7 @@ unsigned int trn::readBPLN( std::istream &file, const std::string &debugString )
 
 unsigned int trn::readBPOL( std::istream &file, const std::string &debugString )
 {
+  std::string dbgStr = debugString + "BPOL: ";
   unsigned int total = 0;
 
   std::string form;
@@ -1748,6 +1751,7 @@ unsigned int trn::readBPOL( std::istream &file, const std::string &debugString )
 
 unsigned int trn::readASRP( std::istream &file, const std::string &debugString )
 {
+  std::string dbgStr = debugString + "ASRP: ";
   unsigned int total = 0;
 
   std::string form;
@@ -1780,6 +1784,7 @@ unsigned int trn::readASRP( std::istream &file, const std::string &debugString )
 
 unsigned int trn::readAEXC( std::istream &file, const std::string &debugString )
 {
+  std::string dbgStr = debugString + "AEXC: ";
   unsigned int total = 0;
 
   std::string form;
@@ -1812,6 +1817,7 @@ unsigned int trn::readAEXC( std::istream &file, const std::string &debugString )
 
 unsigned int trn::readBCIR( std::istream &file, const std::string &debugString )
 {
+  std::string dbgStr = debugString + "BCIR: ";
   unsigned int total = 0;
 
   std::string form;
@@ -1844,6 +1850,7 @@ unsigned int trn::readBCIR( std::istream &file, const std::string &debugString )
 
 unsigned int trn::readAHCN( std::istream &file, const std::string &debugString )
 {
+  std::string dbgStr = debugString + "AHCN: ";
   unsigned int total = 0;
 
   std::string form;
@@ -1903,6 +1910,7 @@ unsigned int trn::readAHCN( std::istream &file, const std::string &debugString )
 
 unsigned int trn::readFHGT( std::istream &file, const std::string &debugString )
 {
+  std::string dbgStr = debugString + "FHGT: ";
   unsigned int total = 0;
 
   std::string form;
@@ -1970,6 +1978,7 @@ unsigned int trn::readFHGT( std::istream &file, const std::string &debugString )
 
 unsigned int trn::readAHTR( std::istream &file, const std::string &debugString )
 {
+  std::string dbgStr = debugString + "AHTR: ";
   unsigned int total = 0;
 
   std::string form;
@@ -2045,6 +2054,7 @@ unsigned int trn::readACRF( std::istream &file, const std::string &debugString )
 
 unsigned int trn::readFSLP( std::istream &file, const std::string &debugString )
 {
+  std::string dbgStr = debugString + "FSLP: ";
   unsigned int total = 0;
 
   std::string form;
@@ -2077,6 +2087,7 @@ unsigned int trn::readFSLP( std::istream &file, const std::string &debugString )
 
 unsigned int trn::readAFSC( std::istream &file, const std::string &debugString )
 {
+  std::string dbgStr = debugString + "AFSC: ";
   unsigned int total = 0;
 
   std::string form;
@@ -2109,6 +2120,7 @@ unsigned int trn::readAFSC( std::istream &file, const std::string &debugString )
 
 unsigned int trn::readFSHD( std::istream &file, const std::string &debugString )
 {
+  std::string dbgStr = debugString + "FSHD: ";
   unsigned int total = 0;
 
   std::string form;
@@ -2141,6 +2153,7 @@ unsigned int trn::readFSHD( std::istream &file, const std::string &debugString )
 
 unsigned int trn::readAFDN( std::istream &file, const std::string &debugString )
 {
+  std::string dbgStr = debugString + "AFDN: ";
   unsigned int total = 0;
 
   std::string form;
@@ -2173,6 +2186,7 @@ unsigned int trn::readAFDN( std::istream &file, const std::string &debugString )
 
 unsigned int trn::readAFSN( std::istream &file, const std::string &debugString )
 {
+  std::string dbgStr = debugString + "AFSN: ";
   unsigned int total = 0;
 
   std::string form;
@@ -2205,6 +2219,7 @@ unsigned int trn::readAFSN( std::istream &file, const std::string &debugString )
 
 unsigned int trn::readAFDF( std::istream &file, const std::string &debugString )
 {
+  std::string dbgStr = debugString + "AFDF: ";
   unsigned int total = 0;
 
   std::string form;
@@ -2237,6 +2252,7 @@ unsigned int trn::readAFDF( std::istream &file, const std::string &debugString )
 
 unsigned int trn::readACRH( std::istream &file, const std::string &debugString )
 {
+  std::string dbgStr = debugString + "ACRH: ";
   unsigned int total = 0;
 
   std::string form;
@@ -2269,6 +2285,7 @@ unsigned int trn::readACRH( std::istream &file, const std::string &debugString )
 
 unsigned int trn::readAROA( std::istream &file, const std::string &debugString )
 {
+  std::string dbgStr = debugString + "AROA: ";
   unsigned int total = 0;
 
   std::string form;
@@ -2301,6 +2318,7 @@ unsigned int trn::readAROA( std::istream &file, const std::string &debugString )
 
 unsigned int trn::readFDIR( std::istream &file, const std::string &debugString )
 {
+  std::string dbgStr = debugString + "FDIR: ";
   unsigned int total = 0;
 
   std::string form;
