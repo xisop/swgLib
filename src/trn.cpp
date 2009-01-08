@@ -785,7 +785,7 @@ unsigned int trn::readRGRP( std::istream &file, const std::string &debugString )
       std::cout << "Expected Form: " << form << std::endl;
       exit( 0 );
     }
-  std::cout << "Found FORM: " << type << std::endl;
+  std::cout << dbgStr << "Found FORM: " << type << std::endl;
 
   while( total < rgrpSize )
     {
@@ -1559,20 +1559,18 @@ unsigned int trn::readAENV( std::istream &file, const std::string &debugString )
 unsigned int trn::readBREC( std::istream &file, const std::string &debugString )
 {
   std::string dbgStr = debugString + "BREC: ";
-  unsigned int total = 0;
-
   std::string form;
   unsigned int brecSize;
   std::string type;
 
-  total += readFormHeader( file, form, brecSize, type );
+  unsigned int total = readFormHeader( file, form, brecSize, type );
   brecSize += 8;
   if( form != "FORM" || type != "BREC" )
     {
       std::cout << "Expected Form of type BREC: " << type << std::endl;
       exit( 0 );
     }
-  std::cout << "Found BREC form" << std::endl;
+  std::cout << debugString << "Found BREC form" << std::endl;
 
   unsigned int size;
   total += readFormHeader( file, form, size, type );
