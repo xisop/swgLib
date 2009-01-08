@@ -315,15 +315,9 @@ unsigned int lod::readRADR( std::istream &file )
     // Need to loop here and read IDTL (and others?)
     while( total < radrSize )
       {
-	peekHeader( file, form, size, type );
-	if( "FORM" == form )
-	  {
-	    total += readUnknown( file, size );
-	  }
-	else
-	  {
-	    total += readUnknown( file, size );
-	  }
+	std::vector<vector3> vec;
+	std::vector<unsigned int> index;
+	total += base::readIDTL( file, vec, index );
       }
 
     if( radrSize == total )
@@ -379,17 +373,16 @@ unsigned int lod::readTEST( std::istream &file )
 	      {
 		std::vector<vector3> vec;
 		std::vector<unsigned int> index;
-
 		total += base::readIDTL( file, vec, index );
 	      }
 	    else
 	      {
-		total += readUnknown( file, size );
+		total += readUnknown( file, size+8 );
 	      }
 	  }
 	else
 	  {
-	    total += readUnknown( file, size );
+	    total += readUnknown( file, size+8 );
 	  }
       }
 
@@ -437,18 +430,11 @@ unsigned int lod::readWRIT( std::istream &file )
 
     std::cout << "Num nodes: " << numNodes << std::endl;
 
-    // Need to loop here and read IDTL (and others?)
     while( total < writSize )
       {
-	peekHeader( file, form, size, type );
-	if( "FORM" == form )
-	  {
-	    total += readUnknown( file, size );
-	  }
-	else
-	  {
-	    total += readUnknown( file, size );
-	  }
+	std::vector<vector3> vec;
+	std::vector<unsigned int> index;
+	total += base::readIDTL( file, vec, index );
       }
 
     if( writSize == total )
