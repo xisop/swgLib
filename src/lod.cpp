@@ -92,7 +92,7 @@ unsigned int lod::readLOD( std::istream &file, std::string path )
   while( total < dtlaSize )
     {
       // Peek at next record, but keep file at same place.
-      base::peakHeader( file, form, size, type );
+      base::peekHeader( file, form, size, type );
 	
       if( form == "FORM" )
 	{
@@ -266,7 +266,7 @@ unsigned int lod::readChildren( std::istream &file )
     unsigned int size;
     std::string type;
 
-    unsigned int total += readFormHeader( file, form, size, type );
+    unsigned int total = readFormHeader( file, form, size, type );
     if( form != "FORM" || type != "DATA" )
     {
 	std::cout << "Expected Form of type DATA: " << type << std::endl;
@@ -288,7 +288,7 @@ unsigned int lod::readRADR( std::istream &file )
     unsigned int radrSize;
     std::string type;
 
-    unsigned int total += readFormHeader( file, form, radrSize, type );
+    unsigned int total = readFormHeader( file, form, radrSize, type );
     radrSize += 8;
     if( form != "FORM" || type != "RADR" )
     {
