@@ -1425,22 +1425,19 @@ unsigned int trn::readADTA( std::istream &file, const std::string &debugString )
 unsigned int trn::readASCN( std::istream &file, const std::string &debugString )
 {
   std::string dbgStr = debugString + "ASCN: ";
-  unsigned int total = 0;
-
   std::string form;
   unsigned int ascnSize;
   std::string type;
 
   // FORM ASCN
-  total += readFormHeader( file, form, ascnSize, type );
+  unsigned int total = readFormHeader( file, form, ascnSize, type );
   ascnSize += 8;
   if( form != "FORM" || type != "ASCN" )
     {
       std::cout << "Expected Form of type ASCN: " << type << std::endl;
       exit( 0 );
     }
-  std::cout << "Found ASCN form" << std::endl;
-
+  std::cout << debugString << "Found ASCN form" << std::endl;
 
   // FORM 0001
   unsigned int size;
@@ -1450,11 +1447,10 @@ unsigned int trn::readASCN( std::istream &file, const std::string &debugString )
       std::cout << "Expected Form of type 0001: " << type << std::endl;
       exit( 0 );
     }
-  std::cout << "Found 0001 form" << std::endl;
-
+  std::cout << dbgStr << "Found 0001 form" << std::endl;
 
   // IHDR
-  total += readIHDR( file, debugString );
+  total += readIHDR( file, dbgStr );
 
   // DATA
   total += readRecordHeader( file, type, size );
@@ -1463,7 +1459,7 @@ unsigned int trn::readASCN( std::istream &file, const std::string &debugString )
       std::cout << "Expected record of type DATA: " << type << std::endl;
       exit( 0 );
     }
-  std::cout << "Found ASCNDATA record" << std::endl;
+  std::cout << dbgStr << "Found DATA record" << std::endl;
 
   unsigned int u1;
   file.read( (char *)&u1, sizeof( u1 ) );
@@ -1477,11 +1473,11 @@ unsigned int trn::readASCN( std::istream &file, const std::string &debugString )
   file.read( (char *)&u3, sizeof( u3 ) );
   total += sizeof( u3 );
 
-  std::cout << u1 << " " << u2 << " " << u3 << std::endl;
+  std::cout << dbgStr << u1 << " " << u2 << " " << u3 << std::endl;
 
   if( ascnSize == total )
     {
-      std::cout << "Finished reading ASCN" << std::endl;
+      std::cout << debugString << "Finished reading ASCN" << std::endl;
     }
   else
     {
@@ -1539,7 +1535,7 @@ unsigned int trn::readAENV( std::istream &file, const std::string &debugString )
     
   if( aenvSize == total )
     {
-      std::cout << "Finished reading AENV" << std::endl;
+      std::cout << debugString << "Finished reading AENV" << std::endl;
     }
   else
     {
@@ -1573,7 +1569,7 @@ unsigned int trn::readBREC( std::istream &file, const std::string &debugString )
 
   if( brecSize == total )
     {
-      std::cout << "Finished reading BREC" << std::endl;
+      std::cout << debugString << "Finished reading BREC" << std::endl;
     }
   else
     {
@@ -1606,7 +1602,7 @@ unsigned int trn::readAHFR( std::istream &file, const std::string &debugString )
 
   if( ahfrSize == total )
     {
-      std::cout << "Finished reading AHFR" << std::endl;
+      std::cout << debugString << "Finished reading AHFR" << std::endl;
     }
   else
     {
@@ -1639,7 +1635,7 @@ unsigned int trn::readFFRA( std::istream &file, const std::string &debugString )
 
   if( ffraSize == total )
     {
-      std::cout << "Finished reading FFRA" << std::endl;
+      std::cout << debugString << "Finished reading FFRA" << std::endl;
     }
   else
     {
@@ -1672,7 +1668,7 @@ unsigned int trn::readACCN( std::istream &file, const std::string &debugString )
 
   if( accnSize == total )
     {
-      std::cout << "Finished reading ACCN" << std::endl;
+      std::cout << debugString << "Finished reading ACCN" << std::endl;
     }
   else
     {
@@ -1705,7 +1701,7 @@ unsigned int trn::readBPLN( std::istream &file, const std::string &debugString )
 
   if( bplnSize == total )
     {
-      std::cout << "Finished reading BPLN" << std::endl;
+      std::cout << debugString << "Finished reading BPLN" << std::endl;
     }
   else
     {
@@ -1738,7 +1734,7 @@ unsigned int trn::readBPOL( std::istream &file, const std::string &debugString )
 
   if( bpolSize == total )
     {
-      std::cout << "Finished reading BPOL" << std::endl;
+      std::cout << debugString << "Finished reading BPOL" << std::endl;
     }
   else
     {
@@ -1771,7 +1767,7 @@ unsigned int trn::readASRP( std::istream &file, const std::string &debugString )
 
   if( asrpSize == total )
     {
-      std::cout << "Finished reading ASRP" << std::endl;
+      std::cout << debugString << "Finished reading ASRP" << std::endl;
     }
   else
     {
@@ -1804,7 +1800,7 @@ unsigned int trn::readAEXC( std::istream &file, const std::string &debugString )
 
   if( aexcSize == total )
     {
-      std::cout << "Finished reading AEXC" << std::endl;
+      std::cout << debugString << "Finished reading AEXC" << std::endl;
     }
   else
     {
@@ -1837,7 +1833,7 @@ unsigned int trn::readBCIR( std::istream &file, const std::string &debugString )
 
   if( bcirSize == total )
     {
-      std::cout << "Finished reading BCIR" << std::endl;
+      std::cout << debugString << "Finished reading BCIR" << std::endl;
     }
   else
     {
@@ -1897,7 +1893,7 @@ unsigned int trn::readAHCN( std::istream &file, const std::string &debugString )
 
   if( ahcnSize == total )
     {
-      std::cout << "Finished reading AHCN" << std::endl;
+      std::cout << debugString << "Finished reading AHCN" << std::endl;
     }
   else
     {
@@ -1965,7 +1961,7 @@ unsigned int trn::readFHGT( std::istream &file, const std::string &debugString )
 
   if( fhgtSize == total )
     {
-      std::cout << "Finished reading FHGT" << std::endl;
+      std::cout << debugString << "Finished reading FHGT" << std::endl;
     }
   else
     {
@@ -1998,7 +1994,7 @@ unsigned int trn::readAHTR( std::istream &file, const std::string &debugString )
 
   if( ahtrSize == total )
     {
-      std::cout << "Finished reading AHTR" << std::endl;
+      std::cout << debugString << "Finished reading AHTR" << std::endl;
     }
   else
     {
@@ -2012,13 +2008,12 @@ unsigned int trn::readAHTR( std::istream &file, const std::string &debugString )
 unsigned int trn::readACRF( std::istream &file, const std::string &debugString )
 {
   std::string dbgStr = debugString + "ACRF: ";
-  unsigned int total = 0;
 
   std::string form;
   unsigned int acrfSize;
   std::string type;
 
-  total += readFormHeader( file, form, acrfSize, type );
+  unsigned int total = readFormHeader( file, form, acrfSize, type );
   acrfSize += 8;
   if( form != "FORM" || type != "ACRF" )
     {
@@ -2037,7 +2032,38 @@ unsigned int trn::readACRF( std::istream &file, const std::string &debugString )
   std::cout << dbgStr << "Found 0001 form" << std::endl;
 
   total += readIHDR( file, dbgStr );
-  total += readUnknown( file, acrfSize-total );
+
+  total += readFormHeader( file, form, size, type );
+  if( form != "FORM" || type != "DATA" )
+    {
+      std::cout << "Expected Form of type DATA: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << dbgStr << "Found DATA form" << std::endl;
+
+  // PARM record
+  total += readRecordHeader( file, type, size );
+  if( type != "PARM" )
+    {
+      std::cout << "Expected PARM record: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << dbgStr << "Found PARM record" << std::endl;
+
+  unsigned int u1;
+  file.read( (char*)&u1, sizeof( u1 ) );
+  total += sizeof( u1 );
+  std::cout << dbgStr << u1 << " ";
+
+  file.read( (char*)&u1, sizeof( u1 ) );
+  total += sizeof( u1 );
+  std::cout << u1 << " ";
+
+  char temp[255];
+  file.getline( temp, 255, 0 );
+  std::string name( temp );
+  std::cout << name << std::endl;
+  total += name.size() + 1;
 
   if( acrfSize == total )
     {
@@ -2074,7 +2100,7 @@ unsigned int trn::readFSLP( std::istream &file, const std::string &debugString )
 
   if( fslpSize == total )
     {
-      std::cout << "Finished reading FSLP" << std::endl;
+      std::cout << debugString << "Finished reading FSLP" << std::endl;
     }
   else
     {
@@ -2107,7 +2133,7 @@ unsigned int trn::readAFSC( std::istream &file, const std::string &debugString )
 
   if( afscSize == total )
     {
-      std::cout << "Finished reading AFSC" << std::endl;
+      std::cout << debugString << "Finished reading AFSC" << std::endl;
     }
   else
     {
@@ -2140,7 +2166,7 @@ unsigned int trn::readFSHD( std::istream &file, const std::string &debugString )
 
   if( fshdSize == total )
     {
-      std::cout << "Finished reading FSHD" << std::endl;
+      std::cout << debugString << "Finished reading FSHD" << std::endl;
     }
   else
     {
@@ -2154,26 +2180,64 @@ unsigned int trn::readFSHD( std::istream &file, const std::string &debugString )
 unsigned int trn::readAFDN( std::istream &file, const std::string &debugString )
 {
   std::string dbgStr = debugString + "AFDN: ";
-  unsigned int total = 0;
-
   std::string form;
   unsigned int afdnSize;
   std::string type;
 
-  total += readFormHeader( file, form, afdnSize, type );
+  unsigned int total = readFormHeader( file, form, afdnSize, type );
   afdnSize += 8;
   if( form != "FORM" || type != "AFDN" )
     {
       std::cout << "Expected Form of type AFDN: " << type << std::endl;
       exit( 0 );
     }
-  std::cout << "Found AFDN form" << std::endl;
+  std::cout << debugString << "Found AFDN form" << std::endl;
 
-  total += readUnknown( file, afdnSize-total );
+  unsigned int size;
+  total += readFormHeader( file, form, size, type );
+  if( form != "FORM" || type != "0002" )
+    {
+      std::cout << "Expected Form of type 0002: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << dbgStr << "Found 0002 form" << std::endl;
+
+  total += readIHDR( file, dbgStr );
+
+  // DATA record
+  total += readRecordHeader( file, type, size );
+  if( type != "DATA" )
+    {
+      std::cout << "Expected DATA record: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << dbgStr << "Found DATA record" << std::endl;
+
+  unsigned int u1;
+  file.read( (char*)&u1, sizeof( u1 ) );
+  total += sizeof( u1 );
+  std::cout << dbgStr << u1 << " ";
+
+  file.read( (char*)&u1, sizeof( u1 ) );
+  total += sizeof( u1 );
+  std::cout << u1 << " ";
+
+  file.read( (char*)&u1, sizeof( u1 ) );
+  total += sizeof( u1 );
+  std::cout << u1 << " ";
+
+  file.read( (char*)&u1, sizeof( u1 ) );
+  total += sizeof( u1 );
+  std::cout << u1 << " ";
+
+  float u2;
+  file.read( (char*)&u2, sizeof( u2 ) );
+  total += sizeof( u2 );
+  std::cout << u2 << std::endl;;
 
   if( afdnSize == total )
     {
-      std::cout << "Finished reading AFDN" << std::endl;
+      std::cout << debugString << "Finished reading AFDN" << std::endl;
     }
   else
     {
@@ -2206,7 +2270,7 @@ unsigned int trn::readAFSN( std::istream &file, const std::string &debugString )
 
   if( afsnSize == total )
     {
-      std::cout << "Finished reading AFSN" << std::endl;
+      std::cout << debugString << "Finished reading AFSN" << std::endl;
     }
   else
     {
@@ -2239,7 +2303,7 @@ unsigned int trn::readAFDF( std::istream &file, const std::string &debugString )
 
   if( afdfSize == total )
     {
-      std::cout << "Finished reading AFDF" << std::endl;
+      std::cout << debugString << "Finished reading AFDF" << std::endl;
     }
   else
     {
@@ -2272,7 +2336,7 @@ unsigned int trn::readACRH( std::istream &file, const std::string &debugString )
 
   if( acrhSize == total )
     {
-      std::cout << "Finished reading ACRH" << std::endl;
+      std::cout << debugString << "Finished reading ACRH" << std::endl;
     }
   else
     {
@@ -2305,7 +2369,7 @@ unsigned int trn::readAROA( std::istream &file, const std::string &debugString )
 
   if( aroaSize == total )
     {
-      std::cout << "Finished reading AROA" << std::endl;
+      std::cout << debugString << "Finished reading AROA" << std::endl;
     }
   else
     {
@@ -2338,7 +2402,7 @@ unsigned int trn::readFDIR( std::istream &file, const std::string &debugString )
 
   if( fdirSize == total )
     {
-      std::cout << "Finished reading FDIR" << std::endl;
+      std::cout << debugString << "Finished reading FDIR" << std::endl;
     }
   else
     {
