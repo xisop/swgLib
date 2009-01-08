@@ -692,12 +692,17 @@ unsigned int base::readAPPR( std::istream &file,
 	if( "FORM" == form )
 	  {
 	    if( "EXBX" == type )
-	  {
-	    // Read 2nd bounding box - needs work, overwriting previous.
-	    total += readEXBX( file, bsX, bsY, bsZ, bsRadius,
-			       bbP1X, bbP1Y, bbP1Z, bbP2X, bbP2Y, bbP2Z
-			       );
-	  }
+	      {
+		// Read 2nd bounding box - needs work, overwriting previous.
+		total += readEXBX( file, bsX, bsY, bsZ, bsRadius,
+				   bbP1X, bbP1Y, bbP1Z, bbP2X, bbP2Y, bbP2Z
+				   );
+	      }
+	    else if( "EXSP" == type )
+	      {
+		float cx, cy, cz, radius;
+		total += base::readEXSP( file, cx, cy, cz, radius );
+	      }
 	    else if( "XCYL" == type )
 	      {
 		// Needs work.
@@ -736,15 +741,17 @@ unsigned int base::readAPPR( std::istream &file,
 	      }
 	    else
 	      {
-		std::cout << "Expected form of type NULL, EXBX, XCYL, CMPT or CMSH: " 
+		std::cout << "Expected form of type NULL, EXBX, EXSP, XCYL, CMPT, CMSH, DTAL, HPTS, FLOR or INFO: " 
 			  << type
 			  <<std::endl;
+		exit( 0 );
 	      }
 	  }
 	else
 	  {
 	    std::cout << "Expected FORM: " << form 
 		      <<std::endl;
+		exit( 0 );
 	  }
       }
 
