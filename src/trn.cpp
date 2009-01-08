@@ -1574,6 +1574,73 @@ unsigned int trn::readBREC( std::istream &file, const std::string &debugString )
     }
   std::cout << "Found BREC form" << std::endl;
 
+  unsigned int size;
+  total += readFormHeader( file, form, size, type );
+  if( form != "FORM" || type != "0003" )
+    {
+      std::cout << "Expected Form of type 0003: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << dbgStr << "Found 0003 form" << std::endl;
+
+  total += readIHDR( file, dbgStr );
+
+  total += readRecordHeader( file, type, size );
+  if( type != "DATA" )
+    {
+      std::cout << "Expected record of type DATA: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << dbgStr << "Found DATA record" << std::endl;
+
+  float u1;
+  file.read( (char *)&u1, sizeof( u1 ) );
+  total += sizeof( u1 );
+  std::cout << dbgStr << u1 << std::endl;
+
+  file.read( (char *)&u1, sizeof( u1 ) );
+  total += sizeof( u1 );
+  std::cout << dbgStr << u1 << std::endl;
+
+  file.read( (char *)&u1, sizeof( u1 ) );
+  total += sizeof( u1 );
+  std::cout << dbgStr << u1 << std::endl;
+
+  file.read( (char *)&u1, sizeof( u1 ) );
+  total += sizeof( u1 );
+  std::cout << dbgStr << u1 << std::endl;
+
+  unsigned int u2;
+  file.read( (char *)&u2, sizeof( u2 ) );
+  total += sizeof( u2 );
+  std::cout << dbgStr << u2 << std::endl;
+
+  file.read( (char *)&u1, sizeof( u1 ) );
+  total += sizeof( u1 );
+  std::cout << dbgStr << u1 << std::endl;
+
+  file.read( (char *)&u2, sizeof( u2 ) );
+  total += sizeof( u2 );
+  std::cout << dbgStr << u2 << std::endl;
+
+  file.read( (char *)&u2, sizeof( u2 ) );
+  total += sizeof( u2 );
+  std::cout << dbgStr << u2 << std::endl;
+
+  file.read( (char *)&u1, sizeof( u1 ) );
+  total += sizeof( u1 );
+  std::cout << dbgStr << u1 << std::endl;
+
+  file.read( (char *)&u1, sizeof( u1 ) );
+  total += sizeof( u1 );
+  std::cout << dbgStr << u1 << std::endl;
+
+  char temp[255];
+  file.getline( temp, 255, 0 );
+  std::string name( temp );
+  std::cout << dbgStr << name << std::endl;
+  total += name.size() + 1;
+
   total += readUnknown( file, brecSize-total );
 
   if( brecSize == total )
