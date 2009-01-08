@@ -253,7 +253,7 @@ unsigned int cmp::readRADR( std::istream &file )
 
     if( numNodes > 0 )
       {
-	total += readIDTL( file, radrVert, radrIndex );
+	total += base::readIDTL( file, radrVert, radrIndex );
       }
 
     if( radrSize == total )
