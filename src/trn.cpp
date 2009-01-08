@@ -1955,20 +1955,18 @@ unsigned int trn::readAHCN( std::istream &file, const std::string &debugString )
 unsigned int trn::readFHGT( std::istream &file, const std::string &debugString )
 {
   std::string dbgStr = debugString + "FHGT: ";
-  unsigned int total = 0;
-
   std::string form;
   unsigned int fhgtSize;
   std::string type;
 
-  total += readFormHeader( file, form, fhgtSize, type );
+  unsigned int total = readFormHeader( file, form, fhgtSize, type );
   fhgtSize += 8;
   if( form != "FORM" || type != "FHGT" )
     {
       std::cout << "Expected Form of type FHGT: " << type << std::endl;
       exit( 0 );
     }
-  std::cout << "Found FHGT form" << std::endl;
+  std::cout << debugString << "Found FHGT form" << std::endl;
 
   unsigned int size;
   total += readFormHeader( file, form, size, type );
@@ -1977,9 +1975,9 @@ unsigned int trn::readFHGT( std::istream &file, const std::string &debugString )
       std::cout << "Expected Form of type 0002: " << type << std::endl;
       exit( 0 );
     }
-  std::cout << "Found 0002 form" << std::endl;
+  std::cout << dbgStr << "Found 0002 form" << std::endl;
 
-  total += readIHDR( file, debugString );
+  total += readIHDR( file, dbgStr );
 
   total += readRecordHeader( file, type, size );
   if( type != "DATA" )
@@ -1987,25 +1985,25 @@ unsigned int trn::readFHGT( std::istream &file, const std::string &debugString )
       std::cout << "Expected record of type DATA: " << type << std::endl;
       exit( 0 );
     }
-  std::cout << "Found DATA record" << std::endl;
+  std::cout << dbgStr << "Found DATA record" << std::endl;
 
   float u1;
   file.read( (char *)&u1, sizeof( u1 ) );
   total += sizeof( u1 );
-  std::cout << u1 << std::endl;
+  std::cout << dbgStr << u1 << std::endl;
 
   file.read( (char *)&u1, sizeof( u1 ) );
   total += sizeof( u1 );
-  std::cout << u1 << std::endl;
+  std::cout << dbgStr << u1 << std::endl;
 
   unsigned int u2;
   file.read( (char *)&u2, sizeof( u2 ) );
   total += sizeof( u2 );
-  std::cout << u2 << std::endl;
+  std::cout << dbgStr << u2 << std::endl;
 
   file.read( (char *)&u1, sizeof( u1 ) );
   total += sizeof( u1 );
-  std::cout << u1 << std::endl;
+  std::cout << dbgStr << u1 << std::endl;
 
   if( fhgtSize == total )
     {
@@ -2023,20 +2021,18 @@ unsigned int trn::readFHGT( std::istream &file, const std::string &debugString )
 unsigned int trn::readAHTR( std::istream &file, const std::string &debugString )
 {
   std::string dbgStr = debugString + "AHTR: ";
-  unsigned int total = 0;
-
   std::string form;
   unsigned int ahtrSize;
   std::string type;
 
-  total += readFormHeader( file, form, ahtrSize, type );
+  unsigned int total = readFormHeader( file, form, ahtrSize, type );
   ahtrSize += 8;
   if( form != "FORM" || type != "AHTR" )
     {
       std::cout << "Expected Form of type AHTR: " << type << std::endl;
       exit( 0 );
     }
-  std::cout << "Found AHTR form" << std::endl;
+  std::cout << debugString << "Found AHTR form" << std::endl;
 
   total += readUnknown( file, ahtrSize-total );
 
@@ -2056,7 +2052,6 @@ unsigned int trn::readAHTR( std::istream &file, const std::string &debugString )
 unsigned int trn::readACRF( std::istream &file, const std::string &debugString )
 {
   std::string dbgStr = debugString + "ACRF: ";
-
   std::string form;
   unsigned int acrfSize;
   std::string type;
