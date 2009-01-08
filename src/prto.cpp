@@ -277,7 +277,7 @@ unsigned int prto::readPRTS( std::istream &file )
 	  {
 	    std::vector<vector3> vec;
 	    std::vector<unsigned int> index;
-	    total += readIDTL( file, vec, index );
+	    total += base::readIDTL( file, vec, index );
 	  }
       }
 
