@@ -83,6 +83,11 @@ namespace ml
     static unsigned int readUnknown( std::istream &file,
 				     const unsigned int size );
 
+    static unsigned int read( std::istream &file, int &data );
+    static unsigned int read( std::istream &file, unsigned int &data );
+    static unsigned int read( std::istream &file, float &data );
+    static unsigned int read( std::istream &file, std::string &data );
+
     static unsigned int readEXBX( std::istream &file,
 				  float &cx, float &cy, float &cz,
 				  float &radius,

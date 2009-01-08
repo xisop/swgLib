@@ -197,6 +197,32 @@ unsigned int base::readUnknown( std::istream &file,
   return size;
 }
 
+unsigned int base::read( std::istream &file, int &data )
+{
+  file.read( (char*)&data, sizeof( int ) );
+  return sizeof( int );
+}
+
+unsigned int base::read( std::istream &file, unsigned int &data )
+{
+  file.read( (char*)&data, sizeof( unsigned int ) );
+  return sizeof( unsigned int );
+}
+
+unsigned int base::read( std::istream &file, float &data )
+{
+  file.read( (char*)&data, sizeof( float ) );
+  return sizeof( float );
+}
+
+unsigned int base::read( std::istream &file, std::string &data )
+{
+  char temp[255];
+  file.getline( temp, 255, 0 );
+  data = temp;
+  return (data.size() + 1);
+}
+
 unsigned int base::readBOX( std::istream &file,
 			    float &x1, float &y1, float &z1,
 			    float &x2, float &y2, float &z2
@@ -304,17 +330,16 @@ unsigned int base::readCYLN( std::istream &file,
   std::cout << "Found CYLN record" << std::endl;
 
   // Read 
-  file.read( (char*)&u1, sizeof( u1 ) );
-  file.read( (char*)&u2, sizeof( u2 ) );
-  file.read( (char*)&u3, sizeof( u3 ) );
-  file.read( (char*)&u4, sizeof( u4 ) );
-  file.read( (char*)&u5, sizeof( u5 ) );
+  total += read( file, u1 );
+  total += read( file, u2 );
+  total += read( file, u3 );
+  total += read( file, u4 );
+  total += read( file, u5 );
   std::cout << u1 << " "
 	    << u2 << " "
 	    << u3 << " "
 	    << u4 << " "
 	    << u5 << std::endl;
-  total += sizeof( float ) * 5;
 
   if( total == size )
     {
@@ -566,14 +591,9 @@ unsigned int base::readVERT( std::istream &file,
   unsigned int numVerts = (vertSize-8)/(sizeof( float ) * 3);
   for( unsigned int i = 0; i < numVerts; ++i )
     {
-      file.read( (char*)&x, sizeof( x ) );
-      total += sizeof( x );
-
-      file.read( (char*)&y, sizeof( y ) );
-      total += sizeof( y );
-
-      file.read( (char*)&z, sizeof( z ) );
-      total += sizeof( z );
+      total += read( file, x );
+      total += read( file, y );
+      total += read( file, z );
 #if 1
       std::cout << "Vert: " << std::fixed
 		<< x << ", "
@@ -618,8 +638,7 @@ unsigned int base::readINDX( std::istream &file,
   unsigned int numIndex = (indxSize-8)/sizeof( x );
   for( unsigned int i = 0; i < numIndex; ++i )
     {
-      file.read( (char*)&x, sizeof( x ) );
-      total += sizeof( x );
+      total += read( file, x );
       std::cout << "Index: " << x << std::endl;
       index.push_back( x );
     }
@@ -783,38 +802,27 @@ unsigned int base::readHPNT( std::istream &file )
     }
   std::cout << "Found HPNT record" << std::endl;
 
-  float u1;
-  file.read( (char*)&u1, sizeof( float ) );
-  std::cout << u1 << " ";
-  file.read( (char*)&u1, sizeof( float ) );
-  std::cout << u1 << " ";
-  file.read( (char*)&u1, sizeof( float ) );
-  std::cout << u1 << " ";
-  file.read( (char*)&u1, sizeof( float ) );
-  std::cout << u1 << std::endl;
-  file.read( (char*)&u1, sizeof( float ) );
-  std::cout << u1 << " ";
-  file.read( (char*)&u1, sizeof( float ) );
-  std::cout << u1 << " ";
-  file.read( (char*)&u1, sizeof( float ) );
-  std::cout << u1 << " ";
-  file.read( (char*)&u1, sizeof( float ) );
-  std::cout << u1 << std::endl;
-  file.read( (char*)&u1, sizeof( float ) );
-  std::cout << u1 << " ";
-  file.read( (char*)&u1, sizeof( float ) );
-  std::cout << u1 << " ";
-  file.read( (char*)&u1, sizeof( float ) );
-  std::cout << u1 << " ";
-  file.read( (char*)&u1, sizeof( float ) );
-  std::cout << u1 << std::endl;
-  total += sizeof( float ) * 12;
+  float u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12;
+  total += read( file, u1 );
+  total += read( file, u2 );
+  total += read( file, u3 );
+  total += read( file, u4 );
+  total += read( file, u5 );
+  total += read( file, u6 );
+  total += read( file, u7 );
+  total += read( file, u8 );
+  total += read( file, u9 );
+  total += read( file, u10 );
+  total += read( file, u11 );
+  total += read( file, u12 );
 
-  char temp[255];
-  file.getline( temp, 255, 0 );
-  std::string name( temp );
+  std::string name;
+  total += read( file, name );
+
+  std::cout << u1 << " " << u2 << " " << u3 << " " << u4 << std::endl;
+  std::cout << u5 << " " << u6 << " " << u7 << " " << u8 << std::endl;
+  std::cout << u9 << " " << u10 << " " << u11 << " " << u12 << std::endl;
   std::cout << name << std::endl;
-  total += name.size() + 1;
 
   if( total == size )
     {
