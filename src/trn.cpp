@@ -1555,6 +1555,7 @@ unsigned int trn::readAENV( std::istream &file, const std::string &debugString )
 }
 
 
+// Boundary Rectangle.
 unsigned int trn::readBREC( std::istream &file, const std::string &debugString )
 {
   std::string dbgStr = debugString + "BREC: ";
@@ -1725,6 +1726,7 @@ unsigned int trn::readACCN( std::istream &file, const std::string &debugString )
   return total;
 }
 
+// Boundary Polyline.
 unsigned int trn::readBPLN( std::istream &file, const std::string &debugString )
 {
   std::string dbgStr = debugString + "BPLN: ";
@@ -1758,6 +1760,7 @@ unsigned int trn::readBPLN( std::istream &file, const std::string &debugString )
   return total;
 }
 
+// Boundary Polygon.
 unsigned int trn::readBPOL( std::istream &file, const std::string &debugString )
 {
   std::string dbgStr = debugString + "BPOL: ";
@@ -1857,6 +1860,7 @@ unsigned int trn::readAEXC( std::istream &file, const std::string &debugString )
   return total;
 }
 
+// Boundary Circle.
 unsigned int trn::readBCIR( std::istream &file, const std::string &debugString )
 {
   std::string dbgStr = debugString + "BCIR: ";
@@ -1893,20 +1897,18 @@ unsigned int trn::readBCIR( std::istream &file, const std::string &debugString )
 unsigned int trn::readAHCN( std::istream &file, const std::string &debugString )
 {
   std::string dbgStr = debugString + "AHCN: ";
-  unsigned int total = 0;
-
   std::string form;
   unsigned int ahcnSize;
   std::string type;
 
-  total += readFormHeader( file, form, ahcnSize, type );
+  unsigned int total = readFormHeader( file, form, ahcnSize, type );
   ahcnSize += 8;
   if( form != "FORM" || type != "AHCN" )
     {
       std::cout << "Expected Form of type AHCN: " << type << std::endl;
       exit( 0 );
     }
-  std::cout << "Found AHCN form" << std::endl;
+  std::cout << debugString << "Found AHCN form" << std::endl;
 
   unsigned int size;
   total += readFormHeader( file, form, size, type );
@@ -1915,9 +1917,9 @@ unsigned int trn::readAHCN( std::istream &file, const std::string &debugString )
       std::cout << "Expected Form of type 0000: " << type << std::endl;
       exit( 0 );
     }
-  std::cout << "Found 0000 form" << std::endl;
+  std::cout << dbgStr << "Found 0000 form" << std::endl;
 
-  total += readIHDR( file, debugString );
+  total += readIHDR( file, dbgStr );
 
   total += readRecordHeader( file, type, size );
   if( type != "DATA" )
@@ -1925,17 +1927,17 @@ unsigned int trn::readAHCN( std::istream &file, const std::string &debugString )
       std::cout << "Expected record of type DATA: " << type << std::endl;
       exit( 0 );
     }
-  std::cout << "Found DATA record" << std::endl;
+  std::cout << dbgStr << "Found DATA record" << std::endl;
 
   unsigned int u1;
   file.read( (char *)&u1, sizeof( u1 ) );
   total += sizeof( u1 );
-  std::cout << u1 << std::endl;
+  std::cout << dbgStr << u1 << std::endl;
 
   float u2;
   file.read( (char *)&u2, sizeof( u2 ) );
   total += sizeof( u2 );
-  std::cout << u2 << std::endl;
+  std::cout << dbgStr << u2 << std::endl;
 
   if( ahcnSize == total )
     {
@@ -2160,22 +2162,60 @@ unsigned int trn::readFSLP( std::istream &file, const std::string &debugString )
 unsigned int trn::readAFSC( std::istream &file, const std::string &debugString )
 {
   std::string dbgStr = debugString + "AFSC: ";
-  unsigned int total = 0;
-
   std::string form;
   unsigned int afscSize;
   std::string type;
 
-  total += readFormHeader( file, form, afscSize, type );
+  unsigned int total = readFormHeader( file, form, afscSize, type );
   afscSize += 8;
   if( form != "FORM" || type != "AFSC" )
     {
       std::cout << "Expected Form of type AFSC: " << type << std::endl;
       exit( 0 );
     }
-  std::cout << "Found AFSC form" << std::endl;
+  std::cout << debugString << "Found AFSC form" << std::endl;
 
-  total += readUnknown( file, afscSize-total );
+  unsigned int size;
+  total += readFormHeader( file, form, size, type );
+  if( form != "FORM" || type != "0004" )
+    {
+      std::cout << "Expected Form of type 0004: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << dbgStr << "Found 0003 form" << std::endl;
+
+  total += readIHDR( file, dbgStr );
+
+  // DATA record
+  total += readRecordHeader( file, type, size );
+  if( type != "DATA" )
+    {
+      std::cout << "Expected DATA record: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << dbgStr << "Found DATA record" << std::endl;
+
+  unsigned int u1;
+  file.read( (char*)&u1, sizeof( u1 ) );
+  total += sizeof( u1 );
+  std::cout << dbgStr << u1 << std::endl;;
+
+  file.read( (char*)&u1, sizeof( u1 ) );
+  total += sizeof( u1 );
+  std::cout << dbgStr << u1 << std::endl;;
+
+  file.read( (char*)&u1, sizeof( u1 ) );
+  total += sizeof( u1 );
+  std::cout << dbgStr << u1 << std::endl;;
+
+  file.read( (char*)&u1, sizeof( u1 ) );
+  total += sizeof( u1 );
+  std::cout << dbgStr << u1 << std::endl;;
+
+  float u2;
+  file.read( (char*)&u2, sizeof( u2 ) );
+  total += sizeof( u2 );
+  std::cout << dbgStr << u2 << std::endl;;
 
   if( afscSize == total )
     {
@@ -2297,20 +2337,18 @@ unsigned int trn::readAFDN( std::istream &file, const std::string &debugString )
 unsigned int trn::readAFSN( std::istream &file, const std::string &debugString )
 {
   std::string dbgStr = debugString + "AFSN: ";
-  unsigned int total = 0;
-
   std::string form;
   unsigned int afsnSize;
   std::string type;
 
-  total += readFormHeader( file, form, afsnSize, type );
+  unsigned int total = readFormHeader( file, form, afsnSize, type );
   afsnSize += 8;
   if( form != "FORM" || type != "AFSN" )
     {
       std::cout << "Expected Form of type AFSN: " << type << std::endl;
       exit( 0 );
     }
-  std::cout << "Found AFSN form" << std::endl;
+  std::cout << debugString << "Found AFSN form" << std::endl;
 
   total += readUnknown( file, afsnSize-total );
 
