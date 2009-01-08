@@ -313,10 +313,18 @@ unsigned int lod::readRADR( std::istream &file )
     std::cout << "Num nodes: " << numNodes << std::endl;
 
     // Need to loop here and read IDTL (and others?)
-    total += readUnknown( file, radrSize - total );
-    total = radrSize;
-
-    //total += readIDTL( file );
+    while( total < radrSize )
+      {
+	peekHeader( file, form, size, type );
+	if( "FORM" == form )
+	  {
+	    total += readUnknown( file, size );
+	  }
+	else
+	  {
+	    total += readUnknown( file, size );
+	  }
+      }
 
     if( radrSize == total )
     {
@@ -329,25 +337,6 @@ unsigned int lod::readRADR( std::istream &file )
                   << std::endl;
     }
 
-    return total;
-}
-
-unsigned int lod::readIDTL( std::istream &file )
-{
-    std::string form;
-    unsigned int idtlSize;
-    std::string type;
-
-    unsigned int total = readFormHeader( file, form, idtlSize, type );
-    if( form != "FORM" || type != "IDTL" )
-    {
-	std::cout << "Expected Form of type IDTL: " << type << std::endl;
-	exit( 0 );
-    }
-    std::cout << "Found IDTL form" << std::endl;
-
-    total += readUnknown( file, idtlSize-4 );
-    
     return total;
 }
 
@@ -381,9 +370,28 @@ unsigned int lod::readTEST( std::istream &file )
     std::cout << "Num nodes: " << numNodes << std::endl;
 
     // Need to loop here and read IDTL (and others?)
-     
-    total += readUnknown( file, testSize - total );
-    total = testSize;
+    while( total < testSize )
+      {
+	peekHeader( file, form, size, type );
+	if( "FORM" == form )
+	  {
+	    if( "IDTL" == type )
+	      {
+		std::vector<vector3> vec;
+		std::vector<unsigned int> index;
+
+		total += base::readIDTL( file, vec, index );
+	      }
+	    else
+	      {
+		total += readUnknown( file, size );
+	      }
+	  }
+	else
+	  {
+	    total += readUnknown( file, size );
+	  }
+      }
 
     if( testSize == total )
     {
@@ -430,9 +438,18 @@ unsigned int lod::readWRIT( std::istream &file )
     std::cout << "Num nodes: " << numNodes << std::endl;
 
     // Need to loop here and read IDTL (and others?)
-     
-    total += readUnknown( file, writSize - total );
-    total = writSize;
+    while( total < writSize )
+      {
+	peekHeader( file, form, size, type );
+	if( "FORM" == form )
+	  {
+	    total += readUnknown( file, size );
+	  }
+	else
+	  {
+	    total += readUnknown( file, size );
+	  }
+      }
 
     if( writSize == total )
     {
