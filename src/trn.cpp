@@ -1513,7 +1513,7 @@ unsigned int trn::readAENV( std::istream &file, const std::string &debugString )
       std::cout << "Expected Form of type 0000: " << type << std::endl;
       exit( 0 );
     }
-  std::cout << "Found 0000 form" << std::endl;
+  std::cout << dbgStr << "Found 0000 form" << std::endl;
 
   // IHDR
   total += readIHDR( file, dbgStr );
@@ -1603,7 +1603,7 @@ unsigned int trn::readAHFR( std::istream &file, const std::string &debugString )
       std::cout << "Expected Form of type AHFR: " << type << std::endl;
       exit( 0 );
     }
-  std::cout << "Found AHFR form" << std::endl;
+  std::cout << debugString << "Found AHFR form" << std::endl;
 
   unsigned int size;
   total += readFormHeader( file, form, size, type );
@@ -1676,9 +1676,61 @@ unsigned int trn::readFFRA( std::istream &file, const std::string &debugString )
       std::cout << "Expected Form of type FFRA: " << type << std::endl;
       exit( 0 );
     }
-  std::cout << "Found FFRA form" << std::endl;
+  std::cout << debugString << "Found FFRA form" << std::endl;
 
-  total += readUnknown( file, ffraSize-total );
+  unsigned int size;
+  total += readFormHeader( file, form, size, type );
+  if( form != "FORM" || type != "0005" )
+    {
+      std::cout << "Expected Form of type 0005: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << dbgStr << "Found 0005 form" << std::endl;
+
+  total += readIHDR( file, dbgStr );
+
+  total += readFormHeader( file, form, size, type );
+  if( form != "FORM" || type != "DATA" )
+    {
+      std::cout << "Expected Form of type DATA: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << dbgStr << "Found DATA form" << std::endl;
+
+  // PARM record
+  total += readRecordHeader( file, type, size );
+  if( type != "PARM" )
+    {
+      std::cout << "Expected PARM record: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << dbgStr << "Found PARM record" << std::endl;
+
+  unsigned int u1;
+  file.read( (char*)&u1, sizeof( u1 ) );
+  total += sizeof( u1 );
+  std::cout << dbgStr << u1 << std::endl;
+
+  file.read( (char*)&u1, sizeof( u1 ) );
+  total += sizeof( u1 );
+  std::cout << dbgStr << u1 << std::endl;;
+
+  float u2;
+  file.read( (char*)&u2, sizeof( u2 ) );
+  total += sizeof( u2 );
+  std::cout << dbgStr << u2 << std::endl;;
+
+  file.read( (char*)&u2, sizeof( u2 ) );
+  total += sizeof( u2 );
+  std::cout << dbgStr << u2 << std::endl;;
+
+  file.read( (char*)&u2, sizeof( u2 ) );
+  total += sizeof( u2 );
+  std::cout << dbgStr << u2 << std::endl;;
+
+  file.read( (char*)&u2, sizeof( u2 ) );
+  total += sizeof( u2 );
+  std::cout << dbgStr << u2 << std::endl;;
 
   if( ffraSize == total )
     {
@@ -1864,22 +1916,59 @@ unsigned int trn::readAEXC( std::istream &file, const std::string &debugString )
 unsigned int trn::readBCIR( std::istream &file, const std::string &debugString )
 {
   std::string dbgStr = debugString + "BCIR: ";
-  unsigned int total = 0;
-
   std::string form;
   unsigned int bcirSize;
   std::string type;
 
-  total += readFormHeader( file, form, bcirSize, type );
+  unsigned int total = readFormHeader( file, form, bcirSize, type );
   bcirSize += 8;
   if( form != "FORM" || type != "BCIR" )
     {
       std::cout << "Expected Form of type BCIR: " << type << std::endl;
       exit( 0 );
     }
-  std::cout << "Found BCIR form" << std::endl;
+  std::cout << debugString << "Found BCIR form" << std::endl;
 
-  total += readUnknown( file, bcirSize-total );
+  unsigned int size;
+  total += readFormHeader( file, form, size, type );
+  if( form != "FORM" || type != "0002" )
+    {
+      std::cout << "Expected Form of type 0002: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << dbgStr << "Found 0002 form" << std::endl;
+
+  total += readIHDR( file, dbgStr );
+
+  total += readRecordHeader( file, type, size );
+  if( type != "DATA" )
+    {
+      std::cout << "Expected record of type DATA: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << dbgStr << "Found DATA record" << std::endl;
+
+  float u1;
+  file.read( (char *)&u1, sizeof( u1 ) );
+  total += sizeof( u1 );
+  std::cout << dbgStr << u1 << std::endl;
+
+  file.read( (char *)&u1, sizeof( u1 ) );
+  total += sizeof( u1 );
+  std::cout << dbgStr << u1 << std::endl;
+
+  file.read( (char *)&u1, sizeof( u1 ) );
+  total += sizeof( u1 );
+  std::cout << dbgStr << u1 << std::endl;
+
+  unsigned int u2;
+  file.read( (char *)&u2, sizeof( u2 ) );
+  total += sizeof( u2 );
+  std::cout << dbgStr << u2 << std::endl;
+
+  file.read( (char *)&u1, sizeof( u1 ) );
+  total += sizeof( u1 );
+  std::cout << dbgStr << u1 << std::endl;
 
   if( bcirSize == total )
     {
