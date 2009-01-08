@@ -686,59 +686,67 @@ unsigned int base::readAPPR( std::istream &file,
     }
     std::cout << "Found 0003 form" << std::endl;
 
-    total += base::readEXBX( file, bsX, bsY, bsZ, bsRadius,
-			     bbP1X, bbP1Y, bbP1Z, bbP2X, bbP2Y, bbP2Z
-			     );
-
-    peekHeader( file, form, size, type );
-    if( "FORM" == form )
+    while( total < apprSize )
       {
-	if( "EXBX" == type )
+	peekHeader( file, form, size, type );
+	if( "FORM" == form )
+	  {
+	    if( "EXBX" == type )
 	  {
 	    // Read 2nd bounding box - needs work, overwriting previous.
 	    total += readEXBX( file, bsX, bsY, bsZ, bsRadius,
 			       bbP1X, bbP1Y, bbP1Z, bbP2X, bbP2Y, bbP2Z
 			       );
 	  }
-	else if( "XCYL" == type )
-	  {
-	    // Needs work.
-	    float u1, u2, u3, u4, u5;
-	    total += readXCYL( file, u1, u2, u3, u4, u5 );
-	  }
-	else if( "CMPT" == type )
-	  {
-	    // Needs work.
-	    total += readCMPT( file );
-	  }
-	else if( "CMSH" == type )
-	  {
-	    // Needs work.
-	    total += readCMSH( file );
-	  }
-	else if( "NULL" == type )
-	  {
-	    total += readNULL( file );
-	  }
-	else if( "DTAL" == type )
-	  {
-	    total += readDTAL( file );
+	    else if( "XCYL" == type )
+	      {
+		// Needs work.
+		float u1, u2, u3, u4, u5;
+		total += readXCYL( file, u1, u2, u3, u4, u5 );
+	      }
+	    else if( "CMPT" == type )
+	      {
+		// Needs work.
+		total += readCMPT( file );
+	      }
+	    else if( "CMSH" == type )
+	      {
+		// Needs work.
+		total += readCMSH( file );
+	      }
+	    else if( "NULL" == type )
+	      {
+		total += readNULL( file );
+	      }
+	    else if( "DTAL" == type )
+	      {
+		total += readDTAL( file );
+	      }
+	    else if( "HPTS" == type )
+	      {
+		total += readHPTS( file );
+	      }
+	    else if( "FLOR" == type )
+	      {
+		total += readFLOR( file );
+	      }
+	    else if( "INFO" == type )
+	      {
+		total += readUnknown( file, size+8 );
+	      }
+	    else
+	      {
+		std::cout << "Expected form of type NULL, EXBX, XCYL, CMPT or CMSH: " 
+			  << type
+			  <<std::endl;
+	      }
 	  }
 	else
 	  {
-	    std::cout << "Expected form of type NULL, EXBX, XCYL, CMPT or CMSH: " 
-		      << type
+	    std::cout << "Expected FORM: " << form 
 		      <<std::endl;
 	  }
       }
-    else
-      {
-	std::cout << "Expected FORM: " << form 
-		  <<std::endl;
-      }
-
-    total += readHPTS( file );
-    total += readFLOR( file );
 
     if( total == apprSize )
     {
@@ -830,6 +838,8 @@ unsigned int base::readNULL( std::istream &file )
     }
     std::cout << "Found NULL form" << std::endl;
 
+    total += readUnknown( file, nullSize - total );
+
     if( total == nullSize )
     {
 	std::cout << "Finished reading NULL." << std::endl;
@@ -905,8 +915,20 @@ unsigned int base::readFLOR( std::istream &file )
 	exit( 0 );
     }
     std::cout << "Size: " << size << std::endl;
-    total += readUnknown( file, size );
 
+    unsigned char numFloor = 0;
+    file.read( (char*)&numFloor, sizeof( numFloor ) );
+    total += sizeof( numFloor );
+
+    char temp[255];
+    for( unsigned char i = 0; i < numFloor; ++i )
+      {
+	file.getline( temp, 255, 0 );
+	std::string name( temp );
+	std::cout << name << std::endl;
+	total += name.size() + 1;
+      }
+    
     if( total == florSize )
     {
 	std::cout << "Finished reading FLOR." << std::endl;
