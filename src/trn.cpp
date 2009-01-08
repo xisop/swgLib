@@ -1486,7 +1486,6 @@ unsigned int trn::readASCN( std::istream &file, const std::string &debugString )
     }
   std::cout << "Found ASCNDATA record" << std::endl;
 
-#if 1
   unsigned int u1;
   file.read( (char *)&u1, sizeof( u1 ) );
   total += sizeof( u1 );
@@ -1500,9 +1499,6 @@ unsigned int trn::readASCN( std::istream &file, const std::string &debugString )
   total += sizeof( u3 );
 
   std::cout << u1 << " " << u2 << " " << u3 << std::endl;
-#else
-  total += readUnknown( file, size );
-#endif
 
   std::cout << "</record>" << std::endl;
 
