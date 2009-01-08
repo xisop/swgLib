@@ -574,7 +574,7 @@ unsigned int base::readVERT( std::istream &file,
 
       file.read( (char*)&z, sizeof( z ) );
       total += sizeof( z );
-#if 0
+#if 1
       std::cout << "Vert: " << std::fixed
 		<< x << ", "
 		<< y << ", "
@@ -620,7 +620,7 @@ unsigned int base::readINDX( std::istream &file,
     {
       file.read( (char*)&x, sizeof( x ) );
       total += sizeof( x );
-      //std::cout << "Index: " << x << std::endl;
+      std::cout << "Index: " << x << std::endl;
       index.push_back( x );
     }
 
