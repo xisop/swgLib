@@ -81,7 +81,6 @@ namespace ml
     unsigned int readPIVT( std::istream &file );
     unsigned int readINFO( std::istream &file );
     unsigned int readRADR( std::istream &file );
-    unsigned int readIDTL( std::istream &file );
     unsigned int readCHLD( std::istream &file );
     unsigned int readTEST( std::istream &file );
     unsigned int readWRIT( std::istream &file );
