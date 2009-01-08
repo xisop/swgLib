@@ -106,22 +106,21 @@ unsigned int trn::readTRNDATA( std::istream &file,
   std::cout << dbgStr << name << std::endl;
   total += name.size() + 1;
 
-  float x1, x2;
-  unsigned int x3, x4;
+  unsigned int x4;
   float x5, x6;
     
   std::cout.flags ( std::ios_base::showpoint );
-  file.read( (char *)&x1, sizeof( x1 ) );
-  total += sizeof( x1 );
-  std::cout << dbgStr << x1 << std::endl;
+  file.read( (char *)&terrainSize, sizeof( terrainSize ) );
+  total += sizeof( terrainSize );
+  std::cout << dbgStr << "Terrain size: " << terrainSize << std::endl;
     
-  file.read( (char *)&x2, sizeof( x2 ) );
-  total += sizeof( x2 );
-  std::cout << dbgStr << x2 << std::endl;
+  file.read( (char *)&blockSize, sizeof( blockSize ) );
+  total += sizeof( blockSize );
+  std::cout << dbgStr << "Block size: " << blockSize << std::endl;
 
-  file.read( (char *)&x3, sizeof( x3 ) );
-  total += sizeof( x3 );
-  std::cout << dbgStr << x3 << std::endl;
+  file.read( (char *)&tilesPerBlock, sizeof( tilesPerBlock ) );
+  total += sizeof( tilesPerBlock );
+  std::cout << dbgStr << "Tiles per block: " << tilesPerBlock << std::endl;
     
   file.read( (char *)&x4, sizeof( x4 ) );
   total += sizeof( x4 );
@@ -433,8 +432,8 @@ unsigned int trn::readMapDATA( std::istream &file,
   file.read( (char*)&width, sizeof( width ) );
   total += 16;
 
-  std::cout << dbgStr << "Terrain width/height: " << x1 << std::endl;
-  std::cout << dbgStr << " Lowest point(?): " << x2 << std::endl;
+  std::cout << dbgStr << " Terrain size(m): " << x1 << std::endl;
+  std::cout << dbgStr << "   Block size(m): " << x2 << std::endl;
   std::cout << dbgStr << "      Map height: " << height << std::endl;
   std::cout << dbgStr << "       Map width: " << width << std::endl;
 

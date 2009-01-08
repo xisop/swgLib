@@ -93,6 +93,10 @@ namespace ml
     unsigned int readSFAM( std::istream &file, const std::string & );
 					  
   private:
+    float terrainSize;
+    float blockSize;
+    unsigned int tilesPerBlock;
+
     unsigned int height;
     unsigned int width;
   };
