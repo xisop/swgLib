@@ -3,7 +3,7 @@
  *  \author Kenneth R. Sewell III
 
  meshLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006,2007 Kenneth R. Sewell III
+ Copyright (C) 2006-2009 Kenneth R. Sewell III
 
  This file is part of meshLib.
 
@@ -34,6 +34,7 @@
 #include <meshLib/cstb.hpp>
 #include <meshLib/dtii.hpp>
 #include <meshLib/eft.hpp>
+#include <meshLib/flor.hpp>
 #include <meshLib/foot.hpp>
 #include <meshLib/ilf.hpp>
 #include <meshLib/lod.hpp>
@@ -122,6 +123,11 @@ int main( int argc, char **argv )
 	{
 	  ml::foot misc;
 	  misc.readFOOT( infile );
+	}
+      else if( "FLOR" == fileType )
+	{
+	  ml::flor misc;
+	  misc.readFLOR( infile );
 	}
       else if( "DTLA" == fileType )
 	{

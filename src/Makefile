@@ -19,6 +19,7 @@ OBJS = \
 	dtii.o \
 	eft.o \
 	foot.o \
+	flor.o \
 	ilf.o \
 	lod.o \
 	msh.o \
@@ -103,6 +104,9 @@ eft.o: eft.cpp $(MESH_INC)/meshLib/eft.hpp
 
 foot.o: foot.cpp $(MESH_INC)/meshLib/foot.hpp
 	$(CXX) $(CFLAG) -c foot.cpp
+
+flor.o: flor.cpp $(MESH_INC)/meshLib/flor.hpp
+	$(CXX) $(CFLAG) -c flor.cpp
 
 lod.o: lod.cpp $(MESH_INC)/meshLib/lod.hpp msh.o \
 	$(MESH_INC)/meshLib/vector3.hpp \
