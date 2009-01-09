@@ -159,6 +159,34 @@ unsigned int base::readFormHeader( std::istream &file,
   return total;
 }
 
+unsigned int base::readFormHeader( std::istream &file,
+				   const std::string &expectedType,
+				   unsigned int &size )
+{
+  std::string form;
+  unsigned total = readRecordHeader( file, form, size );
+  if( "FORM" != form )
+    {
+      std::cout << "Expected FORM, found: " << form << std::endl;
+      exit( 0 );
+    }
+
+  char tempType[5];
+  file.read( tempType, 4 );
+  total += 4;
+  tempType[4] = 0;
+
+  std::string type( tempType );
+  if( expectedType != type )
+    {
+      std::cout << "Expected FORM of type " << expectedType
+		<< ", found: " << type << std::endl;
+      exit( 0 );
+    }
+
+  return total;
+}
+
 unsigned int base::writeFormHeader( std::ofstream &file,
 				    const std::string &form,
 				    const unsigned int &size,
@@ -195,6 +223,18 @@ unsigned int base::readUnknown( std::istream &file,
     }
   std::cout << std::endl;
   return size;
+}
+
+unsigned int base::read( std::istream &file, char &data )
+{
+  file.read( &data, sizeof( char ) );
+  return sizeof( char );
+}
+
+unsigned int base::read( std::istream &file, unsigned char &data )
+{
+  file.read( (char*)&data, sizeof( unsigned char ) );
+  return sizeof( unsigned char );
 }
 
 unsigned int base::read( std::istream &file, int &data )
@@ -364,22 +404,12 @@ unsigned int base::readEXSP( std::istream &file,
   unsigned int exspSize;
   std::string type;
 
-  unsigned int total = readFormHeader( file, form, exspSize, type );
+  unsigned int total = readFormHeader( file, "EXSP", exspSize );
   exspSize += 8;
-  if( form != "FORM" || type != "EXSP" )
-    {
-      std::cout << "Expected Form of type EXSP: " << type << std::endl;
-      exit( 0 );
-    }
   std::cout << "Found EXSP form" << std::endl;
 
   unsigned int size;
-  total += readFormHeader( file, form, size, type );
-  if( form != "FORM" || type != "0001" )
-    {
-      std::cout << "Expected Form of type 0001: " << type << std::endl;
-      exit( 0 );
-    }
+  total += readFormHeader( file, "0001", size );
   std::cout << "Found 0001 form" << std::endl;
 
   total += base::readSPHR( file, cx, cy, cz, radius );
@@ -409,22 +439,12 @@ unsigned int base::readEXBX( std::istream &file,
   unsigned int exbxSize;
   std::string type;
   
-  unsigned int total = readFormHeader( file, form, exbxSize, type );
+  unsigned int total = readFormHeader( file, "EXBX", exbxSize );
   exbxSize += 8;
-  if( form != "FORM" || type != "EXBX" )
-    {
-      std::cout << "Expected Form of type EXBX: " << type << std::endl;
-      return 0;
-    }
   std::cout << "Found EXBX form" << std::endl;
 
   unsigned int size;
-  total += readFormHeader( file, form, size, type );
-  if( form != "FORM" || type != "0001" )
-    {
-      std::cout << "Expected Form of type 0001: " << type << std::endl;
-      exit( 0 );
-    }
+  total += readFormHeader( file, "0001", size );
   std::cout << "Found 0001 form" << std::endl;
 
   total += base::readEXSP( file, cx, cy, cz, radius );
@@ -453,22 +473,12 @@ unsigned int base::readXCYL( std::istream &file,
   unsigned int xcylSize;
   std::string type;
 
-  unsigned int total = readFormHeader( file, form, xcylSize, type );
+  unsigned int total = readFormHeader( file, "XCYL", xcylSize );
   xcylSize += 8;
-  if( form != "FORM" || type != "XCYL" )
-    {
-      std::cout << "Expected Form of type XCYL: " << type << std::endl;
-      exit( 0 );
-    }
   std::cout << "Found XCYL form" << std::endl;
 
   unsigned int size;
-  total += readFormHeader( file, form, size, type );
-  if( form != "FORM" || type != "0000" )
-    {
-      std::cout << "Expected Form of type 0000: " << type << std::endl;
-      exit( 0 );
-    }
+  total += readFormHeader( file, "0000", size );
   std::cout << "Found 0000 form" << std::endl;
 
   total += base::readCYLN( file, u1, u2, u3, u4, u5 );
@@ -534,13 +544,8 @@ unsigned int base::readIDTL( std::istream &file,
   unsigned int idtlSize;
   std::string type;
 
-  unsigned int total = readFormHeader( file, form, idtlSize, type );
+  unsigned int total = readFormHeader( file, "IDTL", idtlSize );
   idtlSize += 8;
-  if( form != "FORM" || type != "IDTL" )
-    {
-      std::cout << "Expected FORM of type IDTL: " << type << std::endl;
-      exit( 0 );
-    }
   std::cout << "Found IDTL FORM" << std::endl;
 
   unsigned int size;
@@ -621,7 +626,6 @@ unsigned int base::readVERT( std::istream &file,
 unsigned int base::readINDX( std::istream &file,
 			     std::vector<unsigned int> &index )
 {
-  std::string form;
   unsigned int indxSize;
   std::string type;
 
@@ -683,28 +687,18 @@ unsigned int base::readAPPR( std::istream &file,
 			     float &bbP2Z
 			     )
 {
-    std::string form;
     unsigned int apprSize;
     std::string type;
 
-    unsigned int total = readFormHeader( file, form, apprSize, type );
+    unsigned int total = readFormHeader( file, "APPR", apprSize );
     apprSize += 8;
-    if( form != "FORM" || type != "APPR" )
-    {
-	std::cout << "Expected Form of type APPR: " << type << std::endl;
-	exit( 0 );
-    }
     std::cout << "Found APPR form" << std::endl;
 
     unsigned int size;
-    total += readFormHeader( file, form, size, type );
-    if( form != "FORM" || type != "0003" )
-    {
-	std::cout << "Expected Form of type 0003: " << type << std::endl;
-	exit( 0 );
-    }
+    total += readFormHeader( file, "0003", size );
     std::cout << "Found 0003 form" << std::endl;
 
+    std::string form;
     while( total < apprSize )
       {
 	peekHeader( file, form, size, type );
@@ -840,17 +834,11 @@ unsigned int base::readHPNT( std::istream &file )
 
 unsigned int base::readNULL( std::istream &file )
 {
-    std::string form;
     unsigned int nullSize;
     std::string type;
 
-    unsigned int total = readFormHeader( file, form, nullSize, type );
+    unsigned int total = readFormHeader( file, "NULL", nullSize );
     nullSize += 8;
-    if( form != "FORM" || type != "NULL" )
-    {
-	std::cout << "Expected Form of type NULL: " << type << std::endl;
-	exit( 0 );
-    }
     std::cout << "Found NULL form" << std::endl;
 
     total += readUnknown( file, nullSize - total );
@@ -871,26 +859,17 @@ unsigned int base::readNULL( std::istream &file )
 
 unsigned int base::readHPTS( std::istream &file )
 {
-    std::string form;
     unsigned int hptsSize;
     std::string type;
 
-    unsigned int total = readFormHeader( file, form, hptsSize, type );
+    unsigned int total = readFormHeader( file, "HPTS", hptsSize );
     hptsSize += 8;
-    if( form != "FORM" || type != "HPTS" )
-    {
-	std::cout << "Expected Form of type HPTS: " << type << std::endl;
-	exit( 0 );
-    }
     std::cout << "Found HPTS form" << std::endl;
 
     while( total < hptsSize )
       {
 	total += readHPNT( file );
       }
-#if 0
-    total += readUnknown( file, hptsSize - total );
-#endif
 
     if( total == hptsSize )
     {
@@ -908,17 +887,11 @@ unsigned int base::readHPTS( std::istream &file )
 
 unsigned int base::readFLOR( std::istream &file )
 {
-    std::string form;
     unsigned int florSize;
     std::string type;
 
-    unsigned int total = readFormHeader( file, form, florSize, type );
+    unsigned int total = readFormHeader( file, "FLOR", florSize );
     florSize += 8;
-    if( form != "FORM" || type != "FLOR" )
-    {
-	std::cout << "Expected Form of type FLOR: " << type << std::endl;
-	exit( 0 );
-    }
     std::cout << "Found FLOR form" << std::endl;
 
     // Read DATA record
@@ -932,16 +905,13 @@ unsigned int base::readFLOR( std::istream &file )
     std::cout << "Size: " << size << std::endl;
 
     unsigned char numFloor = 0;
-    file.read( (char*)&numFloor, sizeof( numFloor ) );
-    total += sizeof( numFloor );
+    total += read( file, numFloor );
 
-    char temp[255];
     for( unsigned char i = 0; i < numFloor; ++i )
       {
-	file.getline( temp, 255, 0 );
-	std::string name( temp );
+	std::string name;
+	total += read( file, name );
 	std::cout << name << std::endl;
-	total += name.size() + 1;
       }
     
     if( total == florSize )
@@ -960,20 +930,15 @@ unsigned int base::readFLOR( std::istream &file )
 
 unsigned int base::readCMPT( std::istream &file )
 {
-    std::string form;
     unsigned int cmptSize;
     std::string type;
 
-    unsigned int total = readFormHeader( file, form, cmptSize, type );
+    unsigned int total = readFormHeader( file, "CMPT", cmptSize );
     cmptSize += 8;
-    if( form != "FORM" || type != "CMPT" )
-    {
-	std::cout << "Expected Form of type CMPT: " << type << std::endl;
-	exit( 0 );
-    }
     std::cout << "Found CMPT form" << std::endl;
 
     unsigned int size;
+    std::string form;
     total += readFormHeader( file, form, size, type );
     if( form != "FORM")
     {
@@ -1002,20 +967,15 @@ unsigned int base::readCMPT( std::istream &file )
 
 unsigned int base::readCPST( std::istream &file )
 {
-    std::string form;
     unsigned int cpstSize;
-    std::string type;
 
-    unsigned int total = readFormHeader( file, form, cpstSize, type );
+    unsigned int total = readFormHeader( file, "CPST", cpstSize );
     cpstSize += 8;
-    if( form != "FORM" || type != "CPST" )
-    {
-	std::cout << "Expected Form of type CPST: " << type << std::endl;
-	exit( 0 );
-    }
     std::cout << "Found CPST form" << std::endl;
 
     unsigned int size;
+    std::string form;
+    std::string type;
     total += readFormHeader( file, form, size, type );
     if( form != "FORM")
     {
@@ -1087,13 +1047,8 @@ unsigned int base::readCMSH( std::istream &file )
     unsigned int cmshSize;
     std::string type;
 
-    unsigned int total = readFormHeader( file, form, cmshSize, type );
+    unsigned int total = readFormHeader( file, "CMSH", cmshSize );
     cmshSize += 8;
-    if( form != "FORM" || type != "CMSH" )
-    {
-	std::cout << "Expected Form of type CMSH: " << type << std::endl;
-	exit( 0 );
-    }
     std::cout << "Found " << form << " " << type
 	      << ": " << cmshSize-12 << " bytes"
 	      << std::endl;
@@ -1134,13 +1089,8 @@ unsigned int base::readDTAL( std::istream &file )
     unsigned int dtalSize;
     std::string type;
 
-    unsigned int total = readFormHeader( file, form, dtalSize, type );
+    unsigned int total = readFormHeader( file, "DTAL", dtalSize );
     dtalSize += 8;
-    if( form != "FORM" || type != "DTAL" )
-    {
-	std::cout << "Expected Form of type DTAL: " << type << std::endl;
-	exit( 0 );
-    }
     std::cout << "Found " << form << " " << type
 	      << ": " << dtalSize-12 << " bytes"
 	      << std::endl;

@@ -58,6 +58,10 @@ namespace ml
 					std::string &form,
 					unsigned int &size,
 					std::string &type );
+
+    static unsigned int readFormHeader( std::istream &file,
+					const std::string &expectedType,
+					unsigned int &size );
     
     static unsigned int writeFormHeader( std::ofstream &file,
 					 const std::string &form,
@@ -83,6 +87,8 @@ namespace ml
     static unsigned int readUnknown( std::istream &file,
 				     const unsigned int size );
 
+    static unsigned int read( std::istream &file, char &data );
+    static unsigned int read( std::istream &file, unsigned char &data );
     static unsigned int read( std::istream &file, int &data );
     static unsigned int read( std::istream &file, unsigned int &data );
     static unsigned int read( std::istream &file, float &data );
