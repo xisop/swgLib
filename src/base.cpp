@@ -594,6 +594,7 @@ unsigned int base::readVERT( std::istream &file,
 
   float x, y, z;
   unsigned int numVerts = (vertSize-8)/(sizeof( float ) * 3);
+  std::cout << "Number of vertices: " << numVerts << std::endl;
   for( unsigned int i = 0; i < numVerts; ++i )
     {
       total += read( file, x );
