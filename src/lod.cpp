@@ -98,8 +98,7 @@ unsigned int lod::readLOD( std::istream &file, std::string path )
 	{
 	  if( type == "APPR" )
 	    {
-	      total += base::readAPPR( file, cx, cy, cz, radius,
-				       x1, y1, z1, x2, y2, z2 );
+	      total += model::readAPPR( file );
 	    }
 	  else if( type == "DATA" )
 	    {
@@ -317,7 +316,7 @@ unsigned int lod::readRADR( std::istream &file )
       {
 	std::vector<vector3> vec;
 	std::vector<unsigned int> index;
-	total += base::readIDTL( file, vec, index );
+	total += model::readIDTL( file, vec, index );
       }
 
     if( radrSize == total )
@@ -373,7 +372,7 @@ unsigned int lod::readTEST( std::istream &file )
 	      {
 		std::vector<vector3> vec;
 		std::vector<unsigned int> index;
-		total += base::readIDTL( file, vec, index );
+		total += model::readIDTL( file, vec, index );
 	      }
 	    else
 	      {
@@ -438,7 +437,7 @@ unsigned int lod::readWRIT( std::istream &file )
       {
 	std::vector<vector3> vec;
 	std::vector<unsigned int> index;
-	total += base::readIDTL( file, vec, index );
+	total += model::readIDTL( file, vec, index );
       }
 
     if( writSize == total )

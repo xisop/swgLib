@@ -22,7 +22,7 @@
  along with meshLib; if not, write to the Free Software
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include <meshLib/base.hpp>
+#include <meshLib/model.hpp>
 #include <meshLib/matrix3.hpp>
 #include <meshLib/vector3.hpp>
 #include <meshLib/cell.hpp>
@@ -36,7 +36,7 @@
 
 namespace ml
 {
-  class prto : public base
+  class prto : public model
   {
   public:
     prto();

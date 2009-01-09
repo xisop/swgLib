@@ -223,7 +223,7 @@ unsigned int ilf::readNODE( std::istream &file )
 
     matrix3 mat;
     vector3 vec;
-    total += base::readMatrixAndPosition( file, mat, vec );
+    total += model::readMatrixAndPosition( file, mat, vec );
 
     std::cout << "Matrix: " << std::endl;
     mat.print();

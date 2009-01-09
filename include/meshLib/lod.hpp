@@ -4,7 +4,7 @@
  *  \author Kenneth R. Sewell III
 
  meshLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006,2007 Kenneth R. Sewell III
+ Copyright (C) 2006-2009 Kenneth R. Sewell III
 
  This file is part of meshLib.
 
@@ -22,7 +22,7 @@
  along with meshLib; if not, write to the Free Software
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include <meshLib/base.hpp>
+#include <meshLib/model.hpp>
 
 #include <fstream>
 #include <string>
@@ -33,7 +33,7 @@
 
 namespace ml
 {
-  class lod : public base
+  class lod : public model
   {
   public:
     lod();

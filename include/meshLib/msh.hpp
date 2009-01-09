@@ -22,7 +22,7 @@
  along with meshLib; if not, write to the Free Software
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include <meshLib/base.hpp>
+#include <meshLib/model.hpp>
 #include <meshLib/cshd.hpp>
 #include <meshLib/sht.hpp>
 #include <meshLib/mshVertexData.hpp>
@@ -41,7 +41,7 @@ namespace ml
     MAX_TEXTURES = 8
   };
 
-  class msh : public base
+  class msh : public model
   {
   public:
     msh();

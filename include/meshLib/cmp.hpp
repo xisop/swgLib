@@ -22,7 +22,7 @@
  along with meshLib; if not, write to the Free Software
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include <meshLib/base.hpp>
+#include <meshLib/model.hpp>
 #include <meshLib/vector3.hpp>
 #include <meshLib/matrix3.hpp>
 
@@ -36,7 +36,7 @@
 namespace ml
 {
   
-  class cmp : public base
+  class cmp : public model
   {
   public:
     cmp();

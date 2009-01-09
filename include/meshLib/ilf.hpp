@@ -4,7 +4,7 @@
  *  \author Kenneth R. Sewell III
 
  meshLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006,2007 Kenneth R. Sewell III
+ Copyright (C) 2006-2009 Kenneth R. Sewell III
 
  This file is part of meshLib.
 
@@ -23,7 +23,7 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include <meshLib/base.hpp>
+#include <meshLib/model.hpp>
 #include <meshLib/matrix3.hpp>
 #include <meshLib/vector3.hpp>
 
@@ -36,7 +36,7 @@
 
 namespace ml
 {
-  class ilf : public base
+  class ilf : public model
   {
   public:
     ilf();

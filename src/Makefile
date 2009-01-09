@@ -12,6 +12,7 @@ OBJS = \
 	mshVertexIndex.o \
 	apt.o \
 	base.o \
+	box.o \
 	cclt.o \
 	cmp.o \
 	cshd.o \
@@ -22,6 +23,7 @@ OBJS = \
 	flor.o \
 	ilf.o \
 	lod.o \
+	model.o \
 	msh.o \
 	peft.o \
 	prto.o \
@@ -47,6 +49,8 @@ MESH_OBJS = \
 	mshVertexData.o \
 	mshVertexIndex.o \
 	base.o \
+	box.o \
+	model.o \
 	msh.o \
 	sht.o \
 	eft.o \
@@ -86,6 +90,9 @@ apt.o: apt.cpp $(MESH_INC)/meshLib/apt.hpp
 base.o: base.cpp $(MESH_INC)/meshLib/base.hpp
 	$(CXX) $(CFLAG) -c base.cpp
 
+box.o: box.cpp $(MESH_INC)/meshLib/box.hpp
+	$(CXX) $(CFLAG) -c box.cpp
+
 cclt.o: cclt.cpp $(MESH_INC)/meshLib/cclt.hpp $(MESH_INC)/meshLib/shot.hpp
 	$(CXX) $(CFLAG) -c cclt.cpp
 
@@ -98,6 +105,9 @@ cshd.o: cshd.cpp $(MESH_INC)/meshLib/cshd.hpp sht.o
 
 msh.o: msh.cpp $(MESH_INC)/meshLib/msh.hpp sht.o cshd.o base.o
 	$(CXX) $(CFLAG) -c msh.cpp
+
+model.o: model.cpp $(MESH_INC)/meshLib/model.hpp
+	$(CXX) $(CFLAG) -c model.cpp
 
 eft.o: eft.cpp $(MESH_INC)/meshLib/eft.hpp
 	$(CXX) $(CFLAG) -c eft.cpp

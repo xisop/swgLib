@@ -103,23 +103,8 @@ unsigned int cmp::readCMP( std::istream &file, std::string path )
 	{
 	  if( type == "APPR" )
 	    {
-	      total += base::readAPPR( file, cx, cy, cz, radius,
-				       x1, y1, z1, x2, y2, z2 );
+	      total += model::readAPPR( file );
 	    }
-#if 0
-	  else if( type == "DATA" )
-	    {
-	      total += readChildren( file );
-	    }
-	  else if( type == "TEST" )
-	    {
-	      total += readTEST( file );
-	    }
-	  else if( type == "WRIT" )
-	    {
-	      total += readWRIT( file );
-	    }
-#endif
 	  else if( type == "RADR" )
 	    {
 	      total += readRADR( file );
@@ -134,16 +119,6 @@ unsigned int cmp::readCMP( std::istream &file, std::string path )
 	{
 	  total += readPART( file );
 	}
-#if 0
-      else if( form == "PIVT" )
-	{
-	  total += readPIVT( file );
-	}
-      else if( form == "INFO" )
-	{
-	  total += readINFO( file );
-	}
-#endif
       else
 	{
 	  std::cout << "Unexpected record: " << form << std::endl;
@@ -194,7 +169,7 @@ unsigned int cmp::readPART( std::istream &file )
     // Read scale/rotate matrix and position vector
     vector3 vec;
     matrix3 matrix;
-    total += base::readMatrixAndPosition( file, matrix, vec );
+    total += model::readMatrixAndPosition( file, matrix, vec );
 
     position.push_back( vec );
     scaleRotate.push_back( matrix );
@@ -253,7 +228,7 @@ unsigned int cmp::readRADR( std::istream &file )
 
     if( numNodes > 0 )
       {
-	total += base::readIDTL( file, radrVert, radrIndex );
+	total += model::readIDTL( file, radrVert, radrIndex );
       }
 
     if( radrSize == total )
@@ -270,191 +245,3 @@ unsigned int cmp::readRADR( std::istream &file )
     return total;
 }
 
-#if 0
-unsigned int cmp::readChildren( std::istream &file )
-{
-    unsigned int total = 0;
-
-    std::string form;
-    unsigned int size;
-    std::string type;
-
-    total += readFormHeader( file, form, size, type );
-    if( form != "FORM" || type != "DATA" )
-    {
-	std::cout << "Expected Form of type DATA: " << type << std::endl;
-	exit( 0 );
-    }
-    std::cout << "Found DATA form" << std::endl;
-
-    while( total < size-4 )
-    {
-	total += readCHLD( file );
-    }
-
-    return total;
-}
-
-unsigned int cmp::readTEST( std::istream &file )
-{
-    unsigned int total = 0;
-
-    std::string form;
-    unsigned int testSize;
-    std::string type;
-
-    total += readFormHeader( file, form, testSize, type );
-    testSize += 8;
-    if( form != "FORM" || type != "TEST" )
-    {
-	std::cout << "Expected Form of type TEST: " << type << std::endl;
-	exit( 0 );
-    }
-    std::cout << "Found TEST form" << std::endl;
-
-    unsigned int size;
-    total += readRecordHeader( file, type, size );
-    if( type != "INFO" )
-    {
-	std::cout << "Expected record of type INFO: " << type << std::endl;
-	exit( 0 );
-    }
-    std::cout << "Found INFO record" << std::endl;
-    unsigned int numNodes;
-    file.read( (char *)&numNodes, sizeof( numNodes ) );
-    total += sizeof( numNodes );
-
-    std::cout << "Num nodes: " << numNodes << std::endl;
-
-    // Need to loop here and read IDTL (and others?)
-     
-    total += readUnknown( file, testSize - total );
-    total = testSize;
-
-    if( testSize == total )
-    {
-	std::cout << "Finished reading TEST" << std::endl;
-    }
-    else
-    {
-	std::cout << "Failed in reading TEST" << std::endl;
-        std::cout << "Read " << total << " out of " << testSize
-                  << std::endl;
-    }
-
-    return total;
-}
-
-unsigned int cmp::readWRIT( std::istream &file )
-{
-    unsigned int total = 0;
-
-    std::string form;
-    unsigned int writSize;
-    std::string type;
-
-    total += readFormHeader( file, form, writSize, type );
-    writSize += 8;
-    if( form != "FORM" || type != "WRIT" )
-    {
-	std::cout << "Expected Form of type WRIT: " << type << std::endl;
-	exit( 0 );
-    }
-    std::cout << "Found WRIT form" << std::endl;
-
-    unsigned int size;
-    total += readRecordHeader( file, type, size );
-    if( type != "INFO" )
-    {
-	std::cout << "Expected record of type INFO: " << type << std::endl;
-	exit( 0 );
-    }
-    std::cout << "Found INFO record" << std::endl;
-
-    unsigned int numNodes;
-    file.read( (char *)&numNodes, sizeof( numNodes ) );
-    total += sizeof( numNodes );
-
-    std::cout << "Num nodes: " << numNodes << std::endl;
-
-    // Need to loop here and read IDTL (and others?)
-     
-    total += readUnknown( file, writSize - total );
-    total = writSize;
-
-    if( writSize == total )
-    {
-	std::cout << "Finished reading WRIT" << std::endl;
-    }
-    else
-    {
-	std::cout << "Failed in reading WRIT" << std::endl;
-        std::cout << "Read " << total << " out of " << writSize
-                  << std::endl;
-    }
-
-    return total;
-}
-
-unsigned int cmp::readPIVT( std::istream &file )
-{
-    unsigned int total = 0;
-
-    unsigned int size;
-    std::string type;
-
-    total += readRecordHeader( file, type, size );
-    if( type != "PIVT" )
-    {
-	std::cout << "Expected record of type PIVT: " << type << std::endl;
-	exit( 0 );
-    }
-    std::cout << "Found PIVT record" << std::endl;
-
-    total += readUnknown( file, size );
-    
-    return total;
-}
-
-unsigned int cmp::readINFO( std::istream &file )
-{
-    unsigned int total = 0;
-
-    unsigned int size;
-    std::string type;
-
-    total += readRecordHeader( file, type, size );
-    if( type != "INFO" )
-    {
-	std::cout << "Expected record of type INFO: " << type << std::endl;
-	exit( 0 );
-    }
-    std::cout << "Found INFO record" << std::endl;
-
-    unsigned int num = size/12;
-
-    for( unsigned int i=0; i < num; ++i )
-    {
-	unsigned int childNo;
-	file.read( (char*)&childNo, sizeof( childNo ) );
-	total += sizeof( childNo );
-
-	float n;
-	file.read( (char*)&n, sizeof( n ) );
-	total += sizeof( n );
-	near.push_back( n );
-
-	float f;
-	file.read( (char*)&f, sizeof( f ) );
-	total += sizeof( f );
-	far.push_back( f );
-
-	std::cout << childNo << ": "
-		  << near[far.size()-1] << "..."
-		  << far[far.size()-1]
-		  << std::endl;
-    }
-    
-    return total;
-}
-#endif

@@ -28,6 +28,7 @@
 #include <string>
 #include <vector>
 
+#include <meshLib/box.hpp>
 #include <meshLib/vector3.hpp>
 #include <meshLib/matrix3.hpp>
 
@@ -46,8 +47,15 @@ namespace ml
     unsigned int readBASE( std::istream &file ){ return 0; }
     virtual bool canWrite() const { return false; }
 
-  protected:
-    bool isOfType( std::istream &file, const std::string &Type );
+    static unsigned int readUnknown( std::istream &file,
+				     const unsigned int size );
+
+    static unsigned int read( std::istream &file, char &data );
+    static unsigned int read( std::istream &file, unsigned char &data );
+    static unsigned int read( std::istream &file, int &data );
+    static unsigned int read( std::istream &file, unsigned int &data );
+    static unsigned int read( std::istream &file, float &data );
+    static unsigned int read( std::istream &file, std::string &data );
 
     static void peekHeader( std::istream &file,
 			    std::string &form,
@@ -84,81 +92,10 @@ namespace ml
 					 const unsigned int &size,
 					 char *buffer);
     
-    static unsigned int readUnknown( std::istream &file,
-				     const unsigned int size );
 
-    static unsigned int read( std::istream &file, char &data );
-    static unsigned int read( std::istream &file, unsigned char &data );
-    static unsigned int read( std::istream &file, int &data );
-    static unsigned int read( std::istream &file, unsigned int &data );
-    static unsigned int read( std::istream &file, float &data );
-    static unsigned int read( std::istream &file, std::string &data );
 
-    static unsigned int readEXBX( std::istream &file,
-				  float &cx, float &cy, float &cz,
-				  float &radius,
-				  float &x1, float &y1, float &z1,
-				  float &x2, float &y2, float &z2
-				  );
-    static unsigned int readEXSP( std::istream &file,
-				  float &cx, float &cy, float &cz,
-				  float &radius
-				  );
-    static unsigned int readXCYL( std::istream &file,
-				  float &u1, float &u2, float &u3,
-				  float &u4, float &u5
-				  );
-    static unsigned int readSPHR( std::istream &file,
-				  float &cx, float &cy, float &cz,
-				  float &radius
-				  );
-
-    static unsigned int readCYLN( std::istream &file,
-				  float &u1, float &u2, float &u3,
-				  float &u4, float &u5
-				  );
-
-    static unsigned int readBOX( std::istream &file,
-				 float &x1, float &y1, float &z1,
-				 float &x2, float &y2, float &z2
-				 );
-
-    static unsigned int readMatrixAndPosition( std::istream &file,
-					       matrix3 &matrix,
-					       vector3 &position
-					       );
-
-    static unsigned int readVERT( std::istream &file,
-				  std::vector<vector3> &vec
-				  );
-
-    static unsigned int readINDX( std::istream &file,
-				  std::vector<unsigned int> &index );
-
-    static unsigned int readIDTL( std::istream &file,
-				  std::vector<vector3> &vec,
-				  std::vector<unsigned int> &index
-				  );
-    unsigned int readCMSH( std::istream &file );
-    unsigned int readCMPT( std::istream &file );
-    unsigned int readCPST( std::istream &file );
-    unsigned int readDTAL( std::istream &file );
-
-    unsigned int readAPPR( std::istream &file,
-			   float &bsX,
-			   float &bsY,
-			   float &bsZ,
-			   float &bsRadius,
-			   float &bbP1X,
-			   float &bbP1Y,
-			   float &bbP1Z,
-			   float &bbP2X,
-			   float &bbP2Y,
-			   float &bbP2Z );
-    unsigned int readNULL( std::istream &file );
-    unsigned int readHPTS( std::istream &file );
-    unsigned int readFLOR( std::istream &file );
-    unsigned int readHPNT( std::istream &file );
+  protected:
+    bool isOfType( std::istream &file, const std::string &Type );
 
     static bool fixSlash( std::string &filename );
 

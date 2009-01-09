@@ -202,7 +202,7 @@ unsigned int prto::readLGHT( std::istream &file )
 	total += sizeof( z );
 	std::cout << z << std::endl;
 
-	total += base::readMatrixAndPosition( file, mat, vec );
+	total += model::readMatrixAndPosition( file, mat, vec );
 	std::cout << "Matrix: " << std::endl;
 	mat.print();
 
@@ -277,7 +277,7 @@ unsigned int prto::readPRTS( std::istream &file )
 	  {
 	    std::vector<vector3> vec;
 	    std::vector<unsigned int> index;
-	    total += base::readIDTL( file, vec, index );
+	    total += model::readIDTL( file, vec, index );
 	  }
       }
 
@@ -454,13 +454,9 @@ unsigned int prto::readCELL( std::istream &file )
 	else if( "EXBX" == type )
 	  {
 	    float cx, cy, cz, radius;
-	    float x1, y1, z1;
-	    float x2, y2, z2;
-	    total += readEXBX( file,
-			       cx, cy, cz, radius,
-			       x1, y1, z1,
-			       x2, y2, z2
-			       );
+	    box box1;
+	    total += readEXBX( file, cx, cy, cz, radius, box1 );
+	    bbox.push_back( box1 );
 	  }
 	else if( "XCYL" == type )
 	  {
@@ -635,7 +631,7 @@ unsigned int prto::readPRTL( std::istream &file,
     total += sizeof( y );
     std::cout << (unsigned int)y << std::endl;
 
-    total += base::readMatrixAndPosition( file, mat, vec );
+    total += model::readMatrixAndPosition( file, mat, vec );
     std::cout << "Matrix: " << std::endl;
     mat.print();
     

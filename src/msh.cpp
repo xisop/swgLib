@@ -288,8 +288,7 @@ unsigned int msh::readMSH( std::istream &file, std::string path )
   
   unsigned int size;
   total += readFormHeader( file, form, size, type );
-  total += base::readAPPR( file, cx, cy, cz, radius,
-			   x1, y1, z1, x2, y2, z2 );
+  total += model::readAPPR( file );
   total += readSPS( file );
   
   if( meshSize == (total-8) )
