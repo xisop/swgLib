@@ -413,8 +413,7 @@ unsigned int msh::readGeode( std::istream &file,
 	exit( 0 );
     }
     unsigned int infoNumber;
-    file.read( (char *)&infoNumber, sizeof( infoNumber ) );
-    total += sizeof( infoNumber );
+    total += base::read( file, infoNumber );
     std::cout << "Info: " << infoNumber << std::endl;
 
     // Load shader and textures...
@@ -443,15 +442,13 @@ unsigned int msh::readGeode( std::istream &file,
 
 unsigned int msh::readGeometry( std::istream &file )
 {
-    unsigned int total = 0;
-
     std::string type;
     unsigned int geometrySize;
     unsigned int size;
 
     // Read top level FORM record.
     std::string form;
-    total += readFormHeader( file, form, geometrySize, type );
+    unsigned int total = readFormHeader( file, form, geometrySize, type );
     geometrySize += 8; // Size of geometry including initial FORM and size.
     if( form != "FORM" )
     {
@@ -467,22 +464,15 @@ unsigned int msh::readGeometry( std::istream &file )
 	exit( 0 );
     }
 
-#if 1
     unsigned int u1;
-    file.read( (char*)&u1, sizeof( u1 ) );
-    total += sizeof( u1 );
+    total += base::read( file, u1 );
     std::cout << u1 << std::endl;
     
     unsigned short u2;
-    file.read( (char*)&u2, sizeof( u2 ) );
-    total += sizeof( u2 );
+    total += base::read( file, u2 );
     std::cout << u2 << std::endl;
     
     total += readUnknown( file, size-6 );
-#else
-    file.seekg( size, std::ios_base::cur );
-    total += size;
-#endif
 
     // Read VTXA FORM record.
     total += readFormHeader( file, form, size, type );
@@ -547,7 +537,7 @@ unsigned int msh::readGeometrySIDX( std::istream &file, unsigned int bytesPerInd
     std::string type;
     unsigned int size;
     // Read SIDX record
-    readRecordHeader( file, type, size );
+    unsigned int total = readRecordHeader( file, type, size );
     if( type != "SIDX" )
     {
 	std::cout << "Expected SIDX record not: " << type << std::endl;
@@ -557,7 +547,7 @@ unsigned int msh::readGeometrySIDX( std::istream &file, unsigned int bytesPerInd
     std::cout << "size: " << size << std::endl;
 
     unsigned int num;
-    file.read( (char *)&num, sizeof( num ) );
+    total += base::read( num );
     std::cout << "Num matrix/index/triangle sets: " << num << std::endl;
     
     for( unsigned int j = 0; j < num; ++j )
