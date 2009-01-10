@@ -637,14 +637,8 @@ unsigned int model::readCMPT( std::istream &file )
     std::cout << "Found CMPT form" << std::endl;
 
     unsigned int size;
-    std::string form;
-    total += readFormHeader( file, form, size, type );
-    if( form != "FORM")
-    {
-	std::cout << "Expected FORM not: " << form << std::endl;
-	exit( 0 );
-    }
-    std::cout << "Found " << form << " " << type
+    total += readFormHeader( file, "0000", size );
+    std::cout << "Found FORM " << type
 	      << ": " << size-4 << " bytes"
 	      << std::endl;
 
@@ -675,6 +669,7 @@ unsigned int model::readCPST( std::istream &file )
     unsigned int size;
     std::string form;
     std::string type;
+#if 0
     total += readFormHeader( file, form, size, type );
     if( form != "FORM")
     {
@@ -684,7 +679,9 @@ unsigned int model::readCPST( std::istream &file )
     std::cout << "Found " << form << " " << type
 	      << ": " << size-4 << " bytes"
 	      << std::endl;
-
+#else
+    total += readFormHeader( file, "0000", size );
+#endif
     while( total < cpstSize )
       {
 	// Peek at next record, but keep file at same place.
