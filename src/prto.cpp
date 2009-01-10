@@ -41,18 +41,12 @@ prto::~prto()
 unsigned int prto::readPRTO( std::istream &file, std::string path )
 {
   basePath = path;
-  unsigned int total = 0;
   std::string form;
   unsigned int prtoSize;
   std::string type;
 
-  total += readFormHeader( file, form, prtoSize, type );
+  unsigned int total = readFormHeader( file, "PRTO", prtoSize );
   prtoSize += 8;
-  if( form != "FORM" || type != "PRTO" )
-    {
-      std::cout << "Expected Form of type PRTO: " << type << std::endl;
-      exit( 0 );
-    }
   std::cout << "Found PRTO form"
 	    << ": " << prtoSize-12 << " bytes"
 	    << std::endl;
@@ -90,13 +84,10 @@ unsigned int prto::readPRTO( std::istream &file, std::string path )
 
 unsigned int prto::readDATA( std::istream &file )
 {
-    unsigned int total = 0;
-
-    std::string form;
     unsigned int dataSize;
     std::string type;
 
-    total += readRecordHeader( file, type, dataSize );
+    unsigned int total = readRecordHeader( file, type, dataSize );
     dataSize += 8;
     if( type != "DATA" )
     {
@@ -108,10 +99,8 @@ unsigned int prto::readDATA( std::istream &file )
 	      << dataSize-8 << " bytes"
 	      << std::endl;
 
-    file.read( (char*)&numPortals, sizeof( numPortals ) );
-    total += sizeof( numPortals );
-    file.read( (char*)&numCells, sizeof( numCells ) );
-    total += sizeof( numCells );
+    total += base::read( file, numPortals );
+    total += base::read( file, numCells );
 
     std::cout << "Num portals: " << numPortals << std::endl;
     std::cout << "Num cells: " << numCells << std::endl;
@@ -132,13 +121,11 @@ unsigned int prto::readDATA( std::istream &file )
 
 unsigned int prto::readLGHT( std::istream &file )
 {
-    unsigned int total = 0;
-
     std::string form;
     unsigned int lghtSize;
     std::string type;
 
-    total += readRecordHeader( file, type, lghtSize );
+    unsigned int total = readRecordHeader( file, type, lghtSize );
     lghtSize += 8;
     if( type != "LGHT" )
     {
@@ -151,10 +138,8 @@ unsigned int prto::readLGHT( std::istream &file )
 	      << std::endl;
 
     unsigned int numLights;
-    file.read( (char*)&numLights, sizeof( numLights ) );
-    total += sizeof( numLights );
+    total += base::read( file, numLights );
     std::cout << "Num lights: " << numLights << std::endl;
-
 
     ml::matrix3 mat;
     ml::vector3 vec;
@@ -164,42 +149,33 @@ unsigned int prto::readLGHT( std::istream &file )
     for( unsigned int i = 0; i < numLights; ++i )
       {
 	std::cout << "Light: " << i << std::endl;
-	file.read( (char*)&x, sizeof( x ) );
-	total += sizeof( x );
+	total += base::read( file, x );
 	std::cout << (unsigned int)x << std::endl;
 	
 	//
-	file.read( (char*)&z, sizeof( z ) );
-	total += sizeof( z );
+	total += base::read( file, z );
 	std::cout << z << " ";
 	
-	file.read( (char*)&z, sizeof( z ) );
-	total += sizeof( z );
+	total += base::read( file, z );
 	std::cout << z << " ";
 	
-	file.read( (char*)&z, sizeof( z ) );
-	total += sizeof( z );
+	total += base::read( file, z );
 	std::cout << z << " ";
 	
-	file.read( (char*)&z, sizeof( z ) );
-	total += sizeof( z );
+	total += base::read( file, z );
 	std::cout << z << std::endl;
 
 	//
-	file.read( (char*)&z, sizeof( z ) );
-	total += sizeof( z );
+	total += base::read( file, z );
 	std::cout << z << " ";
 	
-	file.read( (char*)&z, sizeof( z ) );
-	total += sizeof( z );
+	total += base::read( file, z );
 	std::cout << z << " ";
 	
-	file.read( (char*)&z, sizeof( z ) );
-	total += sizeof( z );
+	total += base::read( file, z );
 	std::cout << z << " ";
 	
-	file.read( (char*)&z, sizeof( z ) );
-	total += sizeof( z );
+	total += base::read( file, z );
 	std::cout << z << std::endl;
 
 	total += model::readMatrixAndPosition( file, mat, vec );
@@ -209,20 +185,15 @@ unsigned int prto::readLGHT( std::istream &file )
 	std::cout << "Position: ";
 	vec.print();
 	
-
-	file.read( (char*)&z, sizeof( z ) );
-	total += sizeof( z );
+	total += base::read( file, z );
 	std::cout << z << " ";
 	
-	file.read( (char*)&z, sizeof( z ) );
-	total += sizeof( z );
+	total += base::read( file, z );
 	std::cout << z << " ";
 	
-	file.read( (char*)&z, sizeof( z ) );
-	total += sizeof( z );
+	total += base::read( file, z );
 	std::cout << z << std::endl;
       }
-
 
     if( lghtSize == total )
     {
@@ -240,31 +211,21 @@ unsigned int prto::readLGHT( std::istream &file )
 
 unsigned int prto::readPRTS( std::istream &file )
 {
-    unsigned int total = 0;
-
-    std::string form;
     unsigned int prtsSize;
     std::string type;
 
-    total += readFormHeader( file, form, prtsSize, type );
+    unsigned int total = readFormHeader( file, "PRTS", prtsSize );
     prtsSize += 8;
-    if( form != "FORM" || type != "PRTS" )
-    {
-	std::cout << "Expected Form of type PRTS: " << type << std::endl;
-	exit( 0 );
-    }
-    std::cout << "Found " << form << " " << type
+    std::cout << "Found FORM " << type
 	      << ": " << prtsSize-12 << " bytes"
 	      << std::endl;
 
     unsigned int size;
-    unsigned int position;
+    std::string form;
     for( unsigned int i = 0; i < numPortals; ++i )
       {
 	// Peek at next record, but keep file at same place.
-        position = file.tellg();
-        readFormHeader( file, form, size, type );
-        file.seekg( position, std::ios_base::beg );
+	peekHeader( file, form, size, type );
 
 	if( "PRTL" == form )
 	  {
@@ -297,20 +258,12 @@ unsigned int prto::readPRTS( std::istream &file )
 
 unsigned int prto::readCELS( std::istream &file )
 {
-    unsigned int total = 0;
-
-    std::string form;
     unsigned int celsSize;
     std::string type;
 
-    total += readFormHeader( file, form, celsSize, type );
+    unsigned int total = readFormHeader( file, "CELS", celsSize );
     celsSize += 8;
-    if( form != "FORM" || type != "CELS" )
-    {
-	std::cout << "Expected Form of type CELS: " << type << std::endl;
-	exit( 0 );
-    }
-    std::cout << "Found " << form << " " << type
+    std::cout << "Found FORM " << type
 	      << ": " << celsSize-12 << " bytes"
 	      << std::endl;
 
@@ -337,13 +290,10 @@ unsigned int prto::readCELS( std::istream &file )
 
 unsigned int prto::readPRTLRecord( std::istream &file )
 {
-    unsigned int total = 0;
-
-    std::string form;
     unsigned int prtlSize;
     std::string type;
 
-    total += readRecordHeader( file, type, prtlSize );
+    unsigned int total = readRecordHeader( file, type, prtlSize );
     prtlSize += 8;
     if( type != "PRTL" )
     {
@@ -356,21 +306,15 @@ unsigned int prto::readPRTLRecord( std::istream &file )
 	      << std::endl;
 
     unsigned int numVerts;
-    file.read( (char*)&numVerts, sizeof( numVerts ) );
-    total += sizeof( numVerts );
+    total += base::read( file, numVerts );
     std::cout << "NumVerts: " << numVerts << std::endl;
 
     float x, y, z;
     for( unsigned int i = 0; i < numVerts; ++i )
       {
-	file.read( (char*)&x, sizeof( x ) );
-	total += sizeof( x );
-	
-	file.read( (char*)&y, sizeof( y ) );
-	total += sizeof( y );
-	
-	file.read( (char*)&z, sizeof( z ) );
-	total += sizeof( z );
+	total += base::read( file, x );
+	total += base::read( file, y );
+	total += base::read( file, z );
 #if 0
 	std::cout << "vert: " << x << ", "
 		  << y << ", " << z
@@ -394,20 +338,13 @@ unsigned int prto::readPRTLRecord( std::istream &file )
 
 unsigned int prto::readCELL( std::istream &file )
 {
-    unsigned int total = 0;
-
     std::string form;
     unsigned int cellSize;
     std::string type;
 
-    total += readFormHeader( file, form, cellSize, type );
+    unsigned int total = readFormHeader( file, "CELL", cellSize );
     cellSize += 8;
-    if( form != "FORM" || type != "CELL" )
-    {
-	std::cout << "Expected Form of type CELL: " << type << std::endl;
-	exit( 0 );
-    }
-    std::cout << "Found " << form << " " << type
+    std::cout << "Found FORM " << type
 	      << ": " << cellSize-12 << " bytes"
 	      << std::endl;
 
@@ -425,13 +362,10 @@ unsigned int prto::readCELL( std::istream &file )
     unsigned int numCellPortals;
     total += readCELLDATA( file, numCellPortals );
 
-    unsigned int position;
     while( total < cellSize )
       {
 	// Peek at next record, but keep file at same place.
-        position = file.tellg();
-        readFormHeader( file, form, size, type );
-        file.seekg( position, std::ios_base::beg );
+	peekHeader( file, form, size, type );
 
 	if( "CMSH" == type )
 	  {
@@ -467,6 +401,10 @@ unsigned int prto::readCELL( std::istream &file )
 	  {
 	    total += readLGHT( file );
 	  }
+	else if( "DTAL" == type )
+	  {
+	    total += readDTAL( file );
+	  }
 	else
 	  {
 	    std::cout << "Unexpected type: " << type << std::endl;
@@ -491,13 +429,10 @@ unsigned int prto::readCELL( std::istream &file )
 unsigned int prto::readCELLDATA( std::istream &file,
 				 unsigned int &numCellPortals )
 {
-    unsigned int total = 0;
-
-    std::string form;
     unsigned int dataSize;
     std::string type;
 
-    total += readRecordHeader( file, type, dataSize );
+    unsigned int total = readRecordHeader( file, type, dataSize );
     dataSize += 8;
     if( type != "DATA" )
     {
@@ -511,44 +446,34 @@ unsigned int prto::readCELLDATA( std::istream &file,
 
     ml::cell newCell;
 
-    file.read( (char*)&numCellPortals, sizeof( numCellPortals ) );
-    total += sizeof( numCellPortals );
+    total += base::read( file, numCellPortals );
     std::cout << "Num portals in this cell: " << numCellPortals << std::endl;
 
     unsigned char u1;
-    file.read( (char*)&u1, sizeof( u1 ) );
+    total += base::read( file, u1 );
     newCell.setUnknown1( u1 );
-    total += sizeof( u1 );
     std::cout << "???: " << (unsigned int)u1 << std::endl;
 
-    char temp[255];
     std::string cellName;
-    file.getline( temp, 255, 0 );
-    cellName = temp;
+    total += base::read( file, cellName );
     newCell.setName( cellName );
-    total += cellName.size() + 1;
     std::cout << "Cell name: " << cellName << std::endl;
 
     std::string cellModel;
-    file.getline( temp, 255, 0 );
-    cellModel = temp;
+    total += base::read( file, cellModel );
     newCell.setModelFilename( cellModel );
-    total += cellModel.size() + 1;
     std::cout << "Cell model: " << cellModel << std::endl;
 
     unsigned char hasFloor;
-    file.read( (char*)&hasFloor, sizeof( hasFloor ) );
+    total += base::read( file, hasFloor );
     newCell.setHasFloor( 0 < hasFloor );
-    total += sizeof( hasFloor );
     std::cout << "Has floor: " << (unsigned int)hasFloor << std::endl;
 
     if( hasFloor > 0 )
       {
 	std::string cellFloor;
-	file.getline( temp, 255, 0 );
-	cellFloor = temp;
+	total += base::read( file, cellFloor );
 	newCell.setFloorFilename( cellFloor );
-	total += cellFloor.size() + 1;
 	std::cout << "Cell floor: " << cellFloor << std::endl;
       }
     
@@ -571,20 +496,13 @@ unsigned int prto::readPRTL( std::istream &file,
 			     ml::matrix3 &mat, 
 			     ml::vector3 &vec )
 {
-    unsigned int total = 0;
-
     std::string form;
     unsigned int prtlSize;
     std::string type;
 
-    total += readFormHeader( file, form, prtlSize, type );
+    unsigned int total = readFormHeader( file, "PRTL", prtlSize );
     prtlSize += 8;
-    if( form != "FORM" || type != "PRTL" )
-    {
-	std::cout << "Expected Form of type PRTL: " << type << std::endl;
-	exit( 0 );
-    }
-    std::cout << "Found " << form << " " << type
+    std::cout << "Found FORM " << type
 	      << ": " << prtlSize-12 << " bytes"
 	      << std::endl;
 
@@ -599,36 +517,26 @@ unsigned int prto::readPRTL( std::istream &file,
 	      << ": " << size << " bytes"
 	      << std::endl;
 
-    //float w;
-    //unsigned short x;
     unsigned char y;
     unsigned int z;
 
-    file.read( (char *)&y, sizeof( y ) );
-    total += sizeof( y );
+    total += base::read( file, y );
     std::cout << (unsigned int)y << std::endl;
     
-    file.read( (char *)&z, sizeof( z ) );
-    total += sizeof( z );
+    total += base::read( file, z );
     std::cout << "Portal geometry index?: " << z << std::endl;
     
-    file.read( (char *)&y, sizeof( y ) );
-    total += sizeof( y );
+    total += base::read( file, y );
     std::cout << (unsigned int)y << std::endl;
     
-    file.read( (char *)&z, sizeof( z ) );
-    total += sizeof( z );
+    total += base::read( file, z );
     std::cout << "Adjacent cell: " << z << std::endl;
     
-    char temp[255];
     std::string name;
-    file.getline( temp, size, 0 );
-    name = temp;
+    total += base::read( file, name );
     std::cout << "'" << name << "'" << std::endl;
-    total += name.size()+1;
 
-    file.read( (char *)&y, sizeof( y ) );
-    total += sizeof( y );
+    total += base::read( file, y );
     std::cout << (unsigned int)y << std::endl;
 
     total += model::readMatrixAndPosition( file, mat, vec );
@@ -654,24 +562,17 @@ unsigned int prto::readPRTL( std::istream &file,
 
 unsigned int prto::readPGRF( std::istream &file )
 {
-    unsigned int total = 0;
-
-    std::string form;
     unsigned int pgrfSize;
     std::string type;
 
-    total += readFormHeader( file, form, pgrfSize, type );
+    unsigned int total = readFormHeader( file, "PGRF", pgrfSize );
     pgrfSize += 8;
-    if( form != "FORM" || type != "PGRF" )
-    {
-	std::cout << "Expected Form of type PGRF: " << type << std::endl;
-	exit( 0 );
-    }
-    std::cout << "Found " << form << " " << type
+    std::cout << "Found FORM " << type
 	      << ": " << pgrfSize-12 << " bytes"
 	      << std::endl;
 
     unsigned int size;
+    std::string form;
     total += readFormHeader( file, form, size, type );
     if( form != "FORM")
     {
@@ -704,13 +605,11 @@ unsigned int prto::readPGRF( std::istream &file )
 
 unsigned int prto::readCRC( std::istream &file )
 {
-    unsigned int total = 0;
-
     std::string form;
     unsigned int crcSize;
     std::string type;
 
-    total += readRecordHeader( file, type, crcSize );
+    unsigned int total = readRecordHeader( file, type, crcSize );
     crcSize += 8;
     if( type != "CRC " )
     {
@@ -722,9 +621,7 @@ unsigned int prto::readCRC( std::istream &file )
 	      << crcSize-8 << " bytes"
 	      << std::endl;
 
-    
-    file.read( (char*)&crc, sizeof( crc ) );
-    total += sizeof( crc );
+    total += base::read( file, crc );
     std::cout << "CRC: 0x" << std::hex << crc
 	      << std::dec << std::endl;
 
@@ -744,13 +641,10 @@ unsigned int prto::readCRC( std::istream &file )
 
 unsigned int prto::readMETA( std::istream &file )
 {
-    unsigned int total = 0;
-
-    std::string form;
     unsigned int metaSize;
     std::string type;
 
-    total += readRecordHeader( file, type, metaSize );
+    unsigned int total = readRecordHeader( file, type, metaSize );
     metaSize += 8;
     if( type != "META" )
     {
@@ -763,8 +657,7 @@ unsigned int prto::readMETA( std::istream &file )
 	      << std::endl;
 
     unsigned int x;
-    file.read( (char*)&x, sizeof( x ) );
-    total += sizeof( x );
+    total += base::read( file, x );
     std::cout << "X: " << x << std::endl;
 
     if( metaSize == total )
@@ -783,13 +676,10 @@ unsigned int prto::readMETA( std::istream &file )
 
 unsigned int prto::readPNOD( std::istream &file )
 {
-    unsigned int total = 0;
-
-    std::string form;
     unsigned int pnodSize;
     std::string type;
 
-    total += readRecordHeader( file, type, pnodSize );
+    unsigned int total = readRecordHeader( file, type, pnodSize );
     pnodSize += 8;
     if( type != "PNOD" )
     {
@@ -802,44 +692,35 @@ unsigned int prto::readPNOD( std::istream &file )
 	      << std::endl;
 
     unsigned int num;
-    file.read( (char*)&num, sizeof( num ) );
-    total += sizeof( num );
+    total += base::read( file, num );
     std::cout << "Num: " << num << std::endl;
 
     unsigned int x;
     float y;
     for( unsigned int i = 0; i < num; ++i )
       {
-	file.read( (char*)&x, sizeof( x ) );
-	total += sizeof( x );
+	total += base::read( file, x );
 	std::cout << "Portal number: " << x << std::endl;
 
-	file.read( (char*)&x, sizeof( x ) );
-	total += sizeof( x );
+	total += base::read( file, x );
 	std::cout << std::hex << "0x" << x << std::dec << std::endl;
 
-	file.read( (char*)&x, sizeof( x ) );
-	total += sizeof( x );
+	total += base::read( file, x );
 	std::cout << "???: " << x << std::endl;
 
-	file.read( (char*)&x, sizeof( x ) );
-	total += sizeof( x );
+	total += base::read( file, x );
 	std::cout << "???: " << x << std::endl;
 
-	file.read( (char*)&y, sizeof( y ) );
-	total += sizeof( y );
+	total += base::read( file, y );
 	std::cout << y << std::endl;
 
-	file.read( (char*)&y, sizeof( y ) );
-	total += sizeof( y );
+	total += base::read( file, y );
 	std::cout << y << std::endl;
 
-	file.read( (char*)&y, sizeof( y ) );
-	total += sizeof( y );
+	total += base::read( file, y );
 	std::cout << y << std::endl;
 
-	file.read( (char*)&x, sizeof( x ) );
-	total += sizeof( x );
+	total += base::read( file, x );
 	std::cout << x << std::endl;
       }
 
@@ -859,13 +740,10 @@ unsigned int prto::readPNOD( std::istream &file )
 
 unsigned int prto::readPEDG( std::istream &file )
 {
-    unsigned int total = 0;
-
-    std::string form;
     unsigned int pedgSize;
     std::string type;
 
-    total += readRecordHeader( file, type, pedgSize );
+    unsigned int total = readRecordHeader( file, type, pedgSize );
     pedgSize += 8;
     if( type != "PEDG" )
     {
@@ -878,27 +756,22 @@ unsigned int prto::readPEDG( std::istream &file )
 	      << std::endl;
 
     unsigned int num;
-    file.read( (char*)&num, sizeof( num ) );
-    total += sizeof( num );
+    total += base::read( file, num );
     std::cout << "Num: " << num << std::endl;
 
     unsigned int x;
     for( unsigned int i = 0; i < num; ++i )
       {
-	file.read( (char*)&x, sizeof( x ) );
-	total += sizeof( x );
+	total += base::read( file, x );
 	std::cout << x << " ";
 
-	file.read( (char*)&x, sizeof( x ) );
-	total += sizeof( x );
+	total += base::read( file, x );
 	std::cout << x << " ";
 
-	file.read( (char*)&x, sizeof( x ) );
-	total += sizeof( x );
+	total += base::read( file, x );
 	std::cout << x << " ";
 
-	file.read( (char*)&x, sizeof( x ) );
-	total += sizeof( x );
+	total += base::read( file, x );
 	std::cout << x << std::endl;
       }
 
@@ -918,13 +791,10 @@ unsigned int prto::readPEDG( std::istream &file )
 
 unsigned int prto::readECNT( std::istream &file )
 {
-    unsigned int total = 0;
-
-    std::string form;
     unsigned int ecntSize;
     std::string type;
 
-    total += readRecordHeader( file, type, ecntSize );
+    unsigned int total = readRecordHeader( file, type, ecntSize );
     ecntSize += 8;
     if( type != "ECNT" )
     {
@@ -937,15 +807,13 @@ unsigned int prto::readECNT( std::istream &file )
 	      << std::endl;
 
     unsigned int num;
-    file.read( (char*)&num, sizeof( num ) );
-    total += sizeof( num );
+    total += base::read( file, num );
     std::cout << "Num: " << num << std::endl;
 
     unsigned int x;
     for( unsigned int i = 0; i < num; ++i )
       {
-	file.read( (char*)&x, sizeof( x ) );
-	total += sizeof( x );
+	total += base::read( file, x );
 	std::cout << "Entry points for cell "
 		  << i << ": " << x << std::endl;
       }
@@ -966,13 +834,10 @@ unsigned int prto::readECNT( std::istream &file )
 
 unsigned int prto::readESTR( std::istream &file )
 {
-    unsigned int total = 0;
-
-    std::string form;
     unsigned int estrSize;
     std::string type;
 
-    total += readRecordHeader( file, type, estrSize );
+    unsigned int total = readRecordHeader( file, type, estrSize );
     estrSize += 8;
     if( type != "ESTR" )
     {
@@ -985,15 +850,13 @@ unsigned int prto::readESTR( std::istream &file )
 	      << std::endl;
 
     unsigned int num;
-    file.read( (char*)&num, sizeof( num ) );
-    total += sizeof( num );
+    total += base::read( file, num );
     std::cout << "Num: " << num << std::endl;
 
     unsigned int x;
     for( unsigned int i = 0; i < num; ++i )
       {
-	file.read( (char*)&x, sizeof( x ) );
-	total += sizeof( x );
+	total += base::read( file, x );
 	std::cout << x << std::endl;
       }
 
