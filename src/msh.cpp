@@ -278,16 +278,20 @@ unsigned int msh::readMSH( std::istream &file, std::string path )
   unsigned int meshSize;
   std::string type;
   
-  total += readFormHeader( file, form, meshSize, type );
-  if( form != "FORM" || type != "MESH" )
-    {
-      std::cout << "Expected Form of type MESH: " << type << std::endl;
-      exit( 0 );
-    }
+  total += readFormHeader( file, "MESH", meshSize );
   std::cout << "Found MESH form" << std::endl;
   
   unsigned int size;
   total += readFormHeader( file, form, size, type );
+  if( form != "FORM")
+    {
+      std::cout << "Expected FORM not: " << form << std::endl;
+      exit( 0 );
+    }
+  std::cout << "Found " << form << " " << type
+	    << ": " << size-4 << " bytes"
+	    << std::endl;
+  
   total += model::readAPPR( file );
   total += readSPS( file );
   
