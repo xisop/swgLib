@@ -44,7 +44,7 @@ bool str::isRightType( std::istream &file )
 {
     unsigned int position = file.tellg();
     unsigned int header;
-    file.read( (char *)&header, sizeof( header ) );
+    base::read( file, header );
     file.seekg( position, std::ios_base::beg );
 
     return ( 0xabcd == header );
@@ -54,8 +54,7 @@ unsigned int str::readSTR( std::istream &file )
 {
     unsigned int position = file.tellg();
     unsigned int header;
-    file.read( (char *)&header, sizeof( header ) );
-    unsigned int total = sizeof( header );
+    unsigned int total = base::read( file, header );
 
     // Check for .str header data
     if( header != 0xabcd )
