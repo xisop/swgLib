@@ -41,36 +41,24 @@ cstb::~cstb()
 
 unsigned int cstb::readCSTB( std::istream &file )
 {
-    unsigned int total = 0;
-    std::string form;
     unsigned int cstbSize;
-    std::string type;
-
-    total += readFormHeader( file, form, cstbSize, type );
+    unsigned int total = readFormHeader( file, "CSTB", cstbSize );
     cstbSize += 8;
-    if( form != "FORM" || type != "CSTB" )
-    {
-	std::cout << "Expected Form of type CSTB: " << type << std::endl;
-	exit( 0 );
-    }
-#if DEBUG
     std::cout << "Found CSTB form"
 	      << ": " << cstbSize-12 << " bytes"
 	      << std::endl;
-#endif
 
     unsigned int size;
+    std::string form, type;
     total += readFormHeader( file, form, size, type );
     if( form != "FORM" )
     {
 	std::cout << "Expected FORM: " << form << std::endl;
 	exit( 0 );
     }
-#if DEBUG
     std::cout << "Found " << form << " " << type
 	      << ": " << size-4 << " bytes"
 	      << std::endl;
-#endif
 
     total += readDATA( file );
     total += readCRCT( file );
@@ -79,9 +67,7 @@ unsigned int cstb::readCSTB( std::istream &file )
 
     if( cstbSize == total )
     {
-#if DEBUG
-	sd::cout << "Finished reading CSTB" << std::endl;
-#endif
+	std::cout << "Finished reading CSTB" << std::endl;
     }
     else
     {
@@ -97,32 +83,25 @@ unsigned int cstb::readCSTB( std::istream &file )
 
 unsigned int cstb::readDATA( std::istream &file )
 {
-    unsigned int total = 0;
-    std::string form;
     unsigned int size;
     std::string type;
 
-    total += readRecordHeader( file, type, size );
+    unsigned int total = readRecordHeader( file, type, size );
     size += 8;
     if( type != "DATA" )
     {
 	std::cout << "Expected record of type DATA: " << type << std::endl;
 	exit( 0 );
     }
-#if DEBUG
-    std::cout << "Found DATA form"
+    std::cout << "Found DATA Record"
 	      << ": " << size-8 << " bytes"
 	      << std::endl;
-#endif
 
-    file.read( (char*)&num, sizeof( num ) );
-    total += sizeof( num );
+    total += base::read( file, num );
 
     if( size == total )
     {
-#if DEBUG
 	std::cout << "Finished reading DATA" << std::endl;
-#endif
     }
     else
     {
@@ -136,37 +115,29 @@ unsigned int cstb::readDATA( std::istream &file )
 
 unsigned int cstb::readCRCT( std::istream &file )
 {
-    unsigned int total = 0;
-    std::string form;
     unsigned int size;
     std::string type;
-
-    total += readRecordHeader( file, type, size );
+    unsigned int total = readRecordHeader( file, type, size );
     size += 8;
     if( type != "CRCT" )
     {
 	std::cout << "Expected record of type CRCT: " << type << std::endl;
 	exit( 0 );
     }
-#if DEBUG
-    std::cout << "Found CRCT form"
+    std::cout << "Found CRCT record"
 	      << ": " << size-8 << " bytes"
 	      << std::endl;
-#endif
 
     unsigned int temp;
     for( unsigned int i = 0; i < num; ++i )
     { 
-	file.read( (char*)&temp, sizeof( temp ) );
-	total += sizeof( temp );
-	crc.push_back( temp );
+      total += base::read( file, temp );
+      crc.push_back( temp );
     }
 
     if( size == total )
     {
-#if DEBUG
 	std::cout << "Finished reading CRCT" << std::endl;
-#endif
     }
     else
     {
@@ -180,37 +151,29 @@ unsigned int cstb::readCRCT( std::istream &file )
 
 unsigned int cstb::readSTRT( std::istream &file )
 {
-   unsigned int total = 0;
-   std::string form;
    unsigned int size;
    std::string type;
-
-   total += readRecordHeader( file, type, size );
+   unsigned int total = readRecordHeader( file, type, size );
     size += 8;
     if( type != "STRT" )
     {
 	std::cout << "Expected record of type STRT: " << type << std::endl;
 	exit( 0 );
     }
-#if DEBUG
-    std::cout << "Found STRT form"
+    std::cout << "Found STRT record"
 	      << ": " << size-8 << " bytes"
 	      << std::endl;
-#endif
 
     unsigned int temp;
     for( unsigned int i = 0; i < num; ++i )
     { 
-	file.read( (char*)&temp, sizeof( temp ) );
-	total += sizeof( temp );
-	offset.push_back( temp );
+      total += base::read( file, temp );
+      offset.push_back( temp );
     }
 
     if( size == total )
     {
-#if DEBUG
 	std::cout << "Finished reading STRT" << std::endl;
-#endif
     }
     else
     {
@@ -224,41 +187,33 @@ unsigned int cstb::readSTRT( std::istream &file )
 
 unsigned int cstb::readSTNG( std::istream &file )
 {
-   unsigned int total = 0;
-   std::string form;
    unsigned int size;
    std::string type;
-   
-   total += readRecordHeader( file, type, size );
+  
+   unsigned int total = readRecordHeader( file, type, size );
    size += 8;
    if( type != "STNG" )
    {
        std::cout << "Expected record of type STNG: " << type << std::endl;
        exit( 0 );
    }
-#if DEBUG
-   std::cout << "Found STNG form"
+   std::cout << "Found STNG record"
 	     << ": " << size-8 << " bytes"
 	     << std::endl;
-#endif
 
    int pos = file.tellg();
    
-   char temp[255];
    for( unsigned int i = 0; i < num; ++i )
    { 
        file.seekg( pos+offset[i], std::ios_base::beg );
-       file.getline( temp, 255, 0 );
-       std::string newName( temp );
-       total += newName.size() + 1;
+       std::string newName;
+       total += base::read( file, newName );
        name.push_back( newName );
    }
    
     if( size == total )
     {
-#if DEBUG
 	std::cout << "Finished reading STNG" << std::endl;
-#endif
     }
     else
     {
