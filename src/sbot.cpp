@@ -4,7 +4,7 @@
  *  \author Kenneth R. Sewell III
 
  meshLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006,2007 Kenneth R. Sewell III
+ Copyright (C) 2006-2009 Kenneth R. Sewell III
 
  This file is part of meshLib.
 
@@ -45,30 +45,16 @@ sbot::~sbot()
 
 unsigned int sbot::readSBOT( std::istream &file )
 {
-    unsigned int total = 0;
-    std::string form;
     unsigned int sbotSize;
-    std::string type;
-
-    total += readFormHeader( file, form, sbotSize, type );
+    unsigned int total = readFormHeader( file, "SBOT", sbotSize );
     sbotSize += 8;
-    if( form != "FORM" || type != "SBOT" )
-    {
-	std::cout << "Expected Form of type SBOT: " << type << std::endl;
-	exit( 0 );
-    }
     std::cout << "Found SBOT form" << std::endl;
 
     total += readDERV( file, sbotBaseObjectFilename );
 
     unsigned int size0001;
-    total += readFormHeader( file, form, size0001, type );
+    total += readFormHeader( file, "0001", size0001 );
     size0001 += 8;
-    if( form != "FORM" || type != "0001" )
-    {
-	std::cout << "Expected Form of type 0001: " << type << std::endl;
-	exit( 0 );
-    }
     std::cout << "Found 0001 form" << std::endl;
 
     total += readPCNT( file, numNodes );
@@ -78,7 +64,6 @@ unsigned int sbot::readSBOT( std::istream &file )
       }
 
     total += readSTOT( file );
-
 
     if( sbotSize == total )
     {
@@ -100,13 +85,9 @@ void sbot::print() const
 
 unsigned int sbot::readSBOTXXXX( std::istream &file )
 {
-    unsigned int total = 0;
-
-    std::string form;
     unsigned int xxxxSize;
     std::string type;
-
-    total += readRecordHeader( file, type, xxxxSize );
+    unsigned int total = readRecordHeader( file, type, xxxxSize );
     if( type != "XXXX" )
     {
         std::cout << "Expected record of type XXXX: " << type << std::endl;
@@ -114,22 +95,17 @@ unsigned int sbot::readSBOTXXXX( std::istream &file )
     }
     std::cout << "Found " << type << std::endl;
 
-    char temp[255];
-    file.getline( temp, 255, 0 );
-    std::string property( temp );
+    std::string property;
+    total += base::read( file, property );
     std::cout << "Property: " << property << std::endl;
-    total += property.size() + 1;
 
     unsigned char enabled;
-
     if( property == "terrainModificationFileName" )
       {
-	file.read( (char *)&enabled, 1 ); ++total;
+	total += base::read( file, enabled );
 	if( enabled > 0 )
 	  {
-	    file.getline( temp, 255, 0 );
-	    terrainModificationFilename = temp;
-	    total += terrainModificationFilename.size() + 1;
+	    total += base::read( file, terrainModificationFilename );
 	    
 	    std::cout << property << ": "
 		      << terrainModificationFilename
@@ -138,12 +114,10 @@ unsigned int sbot::readSBOTXXXX( std::istream &file )
       }
     else if( property == "interiorLayoutFileName" )
       {
-	file.read( (char *)&enabled, 1 ); ++total;
+	total += base::read( file, enabled );
 	if( enabled > 0 )
 	  {
-	    file.getline( temp, 255, 0 );
-	    interiorLayoutFilename = temp;
-	    total += interiorLayoutFilename.size() + 1;
+	    total += base::read( file, interiorLayoutFilename );
 	    
 	    std::cout << property << ": "
 		      << interiorLayoutFilename
@@ -152,13 +126,11 @@ unsigned int sbot::readSBOTXXXX( std::istream &file )
       }
     else if( property == "portalLayoutFilename" )
       {
-	file.read( (char *)&enabled, 1 ); ++total;
+	total += base::read( file, enabled );
 	if( enabled > 0 )
 	  {
-	    file.getline( temp, 255, 0 );
-	    portalLayoutFilename = temp;
-	    total += portalLayoutFilename.size() + 1;
-	    
+	    total += base::read( file, portalLayoutFilename );
+
 	    std::cout << property << ": "
 		      << portalLayoutFilename
 		      << std::endl;
