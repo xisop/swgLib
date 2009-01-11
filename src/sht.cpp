@@ -42,10 +42,7 @@ sht::~sht()
 unsigned int sht::readSHT( std::istream &file, std::string path )
 {
   basePath = path;
-  std::string form;
   unsigned int sshtSize;
-  std::string type;
-
   // Reset class
   normalMapUnit = UINT_MAX;
   texTag.clear();
@@ -57,20 +54,14 @@ unsigned int sht::readSHT( std::istream &file, std::string path )
       coordMapping[i] = UINT_MAX;
     }
 
-  unsigned int position = file.tellg();
-  unsigned int total = readFormHeader( file, form, sshtSize, type );
+  unsigned int total = readFormHeader( file, "SSHT", sshtSize );
   sshtSize += 8;
-  if( form != "FORM" || type != "SSHT" )
-    {
-      std::cout << "SSHT not found." << std::endl;
-      file.seekg( position, std::ios_base::beg );
-      return 0;
-    }
   std::cout << "Found SSHT form"
 	    << ": " << sshtSize-12 << " bytes"
 	    << std::endl;
 
   unsigned int size;
+  std::string form, type;
   total += readFormHeader( file, form, size, type );
   if( form != "FORM" )
     {
@@ -84,9 +75,7 @@ unsigned int sht::readSHT( std::istream &file, std::string path )
   while( total < sshtSize )
     {
       // Peek at next record, but keep file at same place.
-      position = file.tellg();
-      readFormHeader( file, form, size, type );
-      file.seekg( position, std::ios_base::beg );
+      peekHeader( file, form, size, type );
 
       if( form == "FORM" )
 	{
@@ -140,32 +129,18 @@ unsigned int sht::readSHT( std::istream &file, std::string path )
 
 unsigned int sht::readMATS( std::istream &file )
 {
-  std::string form;
   unsigned int matsSize;
-  std::string type;
-
-  unsigned int total = readFormHeader( file, form, matsSize, type );
+  unsigned int total = readFormHeader( file, "MATS", matsSize );
   matsSize += 8;
-  if( form != "FORM" || type != "MATS" )
-    {
-      std::cout << "Expected Form of type MATS: " << type << std::endl;
-      exit( 0 );
-    }
-  std::cout << "Found " << form << " " << type
-	    << ": " << matsSize-12 << " bytes"
+  std::cout << "Found FORM MATS: " << matsSize-12 << " bytes"
 	    << std::endl;
 
   unsigned int size;
-  total += readFormHeader( file, form, size, type );
-  if( form != "FORM" || type != "0000")
-    {
-      std::cout << "Expected Form of type 0000: " << type << std::endl;
-      exit( 0 );
-    }
-  std::cout << "Found " << form << " " << type
-	    << ": " << size-4 << " bytes"
+  total += readFormHeader( file, "0000", size );
+  std::cout << "Found FORM 0000: " << size-4 << " bytes"
 	    << std::endl;
 
+  std::string type;
   unsigned int matsFound = 0;
   while( total < matsSize )
     {
@@ -255,19 +230,10 @@ unsigned int sht::readMATS( std::istream &file )
 
 unsigned int sht::readTXMS( std::istream &file )
 {
-  std::string form;
   unsigned int txmsSize;
-  std::string type;
-
-  unsigned int total = readFormHeader( file, form, txmsSize, type );
+  unsigned int total = readFormHeader( file, "TXMS", txmsSize );
   txmsSize += 8; // Add size of FORM and size fields.
-  if( form != "FORM" || type != "TXMS" )
-    {
-      std::cout << "Expected Form of type TXMS: " << type << std::endl;
-      exit( 0 );
-    }
-  std::cout << "Found " << form << " " << type
-	    << ": " << txmsSize-12 << " bytes"
+  std::cout << "Found FORM TXMS: " << txmsSize-12 << " bytes"
 	    << std::endl;
 
   while( total < txmsSize )
@@ -291,24 +257,16 @@ unsigned int sht::readTXMS( std::istream &file )
 
 unsigned int sht::readTXM( std::istream &file )
 {
-  std::string form;
   unsigned int txmSize;
-  std::string type;
-
   // Read FORM TXM record
-  unsigned int total = readFormHeader( file, form, txmSize, type );
+  unsigned int total = readFormHeader( file, "TXM ", txmSize );
   txmSize += 8;
-  if( form != "FORM" || type != "TXM " )
-    {
-      std::cout << "Expected Form of type TXM: " << type << std::endl;
-      exit( 0 );
-    }
-  std::cout << "Found " << form << " " << type
-	    << ": " << txmSize-12 << " bytes"
+  std::cout << "Found FORM TXM : " << txmSize-12 << " bytes"
 	    << std::endl;
 
   // Read FORM 0001 record
   unsigned int size;
+  std::string form, type;
   total += readFormHeader( file, form, size, type );
   //if( form != "FORM" || type != "0001" )
   if( form != "FORM" )
@@ -345,18 +303,10 @@ unsigned int sht::readTXM( std::istream &file )
 	  exit( 0 );
 	}
 
-      char temp[255];
       std::string textureName;
-      file.getline( temp, size, 0 );
-      textureName = temp;
-      total += size;
-      for( unsigned int i = 0; i < textureName.size(); ++i )
-	{
-	  if( textureName[i] == '\\' )
-	    {
-	      textureName[i] = '/';
-	    }
-	}
+      total += base::read( file, textureName );
+      base::fixSlash( textureName );
+
       std::string fullTextureName = basePath + textureName;
       std::cout << "Texture name: " << fullTextureName << std::endl;
 
@@ -490,21 +440,14 @@ unsigned int sht::readTXM( std::istream &file )
 
 unsigned int sht::readTCSS( std::istream &file )
 {
-  std::string form;
   unsigned int tcssSize;
-  std::string type;
 
-  unsigned int total = readFormHeader( file, form, tcssSize, type );
+  unsigned int total = readFormHeader( file, "TCSS", tcssSize );
   tcssSize += 8;
-  if( form != "FORM" || type != "TCSS" )
-    {
-      std::cout << "Expected Form of type TCSS: " << type << std::endl;
-      exit( 0 );
-    }
-  std::cout << "Found " << form << " " << type
-	    << ": " << tcssSize-12 << " bytes"
+  std::cout << "Found FORM TCSS: " << tcssSize-12 << " bytes"
 	    << std::endl;
 
+  std::string type;
   unsigned int size;
   total += readRecordHeader( file, type, size );
   if( type != "0000" )
@@ -654,25 +597,14 @@ unsigned int sht::readTCSS( std::istream &file )
 
 unsigned int sht::readTFNS( std::istream &file )
 {
-  std::string form;
   unsigned int tfnsSize;
-  std::string type;
-
-  unsigned int position = file.tellg();
-
-  unsigned int total = readFormHeader( file, form, tfnsSize, type );
+  unsigned int total = readFormHeader( file, "TFNS", tfnsSize );
   tfnsSize += 8;
-  if( form != "FORM" || type != "TFNS" )
-    {
-      std::cout << "No FORM TFNS found." << std::endl;
-      file.seekg( position, std::ios_base::beg );
-      return 0;
-    }
-  std::cout << "Found " << form << " " << type
-	    << ": " << tfnsSize-12 << " bytes"
+  std::cout << "Found FORM TFNS: " << tfnsSize-12 << " bytes"
 	    << std::endl;
 
   unsigned int size;
+  std::string type;
   total += readRecordHeader( file, type, size );
   if( type != "0000" )
     {
@@ -701,25 +633,14 @@ unsigned int sht::readTFNS( std::istream &file )
 
 unsigned int sht::readTSNS( std::istream &file )
 {
-  std::string form;
   unsigned int tsnsSize;
-  std::string type;
-
-  unsigned int position = file.tellg();
-
-  unsigned int total = readFormHeader( file, form, tsnsSize, type );
+  unsigned int total = readFormHeader( file, "TSNS", tsnsSize );
   tsnsSize += 8;
-  if( form != "FORM" || type != "TSNS" )
-    {
-      std::cout << "No FORM TSNS found." << std::endl;
-      file.seekg( position, std::ios_base::beg );
-      return 0;
-    }
-  std::cout << "Found " << form << " " << type
-	    << ": " << tsnsSize-12 << " bytes"
+  std::cout << "Found FORM TSNS: " << tsnsSize-12 << " bytes"
 	    << std::endl;
 
   unsigned int size;
+  std::string type;
   total += readRecordHeader( file, type, size );
   if( type != "0000" )
     {
@@ -748,25 +669,14 @@ unsigned int sht::readTSNS( std::istream &file )
 
 unsigned int sht::readARVS( std::istream &file )
 {
-  std::string form;
   unsigned int arvsSize;
-  std::string type;
-
-  unsigned int position = file.tellg();
-
-  unsigned int total = readFormHeader( file, form, arvsSize, type );
+  unsigned int total = readFormHeader( file, "ARVS", arvsSize );
   arvsSize += 8;
-  if( form != "FORM" || type != "ARVS" )
-    {
-      std::cout << "No FORM ARVS found." << std::endl;
-      file.seekg( position, std::ios_base::beg );
-      return 0;
-    }
-  std::cout << "Found " << form << " " << type
-	    << ": " << arvsSize-12 << " bytes"
+  std::cout << "Found FORM ARVS: " << arvsSize-12 << " bytes"
 	    << std::endl;
 
   unsigned int size;
+  std::string type;
   total += readRecordHeader( file, type, size );
   if( type != "0000" )
     {
@@ -776,7 +686,6 @@ unsigned int sht::readARVS( std::istream &file )
   std::cout << "Found record " << type
 	    << ": " << size << " bytes"
 	    << std::endl;
-
 
   total += readUnknown( file, size );
     
@@ -796,33 +705,17 @@ unsigned int sht::readARVS( std::istream &file )
 
 unsigned int sht::readEFCT( std::istream &file )
 {
-  std::string form;
   unsigned int efctSize;
   std::string type;
 
-  unsigned int position = file.tellg();
-
-  unsigned int total = readFormHeader( file, form, efctSize, type );
+  unsigned int total = readFormHeader( file, "EFCT", efctSize );
   efctSize += 8;
-  if( form != "FORM" || type != "EFCT" )
-    {
-      std::cout << "No FORM EFCT found." << std::endl;
-      file.seekg( position, std::ios_base::beg );
-      return 0;
-    }
-  std::cout << "Found " << form << " " << type
-	    << ": " << efctSize-12 << " bytes"
+  std::cout << "Found FORM EFCT: " << efctSize-12 << " bytes"
 	    << std::endl;
 
   unsigned int size;
-  total += readFormHeader( file, form, size, type );
-  if( form != "FORM" || type != "0001" )
-    {
-      std::cout << "Expected FORM of type 0001: " << type << std::endl;
-      exit( 0 );
-    }
-  std::cout << "Found " << form << " " << type
-	    << ": " << size-4 << " bytes"
+  total += readFormHeader( file, "0001", size );
+  std::cout << "Found FORM 0001: " << size-4 << " bytes"
 	    << std::endl;
 
   total += readRecordHeader( file, type, size );
@@ -855,33 +748,22 @@ unsigned int sht::readNAME( std::istream &file )
 {
   unsigned int nameSize;
   std::string type;
-  unsigned int position = file.tellg();
-
   // Read Effect file record
   unsigned int total = readRecordHeader( file, type, nameSize );
+  nameSize += 8;
   if( type != "NAME" )
     {
       std::cout << "Expected record of type NAME: " << type << std::endl;
-      file.seekg( position, std::ios_base::beg );
       return 0;
     }
 
-  char temp[255];
-  file.getline( temp, nameSize, 0 );
-  effectName = temp;
-  total += nameSize;
-  for( unsigned int i = 0; i < effectName.size(); ++i )
-    {
-      if( effectName[i] == '\\' )
-	{
-	  effectName[i] = '/';
-	}
-    }
+  total += base::read( file, effectName );
+  base::fixSlash( effectName );
 
   std::string fullEffectName = basePath + effectName;
   std::cout << "Effect file: " << fullEffectName << std::endl;
 
-  if( nameSize == (total-8) )
+  if( nameSize == total )
     {
       std::cout << "Finished reading NAME" << std::endl;
     }

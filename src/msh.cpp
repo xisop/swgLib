@@ -599,7 +599,7 @@ unsigned int msh::readGeometryINDX( std::istream &file, unsigned int &bytesPerIn
     std::cout << "size: " << size << std::endl;
 
     unsigned int numIndex;
-    total += base::read( file, numIndex );
+    base::read( file, numIndex );
     std::cout << "Num index: " << numIndex << std::endl;
     std::cout << "Num triangles: " << numIndex/3 << std::endl;
 
