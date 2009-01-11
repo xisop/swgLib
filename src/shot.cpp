@@ -4,7 +4,7 @@
  *  \author Kenneth R. Sewell III
 
  meshLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006,2007 Kenneth R. Sewell III
+ Copyright (C) 2006-2009 Kenneth R. Sewell III
 
  This file is part of meshLib.
 
@@ -45,25 +45,15 @@ shot::~shot()
 
 unsigned int shot::readSHOT( std::istream &file )
 {
-    unsigned int total = 0;
-    std::string form;
     unsigned int shotSize;
-    std::string type;
-
-    total += readFormHeader( file, form, shotSize, type );
+    unsigned int total = readFormHeader( file, "SHOT", shotSize );
     shotSize += 8;
-    if( form != "FORM" || type != "SHOT" )
-    {
-	std::cout << "Expected Form of type SHOT: " << type << std::endl;
-	exit( 0 );
-    }
     std::cout << "Found SHOT form" << std::endl;
 
     // Peek at next record, but keep file at same place.
-    unsigned int position = file.tellg();
     unsigned int size;
-    readFormHeader( file, form, size, type );
-    file.seekg( position, std::ios_base::beg );
+    std::string form, type;
+    peekHeader( file, form, size, type );
 
     if( "DERV" == type )
       {
@@ -101,21 +91,13 @@ unsigned int shot::readSHOT( std::istream &file )
 
 unsigned int shot::readDERV( std::istream &file, std::string &filename )
 {
-    unsigned int total = 0;
-    std::string form;
     unsigned int dervSize;
-    std::string type;
-
-    total += readFormHeader( file, form, dervSize, type );
+    unsigned int total = readFormHeader( file, "DERV", dervSize );
     dervSize += 8;
-    if( form != "FORM" || type != "DERV" )
-    {
-	std::cout << "Expected Form of type DERV: " << type << std::endl;
-	exit( 0 );
-    }
     std::cout << "Found DERV form" << std::endl;
 
     unsigned int xxxxSize;
+    std::string type;
     total += readRecordHeader( file, type, xxxxSize );
     if( type != "XXXX" )
     {
@@ -124,10 +106,7 @@ unsigned int shot::readDERV( std::istream &file, std::string &filename )
     }
     std::cout << "Found " << type << std::endl;
 
-    char temp[255];
-    file.getline( temp, 255, 0 );
-    filename = temp;
-    total += filename.size() + 1;
+    total += base::read( file, filename );
 
     if( dervSize == total )
     {
@@ -150,13 +129,9 @@ void shot::print() const
 
 unsigned int shot::readPCNT( std::istream &file, unsigned int &num )
 {
-    unsigned int total = 0;
-
-    std::string form;
     unsigned int pcntSize;
     std::string type;
-
-    total += readRecordHeader( file, type, pcntSize );
+    unsigned int total = readRecordHeader( file, type, pcntSize );
     if( type != "PCNT" )
     {
         std::cout << "Expected record of type PCNT: " << type << std::endl;
@@ -171,8 +146,7 @@ unsigned int shot::readPCNT( std::istream &file, unsigned int &num )
       }
     pcntSize += 8;
 
-    file.read( (char *)&num, sizeof( num ) );
-    total += sizeof( num );
+    total += base::read( file, num );
     std::cout << "num: " << num << std::endl;
 
     if( pcntSize == total )
@@ -191,44 +165,35 @@ unsigned int shot::readPCNT( std::istream &file, unsigned int &num )
 
 unsigned int shot::readXXXX( std::istream &file )
 {
-    unsigned int total = 0;
-
-    std::string form;
     unsigned int xxxxSize;
     std::string type;
-
-    total += readRecordHeader( file, type, xxxxSize );
+    unsigned int total = readRecordHeader( file, type, xxxxSize );
     if( type != "XXXX" )
     {
         std::cout << "Expected record of type XXXX: " << type << std::endl;
         exit( 0 );
     }
     std::cout << "Found " << type << std::endl;
-
-    char temp[255];
-    file.getline( temp, 255, 0 );
-    std::string property( temp );
+    
+    std::string property;
+    total += base::read( file, property );
     std::cout << "Property: " << property << std::endl;
-    total += property.size() + 1;
 
     unsigned char enabled;
     unsigned char junk;
 
     if( property == "objectName" )
       {
-	file.read( (char *)&enabled, 1 ); ++total;
+	total += base::read( file, enabled );
 	if( enabled > 0 )
 	  {
-	    file.read( (char *)&junk, 1 ); ++total;
-	    file.getline( temp, 255, 0 );
-	    std::string tempS( temp );
-	    total += tempS.size() + 1;
+	    std::string tempS;
+	    total += base::read( file, junk );
+	    total += base::read( file, tempS );
 	    objectName.push_back( tempS );
 	    
-	    file.read( (char *)&junk, 1 ); ++total;
-	    file.getline( temp, 255, 0 );
-	    tempS = temp;
-	    total += tempS.size() + 1;
+	    total += base::read( file, junk );
+	    total += base::read( file, tempS );
 	    objectName.push_back( tempS );
 
 	    std::cout << property << ": "
@@ -240,19 +205,16 @@ unsigned int shot::readXXXX( std::istream &file )
       }
     else if( property == "detailedDescription" )
       {
-	file.read( (char *)&enabled, 1 ); ++total;
+	total += base::read( file, enabled );
 	if( enabled > 0 )
 	  {
-	    file.read( (char *)&junk, 1 ); ++total;
-	    file.getline( temp, 255, 0 );
-	    std::string tempS( temp );
-	    total += tempS.size() + 1;
+	    std::string tempS;
+	    total += base::read( file, junk );
+	    total += base::read( file, tempS );
 	    detailedDescription.push_back( tempS );
 	    
-	    file.read( (char *)&junk, 1 ); ++total;
-	    file.getline( temp, 255, 0 );
-	    tempS = temp;
-	    total += tempS.size() + 1;
+	    total += base::read( file, junk );
+	    total += base::read( file, tempS );
 	    detailedDescription.push_back( tempS );
 
 	    std::cout << property << ": "
@@ -264,19 +226,16 @@ unsigned int shot::readXXXX( std::istream &file )
       }
     else if( property == "lookAtText" )
       {
-	file.read( (char *)&enabled, 1 ); ++total;
+	total += base::read( file, enabled );
 	if( enabled > 0 )
 	  {
-	    file.read( (char *)&junk, 1 ); ++total;
-	    file.getline( temp, 255, 0 );
-	    std::string tempS( temp );
-	    total += tempS.size() + 1;
+	    std::string tempS;
+	    total += base::read( file, junk );
+	    total += base::read( file, tempS );
 	    lookAtText.push_back( tempS );
 	    
-	    file.read( (char *)&junk, 1 ); ++total;
-	    file.getline( temp, 255, 0 );
-	    tempS = temp;
-	    total += tempS.size() + 1;
+	    total += base::read( file, junk );
+	    total += base::read( file, tempS );
 	    lookAtText.push_back( tempS );
 
 	    std::cout << property << ": "
@@ -318,12 +277,10 @@ unsigned int shot::readXXXX( std::istream &file )
       }
     else if( property == "appearanceFilename" )
       {
-	file.read( (char *)&enabled, 1 ); ++total;
+	total += base::read( file, enabled );
 	if( enabled > 0 )
 	  {
-	    file.getline( temp, 255, 0 );
-	    appearanceFilename = temp;
-	    total += appearanceFilename.size() + 1;
+	    total += base::read( file, appearanceFilename );
 	    
 	    std::cout << property << ": "
 		      << appearanceFilename
@@ -332,12 +289,10 @@ unsigned int shot::readXXXX( std::istream &file )
       }
     else if( property == "portalLayoutFilename" )
       {
-	file.read( (char *)&enabled, 1 ); ++total;
+	total += base::read( file, enabled );
 	if( enabled > 0 )
 	  {
-	    file.getline( temp, 255, 0 );
-	    portalLayoutFilename = temp;
-	    total += portalLayoutFilename.size() + 1;
+	    total += base::read( file, portalLayoutFilename );
 	    
 	    std::cout << property << ": "
 		      << portalLayoutFilename
