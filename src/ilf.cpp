@@ -4,7 +4,7 @@
  *  \author Kenneth R. Sewell III
 
  meshLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006,2007 Kenneth R. Sewell III
+ Copyright (C) 2006-2009 Kenneth R. Sewell III
 
  This file is part of meshLib.
 
@@ -130,26 +130,15 @@ unsigned int ilf::createILF( std::istream &infile, std::ofstream &outfile )
 
 unsigned int ilf::readILF( std::istream &file )
 {
-    unsigned int total = 0;
-    std::string form;
     unsigned int ilfSize;
-    std::string type;
-
-    total += readFormHeader( file, form, ilfSize, type );
+    unsigned int total = readFormHeader( file, "INLY", ilfSize );
     ilfSize += 8;
-    if( form != "FORM" || type != "INLY" )
-    {
-	std::cout << "Expected Form of type INLY: " << type << std::endl;
-	exit( 0 );
-    }
-#if DEBUG
     std::cout << "Found INLY form"
 	      << ": " << ilfSize-12 << " bytes"
 	      << std::endl;
-#endif
-    std::cout << "File type: " << type << std::endl;
 
     unsigned int size;
+    std::string form, type;
     total += readFormHeader( file, form, size, type );
     if( form != "FORM" )
     {
@@ -186,34 +175,25 @@ unsigned int ilf::readILF( std::istream &file )
 
 unsigned int ilf::readNODE( std::istream &file )
 {
-    unsigned int total = 0;
-    std::string form;
     unsigned int nodeSize;
     std::string type;
-
-    total += readRecordHeader( file, type, nodeSize );
+    unsigned int total = readRecordHeader( file, type, nodeSize );
     nodeSize += 8;
     if( type != "NODE" )
     {
 	std::cout << "Expected record of type NODE: " << type << std::endl;
 	exit( 0 );
     }
-#if DEBUG
-    std::cout << "Found NODE form"
+    std::cout << "Found NODE record"
 	      << ": " << nodeSize-8 << " bytes"
 	      << std::endl;
-#endif
 
-    char temp[255];
-
-    file.getline( temp, 255, 0 );
-    std::string objectFilename( temp );
-    total += static_cast<unsigned int>( objectFilename.size() + 1 );
+    std::string objectFilename;
+    total += base::read( file, objectFilename );
     nodeFilename.push_back( objectFilename );
 
-    file.getline( temp, 255, 0 );
-    std::string objectZone( temp );
-    total += static_cast<unsigned int>( objectZone.size() + 1 );
+    std::string objectZone;
+    total += base::read( file, objectZone );
     nodeZone.push_back( objectZone );
 
     std::cout << "Object Filename: " << objectFilename << std::endl;
