@@ -528,11 +528,12 @@ unsigned int eft::readPTXM( std::istream &file )
     std::string name;
     unsigned char num;
     total += base::read( file, num );
-    total += base::read( file, name );
-#if 0
+#if 1
     file.width( size - sizeof( unsigned char ) );
     file >> name;
     total += size;
+#else
+    total += base::read( file, name );
 #endif
     std::cout << "Pixel shader texture " << (unsigned int)num
 	      << ": " << name << std::endl;
