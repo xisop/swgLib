@@ -67,16 +67,14 @@ bool lod::getChild( unsigned int index,
 unsigned int lod::readLOD( std::istream &file, std::string path )
 {
   basePath = path;
-  std::string form;
   unsigned int dtlaSize;
-  std::string type;
-
   unsigned int total = readFormHeader( file, "DTLA", dtlaSize );
   dtlaSize += 8;
   std::cout << "Found DTLA form" << std::endl;
 
   unsigned int size;
 #if 1
+  std::string form, type;
   total += readFormHeader( file, form, size, type );
   if( form != "FORM" )
     {
