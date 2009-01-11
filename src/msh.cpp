@@ -144,8 +144,8 @@ unsigned int msh::readD3DFVF(
 #define D3DFVF_LASTBETA_D3DCOLOR   0x8000
 #define D3DFVF_RESERVED2           0x6000
     
-    file.read( (char*)&codes, sizeof( codes ) );
-    std::bitset <32> bs( codes );
+  base::read( file, codes );
+  std::bitset <32> bs( codes );
 
     std::cout << "D3D Flexible Vertex Format Bits: ";
     std::cout << bs << std::endl;
@@ -337,8 +337,7 @@ unsigned int msh::readSPS( std::istream &file )
     }
 
     unsigned int numGeode;
-    file.read( (char *)&numGeode, sizeof( numGeode ) );
-    total += sizeof( numGeode );
+    total += base::read( file, numGeode );
     std::cout << "CNT: " << numGeode << std::endl;
 
     for( unsigned int i = 0; i < numGeode; ++i )
@@ -503,8 +502,7 @@ unsigned int msh::readGeometry( std::istream &file )
     total += readD3DFVF( file, d3dfvfCodes, numTextures );
 
     unsigned int numVerts;
-    file.read( (char *)&numVerts, sizeof( numVerts ) );
-    total += sizeof( numVerts );
+    total += base::read( file, numVerts );
     std::cout << "Num Vertices: " << numVerts << std::endl;
     
     total += readGeometryDATA( file, numVerts );
@@ -553,15 +551,15 @@ unsigned int msh::readGeometrySIDX( std::istream &file, unsigned int bytesPerInd
     for( unsigned int j = 0; j < num; ++j )
     {
       float rx, ry, rz;
-      file.read( (char *)&rx, sizeof( rx ) );
+      total += base::read( file, rx );
       std::cout << "X rotation?: " << rx << std::endl;
-      file.read( (char *)&ry, sizeof( ry ) );
+      total += base::read( file, ry );
       std::cout << "Y rotation?: " << ry << std::endl;
-      file.read( (char *)&rz, sizeof( rz ) );
+      total += base::read( file, rz );
       std::cout << "Z rotation?: " << rz << std::endl;
       
       unsigned int numIndex;
-      file.read( (char *)&numIndex, sizeof( numIndex ) );
+      total += base::read( file, numIndex );
       std::cout << "Num index: " << numIndex << std::endl;
       std::cout << "Num triangles: " << numIndex/3 << std::endl;
       
@@ -600,9 +598,8 @@ unsigned int msh::readGeometryINDX( std::istream &file, unsigned int &bytesPerIn
 
     std::cout << "size: " << size << std::endl;
 
-#if 1
     unsigned int numIndex;
-    file.read( (char *)&numIndex, sizeof( numIndex ) );
+    total += base::read( file, numIndex );
     std::cout << "Num index: " << numIndex << std::endl;
     std::cout << "Num triangles: " << numIndex/3 << std::endl;
 
@@ -621,10 +618,6 @@ unsigned int msh::readGeometryINDX( std::istream &file, unsigned int &bytesPerIn
       }
 
     indexData.push_back( mvi );
-
-#else
-    file.seekg( size, std::ios_base::cur );
-#endif
 
     // Return size + size of FORM/size data.
     return size+8;
