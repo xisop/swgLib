@@ -52,6 +52,8 @@ namespace ml
 
     static unsigned int read( std::istream &file, char &data );
     static unsigned int read( std::istream &file, unsigned char &data );
+    static unsigned int read( std::istream &file, short &data );
+    static unsigned int read( std::istream &file, unsigned short &data );
     static unsigned int read( std::istream &file, int &data );
     static unsigned int read( std::istream &file, unsigned int &data );
     static unsigned int read( std::istream &file, float &data );

@@ -45,7 +45,7 @@ std::string base::getType( std::istream &file )
   else
     {
       unsigned int x;
-      file.read( (char*)&x, sizeof( x ) );
+      read( file, x );
 
       // .str string file
       if( x == 0xabcd )
@@ -235,6 +235,18 @@ unsigned int base::read( std::istream &file, unsigned char &data )
 {
   file.read( (char*)&data, sizeof( unsigned char ) );
   return sizeof( unsigned char );
+}
+
+unsigned int base::read( std::istream &file, short &data )
+{
+  file.read( (char*)&data, sizeof( short ) );
+  return sizeof( short );
+}
+
+unsigned int base::read( std::istream &file, unsigned short &data )
+{
+  file.read( (char*)&data, sizeof( unsigned short ) );
+  return sizeof( unsigned short );
 }
 
 unsigned int base::read( std::istream &file, int &data )
