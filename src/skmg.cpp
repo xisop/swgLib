@@ -256,13 +256,9 @@ unsigned int skmg::readBLT( std::istream &file )
     unsigned int numBLTNorm;
     total += readBLTINFO( file, numBLTPos, numBLTNorm );
 
-    total += readUnknown( file, bltSize-total );
+    total += readBLTPOSN( file, numBLTPos );
+    total += readBLTNORM( file, numBLTNorm );
 
-#if 0
-    total += readPOSN( file,  );
-    total += readNORM( file );
-    total += readDOT3( file );
-#endif
     if( bltSize == total )
     {
 	std::cout << "Finished reading BLT" << std::endl;
@@ -517,13 +513,11 @@ unsigned int skmg::readPRIM( std::istream &file )
     total += readPRIMINFO( file );
 
     unsigned int size;
-    unsigned int position;
     std::string form, type;
     while( total < primSize )
       {
 	// Peek at next record, but keep file at same place.
 	peekHeader( file, form, size, type );
-        file.seekg( position, std::ios_base::beg );
 
 	if( form == "FORM" )
 	  {
@@ -661,7 +655,7 @@ unsigned int skmg::readOITL( std::istream &file )
     std::cout << "Num OITL: " << numOITL << std::endl;;
 
     unsigned int x;
-    unsigned short y;
+    short y;
     for( unsigned int i = 0; i < numOITL; ++i )
       {
 	total += base::read( file, y );
@@ -708,8 +702,9 @@ unsigned int skmg::readINFO( std::istream &file )
     unsigned int u2;
     unsigned int u3;
     unsigned int u7;
-    unsigned int u8;
-    unsigned int u10;
+    short u8;
+    short u9;
+    int u10;
 
     total += base::read( file, u1 );
     std::cout << u1 << std::endl;
@@ -721,13 +716,13 @@ unsigned int skmg::readINFO( std::istream &file )
     std::cout << u3 << std::endl;
 
     total += base::read( file, numBones);
-    std::cout << numBones << std::endl;
+    std::cout << "Num bones: " << numBones << std::endl;
 
     total += base::read( file, numPoints );
-    std::cout << numPoints << std::endl;
+    std::cout << "Num points: " << numPoints << std::endl;
 
     total += base::read( file, numTwdt);
-    std::cout << numTwdt << std::endl;
+    std::cout << "Num twdt: " << numTwdt << std::endl;
 
     total += base::read( file, numNorm );
     std::cout << numNorm << std::endl;
@@ -740,6 +735,9 @@ unsigned int skmg::readINFO( std::istream &file )
 
     total += base::read( file, u8 );
     std::cout << u8 << std::endl;
+
+    total += base::read( file, u9 );
+    std::cout << u9 << std::endl;
 
     // Something to do with OITL
     total += base::read( file, u10 );
@@ -841,16 +839,17 @@ unsigned int skmg::readPOSN( std::istream &file )
         std::cout << "Expected record of type POSN: " << type << std::endl;
         exit( 0 );
     }
-    std::cout << "Found " << type << std::endl;
+    std::cout << "Found POSN: " << posnSize << std::endl;
 
     std::cout << "Num points: " << numPoints << std::endl;
+
     float tempX, tempY, tempZ;
     for( unsigned int i = 0; i < numPoints; ++i )
       {
 	total += base::read( file, tempX );
 	total += base::read( file, tempY );
 	total += base::read( file, tempZ );
-
+	std::cout << tempX << ",  " << tempY << ", " << tempZ << std::endl;
 	x.push_back( tempX );
 	y.push_back( tempY );
 	z.push_back( tempZ );
@@ -991,6 +990,86 @@ unsigned int skmg::readDOT3Index( std::istream &file )
     return total;
 }
 
+unsigned int skmg::readBLTPOSN( std::istream &file, unsigned int num )
+{
+    std::string type;
+    unsigned int posnSize;
+    unsigned int total = readRecordHeader( file, type, posnSize );
+    posnSize += 8;
+    if( type != "POSN" )
+    {
+        std::cout << "Expected record of type POSN: " << type << std::endl;
+        exit( 0 );
+    }
+    std::cout << "Found POSN: " << posnSize << std::endl;
+    std::cout << "Num points: " << num << std::endl;
+
+    float tempX, tempY, tempZ, tempW;
+    for( unsigned int i = 0; i < num; ++i )
+      {
+	total += base::read( file, tempX );
+	total += base::read( file, tempY );
+	total += base::read( file, tempZ );
+	total += base::read( file, tempW );
+	std::cout << tempX << ",  " << tempY << ", " << tempZ << ", " << tempW << std::endl;
+      }
+
+    if( posnSize == total )
+    {
+        std::cout << "Finished reading POSN" << std::endl;
+    }
+    else
+    {
+        std::cout << "FAILED in reading POSN" << std::endl;
+        std::cout << "Read " << total << " out of " << posnSize
+                  << std::endl;
+     }
+
+    return total;
+}
+
+unsigned int skmg::readBLTNORM( std::istream &file, unsigned int num )
+{
+    std::string type;
+    unsigned int normSize;
+    unsigned int total = readRecordHeader( file, type, normSize );
+    normSize += 8;
+    if( type != "NORM" )
+    {
+        std::cout << "Expected record of type NORM: " << type << std::endl;
+        exit( 0 );
+    }
+    std::cout << "Found " << type << std::endl;
+
+    std::cout << "Num Norm:  " << num << std::endl;
+    float tempX, tempY, tempZ, tempW;
+    for( unsigned int i = 0; i < num; ++i )
+      {
+	total += base::read( file, tempX );
+	total += base::read( file, tempY );
+	total += base::read( file, tempZ );
+	total += base::read( file, tempW );
+	std::cout << tempX << ", " << tempY << ", " << tempZ << ", " << tempW << std::endl;
+
+	nx.push_back( tempX );
+	ny.push_back( tempY );
+	nz.push_back( tempZ );
+      }
+
+    if( normSize == total )
+    {
+        std::cout << "Finished reading NORM" << std::endl;
+    }
+    else
+    {
+        std::cout << "FAILED in reading NORM" << std::endl;
+        std::cout << "Read " << total << " out of " << normSize
+                  << std::endl;
+     }
+
+    return total;
+}
+
 // One entry for each point.  Each record is number of bones to which
 // the point belongs.
 unsigned int skmg::readTWHD( std::istream &file )
@@ -1011,8 +1090,9 @@ unsigned int skmg::readTWHD( std::istream &file )
     for( unsigned int i = 0; i < numPoints; ++i )
       {
 	total += base::read( file, x );
-	std::cout << x << std::endl;
+	std::cout << x << " ";
       }
+	std::cout << std::endl;
 
     if( twhdSize == total )
     {
@@ -1189,7 +1269,7 @@ unsigned int skmg::readXFNM( std::istream &file )
     for( unsigned int i = 0; i < numBones; ++i )
       {
 	total += base::read( file, boneName );
-	std::cout << boneName << std::endl;
+	std::cout << "Bone " << i << ": " << boneName << std::endl;
       }
 
     if( xfnmSize == total )
