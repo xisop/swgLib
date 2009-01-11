@@ -4,7 +4,7 @@
  *  \author Kenneth R. Sewell III
 
  meshLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006,2007 Kenneth R. Sewell III
+ Copyright (C) 2006-2009 Kenneth R. Sewell III
 
  This file is part of meshLib.
 
@@ -179,18 +179,12 @@ unsigned int ws::createWS( std::ofstream &outfile )
 
 unsigned int ws::readWS( std::istream &file )
 {
-    unsigned int total = 0;
     std::string form;
     unsigned int wsSize;
     std::string type;
 
-    total += readFormHeader( file, form, wsSize, type );
+    unsigned int total = readFormHeader( file, "WSNP", wsSize );
     wsSize += 8;
-    if( form != "FORM" || type != "WSNP" )
-    {
-	std::cout << "Expected Form of type WSNP: " << type << std::endl;
-	exit( 0 );
-    }
 #if DEBUG
     std::cout << "Found WSNP form"
 	      << ": " << wsSize-12 << " bytes"
@@ -213,7 +207,6 @@ unsigned int ws::readWS( std::istream &file )
 
     total += readNODS( file );
     total += readOTNL( file );
-
 
     std::vector< wsNode >::iterator node;
     for( node = nodes.begin(); node != nodes.end(); ++node )
@@ -268,18 +261,9 @@ unsigned int ws::writeNODS( std::ofstream &outfile )
 
 unsigned int ws::readNODS( std::istream &file )
 {
-    unsigned int total = 0;
-    std::string form;
     unsigned int nodsSize;
-    std::string type;
-
-    total += readFormHeader( file, form, nodsSize, type );
+    unsigned int total = readFormHeader( file, "NODS", nodsSize );
     nodsSize += 8;
-    if( form != "FORM" || type != "NODS" )
-    {
-	std::cout << "Expected Form of type NODS: " << type << std::endl;
-	exit( 0 );
-    }
 #if DEBUG
     std::cout << "Found NODS form"
 	      << ": " << nodsSize-12 << " bytes"
@@ -360,19 +344,12 @@ unsigned int ws::writeNODE( std::ofstream &outfile )
 
 unsigned int ws::readNODE( std::istream &file, unsigned int level )
 {
-    unsigned int total = 0;
-    std::string form;
     unsigned int nodeSize;
     std::string type;
 
     // FORM NODE
-    total += readFormHeader( file, form, nodeSize, type );
+    unsigned int total = readFormHeader( file, "NODE", nodeSize );
     nodeSize += 8;
-    if( form != "FORM" || type != "NODE" )
-    {
-	std::cout << "Expected Form of type NODE: " << type << std::endl;
-	exit( 0 );
-    }
 #if DEBUG
     std::cout << "Found NODE form"
 	      << ": " << nodeSize-12 << " bytes"
@@ -381,13 +358,8 @@ unsigned int ws::readNODE( std::istream &file, unsigned int level )
 
     // FORM 0000
     unsigned int size;
-    total += readFormHeader( file, form, size, type );
+    total += readFormHeader( file, "0000", size );
     size += 8;
-    if( form != "FORM" || type != "0000" )
-    {
-	std::cout << "Expected Form of type 0000: " << type << std::endl;
-	exit( 0 );
-    }
 #if DEBUG
     std::cout << "Found 0000 form"
 	      << ": " << size-12 << " bytes"
@@ -482,11 +454,10 @@ unsigned int ws::writeOTNL( std::ofstream &outfile )
 
 unsigned int ws::readOTNL( std::istream &file )
 {
-    unsigned int total = 0;
     unsigned int otnlSize;
     std::string type;
 
-    total += readRecordHeader( file, type, otnlSize );
+    unsigned int total = readRecordHeader( file, type, otnlSize );
     otnlSize += 8;
     if( type != "OTNL" )
     {
@@ -500,19 +471,16 @@ unsigned int ws::readOTNL( std::istream &file )
 #endif
 
     unsigned int numObjects;
-    file.read( (char*)&numObjects, sizeof( numObjects ) );
-    total += sizeof( numObjects );
+    total += base::read( file, numObjects );
 #if DEBUG
     std::cout << "Num objects: " << numObjects << std::endl;
 #endif
 
-    char temp[512];
     for( unsigned int i = 0; i < numObjects; ++i )
     {
-	file.getline( temp, 512, 0 );
-	std::string objectName( temp );
-	total += static_cast<unsigned int>( objectName.size() + 1 );
-	objectNames.push_back( objectName );
+      std::string objectName;
+      total += base::read( file, objectName );
+      objectNames.push_back( objectName );
     }
 
     if( otnlSize == total )
@@ -533,46 +501,19 @@ unsigned int ws::readOTNL( std::istream &file )
 
 unsigned int wsNode::read( std::istream &file )
 {
-    unsigned int total = 0;
-
-    file.read( (char *)&nodeID, sizeof( nodeID ) );
-    total += sizeof( nodeID );
-
-    file.read( (char *)&parentNodeID, sizeof( parentNodeID ) );
-    total += sizeof( parentNodeID );
-    
-    file.read( (char *)&objectIndex, sizeof( objectIndex ) );
-    total += sizeof( objectIndex );
-    
-    file.read( (char *)&positionInParent, sizeof( positionInParent ) );
-    total += sizeof( positionInParent );
-
-    file.read( (char *)&qx, sizeof( qx ) );
-    total += sizeof( qx );
-
-    file.read( (char *)&qy, sizeof( qy ) );
-    total += sizeof( qy );
-
-    file.read( (char *)&qz, sizeof( qz ) );
-    total += sizeof( qz );
-
-    file.read( (char *)&qw, sizeof( qw ) );
-    total += sizeof( qw );
-
-    file.read( (char *)&x, sizeof( x ) );
-    total += sizeof( x );
-    
-    file.read( (char *)&y, sizeof( y ) );
-    total += sizeof( y );
-    
-    file.read( (char *)&z, sizeof( z ) );
-    total += sizeof( z );
-
-    file.read( (char *)&u2, sizeof( u2 ) );
-    total += sizeof( u2 );
-
-    file.read( (char *)&crc, sizeof( crc ) );
-    total += sizeof( crc );
+    unsigned int total = base::read( file, nodeID );
+    total += base::read( file, parentNodeID );
+    total += base::read( file, objectIndex );
+    total += base::read( file, positionInParent );
+    total += base::read( file, qx );
+    total += base::read( file, qy );
+    total += base::read( file, qz );
+    total += base::read( file, qw );
+    total += base::read( file, x );
+    total += base::read( file, y );
+    total += base::read( file, z );
+    total += base::read( file, u2 );
+    total += base::read( file, crc );
 
     return total;
 }
