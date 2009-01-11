@@ -394,13 +394,7 @@ unsigned int msh::readGeode( std::istream &file,
     file.getline( temp, size, 0 );
     shaderName = temp;
     total += size;
-    for( unsigned int i = 0; i < shaderName.size(); ++i )
-    {
-	if( shaderName[i] == '\\' )
-	{
-	    shaderName[i] = '/';
-	}
-    }
+    base::fixSlash( shaderName );
     std::cout << "Shader file: " << shaderName << std::endl;
 
 
