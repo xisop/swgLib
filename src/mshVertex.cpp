@@ -101,8 +101,8 @@ bool mshVertex::read( std::istream &file )
     }
 
   // Read all float values in one read.
-  base::read( file, bytesPerVertex );
-  
+  file.read( (char *)data, bytesPerVertex );
+
   return true;
 }
 
