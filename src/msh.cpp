@@ -471,7 +471,7 @@ unsigned int msh::readGeometry( std::istream &file )
     total += base::read( file, u2 );
     std::cout << u2 << std::endl;
     
-    total += readUnknown( file, size-6 );
+    //total += readUnknown( file, size-6 );
 
     // Read VTXA FORM record.
     total += readFormHeader( file, form, size, type );
@@ -638,7 +638,7 @@ unsigned int msh::readGeometryDATA( std::istream &file,
 	exit( 0 );
     }
 
-    unsigned int bytesPerVertex = size/numVerts;
+    unsigned int bytesPerVertex = (size-8)/numVerts;
 
     std::cout << std::fixed;
     std::cout << "Bytes per vertex: " << bytesPerVertex << std::endl;
