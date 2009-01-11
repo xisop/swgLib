@@ -4,7 +4,7 @@
  *  \author Kenneth R. Sewell III
 
  meshLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006,2007 Kenneth R. Sewell III
+ Copyright (C) 2006-2009 Kenneth R. Sewell III
 
  This file is part of meshLib.
 
@@ -45,21 +45,13 @@ foot::~foot()
 
 unsigned int foot::readFOOT( std::istream &file )
 {
-    unsigned int total = 0;
-    std::string form;
     unsigned int footSize;
-    std::string type;
-
-    total += readFormHeader( file, form, footSize, type );
+    unsigned int total = readFormHeader( file, "FOOT", footSize );
     footSize += 8;
-    if( form != "FORM" || type != "FOOT" )
-    {
-	std::cout << "Expected Form of type FOOT: " << type << std::endl;
-	exit( 0 );
-    }
     std::cout << "Found FOOT form" << std::endl;
 
     unsigned int size;
+    std::string form, type;
     total += readFormHeader( file, form, size, type );
     if( form != "FORM" )
     {
@@ -88,12 +80,9 @@ unsigned int foot::readFOOT( std::istream &file )
 
 unsigned int foot::readINFO( std::istream &file  )
 {
-    unsigned int total = 0;
-    std::string form;
     std::string type;
-
     unsigned int infoSize;
-    total += readRecordHeader( file, type, infoSize );
+    unsigned int total = readRecordHeader( file, type, infoSize );
     infoSize += 8;
     if( type != "INFO" )
     {
@@ -103,28 +92,22 @@ unsigned int foot::readINFO( std::istream &file  )
     std::cout << "Found " << type << std::endl;
 
     unsigned int x;
-    file.read( (char *)&numColumns, sizeof( numColumns ) );
-    total += sizeof( numColumns );
+    total += base::read( file, numColumns );
     std::cout << "Number columns: " << numColumns << std::endl;
     
-    file.read( (char *)&numRows, sizeof( numRows ) );
-    total += sizeof( numRows );
+    total += base::read( file, numRows );
     std::cout << "Num rows: " << numRows << std::endl;
     
-    file.read( (char *)&x, sizeof( x ) );
-    total += sizeof( x );
+    total += base::read( file, x );
     std::cout << "???: " << x << std::endl;
     
-    file.read( (char *)&x, sizeof( x ) );
-    total += sizeof( x );
+    total += base::read( file, x );
     std::cout << "???: " << x << std::endl;
 
-    file.read( (char *)&blockWidth, sizeof( blockWidth ) );
-    total += sizeof( blockWidth );
+    total += base::read( file, blockWidth );
     std::cout << std::fixed << blockWidth << std::endl;
     
-    file.read( (char *)&blockHeight, sizeof( blockHeight ) );
-    total += sizeof( blockHeight );
+    total += base::read( file, blockHeight );
     std::cout << std::fixed << blockHeight << std::endl;
 
     if( infoSize == total )
@@ -143,12 +126,9 @@ unsigned int foot::readINFO( std::istream &file  )
 
 unsigned int foot::readPRNT( std::istream &file )
 {
-    unsigned int total = 0;
-    std::string form;
     std::string type;
-
     unsigned int prntSize;
-    total += readRecordHeader( file, type, prntSize );
+    unsigned int total = readRecordHeader( file, type, prntSize );
     prntSize += 8;
     if( type != "PRNT" )
     {
@@ -157,16 +137,12 @@ unsigned int foot::readPRNT( std::istream &file )
     }
     std::cout << "Found " << type << std::endl;
 
-
-    char temp[255];
     for( unsigned int i = 0; i < numRows; ++i )
       {
-	file.getline( temp, 255, 0 );
-	std::string prntString( temp );
-	total += prntString.size() + 1;
+	std::string prntString;
+	total += base::read( file, prntString );
 	std::cout << prntString << std::endl;
       }
-
 
     if( prntSize == total )
     {
