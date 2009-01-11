@@ -629,9 +629,9 @@ unsigned int msh::readGeometryDATA( std::istream &file,
 {
     std::string type;
     unsigned int size;
-
     // Read DATA record
-    readRecordHeader( file, type, size );
+    unsigned int total = readRecordHeader( file, type, size );
+    size += 8;
     if( type != "DATA" )
     {
 	std::cout << "Expected DATA record not: " << type << std::endl;
@@ -651,17 +651,27 @@ unsigned int msh::readGeometryDATA( std::istream &file,
 	vData->read( file, numVerts );
 	//vData->print();
 	vertexData.push_back( vData );
+	total += numVerts * bytesPerVertex;
       }
     else
       {
 	std::cerr << "Unsupported vertex size: "
 		  << bytesPerVertex
 		  << std::endl;
-	file.seekg( size, std::ios_base::cur );
 	exit( 0 );
       }
 
-    // Return size + size of FORM/size data.
-    return size+8;
+    if( size == total )
+    {
+        std::cout << "Finished reading DATA" << std::endl;
+    }
+    else
+    {
+        std::cout << "FAILED in reading DATA" << std::endl;
+        std::cout << "Read " << total << " out of " << size
+                  << std::endl;
+     }
+
+    return total;
 }
 
