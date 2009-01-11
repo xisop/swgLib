@@ -40,20 +40,15 @@ swts::~swts()
 unsigned int swts::readSWTS( std::istream &file, std::string path )
 {
   basePath = path;
-  std::string form;
   unsigned int swtsSize;
   std::string type;
 
   unsigned int total = readFormHeader( file, "SWTS", swtsSize );
   swtsSize += 8;
-  if( form != "FORM" || type != "SWTS" )
-    {
-      std::cout << "Expected Form of type SWTS: " << type << std::endl;
-      exit( 0 );
-    }
   std::cout << "Found SWTS form" << std::endl;
 
   unsigned int size;
+  std::string form;
   total += readFormHeader( file, form, size, type );
   if( form != "FORM" )
     {
