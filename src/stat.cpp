@@ -4,7 +4,7 @@
  *  \author Kenneth R. Sewell III
 
  meshLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006,2007 Kenneth R. Sewell III
+ Copyright (C) 2006-2009 Kenneth R. Sewell III
 
  This file is part of meshLib.
 
@@ -45,25 +45,15 @@ stat::~stat()
 
 unsigned int stat::readSTAT( std::istream &file )
 {
-    unsigned int total = 0;
-    std::string form;
     unsigned int statSize;
-    std::string type;
-
-    total += readFormHeader( file, form, statSize, type );
+    unsigned int total = readFormHeader( file, "STAT", statSize );
     statSize += 8;
-    if( form != "FORM" || type != "STAT" )
-    {
-	std::cout << "Expected Form of type STAT: " << type << std::endl;
-	exit( 0 );
-    }
     std::cout << "Found STAT form" << std::endl;
 
     // Peek at next record, but keep file at same place.
-    unsigned int position = file.tellg();
     unsigned int size;
-    readFormHeader( file, form, size, type );
-    file.seekg( position, std::ios_base::beg );
+    std::string form, type;
+    peekHeader( file, form, size, type );
     
     if( "DERV" == type )
       {
@@ -87,7 +77,6 @@ unsigned int stat::readSTAT( std::istream &file )
       }
 
     total += readSHOT( file );
-
 
     if( statSize == total )
     {

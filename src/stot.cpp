@@ -4,7 +4,7 @@
  *  \author Kenneth R. Sewell III
 
  meshLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006,2007 Kenneth R. Sewell III
+ Copyright (C) 2006-2009 Kenneth R. Sewell III
 
  This file is part of meshLib.
 
@@ -45,23 +45,15 @@ stot::~stot()
 
 unsigned int stot::readSTOT( std::istream &file )
 {
-    unsigned int total = 0;
-    std::string form;
     unsigned int stotSize;
-    std::string type;
-
-    total += readFormHeader( file, form, stotSize, type );
+    unsigned int total = readFormHeader( file, "STOT", stotSize );
     stotSize += 8;
-    if( form != "FORM" || type != "STOT" )
-    {
-	std::cout << "Expected Form of type STOT: " << type << std::endl;
-	exit( 0 );
-    }
     std::cout << "Found STOT form" << std::endl;
 
     total += readDERV( file, stotBaseObjectFilename );
 
     unsigned int size;
+    std::string form, type;
     total += readFormHeader( file, form, size, type );
     size += 8;
     if( form != "FORM" )
@@ -99,13 +91,9 @@ void stot::print() const
 
 unsigned int stot::readSTOTXXXX( std::istream &file )
 {
-    unsigned int total = 0;
-
-    std::string form;
     unsigned int xxxxSize;
     std::string type;
-
-    total += readRecordHeader( file, type, xxxxSize );
+    unsigned int total = readRecordHeader( file, type, xxxxSize );
     if( type != "XXXX" )
     {
         std::cout << "Expected record of type XXXX: " << type << std::endl;
@@ -113,9 +101,8 @@ unsigned int stot::readSTOTXXXX( std::istream &file )
     }
     std::cout << "Found " << type << std::endl;
 
-    char temp[255];
-    file.getline( temp, 255, 0 );
-    std::string property( temp );
+    std::string property;
+    total += base::read( file, property );
     std::cout << "Property: " << property << std::endl;
     total += property.size() + 1;
 
