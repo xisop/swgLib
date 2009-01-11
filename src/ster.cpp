@@ -4,7 +4,7 @@
  *  \author Kenneth R. Sewell III
 
  meshLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006,2007 Kenneth R. Sewell III
+ Copyright (C) 2006-2009 Kenneth R. Sewell III
 
  This file is part of meshLib.
 
@@ -41,21 +41,15 @@ ster::~ster()
 
 unsigned int ster::readSTER( std::istream &file )
 {
-    unsigned int total = 0;
-    std::string form;
     unsigned int sterSize;
     std::string type;
 
-    total += readFormHeader( file, form, sterSize, type );
+    unsigned int total = readFormHeader( file, "STER", sterSize );
     sterSize += 8;
-    if( form != "FORM" || type != "STER" )
-    {
-	std::cout << "Expected Form of type STER: " << type << std::endl;
-	exit( 0 );
-    }
     std::cout << "Found STER form" << std::endl;
 
     unsigned int size;
+    std::string form;
     total += readFormHeader( file, form, size, type );
     if( form != "FORM" )
     {
@@ -69,7 +63,6 @@ unsigned int ster::readSTER( std::istream &file )
       {
 	total += readXXXX( file );
       }
-
 
     if( sterSize == total )
     {
@@ -91,13 +84,11 @@ void ster::print() const
 
 unsigned int ster::readPCNT( std::istream &file )
 {
-    unsigned int total = 0;
-
-    std::string form;
     unsigned int pcntSize;
     std::string type;
 
-    total += readRecordHeader( file, type, pcntSize );
+    unsigned int total = readRecordHeader( file, type, pcntSize );
+    pcntSize += 8;
     if( type != "PCNT" )
     {
         std::cout << "Expected record of type PCNT: " << type << std::endl;
@@ -111,11 +102,10 @@ unsigned int ster::readPCNT( std::istream &file )
         exit( 0 );
       }
 
-    file.read( (char *)&numNodes, sizeof( numNodes ) );
-    total += sizeof( numNodes );
-    std::cout << "<numNodes>" << numNodes << "</numNodes>" << std::endl;
+    total += base::read( file, numNodes );
+    std::cout << "numNodes: " << numNodes << std::endl;
 
-    if( pcntSize == (total-8) )
+    if( pcntSize == total )
     {
         std::cout << "Finished reading PCNT" << std::endl;
     }
@@ -131,13 +121,12 @@ unsigned int ster::readPCNT( std::istream &file )
 
 unsigned int ster::readXXXX( std::istream &file )
 {
-    unsigned int total = 0;
-
     std::string form;
     unsigned int xxxxSize;
     std::string type;
 
-    total += readRecordHeader( file, type, xxxxSize );
+    unsigned int total = readRecordHeader( file, type, xxxxSize );
+    xxxxSize += 8;
     if( type != "XXXX" )
     {
         std::cout << "Expected record of type XXXX: " << type << std::endl;
@@ -145,36 +134,30 @@ unsigned int ster::readXXXX( std::istream &file )
     }
     std::cout << "Found " << type << std::endl;
 
-    char temp[255];
-    file.getline( temp, 255, 0 );
-    std::string name( temp );
-    std::cout << "<name>" << name << "</name>" << std::endl;
-    total += name.size() + 1;
+    std::string name;
+    total += base::read( file, name );
+    std::cout << "name: " << name << std::endl;
 
     unsigned char x;
-    file.read( (char *)&x, sizeof( x ) );
-    total += sizeof( x );
-    std::cout << "<?>" << (unsigned int)x << "</?>" << std::endl;
+    total += base::read( file, x );
+    std::cout << "?: " << (unsigned int)x << std::endl;
 
-    file.getline( temp, 255, 0 );
-    std::string name2( temp );
-    std::cout << "<name>" << name2 << "</name>" << std::endl;
-    total += name2.size() + 1;
+    std::string name2;
+    total += base::read( file, name2 );
+    std::cout << "name2: " << name2 << std::endl;
 
     if( "cover" == name )
       {
 	unsigned short y;
-	file.read( (char *)&y, sizeof( y ) );
-	total += sizeof( y );
-	std::cout << "<?>" << y << "</?>" << std::endl;
+	total += base::read( file, y );
+	std::cout << "?: " << y << std::endl;
 
 	unsigned char z;
-	file.read( (char *)&z, sizeof( z ) );
-	total += sizeof( z );
-	std::cout << "<?>" << (unsigned int)z << "</?>" << std::endl;
+	total += base::read( file, z );
+	std::cout << "?: " << (unsigned int)z << std::endl;
       }
 
-    if( xxxxSize == (total-8) )
+    if( xxxxSize == total )
     {
         std::cout << "Finished reading XXXX" << std::endl;
     }
