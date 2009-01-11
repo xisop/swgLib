@@ -4,7 +4,7 @@
  *  \author Kenneth R. Sewell III
 
  meshLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006,2007 Kenneth R. Sewell III
+ Copyright (C) 2006-2009 Kenneth R. Sewell III
 
  This file is part of meshLib.
 
@@ -45,18 +45,9 @@ sd2d::~sd2d()
 
 unsigned int sd2d::readSD2D( std::istream &file )
 {
-    unsigned int total = 0;
-    std::string form;
     unsigned int sd2dSize;
-    std::string type;
-
-    total += readFormHeader( file, form, sd2dSize, type );
+    unsigned int total = readFormHeader( file, "SD2D", sd2dSize );
     sd2dSize += 8;
-    if( form != "FORM" || type != "SD2D" )
-    {
-	std::cout << "Expected Form of type SD2D: " << type << std::endl;
-	exit( 0 );
-    }
     std::cout << "Found SD2D form" << std::endl;
 
     total += read0003( file );
@@ -77,12 +68,9 @@ unsigned int sd2d::readSD2D( std::istream &file )
 
 unsigned int sd2d::read0003( std::istream &file )
 {
-    unsigned int total = 0;
-    std::string form;
     std::string type;
-
     unsigned int size;
-    total += readRecordHeader( file, type, size );
+    unsigned int total = readRecordHeader( file, type, size );
     size += 8;
     if( type != "0003" )
     {
@@ -91,17 +79,13 @@ unsigned int sd2d::read0003( std::istream &file )
     }
     std::cout << "Found " << type << std::endl;
 
-    file.read( (char *)&numSamples, sizeof( numSamples ) );
-    total += sizeof( numSamples );
+    total += base::read( file, numSamples );
     std::cout << "Num samples: " << numSamples << std::endl;
 
     std::string sampleName;
     for( unsigned int i = 0; i < numSamples; ++i )
       {
-	char temp[255];
-	file.getline( temp, 255, 0 );
-	sampleName = temp;
-	total += sampleName.size() + 1;
+	total += base::read( file, sampleName );
 	base::fixSlash( sampleName );
 	std::cout << "Sample: " << sampleName << std::endl;
 	samples.push_back( sampleName );
@@ -110,20 +94,16 @@ unsigned int sd2d::read0003( std::istream &file )
     unsigned char x;
     for( unsigned int i = 0; i < 28; ++i )
       {
-	file.read( (char*)&x, sizeof( x ) );
-	total += sizeof( x );
+	total += base::read( file, x );
 	std::cout << (unsigned int)x << " ";
 
-	file.read( (char*)&x, sizeof( x ) );
-	total += sizeof( x );
+	total += base::read( file, x );
 	std::cout << (unsigned int)x << " ";
 
-	file.read( (char*)&x, sizeof( x ) );
-	total += sizeof( x );
+	total += base::read( file, x );
 	std::cout << (unsigned int)x << " ";
 
-	file.read( (char*)&x, sizeof( x ) );
-	total += sizeof( x );
+	total += base::read( file, x );
 	std::cout << (unsigned int)x << std::endl;
       }
 	
