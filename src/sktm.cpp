@@ -4,7 +4,7 @@
  *  \author Kenneth R. Sewell III
 
  meshLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006,2007 Kenneth R. Sewell III
+ Copyright (C) 2006-2009 Kenneth R. Sewell III
 
  This file is part of meshLib.
 
@@ -45,21 +45,13 @@ sktm::~sktm()
 
 unsigned int sktm::readSKTM( std::istream &file )
 {
-    unsigned int total = 0;
-    std::string form;
     unsigned int sktmSize;
-    std::string type;
-
-    total += readFormHeader( file, form, sktmSize, type );
+    unsigned int total = readFormHeader( file, "SKTM", sktmSize );
     sktmSize += 8;
-    if( form != "FORM" || type != "SKTM" )
-    {
-	std::cout << "Expected Form of type SKTM: " << type << std::endl;
-	exit( 0 );
-    }
     std::cout << "Found SKTM form" << std::endl;
 
     unsigned int size;
+    std::string form, type;
     total += readFormHeader( file, form, size, type );
     if( form != "FORM" )
     {
@@ -79,7 +71,6 @@ unsigned int sktm::readSKTM( std::istream &file )
     total += readBPTR( file, num );
     total += readBPRO( file, num );
     total += readJROR( file, num );
-
     
     if( sktmSize == total )
     {
@@ -97,12 +88,9 @@ unsigned int sktm::readSKTM( std::istream &file )
 
 unsigned int sktm::readINFO( std::istream &file, unsigned short &value )
 {
-    unsigned int total = 0;
-    std::string form;
     std::string type;
-
     unsigned int infoSize;
-    total += readRecordHeader( file, type, infoSize );
+    unsigned int total = readRecordHeader( file, type, infoSize );
     infoSize += 8;
     if( type != "INFO" )
     {
@@ -111,9 +99,7 @@ unsigned int sktm::readINFO( std::istream &file, unsigned short &value )
     }
     std::cout << "Found " << type << std::endl;
 
-    
-    file.read( (char*)&value, sizeof( value ) );
-    total += sizeof( value );
+    total += base::read( file, value );
 
     if( infoSize == total )
     {
@@ -131,12 +117,9 @@ unsigned int sktm::readINFO( std::istream &file, unsigned short &value )
 
 unsigned int sktm::readINFO( std::istream &file, unsigned int &value )
 {
-    unsigned int total = 0;
-    std::string form;
     std::string type;
-
     unsigned int infoSize;
-    total += readRecordHeader( file, type, infoSize );
+    unsigned int total = readRecordHeader( file, type, infoSize );
     infoSize += 8;
     if( type != "INFO" )
     {
@@ -145,9 +128,7 @@ unsigned int sktm::readINFO( std::istream &file, unsigned int &value )
     }
     std::cout << "Found " << type << std::endl;
 
-    
-    file.read( (char*)&value, sizeof( value ) );
-    total += sizeof( value );
+    total += base::read( file, value );
 
     if( infoSize == total )
     {
@@ -165,12 +146,9 @@ unsigned int sktm::readINFO( std::istream &file, unsigned int &value )
 
 unsigned int sktm::readNAME( std::istream &file, unsigned int num )
 {
-    unsigned int total = 0;
-    std::string form;
     std::string type;
-
     unsigned int nameSize;
-    total += readRecordHeader( file, type, nameSize );
+    unsigned int total = readRecordHeader( file, type, nameSize );
     nameSize += 8;
     if( type != "NAME" )
     {
@@ -179,13 +157,10 @@ unsigned int sktm::readNAME( std::istream &file, unsigned int num )
     }
     std::cout << "Found " << type << std::endl;
 
-    char temp[255];
     std::string filename;
     for( unsigned int i = 0; i < num; ++i )
       {
-	file.getline( temp, 255, 0 );
-	filename = temp;
-	total += filename.size() + 1;
+	total += base::read( file, filename );
 	std::cout << i << ": " << filename << std::endl;
 	groupNames.push_back( filename );
       }
@@ -211,12 +186,9 @@ void sktm::print() const
 /// Parent bone
 unsigned int sktm::readPRNT( std::istream &file, unsigned int num )
 {
-    unsigned int total = 0;
-    std::string form;
     std::string type;
-
     unsigned int prntSize;
-    total += readRecordHeader( file, type, prntSize );
+    unsigned int total = readRecordHeader( file, type, prntSize );
     prntSize += 8;
     if( type != "PRNT" )
     {
@@ -234,8 +206,7 @@ unsigned int sktm::readPRNT( std::istream &file, unsigned int num )
     unsigned int value;
     for( unsigned int i = 0; i < num; ++i )
       {
-	file.read( (char*)&value, sizeof( value ) );
-	total += sizeof( value );
+	total += base::read( file, value );
 	std::cout << value << " ";
 	std::cout << std::endl;
 
@@ -257,12 +228,9 @@ unsigned int sktm::readPRNT( std::istream &file, unsigned int num )
 
 unsigned int sktm::readRPRE( std::istream &file, unsigned int num )
 {
-    unsigned int total = 0;
-    std::string form;
     std::string type;
-
     unsigned int rpreSize;
-    total += readRecordHeader( file, type, rpreSize );
+    unsigned int total = readRecordHeader( file, type, rpreSize );
     rpreSize += 8;
     if( type != "RPRE" )
     {
@@ -280,20 +248,16 @@ unsigned int sktm::readRPRE( std::istream &file, unsigned int num )
     float value;
     for( unsigned int i = 0; i < num; ++i )
       {
-	file.read( (char*)&value, sizeof( value ) );
-	total += sizeof( value );
+	total += base::read( file, value );
 	std::cout << value << " ";
 
-	file.read( (char*)&value, sizeof( value ) );
-	total += sizeof( value );
+	total += base::read( file, value );
 	std::cout << value << " ";
 
-	file.read( (char*)&value, sizeof( value ) );
-	total += sizeof( value );
+	total += base::read( file, value );
 	std::cout << value << " ";
 
-	file.read( (char*)&value, sizeof( value ) );
-	total += sizeof( value );
+	total += base::read( file, value );
 	std::cout << value << " ";
 	std::cout << std::endl;
       }
@@ -314,12 +278,9 @@ unsigned int sktm::readRPRE( std::istream &file, unsigned int num )
 
 unsigned int sktm::readRPST( std::istream &file, unsigned int num )
 {
-    unsigned int total = 0;
-    std::string form;
     std::string type;
-
     unsigned int rpstSize;
-    total += readRecordHeader( file, type, rpstSize );
+    unsigned int total = readRecordHeader( file, type, rpstSize );
     rpstSize += 8;
     if( type != "RPST" )
     {
@@ -337,20 +298,16 @@ unsigned int sktm::readRPST( std::istream &file, unsigned int num )
     float value;
     for( unsigned int i = 0; i < num; ++i )
       {
-	file.read( (char*)&value, sizeof( value ) );
-	total += sizeof( value );
+	total += base::read( file, value );
 	std::cout << value << " ";
 
-	file.read( (char*)&value, sizeof( value ) );
-	total += sizeof( value );
+	total += base::read( file, value );
 	std::cout << value << " ";
 
-	file.read( (char*)&value, sizeof( value ) );
-	total += sizeof( value );
+	total += base::read( file, value );
 	std::cout << value << " ";
 
-	file.read( (char*)&value, sizeof( value ) );
-	total += sizeof( value );
+	total += base::read( file, value );
 	std::cout << value << " ";
 	std::cout << std::endl;
       }
@@ -371,12 +328,9 @@ unsigned int sktm::readRPST( std::istream &file, unsigned int num )
 
 unsigned int sktm::readBPTR( std::istream &file, unsigned int num )
 {
-    unsigned int total = 0;
-    std::string form;
     std::string type;
-
     unsigned int bptrSize;
-    total += readRecordHeader( file, type, bptrSize );
+    unsigned int total = readRecordHeader( file, type, bptrSize );
     bptrSize += 8;
     if( type != "BPTR" )
     {
@@ -394,16 +348,13 @@ unsigned int sktm::readBPTR( std::istream &file, unsigned int num )
     float value;
     for( unsigned int i = 0; i < num; ++i )
       {
-	file.read( (char*)&value, sizeof( value ) );
-	total += sizeof( value );
+	total += base::read( file, value );
 	std::cout << value << " ";
 
-	file.read( (char*)&value, sizeof( value ) );
-	total += sizeof( value );
+	total += base::read( file, value );
 	std::cout << value << " ";
 
-	file.read( (char*)&value, sizeof( value ) );
-	total += sizeof( value );
+	total += base::read( file, value );
 	std::cout << value << " ";
 	std::cout << std::endl;
       }
@@ -424,12 +375,9 @@ unsigned int sktm::readBPTR( std::istream &file, unsigned int num )
 
 unsigned int sktm::readBPRO( std::istream &file, unsigned int num )
 {
-    unsigned int total = 0;
-    std::string form;
     std::string type;
-
     unsigned int bproSize;
-    total += readRecordHeader( file, type, bproSize );
+    unsigned int total = readRecordHeader( file, type, bproSize );
     bproSize += 8;
     if( type != "BPRO" )
     {
@@ -447,20 +395,16 @@ unsigned int sktm::readBPRO( std::istream &file, unsigned int num )
     float value;
     for( unsigned int i = 0; i < num; ++i )
       {
-	file.read( (char*)&value, sizeof( value ) );
-	total += sizeof( value );
+	total += base::read( file, value );
 	std::cout << value << " ";
 
-	file.read( (char*)&value, sizeof( value ) );
-	total += sizeof( value );
+	total += base::read( file, value );
 	std::cout << value << " ";
 
-	file.read( (char*)&value, sizeof( value ) );
-	total += sizeof( value );
+	total += base::read( file, value );
 	std::cout << value << " ";
 
-	file.read( (char*)&value, sizeof( value ) );
-	total += sizeof( value );
+	total += base::read( file, value );
 	std::cout << value << " ";
 	std::cout << std::endl;
       }
@@ -481,12 +425,9 @@ unsigned int sktm::readBPRO( std::istream &file, unsigned int num )
 
 unsigned int sktm::readJROR( std::istream &file, unsigned int num )
 {
-    unsigned int total = 0;
-    std::string form;
     std::string type;
-
     unsigned int jrorSize;
-    total += readRecordHeader( file, type, jrorSize );
+    unsigned int total = readRecordHeader( file, type, jrorSize );
     jrorSize += 8;
     if( type != "JROR" )
     {
@@ -504,8 +445,7 @@ unsigned int sktm::readJROR( std::istream &file, unsigned int num )
     unsigned int value;
     for( unsigned int i = 0; i < num; ++i )
       {
-	file.read( (char*)&value, sizeof( value ) );
-	total += sizeof( value );
+	total += base::read( file, value );
 	std::cout << value << " ";
       }
     std::cout << std::endl;
