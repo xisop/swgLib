@@ -41,20 +41,13 @@ cshd::~cshd()
 unsigned int cshd::readCSHD( std::istream &file, std::string path )
 {
   basePath = path;
-  std::string form;
   unsigned int cshdSize;
-  std::string type;
-
-  unsigned int total = readFormHeader( file, form, cshdSize, type );
+  unsigned int total = readFormHeader( file, "CSHD", cshdSize );
   cshdSize += 8;
-  if( form != "FORM" || type != "CSHD" )
-    {
-      std::cout << "Expected Form of type CSHD: " << type << std::endl;
-      exit( 0 );
-    }
   std::cout << "Found CSHD form" << std::endl;
 
   unsigned int size;
+  std::string form, type;
   total += readFormHeader( file, form, size, type );
   if( form != "FORM" )
     {
@@ -111,19 +104,10 @@ unsigned int cshd::readCSHD( std::istream &file, std::string path )
 
 unsigned int cshd::readTFAC( std::istream &file )
 {
-    std::string form;
     unsigned int tfacSize;
-    std::string type;
-
-    unsigned int total = readFormHeader( file, form, tfacSize, type );
+    unsigned int total = readFormHeader( file, "TFAC", tfacSize );
     tfacSize += 8; // Add size of FORM and size fields.
-    if( form != "FORM" || type != "TFAC" )
-    {
-        std::cout << "Expected Form of type TFAC: " << type << std::endl;
-        exit( 0 );
-    }
-    std::cout << "Found " << form << " " << type << std::endl;
-
+    std::cout << "Found FORM TFAC" << std::endl;
 
     while( total < tfacSize )
     {
@@ -148,7 +132,6 @@ unsigned int cshd::readPAL( std::istream &file )
 {
     unsigned int palSize;
     std::string type;
-
     unsigned int total = readRecordHeader( file, type, palSize );
     if( type != "PAL " )
     {
@@ -175,25 +158,14 @@ unsigned int cshd::readPAL( std::istream &file )
 
 unsigned int cshd::readTXTR( std::istream &file )
 {
-    std::string form;
     unsigned int txtrSize;
-    std::string type;
-
-    unsigned int position = file.tellg();
-
-    unsigned int total = readFormHeader( file, form, txtrSize, type );
+    unsigned int total = readFormHeader( file, "TXTR", txtrSize );
     txtrSize += 8;
-    if( form != "FORM" || type != "TXTR" )
-    {
-	std::cout << "No FORM TXTR found." << std::endl;
-	file.seekg( position, std::ios_base::beg );
-	return 0;
-    }
-    std::cout << "Found " << form << " " << type
-	      << ": " << txtrSize-12 << " bytes"
+    std::cout << "Found FORM TXTR: " << txtrSize-12 << " bytes"
 	      << std::endl;
 
     unsigned int size;
+    std::string type;
     total += readRecordHeader( file, type, size );
     if( type != "DATA" )
     {
@@ -205,15 +177,13 @@ unsigned int cshd::readTXTR( std::istream &file )
 	      << std::endl;
 
     unsigned short numTexNames;
-    file.read( (char *)&numTexNames, sizeof( unsigned short ) );
-    total += sizeof( unsigned short );
-    char name[255];
+    total += base::read( file, numTexNames );
+
     for( unsigned int i = 0; i < numTexNames; ++i )
       {
-	file.getline( name, 255, 0 );
-	std::string texName( name );
-	total += texName.size()+1;
-	std::cout << "Texture name: " << name << std::endl;
+	std::string texName;
+	total += base::read( file, texName );
+	std::cout << "Texture name: " << texName << std::endl;
       }
 
     total += readCUST( file );
@@ -234,22 +204,10 @@ unsigned int cshd::readTXTR( std::istream &file )
 
 unsigned int cshd::readCUST( std::istream &file )
 {
-    std::string form;
     unsigned int custSize;
-    std::string type;
-
-    unsigned int position = file.tellg();
-
-    unsigned int total = readFormHeader( file, form, custSize, type );
+    unsigned int total = readFormHeader( file, "CUST", custSize );
     custSize += 8;
-    if( form != "FORM" || type != "CUST" )
-    {
-	std::cout << "No FORM CUST found." << std::endl;
-	file.seekg( position, std::ios_base::beg );
-	return 0;
-    }
-    std::cout << "Found " << form << " " << type
-	      << ": " << custSize-12 << " bytes"
+    std::cout << "Found FORM CUST: " << custSize-12 << " bytes"
 	      << std::endl;
 
     while( total < custSize )
