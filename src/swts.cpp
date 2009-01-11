@@ -4,7 +4,7 @@
  *  \author Kenneth R. Sewell III
 
  meshLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006,2007 Kenneth R. Sewell III
+ Copyright (C) 2006-2009 Kenneth R. Sewell III
 
  This file is part of meshLib.
 
@@ -40,12 +40,11 @@ swts::~swts()
 unsigned int swts::readSWTS( std::istream &file, std::string path )
 {
   basePath = path;
-  unsigned int total = 0;
   std::string form;
   unsigned int swtsSize;
   std::string type;
 
-  total += readFormHeader( file, form, swtsSize, type );
+  unsigned int total = readFormHeader( file, "SWTS", swtsSize );
   swtsSize += 8;
   if( form != "FORM" || type != "SWTS" )
     {
@@ -63,13 +62,10 @@ unsigned int swts::readSWTS( std::istream &file, std::string path )
     }
   std::cout << "Found " << form << " " << type << std::endl;
 
-  unsigned int position;
   while( total < swtsSize )
     {
       // Peek at next record, but keep file at same place.
-      position = file.tellg();
-      readFormHeader( file, form, size, type );
-      file.seekg( position, std::ios_base::beg );
+      peekHeader( file, form, size, type );
 
       if( form == "FORM" )
 	{
@@ -118,20 +114,12 @@ unsigned int swts::readSWTS( std::istream &file, std::string path )
 
 unsigned int swts::readDTST( std::istream &file )
 {
-    unsigned int total = 0;
-
-    std::string form;
     unsigned int dtstSize;
     std::string type;
 
-    total += readFormHeader( file, form, dtstSize, type );
+    unsigned int total = readFormHeader( file, "DTST", dtstSize );
     dtstSize += 8; // Add size of FORM and size fields.
-    if( form != "FORM" || type != "DTST" )
-    {
-        std::cout << "Expected Form of type DTST: " << type << std::endl;
-        exit( 0 );
-    }
-    std::cout << "Found " << form << " " << type << std::endl;
+    std::cout << "Found FORM " << type << std::endl;
 
     unsigned int size;
     total += readRecordHeader( file, type, size );
@@ -148,13 +136,11 @@ unsigned int swts::readDTST( std::istream &file )
       }
 
     unsigned int x;
-    file.read( (char *)&x, sizeof( x ) );
-    total += sizeof( x );
+    total += base::read( file, x );
     std::cout << x << std::endl;
 
     float y;
-    file.read( (char *)&y, sizeof( y ) );
-    total += sizeof( y );
+    total += base::read( file, y );
     std::cout << y << std::endl;
 
     if( dtstSize == total )
@@ -173,20 +159,12 @@ unsigned int swts::readDTST( std::istream &file )
 
 unsigned int swts::readDRTS( std::istream &file )
 {
-    unsigned int total = 0;
-
-    std::string form;
     unsigned int dtstSize;
     std::string type;
 
-    total += readFormHeader( file, form, dtstSize, type );
+    unsigned int total = readFormHeader( file, "DRTS", dtstSize );
     dtstSize += 8; // Add size of FORM and size fields.
-    if( form != "FORM" || type != "DRTS" )
-    {
-        std::cout << "Expected Form of type DRTS: " << type << std::endl;
-        exit( 0 );
-    }
-    std::cout << "Found " << form << " " << type << std::endl;
+    std::cout << "Found FORM " << type << std::endl;
 
     unsigned int size;
     total += readRecordHeader( file, type, size );
@@ -203,18 +181,15 @@ unsigned int swts::readDRTS( std::istream &file )
       }
 
     unsigned int x;
-    file.read( (char *)&x, sizeof( x ) );
-    total += sizeof( x );
+    total += base::read( file, x );
     std::cout << x << std::endl;
 
     float y;
-    file.read( (char *)&y, sizeof( y ) );
-    total += sizeof( y );
+    total += base::read( file, y );
     std::cout << y << std::endl;
 
     float z;
-    file.read( (char *)&z, sizeof( z ) );
-    total += sizeof( z );
+    total += base::read( file, z );
     std::cout << z << std::endl;
 
     if( dtstSize == total )
@@ -233,12 +208,10 @@ unsigned int swts::readDRTS( std::istream &file )
 
 unsigned int swts::readNAME( std::istream &file )
 {
-    unsigned int total = 0;
-
     unsigned int nameSize;
     std::string type;
 
-    total += readRecordHeader( file, type, nameSize );
+    unsigned int total = readRecordHeader( file, type, nameSize );
     nameSize += 8;
     if( type != "NAME" )
     {
@@ -247,10 +220,7 @@ unsigned int swts::readNAME( std::istream &file )
     }
     std::cout << "Found " << type << std::endl;
     
-    char temp[255];
-    file.getline( temp, 255, 0 );
-    shaderFilename = temp;
-    total += shaderFilename.size() + 1;
+    total += base::read( file, shaderFilename );
 
     if( nameSize == total )
     {
@@ -268,12 +238,10 @@ unsigned int swts::readNAME( std::istream &file )
 
 unsigned int swts::readTEXT( std::istream &file )
 {
-    unsigned int total = 0;
-
     unsigned int textSize;
     std::string type;
 
-    total += readRecordHeader( file, type, textSize );
+    unsigned int total = readRecordHeader( file, type, textSize );
     textSize += 8;
     if( type != "TEXT" )
     {
@@ -288,9 +256,8 @@ unsigned int swts::readTEXT( std::istream &file )
     temp[4] = 0;
     textureTagList.push_back( std::string( temp ) );
 
-    file.getline( temp, 255, 0 );
     std::string textName( temp );
-    total += textName.size() + 1;
+    total += base::read( file, textName );
     textureList.push_back( textName );
 
     if( textSize == total )
