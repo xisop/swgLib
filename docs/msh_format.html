@@ -1,25 +1,26 @@
 <html>
 <head>
-  <title>SWG mesh file format.</title>
+  <title>SWG Mesh (.msh) file format.</title>
   <style type="text/css">
   </style>
 </head>
 <body style="background-color:white" >
-<hl style="color:black; font-size:25px">SWG MESH format</hl></br>
+<hl style="color:black; font-size:25px">SWG Mesh (.msh) format</hl></br>
 <hl style="color:black; font-size:15px">by Xunil</hl></br>
 <p style="color:back">
-This file, like most SWG files, is based on
-the <a href="iff_format.html">IFF</a> format.  This
-overview will skip going into detail about the IFF format in general
-and focus purely on the organization of the MESH form.</br>
-If a Form/Record appears multiple times I will only define it the
-first time, unless its structure differs.
-</br>
-This file format is still being explored, so take this information as
+<ul>
+<li> This file, like most SWG files, is based on the <a href="iff_format.html">IFF</a> format.</li>
+<li> This overview will skip going into detail about the IFF format in general
+and focus purely on the organization of the MESH form.</li>
+<li>If a Form/Record appears multiple times I will only define it the
+first time, unless its structure differs.</li>
+<li>This file format is still being explored, so take this information as
 a guide and realize that some assumptions made here may be incorrect
-or missing details.</br>
-<b>NOTE:</b> All values are little-endian, unless otherwise noted.</br>
-
+or missing details.</li>
+<li>If you discover something I missed or have an error correction,
+  please send a message Xunil on the <a href="http://www.swgemu.com/forums">swgemu forums.</a></li>
+<li><b>NOTE:</b> All values are little-endian, unless otherwise noted.</li>
+</ul>
 </br>
 
 <ul>
@@ -28,7 +29,7 @@ or missing details.</br>
     <li>Form:000# <i>(The # is an ASCII numerical character, not sure
 	of the meaning for this form.)</i></li>
     <ul>
-      <li>Form:APPR
+      <li><a name="appr">Form:APPR</a>
       <ul>
 	<li>Form:0003</li>
 	<li>Form:EXBX <i>(Bounding box) 1 or more required.</i>
