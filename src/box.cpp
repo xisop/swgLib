@@ -44,13 +44,12 @@ unsigned int box::readBOX( std::istream &file )
   std::cout << "Found BOX record" << std::endl;
 
   // Read center and radius of bounding sphere
-  file.read( (char*)&x1, sizeof( float ) );
-  file.read( (char*)&y1, sizeof( float ) );
-  file.read( (char*)&z1, sizeof( float ) );
-  file.read( (char*)&x2, sizeof( float ) );
-  file.read( (char*)&y2, sizeof( float ) );
-  file.read( (char*)&z2, sizeof( float ) );
-  total += sizeof( float ) * 6;
+  total += base::read( file, x1 );
+  total += base::read( file, y1 );
+  total += base::read( file, z1 );
+  total += base::read( file, x2 );
+  total += base::read( file, y2 );
+  total += base::read( file, z2 );
 
   std::cout << "Bounding box corners: " << std::endl;
   std::cout << "   " << x1 << ", " << y1 << ", " << z1 << std::endl;

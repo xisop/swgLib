@@ -221,9 +221,7 @@ unsigned int cmp::readRADR( std::istream &file )
     std::cout << "Found INFO record" << std::endl;
 
     unsigned int numNodes;
-    file.read( (char *)&numNodes, sizeof( numNodes ) );
-    total += sizeof( numNodes );
-
+    total += base::read( file, numNodes );
     std::cout << "Num nodes: " << numNodes << std::endl;
 
     if( numNodes > 0 )
