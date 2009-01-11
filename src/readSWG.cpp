@@ -38,6 +38,7 @@
 #include <meshLib/foot.hpp>
 #include <meshLib/ilf.hpp>
 #include <meshLib/lod.hpp>
+#include <meshLib/mlod.hpp>
 #include <meshLib/peft.hpp>
 #include <meshLib/prto.hpp>
 #include <meshLib/sbot.hpp>
@@ -134,6 +135,12 @@ int main( int argc, char **argv )
 	  // LOD
 	  ml::lod misc;
 	  misc.readLOD( infile );
+	}
+      else if( "MLOD" == fileType )
+	{
+	  // MLOD
+	  ml::mlod misc;
+	  misc.readMLOD( infile );
 	}
       else if( "PEFT" == fileType )
 	{

@@ -23,6 +23,7 @@ OBJS = \
 	flor.o \
 	ilf.o \
 	lod.o \
+	mlod.o \
 	model.o \
 	msh.o \
 	peft.o \
@@ -103,12 +104,6 @@ cmp.o: cmp.cpp $(MESH_INC)/meshLib/cmp.hpp $(MESH_INC)/meshLib/vector3.hpp \
 cshd.o: cshd.cpp $(MESH_INC)/meshLib/cshd.hpp sht.o
 	$(CXX) $(CFLAG) -c cshd.cpp
 
-msh.o: msh.cpp $(MESH_INC)/meshLib/msh.hpp sht.o cshd.o base.o
-	$(CXX) $(CFLAG) -c msh.cpp
-
-model.o: model.cpp $(MESH_INC)/meshLib/model.hpp
-	$(CXX) $(CFLAG) -c model.cpp
-
 eft.o: eft.cpp $(MESH_INC)/meshLib/eft.hpp
 	$(CXX) $(CFLAG) -c eft.cpp
 
@@ -122,6 +117,15 @@ lod.o: lod.cpp $(MESH_INC)/meshLib/lod.hpp msh.o \
 	$(MESH_INC)/meshLib/vector3.hpp \
 	$(MESH_INC)/meshLib/matrix3.hpp
 	$(CXX) $(CFLAG) -c lod.cpp
+
+mlod.o: mlod.cpp $(MESH_INC)/meshLib/mlod.hpp
+	$(CXX) $(CFLAG) -c mlod.cpp
+
+msh.o: msh.cpp $(MESH_INC)/meshLib/msh.hpp sht.o cshd.o base.o
+	$(CXX) $(CFLAG) -c msh.cpp
+
+model.o: model.cpp $(MESH_INC)/meshLib/model.hpp
+	$(CXX) $(CFLAG) -c model.cpp
 
 peft.o: peft.cpp $(MESH_INC)/meshLib/peft.hpp
 	$(CXX) $(CFLAG) -c peft.cpp
