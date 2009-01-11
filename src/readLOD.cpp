@@ -3,7 +3,7 @@
  *  \author Kenneth R. Sewell III
 
  meshLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006,2007 Kenneth R. Sewell III
+ Copyright (C) 2006-2009 Kenneth R. Sewell III
 
  This file is part of meshLib.
 
@@ -31,7 +31,6 @@
 
 int main( int argc, char **argv )
 {
-
     if( 2 != argc )
     {
 	std::cout << "readLOD <file>" << std::endl;

@@ -4,7 +4,7 @@
  *  \author Kenneth R. Sewell III
 
  meshLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006,2007 Kenneth R. Sewell III
+ Copyright (C) 2006-2009 Kenneth R. Sewell III
 
  This file is part of meshLib.
 
@@ -45,18 +45,9 @@ sd3d::~sd3d()
 
 unsigned int sd3d::readSD3D( std::istream &file )
 {
-    unsigned int total = 0;
-    std::string form;
     unsigned int sd3dSize;
-    std::string type;
-
-    total += readFormHeader( file, form, sd3dSize, type );
+    unsigned int total = readFormHeader( file, "SD3D", sd3dSize );
     sd3dSize += 8;
-    if( form != "FORM" || type != "SD3D" )
-    {
-	std::cout << "Expected Form of type SD3D: " << type << std::endl;
-	exit( 0 );
-    }
     std::cout << "Found SD3D form" << std::endl;
 
     total += readSD2D( file );
@@ -78,12 +69,9 @@ unsigned int sd3d::readSD3D( std::istream &file )
 
 unsigned int sd3d::read0001( std::istream &file )
 {
-    unsigned int total = 0;
-    std::string form;
     std::string type;
-
     unsigned int size;
-    total += readRecordHeader( file, type, size );
+    unsigned int total = readRecordHeader( file, type, size );
     size += 8;
     if( type != "0001" )
     {

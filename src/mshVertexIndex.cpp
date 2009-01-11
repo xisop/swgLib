@@ -3,7 +3,7 @@
  *  \file   mshVertexIndex.cpp
  *  \author Kenneth R. Sewell III
 
- Copyright (C) 2006,2007 Kenneth R. Sewell III
+ Copyright (C) 2006-2009 Kenneth R. Sewell III
 
  This file is part of meshLib.
 

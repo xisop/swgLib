@@ -4,7 +4,7 @@
  *  \author Kenneth R. Sewell III
 
  meshLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006,2007 Kenneth R. Sewell III
+ Copyright (C) 2006-2009 Kenneth R. Sewell III
 
  This file is part of meshLib.
 
@@ -42,36 +42,24 @@ spam::~spam()
 
 unsigned int spam::readSPAM( std::istream &file )
 {
-    unsigned int total = 0;
-    std::string form;
     unsigned int spamSize;
-    std::string type;
-
-    total += readFormHeader( file, form, spamSize, type );
+    unsigned int total = readFormHeader( file, "SPAM", spamSize );
     spamSize += 8;
-    if( form != "FORM" || type != "SPAM" )
-    {
-	std::cout << "Expected Form of type SPAM: " << type << std::endl;
-	exit( 0 );
-    }
-#if DEBUG
     std::cout << "Found SPAM form"
 	      << ": " << spamSize-12 << " bytes"
 	      << std::endl;
-#endif
 
     unsigned int size;
+  std::string form, type;
     total += readFormHeader( file, form, size, type );
     if( form != "FORM" )
     {
 	std::cout << "Expected FORM: " << form << std::endl;
 	exit( 0 );
     }
-#if DEBUG
     std::cout << "Found " << form << " " << type
 	      << ": " << size-4 << " bytes"
 	      << std::endl;
-#endif
 
     total += readAPPE( file );
     total += readCLIE( file );
@@ -80,9 +68,7 @@ unsigned int spam::readSPAM( std::istream &file )
 
     if( spamSize == total )
     {
-#if DEBUG
-	sd::cout << "Finished reading SPAM" << std::endl;
-#endif
+	std::cout << "Finished reading SPAM" << std::endl;
     }
     else
     {
@@ -98,25 +84,15 @@ unsigned int spam::readSPAM( std::istream &file )
 
 unsigned int spam::readAPPE( std::istream &file )
 {
-    unsigned int total = 0;
-    std::string form;
     unsigned int formSize;
-    std::string type;
-
-    total += readFormHeader( file, form, formSize, type );
+    unsigned int total = readFormHeader( file, "APPE", formSize );
     formSize += 8;
-    if( form != "FORM" || type != "APPE" )
-    {
-	std::cout << "Expected form of type APPE: " << type << std::endl;
-	exit( 0 );
-    }
-#if DEBUG
     std::cout << "Found APPE form"
 	      << ": " << formSize-8 << " bytes"
 	      << std::endl;
-#endif
     
     unsigned int size;
+    std::string type;
     total += readRecordHeader( file, type, size );
     size += 8;
     if( type != "0000" )
@@ -125,20 +101,16 @@ unsigned int spam::readAPPE( std::istream &file )
 	exit( 0 );
     }
 
-    char temp[255];
     while( total < size )
-    {
-	file.getline( temp, 255, 0 );
-	std::string newName( temp );
-	total += newName.size() + 1;
+      {
+	std::string newName;
+	total += base::read( file, newName );
 	appe.push_back( newName );
     }
 
     if( formSize == total )
     {
-#if DEBUG
 	std::cout << "Finished reading APPE" << std::endl;
-#endif
     }
     else
     {
@@ -152,25 +124,15 @@ unsigned int spam::readAPPE( std::istream &file )
 
 unsigned int spam::readCLIE( std::istream &file )
 {
-    unsigned int total = 0;
-    std::string form;
     unsigned int formSize;
-    std::string type;
-
-    total += readFormHeader( file, form, formSize, type );
+    unsigned int total = readFormHeader( file, "CLIE", formSize );
     formSize += 8;
-    if( form != "FORM" || type != "CLIE" )
-    {
-	std::cout << "Expected form of type CLIE: " << type << std::endl;
-	exit( 0 );
-    }
-#if DEBUG
     std::cout << "Found CLIE form"
 	      << ": " << formSize-8 << " bytes"
 	      << std::endl;
-#endif
     
     unsigned int size;
+    std::string type;
     total += readRecordHeader( file, type, size );
     size += 8;
     if( type != "0000" )
@@ -179,20 +141,16 @@ unsigned int spam::readCLIE( std::istream &file )
 	exit( 0 );
     }
 
-    char temp[255];
     while( total < size )
     {
-	file.getline( temp, 255, 0 );
-	std::string newName( temp );
-	total += newName.size() + 1;
+	std::string newName;
+	total += base::read( file, newName );
 	clie.push_back( newName );
     }
 
     if( formSize == total )
     {
-#if DEBUG
 	std::cout << "Finished reading CLIE" << std::endl;
-#endif
     }
     else
     {
@@ -206,25 +164,15 @@ unsigned int spam::readCLIE( std::istream &file )
 
 unsigned int spam::readPORT( std::istream &file )
 {
-    unsigned int total = 0;
-    std::string form;
     unsigned int formSize;
-    std::string type;
-
-    total += readFormHeader( file, form, formSize, type );
+    unsigned int total = readFormHeader( file, "PORT", formSize );
     formSize += 8;
-    if( form != "FORM" || type != "PORT" )
-    {
-	std::cout << "Expected form of type PORT: " << type << std::endl;
-	exit( 0 );
-    }
-#if DEBUG
     std::cout << "Found PORT form"
 	      << ": " << formSize-8 << " bytes"
 	      << std::endl;
-#endif
     
     unsigned int size;
+    std::string type;
     total += readRecordHeader( file, type, size );
     size += 8;
     if( type != "0000" )
@@ -233,20 +181,16 @@ unsigned int spam::readPORT( std::istream &file )
 	exit( 0 );
     }
 
-    char temp[255];
     while( total < size )
     {
-	file.getline( temp, 255, 0 );
-	std::string newName( temp );
-	total += newName.size() + 1;
+	std::string newName;
+	total += base::read( file, newName );
 	port.push_back( newName );
     }
 
     if( formSize == total )
     {
-#if DEBUG
 	std::cout << "Finished reading PORT" << std::endl;
-#endif
     }
     else
     {
@@ -260,25 +204,14 @@ unsigned int spam::readPORT( std::istream &file )
 
 unsigned int spam::readSOUN( std::istream &file )
 {
-    unsigned int total = 0;
-    std::string form;
     unsigned int formSize;
-    std::string type;
-
-    total += readFormHeader( file, form, formSize, type );
+    unsigned int total = readFormHeader( file, "SOUN", formSize );
     formSize += 8;
-    if( form != "FORM" || type != "SOUN" )
-    {
-	std::cout << "Expected form of type SOUN: " << type << std::endl;
-	exit( 0 );
-    }
-#if DEBUG
-    std::cout << "Found SOUN form"
-	      << ": " << formSize-8 << " bytes"
+    std::cout << "Found SOUN form: " << formSize-8 << " bytes"
 	      << std::endl;
-#endif
     
     unsigned int size;
+    std::string type;
     total += readRecordHeader( file, type, size );
     size += 8;
     if( type != "0000" )
@@ -287,20 +220,16 @@ unsigned int spam::readSOUN( std::istream &file )
 	exit( 0 );
     }
 
-    char temp[255];
     while( total < size )
     {
-	file.getline( temp, 255, 0 );
-	std::string newName( temp );
-	total += newName.size() + 1;
+	std::string newName;
+	total += base::read( file, newName );
 	soun.push_back( newName );
     }
 
     if( formSize == total )
     {
-#if DEBUG
 	std::cout << "Finished reading SOUN" << std::endl;
-#endif
     }
     else
     {
