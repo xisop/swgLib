@@ -93,6 +93,7 @@ unsigned int trn::readTRNDATA( std::istream &file,
 
   // DATA record ( Level 2 )
   unsigned int total = readRecordHeader( file, type, size );
+  size += 8;
   if( type != "DATA" )
     {
       std::cout << "Expected DATA record: " << type << std::endl;
@@ -100,54 +101,43 @@ unsigned int trn::readTRNDATA( std::istream &file,
     }
   std::cout << debugString << "Found DATA record" << std::endl;
 
-  char temp[255];
-  file.getline( temp, 255, 0 );
-  std::string name( temp );
+  std::string name;
+  total += base::read( file, name );
   std::cout << dbgStr << name << std::endl;
-  total += name.size() + 1;
 
   unsigned int x4;
   float x5, x6;
     
   std::cout.flags ( std::ios_base::showpoint );
-  file.read( (char *)&terrainSize, sizeof( terrainSize ) );
-  total += sizeof( terrainSize );
+  total += base::read( file, terrainSize );
   std::cout << dbgStr << "Terrain size: " << terrainSize << std::endl;
-    
-  file.read( (char *)&blockSize, sizeof( blockSize ) );
-  total += sizeof( blockSize );
+  
+  total += base::read( file, blockSize );
   std::cout << dbgStr << "Block size: " << blockSize << std::endl;
 
-  file.read( (char *)&tilesPerBlock, sizeof( tilesPerBlock ) );
-  total += sizeof( tilesPerBlock );
+  total += base::read( file, tilesPerBlock );
   std::cout << dbgStr << "Tiles per block: " << tilesPerBlock << std::endl;
     
-  file.read( (char *)&x4, sizeof( x4 ) );
-  total += sizeof( x4 );
+  total += base::read( file, x4 );
   std::cout << dbgStr << x4 << std::endl;
 
-  file.read( (char *)&x5, sizeof( x5 ) );
-  total += sizeof( x5 );
+  total += base::read( file, x5 );
   std::cout << dbgStr << x5 << std::endl;
     
-  file.read( (char *)&x6, sizeof( x6 ) );
-  total += sizeof( x6 );
+  total += base::read( file, x6 );
   std::cout << dbgStr << x6 << std::endl;
 
-  file.getline( temp, 255, 0 );
-  std::string waterShader( temp );
+  std::string waterShader;
+  total += base::read( file, waterShader );
   std::cout << dbgStr << waterShader << std::endl;
-  total += waterShader.size() + 1;
 
   float x;
   for( unsigned int i = 0; i < 21; ++i )
     {
-      file.read( (char *)&x, sizeof( x ) );
-      total += sizeof( x );
+      total += base::read( file, x );
       std::cout << dbgStr << x << std::endl;
     }
 
-  size += 8;
   if( size == total )
     {
       std::cout << debugString << "Finished reading DATA" << std::endl;
