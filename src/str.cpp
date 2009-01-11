@@ -4,7 +4,7 @@
  *  \author Kenneth R. Sewell III
 
  meshLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006,2007 Kenneth R. Sewell III
+ Copyright (C) 2006-2009 Kenneth R. Sewell III
 
  This file is part of meshLib.
 
@@ -23,6 +23,7 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#include <meshLib/base.hpp>
 #include <meshLib/str.hpp>
 
 #include <iostream>
@@ -51,12 +52,10 @@ bool str::isRightType( std::istream &file )
 
 unsigned int str::readSTR( std::istream &file )
 {
-    unsigned int total = 0;
-
     unsigned int position = file.tellg();
     unsigned int header;
     file.read( (char *)&header, sizeof( header ) );
-    total += sizeof( header );
+    unsigned int total = sizeof( header );
 
     // Check for .str header data
     if( header != 0xabcd )
@@ -67,20 +66,17 @@ unsigned int str::readSTR( std::istream &file )
     }
 
     unsigned char unknown;
-    file.read( (char *)&unknown, sizeof( unknown ) );
-    //std::cout << "Unknown: " << (unsigned int)unknown << std::endl;
-    total += sizeof( unknown );
+    total += base::read( file, unknown );
+    std::cout << "Unknown: " << (unsigned int)unknown << std::endl;
 
     unsigned int unknown1;
-    file.read( (char *)&unknown1, sizeof( unknown1 ) );
-    //std::cout << "Unknown: " << unknown1 << std::endl;
-    total += sizeof( unknown1 );
+    total += base::read( file, unknown1 );
+    std::cout << "Unknown: " << unknown1 << std::endl;
     
     // Number of ids and descriptions
     unsigned int numStrings;
-    file.read( (char *)&numStrings, sizeof( numStrings ) );
-    //std::cout << "Num strings: " << numStrings << std::endl;
-    total += sizeof( numStrings );
+    total += base::read( file, numStrings );
+    std::cout << "Num strings: " << numStrings << std::endl;
 
     // Allocate vectors to hold IDs and descriptions...
     std::vector< std::string > id( numStrings );
@@ -90,43 +86,41 @@ unsigned int str::readSTR( std::istream &file )
     unsigned int num, key, size;
     for( unsigned int j = 0; j < numStrings; ++j )
     {
-	file.read( (char *)&num, sizeof( num ) );
-	file.read( (char *)&key, sizeof( key ) );
-	file.read( (char *)&size, sizeof( size ) );
-	total += 3 * sizeof( unsigned int );
-    
-	std::string description;
-
-	char *temp = new char[size*2];
-	file.read( temp, size*2 );
-	for( unsigned int i = 0; i < size; ++i )
+      total += base::read( file, num );
+      total += base::read( file, key );
+      total += base::read( file, size );
+      
+      std::string description;
+      
+      char *temp = new char[size*2];
+      file.read( temp, size*2 );
+      for( unsigned int i = 0; i < size; ++i )
 	{
-	    description.push_back( temp[i*2] );
+	  description.push_back( temp[i*2] );
 	}
-	delete[] temp;
-
-	// number of 2-byte characters
-	total +=  size * 2;
-
-	desc[num-1] = description;
+      delete[] temp;
+      
+      // number of 2-byte characters
+      total +=  size * 2;
+      
+      desc[num-1] = description;
     }
 
     // Read the ID's
     for( unsigned int j = 0; j < numStrings; ++j )
     {
-	file.read( (char *)&num, sizeof( num ) );
-	file.read( (char *)&size, sizeof( size ) );
-	total += 2 * sizeof( unsigned int );
-
-	char *temp = new char[size];
-	file.read( temp, size );
-	std::string name( temp, size );
-	delete[] temp;
-
-	// Number of characters
-	total += size;
-
-	id[num-1] = name;
+      total += base::read( file, num );
+      total += base::read( file, size );
+      
+      char *temp = new char[size];
+      file.read( temp, size );
+      std::string name( temp, size );
+      delete[] temp;
+      
+      // Number of characters
+      total += size;
+      
+      id[num-1] = name;
     }
 
     // Erase current map, populate with new data...
