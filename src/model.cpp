@@ -49,11 +49,10 @@ unsigned int model::readSPHR( std::istream &file,
   std::cout << "Found SPHR record" << std::endl;
 
   // Read center and radius of bounding sphere
-  file.read( (char*)&cx, sizeof( float ) );
-  file.read( (char*)&cy, sizeof( float ) );
-  file.read( (char*)&cz, sizeof( float ) );
-  file.read( (char*)&radius, sizeof( float ) );
-  total += sizeof( float ) * 4;
+  total += base::read( file, cx );
+  total += base::read( file, cy );
+  total += base::read( file, cz );
+  total += base::read( file, radius );
 
   std::cout << "Bounding sphere center and radius: " << std::endl;
   std::cout << "  ( " << cx << ", " << cy << ", " << cz
