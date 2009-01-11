@@ -71,13 +71,8 @@ unsigned int lod::readLOD( std::istream &file, std::string path )
   unsigned int dtlaSize;
   std::string type;
 
-  unsigned int total = readFormHeader( file, form, dtlaSize, type );
+  unsigned int total = readFormHeader( file, "DTLA", dtlaSize );
   dtlaSize += 8;
-  if( form != "FORM" || type != "DTLA" )
-    {
-      std::cout << "Expected Form of type DTLA: " << type << std::endl;
-      exit( 0 );
-    }
   std::cout << "Found DTLA form" << std::endl;
 
   unsigned int size;
