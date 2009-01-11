@@ -81,12 +81,21 @@ unsigned int lod::readLOD( std::istream &file, std::string path )
   std::cout << "Found DTLA form" << std::endl;
 
   unsigned int size;
+#if 1
   total += readFormHeader( file, form, size, type );
   if( form != "FORM" )
     {
       std::cout << "Expected Form " << std::endl;
       exit( 0 );
     }
+  if( type != "0007" && type != "0006" && type != "0005")
+    {
+      std::cout << "Expected type 0005, 0006 or 0007: " << type << std::endl;
+      exit( 0 );
+    }
+#else
+  total += readFormHeader( file, "0000", size );
+#endif
   std::cout << "Found form of type: " << type << std::endl;
 
   while( total < dtlaSize )
@@ -187,17 +196,14 @@ unsigned int lod::readINFO( std::istream &file )
     for( unsigned int i=0; i < num; ++i )
     {
 	unsigned int childNo;
-	file.read( (char*)&childNo, sizeof( childNo ) );
-	total += sizeof( childNo );
+	total += base::read( file, childNo );
 
 	float n;
-	file.read( (char*)&n, sizeof( n ) );
-	total += sizeof( n );
+	total += base::read( file, n );
 	near.push_back( n );
 
 	float f;
-	file.read( (char*)&f, sizeof( f ) );
-	total += sizeof( f );
+	total += base::read( file, f );
 	far.push_back( f );
 
 	std::cout << childNo << ": "
@@ -224,13 +230,10 @@ unsigned int lod::readCHLD( std::istream &file )
     std::cout << "Found CHLD record" << std::endl;
 
     unsigned int childNumber;
-    file.read( (char *)&childNumber, sizeof( childNumber ) );
-    total += sizeof( childNumber );
+    total += base::read( file, childNumber );
 
-    char temp[255];
-    file.getline( temp, 255, 0 );
-    std::string tempFilename( temp );
-    total += tempFilename.size() + 1;
+    std::string tempFilename;
+    total += base::read( file, tempFilename );
 
     // Some files already have appearance/ in them
     if( tempFilename.substr( 0, 11 ) != "appearance/" )
@@ -261,19 +264,15 @@ unsigned int lod::readCHLD( std::istream &file )
 
 unsigned int lod::readChildren( std::istream &file )
 {
-    std::string form;
     unsigned int size;
-    std::string type;
-
-    unsigned int total = readFormHeader( file, form, size, type );
-    if( form != "FORM" || type != "DATA" )
-    {
-	std::cout << "Expected Form of type DATA: " << type << std::endl;
-	exit( 0 );
-    }
+    unsigned int total = readFormHeader( file, "DATA", size );
     std::cout << "Found DATA form" << std::endl;
 
+#if 0
     while( total < size-4 )
+#else
+      for( unsigned int i = 0; i < near.size(); ++i )
+#endif
     {
 	total += readCHLD( file );
     }
@@ -283,19 +282,12 @@ unsigned int lod::readChildren( std::istream &file )
 
 unsigned int lod::readRADR( std::istream &file )
 {
-    std::string form;
     unsigned int radrSize;
-    std::string type;
-
-    unsigned int total = readFormHeader( file, form, radrSize, type );
+    unsigned int total = readFormHeader( file, "RADR", radrSize );
     radrSize += 8;
-    if( form != "FORM" || type != "RADR" )
-    {
-	std::cout << "Expected Form of type RADR: " << type << std::endl;
-	exit( 0 );
-    }
     std::cout << "Found RADR form" << std::endl;
 
+    std::string type;
     unsigned int size;
     total += readRecordHeader( file, type, size );
     if( type != "INFO" )
@@ -306,9 +298,7 @@ unsigned int lod::readRADR( std::istream &file )
     std::cout << "Found INFO record" << std::endl;
 
     unsigned int numNodes;
-    file.read( (char *)&numNodes, sizeof( numNodes ) );
-    total += sizeof( numNodes );
-
+    total += base::read( file, numNodes );
     std::cout << "Num nodes: " << numNodes << std::endl;
 
     // Need to loop here and read IDTL (and others?)
@@ -339,13 +329,8 @@ unsigned int lod::readTEST( std::istream &file )
     unsigned int testSize;
     std::string type;
 
-    unsigned int total = readFormHeader( file, form, testSize, type );
+    unsigned int total = readFormHeader( file, "TEST", testSize );
     testSize += 8;
-    if( form != "FORM" || type != "TEST" )
-    {
-	std::cout << "Expected Form of type TEST: " << type << std::endl;
-	exit( 0 );
-    }
     std::cout << "Found TEST form" << std::endl;
 
     unsigned int size;
@@ -357,9 +342,7 @@ unsigned int lod::readTEST( std::istream &file )
     }
     std::cout << "Found INFO record" << std::endl;
     unsigned int numNodes;
-    file.read( (char *)&numNodes, sizeof( numNodes ) );
-    total += sizeof( numNodes );
-
+    total += base::read( file, numNodes );
     std::cout << "Num nodes: " << numNodes << std::endl;
 
     // Need to loop here and read IDTL (and others?)
@@ -409,13 +392,8 @@ unsigned int lod::readWRIT( std::istream &file )
     unsigned int writSize;
     std::string type;
 
-    unsigned int total = readFormHeader( file, form, writSize, type );
+    unsigned int total = readFormHeader( file, "WRIT", writSize );
     writSize += 8;
-    if( form != "FORM" || type != "WRIT" )
-    {
-	std::cout << "Expected Form of type WRIT: " << type << std::endl;
-	exit( 0 );
-    }
     std::cout << "Found WRIT form" << std::endl;
 
     unsigned int size;
@@ -428,8 +406,7 @@ unsigned int lod::readWRIT( std::istream &file )
     std::cout << "Found INFO record" << std::endl;
 
     unsigned int numNodes;
-    file.read( (char *)&numNodes, sizeof( numNodes ) );
-    total += sizeof( numNodes );
+    total += base::read( file, numNodes );
 
     std::cout << "Num nodes: " << numNodes << std::endl;
 
