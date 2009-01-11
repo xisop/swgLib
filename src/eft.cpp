@@ -4,7 +4,7 @@
  *  \author Kenneth R. Sewell III
 
  meshLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006,2007 Kenneth R. Sewell III
+ Copyright (C) 2006-2009 Kenneth R. Sewell III
 
  This file is part of meshLib.
 
@@ -43,23 +43,15 @@ eft::~eft()
 unsigned int eft::readEFT( std::istream &file, std::string path )
 {
   basePath = path;
-  unsigned int total = 0;
-  std::string form;
   unsigned int eftSize;
-  std::string type;
-
-  total += readFormHeader( file, form, eftSize, type );
+  unsigned int total = readFormHeader( file, "EFCT", eftSize );
   eftSize += 8;
-  if( form != "FORM" || type != "EFCT" )
-    {
-      std::cout << "Expected Form of type EFCT: " << type << std::endl;
-      exit( 0 );
-    }
   std::cout << "Found EFCT form"
 	    << ": " << eftSize-12 << " bytes"
 	    << std::endl;
 
   unsigned int size;
+  std::string form, type;
   total += readFormHeader( file, form, size, type );
   if( form != "FORM" )
     {
@@ -85,15 +77,8 @@ unsigned int eft::readEFT( std::istream &file, std::string path )
     }
 
   unsigned short numIMPL;
-  file.read( (char *)&numIMPL, sizeof( numIMPL ) );
-  total += sizeof( numIMPL );
+  total += base::read( file, numIMPL );
   std::cout << "Number of IMPL records: " << (int)numIMPL << std::endl;
-#if 0
-  unsigned char unknown;
-  file.read( (char *)&unknown, sizeof( unknown ) );
-  total += sizeof( unknown );
-  std::cout << "Unknown: " << (int)unknown << std::endl;
-#endif
 
   for( unsigned short i = 0; i < numIMPL; ++i )
     {
@@ -116,24 +101,14 @@ unsigned int eft::readEFT( std::istream &file, std::string path )
 
 unsigned int eft::readIMPL( std::istream &file )
 {
-    unsigned int total = 0;
-
-    std::string form;
     unsigned int implSize;
-    std::string type;
-
-    total += readFormHeader( file, form, implSize, type );
+    unsigned int total = readFormHeader( file, "IMPL", implSize );
     implSize += 8;
-    if( form != "FORM" || type != "IMPL" )
-    {
-	std::cout << "Expected Form of type IMPL: " << type << std::endl;
-	exit( 0 );
-    }
-    std::cout << "Found " << form << " " << type
-	      << ": " << implSize-12 << " bytes"
+    std::cout << "Found FORM IMPL: " << implSize-12 << " bytes"
 	      << std::endl;
 
     unsigned int size;
+    std::string form, type;
     total += readFormHeader( file, form, size, type );
     if( form != "FORM")
     {
@@ -144,13 +119,10 @@ unsigned int eft::readIMPL( std::istream &file )
 	      << ": " << size-4 << " bytes"
 	      << std::endl;
 
-    unsigned int position;
     while( total < implSize )
     {
-	// Peek at next record, but keep file at same place.
-        position = file.tellg();
-        readFormHeader( file, form, size, type );
-        file.seekg( position, std::ios_base::beg );
+      // Peek at next record, but keep file at same place.
+      peekHeader( file, form, size, type );
 
 	if( form == "SCAP" )
 	{
@@ -192,13 +164,9 @@ unsigned int eft::readIMPL( std::istream &file )
 
 unsigned int eft::readSCAP( std::istream &file )
 {
-    unsigned int total = 0;
-
-    std::string form;
     unsigned int scapSize;
     std::string type;
-
-    total += readRecordHeader( file, type, scapSize );
+    unsigned int total = readRecordHeader( file, type, scapSize );
     if( type != "SCAP" )
     {
         std::cout << "Expected record of type SCAP: " << type << std::endl;
@@ -209,19 +177,16 @@ unsigned int eft::readSCAP( std::istream &file )
 	      << scapSize << " bytes"
 	      << std::endl;
 
-#if 1
     unsigned int numScap = scapSize/4;
 
     unsigned int data;
     for( unsigned int i = 0; i < numScap; ++i )
     {
-        file.read( (char*)&data, sizeof( data ) );
-	std::cout << std::bitset<32>( data ) << " " << std::endl;
+      total += base::read( file, data );
+      std::cout << std::bitset<32>( data ) << " " << std::endl;
     }
     total += scapSize;
-#else
-    total += readUnknown( file, scapSize );
-#endif
+
     if( scapSize == (total-8) )
     {
 	std::cout << "Finished reading SCAP" << std::endl;
@@ -238,13 +203,9 @@ unsigned int eft::readSCAP( std::istream &file )
 
 unsigned int eft::readOPTN( std::istream &file )
 {
-    unsigned int total = 0;
-
-    std::string form;
     unsigned int optnSize;
     std::string type;
-
-    total += readRecordHeader( file, type, optnSize );
+    unsigned int total = readRecordHeader( file, type, optnSize );
     if( type != "OPTN" )
     {
         std::cout << "Expected record of type OPTN: " << type << std::endl;
@@ -273,13 +234,9 @@ unsigned int eft::readOPTN( std::istream &file )
 
 unsigned int eft::readIMPLDATA( std::istream &file )
 {
-    unsigned int total = 0;
-
-    std::string form;
     unsigned int impldataSize;
     std::string type;
-
-    total += readRecordHeader( file, type, impldataSize );
+    unsigned int total = readRecordHeader( file, type, impldataSize );
     if( type != "DATA" )
     {
         std::cout << "Expected record of type DATA: " << type << std::endl;
@@ -308,24 +265,14 @@ unsigned int eft::readIMPLDATA( std::istream &file )
 
 unsigned int eft::readPASS( std::istream &file )
 {
-    unsigned int total = 0;
-
-    std::string form;
     unsigned int passSize;
-    std::string type;
-
-    total += readFormHeader( file, form, passSize, type );
+    unsigned int total = readFormHeader( file, "PASS", passSize );
     passSize += 8;
-    if( form != "FORM" || type != "PASS" )
-    {
-        std::cout << "Expected FORM of type PASS: " << type << std::endl;
-        exit( 0 );
-    }
-    std::cout << "Found " << form << " " << type
-	      << ": " << passSize-12 << " bytes"
+    std::cout << "Found FORM PASS: " << passSize-12 << " bytes"
 	      << std::endl;
 
     unsigned int size;
+    std::string form, type;
     total += readFormHeader( file, form, size, type );
     if( form != "FORM" )
     {
@@ -349,9 +296,7 @@ unsigned int eft::readPASS( std::istream &file )
     total += readUnknown( file, size );
 
     // Peek at next record, but keep file at same place.
-    unsigned int position = file.tellg();
-    readFormHeader( file, form, size, type );
-    file.seekg( position, std::ios_base::beg );
+    peekHeader( file, form, size, type );
 
     if( form == "FORM" && type == "PVSH" )
     {
@@ -389,25 +334,15 @@ unsigned int eft::readPASS( std::istream &file )
 
 unsigned int eft::readPVSH( std::istream &file )
 {
-    unsigned int total = 0;
-
-    std::string form;
     unsigned int pvshSize;
-    std::string type;
-
-    total += readFormHeader( file, form, pvshSize, type );
+    unsigned int total = readFormHeader( file, "PVSH", pvshSize );
     pvshSize += 8;
-    if( form != "FORM" || type != "PVSH" )
-    {
-	std::cout << "Expected Form of type PVSH: " << type << std::endl;
-	exit( 0 );
-    }
-    std::cout << "Found " << form << " " << type
-	      << " (Vertex shader)"
+    std::cout << "Found FORM PVSH (Vertex shader)"
 	      << ": " << pvshSize-12 << " bytes"
 	      << std::endl;
 
     unsigned int size;
+    std::string type;
     total += readRecordHeader( file, type, size );
     if( type != "0000" )
     {
@@ -418,14 +353,9 @@ unsigned int eft::readPVSH( std::istream &file )
 	      << ": " << size << " bytes"
 	      << std::endl;
 
-    char temp[255];
     std::string vertexProgramName;
-    file.getline( temp, size, 0 );
-    total += size;
-    vertexProgramName = temp;
-
+    total += base::read( file, vertexProgramName );
     std::cout << "Vertex program: " << vertexProgramName << std::endl;
-
 
     if( pvshSize == total )
     {
@@ -443,25 +373,15 @@ unsigned int eft::readPVSH( std::istream &file )
 
 unsigned int eft::readPFFP( std::istream &file )
 {
-    unsigned int total = 0;
-
-    std::string form;
     unsigned int pffpSize;
-    std::string type;
-
-    total += readFormHeader( file, form, pffpSize, type );
+    unsigned int total = readFormHeader( file, "PFFP", pffpSize );
     pffpSize += 8;
-    if( form != "FORM" || type != "PFFP" )
-    {
-	std::cout << "Expected Form of type PFFP: " << type << std::endl;
-	exit( 0 );
-    }
-    std::cout << "Found " << form << " " << type 
-	      << " (Fixed Function Pipeline)"
+    std::cout << "Found FORM PFFP (Fixed Function Pipeline)"
 	      << ": " << pffpSize-12 << " bytes"
 	      << std::endl;
 
     unsigned int size;
+    std::string type;
     total += readRecordHeader( file, type, size );
     if( type != "0001" )
     {
@@ -490,24 +410,14 @@ unsigned int eft::readPFFP( std::istream &file )
 
 unsigned int eft::readSTAG( std::istream &file )
 {
-    unsigned int total = 0;
-
-    std::string form;
     unsigned int stagSize;
-    std::string type;
-
-    total += readFormHeader( file, form, stagSize, type );
+    unsigned int total = readFormHeader( file, "STAG", stagSize );
     stagSize += 8;
-    if( form != "FORM" || type != "STAG" )
-    {
-	std::cout << "Expected Form of type STAG: " << type << std::endl;
-	exit( 0 );
-    }
-    std::cout << "Found " << form << " " << type
-	      << ": " << stagSize-12 << " bytes"
+    std::cout << "Found FORM STAG: " << stagSize-12 << " bytes"
 	      << std::endl;
 
     unsigned int size;
+    std::string type;
     total += readRecordHeader( file, type, size );
     if( type != "0000" )
     {
@@ -537,25 +447,15 @@ unsigned int eft::readSTAG( std::istream &file )
 
 unsigned int eft::readPPSH( std::istream &file )
 {
-    unsigned int total = 0;
-
-    std::string form;
     unsigned int ppshSize;
-    std::string type;
-
-    total += readFormHeader( file, form, ppshSize, type );
+    unsigned int total = readFormHeader( file, "PPSH", ppshSize );
     ppshSize += 8;
-    if( form != "FORM" || type != "PPSH" )
-    {
-	std::cout << "Expected Form of type PPSH: " << type << std::endl;
-	exit( 0 );
-    }
-    std::cout << "Found " << form << " " << type 
-	      << " (Pixel shader)"
+    std::cout << "Found FORM PPSH (Pixel shader)"
 	      << ": " << ppshSize-12 << " bytes"
 	      << std::endl;
 
     unsigned int size;
+    std::string form, type;
     total += readFormHeader( file, form, size, type );
     if( form != "FORM" )
     {
@@ -578,14 +478,11 @@ unsigned int eft::readPPSH( std::istream &file )
 
     std::string pixelShaderName;
     unsigned char num;
-    file.read( (char *)&num, sizeof( unsigned char ) );
-    char temp[255];
-    file.getline( temp, size - sizeof( unsigned char ), 0 );
-    pixelShaderName = temp;
+    total += base::read( file, num );
+    total += base::read( file, pixelShaderName );
     std::cout << "Number of texture arguments to pixel shader: "
 	      << (unsigned int)num << std::endl;
     std::cout << "Pixel shader: " << pixelShaderName << std::endl;;
-    total += size;
 
     while( total < ppshSize )
     {
@@ -608,24 +505,14 @@ unsigned int eft::readPPSH( std::istream &file )
 
 unsigned int eft::readPTXM( std::istream &file )
 {
-    unsigned int total = 0;
-
-    std::string form;
     unsigned int ptxmSize;
-    std::string type;
-
-    total += readFormHeader( file, form, ptxmSize, type );
+    unsigned int total = readFormHeader( file, "PTXM", ptxmSize );
     ptxmSize += 8;
-    if( form != "FORM" || type != "PTXM" )
-    {
-	std::cout << "Expected Form of type PTXM: " << type << std::endl;
-	exit( 0 );
-    }
-    std::cout << "Found " << form << " " << type
-	      << ": " << ptxmSize-12 << " bytes"
+    std::cout << "Found FORM PTXM: " << ptxmSize-12 << " bytes"
 	      << std::endl;
 
     unsigned int size;
+    std::string type;
     total += readRecordHeader( file, type, size );
 #if 0
     if( type != "0002" )
@@ -640,10 +527,13 @@ unsigned int eft::readPTXM( std::istream &file )
 
     std::string name;
     unsigned char num;
-    file.read( (char *)&num, sizeof( unsigned char ) );
+    total += base::read( file, num );
+    total += base::read( file, name );
+#if 0
     file.width( size - sizeof( unsigned char ) );
     file >> name;
     total += size;
+#endif
     std::cout << "Pixel shader texture " << (unsigned int)num
 	      << ": " << name << std::endl;
 
