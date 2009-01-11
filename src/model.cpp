@@ -230,24 +230,21 @@ unsigned int model::readMatrixAndPosition( std::istream &file,
   unsigned int total = sizeof( float ) * 3;
   
   // X position
-  file.read( (char *)&x, sizeof( x ) );
-  total += sizeof( x );
+  total += base::read( file, x );
   
   // Second row of matrix
   file.read( (char *)(v+3), sizeof( float ) * 3 );
   total += sizeof( float ) * 3;
   
   // Y position
-  file.read( (char *)&y, sizeof( y ) );
-  total += sizeof( y );
+  total += base::read( file, y );
   
   // Third row of matrix
   file.read( (char *)(v+6), sizeof( float ) * 3 );
   total += sizeof( float ) * 3;
   
   // Y position
-  file.read( (char *)&z, sizeof( z ) );
-  total += sizeof( z );
+  total += base::read( file, z );
 
   matrix.set( v );
   position.set( x, y, z );
@@ -260,15 +257,13 @@ unsigned int model::readIDTL( std::istream &file,
 			     std::vector<unsigned int> &index
 			     )
 {
-  std::string form;
   unsigned int idtlSize;
-  std::string type;
-
   unsigned int total = readFormHeader( file, "IDTL", idtlSize );
   idtlSize += 8;
   std::cout << "Found IDTL FORM" << std::endl;
 
   unsigned int size;
+  std::string form, type;
   total += readFormHeader( file, form, size, type );
   if( form != "FORM" )
     {
