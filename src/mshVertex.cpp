@@ -22,6 +22,7 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#include <meshLib/base.hpp>
 #include <meshLib/mshVertex.hpp>
 #include <memory.h>
 #include <iostream>
@@ -100,7 +101,7 @@ bool mshVertex::read( std::istream &file )
     }
 
   // Read all float values in one read.
-  file.read( (char *)data, bytesPerVertex );
+  base::read( file, bytesPerVertex );
   
   return true;
 }
