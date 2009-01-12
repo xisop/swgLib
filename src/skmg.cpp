@@ -567,14 +567,13 @@ unsigned int skmg::readTCSD( std::istream &file )
     std::cout << "Found " << type << std::endl;
 
     std::cout << "Num TCSD: " << numIndex << std::endl;
-    float x;
+    // Texture coords?
+    float u, v;
     for( unsigned int i = 0; i < numIndex; ++i )
       {
-	total += base::read( file, x );
-	std::cout << x << ", ";
-	
-	total += base::read( file, x );
-	std::cout << x << std::endl;
+	total += base::read( file, u );
+	total += base::read( file, v );
+	std::cout << u << ", " << v << std::endl;;
       }
 
     if( tcsdSize == total )
@@ -1169,7 +1168,7 @@ unsigned int skmg::readPIDX( std::istream &file )
     for( unsigned int i = 0; i < numIndex; ++i )
       {
 	total += base::read( file, index );
-	//std::cout << index << std::endl;
+	std::cout << index << std::endl;
       }
 
     if( pidxSize == total )
@@ -1205,7 +1204,7 @@ unsigned int skmg::readNIDX( std::istream &file )
     for( unsigned int i = 0; i < numIndex; ++i )
       {
 	total += base::read( file, index );
-	//std::cout << index << std::endl;
+	std::cout << index << std::endl;
       }
 
     if( nidxSize == total )
@@ -1288,5 +1287,24 @@ unsigned int skmg::readXFNM( std::istream &file )
 
 void skmg::print() const
 {
+}
+
+unsigned int skmg::getNumVertex() const
+{
+  return x.size();
+}
+
+void skmg::getVertex( unsigned int index, float &X, float &Y, float &Z) const
+{
+  X = x[index];
+  Y = y[index];
+  Z = z[index];
+}
+
+void skmg::getNormal( unsigned int index, float &NX, float &NY, float &NZ) const
+{
+  NX = nx[index];
+  NY = ny[index];
+  NZ = nz[index];
 }
 

@@ -45,6 +45,10 @@ namespace ml
     unsigned int readSKMG( std::istream &file );
     void print() const;
 
+    unsigned int getNumVertex() const;
+    void getVertex( unsigned int index, float &X, float &Y, float &Z ) const;
+    void getNormal( unsigned int index, float &NX, float &NY, float &NZ ) const;
+
   protected:
     unsigned int readINFO( std::istream &file );
 
