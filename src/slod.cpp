@@ -244,11 +244,20 @@ unsigned int slod::readPRNT( std::istream &file, unsigned int num )
 	exit( 0 );
       }
 
-    unsigned int value;
+    int value;
     for( unsigned int i = 0; i < num; ++i )
       {
 	total += base::read( file, value );
-	std::cout << value << " ";
+	//std::cout << value << std::endl;
+	std::cout << "Bone " << groupNames[i];
+	if( value < 0 )
+	  {
+	    std::cout  << " has no parent.";
+	  }
+	else
+	  {
+	    std::cout  << " has parent bone " << groupNames[value];
+	  }
 	std::cout << std::endl;
       }
 
@@ -285,9 +294,14 @@ unsigned int slod::readRPRE( std::istream &file, unsigned int num )
 	exit( 0 );
       }
 
+    std::cout << std::fixed;
     float value;
     for( unsigned int i = 0; i < num; ++i )
       {
+	std::cout << "Bone ";
+	std::cout.width( 10 );
+	std::cout << groupNames[i] << ": ";
+
 	total += base::read( file, value );
 	std::cout << value << " ";
 
@@ -338,6 +352,10 @@ unsigned int slod::readRPST( std::istream &file, unsigned int num )
     float value;
     for( unsigned int i = 0; i < num; ++i )
       {
+	std::cout << "Bone ";
+	std::cout.width( 10 );
+	std::cout << groupNames[i] << ": ";
+
 	total += base::read( file, value );
 	std::cout << value << " ";
 
@@ -388,6 +406,10 @@ unsigned int slod::readBPTR( std::istream &file, unsigned int num )
     float value;
     for( unsigned int i = 0; i < num; ++i )
       {
+	std::cout << "Bone ";
+	std::cout.width( 10 );
+	std::cout << groupNames[i] << ": ";
+
 	total += base::read( file, value );
 	std::cout << value << " ";
 
@@ -435,6 +457,10 @@ unsigned int slod::readBPRO( std::istream &file, unsigned int num )
     float value;
     for( unsigned int i = 0; i < num; ++i )
       {
+	std::cout << "Bone ";
+	std::cout.width( 10 );
+	std::cout << groupNames[i] << ": ";
+
 	total += base::read( file, value );
 	std::cout << value << " ";
 
@@ -485,8 +511,12 @@ unsigned int slod::readJROR( std::istream &file, unsigned int num )
     unsigned int value;
     for( unsigned int i = 0; i < num; ++i )
       {
+	std::cout << "Bone ";
+	std::cout.width( 10 );
+	std::cout << groupNames[i] << ": ";
+
 	total += base::read( file, value );
-	std::cout << value << " ";
+	std::cout << value << std::endl;
       }
     std::cout << std::endl;
 
