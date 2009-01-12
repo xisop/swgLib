@@ -59,6 +59,8 @@ namespace ml
     unsigned int readNAME( std::istream &file );
     unsigned int readBLTS( std::istream &file );
     unsigned int readBLT( std::istream &file );
+    unsigned int readBLTPOSN( std::istream &file, unsigned int num );
+    unsigned int readBLTNORM( std::istream &file, unsigned int num );
     unsigned int readOZN( std::istream &file );
     unsigned int readFOZC( std::istream &file );
     unsigned int readOZC( std::istream &file );
