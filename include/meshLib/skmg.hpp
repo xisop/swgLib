@@ -66,7 +66,8 @@ namespace ml
       return numBones;
     }
 
-    const std::vector<unsigned int> &getTriangles( short group ) const;
+    const std::vector<unsigned int> &getTriangles() const;
+    const std::vector<unsigned int> &getOTriangles( short group ) const;
 
   protected:
     unsigned int readINFO( std::istream &file );
@@ -131,6 +132,7 @@ namespace ml
     std::vector<unsigned int> nidx;
 
     std::map< short, std::vector<unsigned int> > oitl;
+    std::vector<unsigned int> itl;
   };
 }
 #endif

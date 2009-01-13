@@ -612,17 +612,18 @@ unsigned int skmg::readITL( std::istream &file )
     total += base::read( file, numITL );
     std::cout << "Num ITL: " << numITL << std::endl;;
 
-    unsigned int u1;
+    unsigned int i1, i2, i3;
     for( unsigned int i = 0; i < numITL; ++i )
       {
-	total += base::read( file, u1 );
-	std::cout << u1 << ", ";
-	
-	total += base::read( file, u1 );
-	std::cout << u1 << ", ";
+	total += base::read( file, i1 );
+	total += base::read( file, i2 );
+	total += base::read( file, i3 );
 
-	total += base::read( file, u1 );
-	std::cout << u1 << std::endl;
+	itl.push_back( i1 );
+	itl.push_back( i2 );
+	itl.push_back( i3 );
+
+	std::cout << i1 << ", " << i2 << ", " << i3 << std::endl;
       }
 
     if( itlSize == total )
@@ -1322,7 +1323,11 @@ void skmg::getTexCoord( unsigned int index, float &U, float &V ) const
   V = v[index];
 }
 
-const std::vector<unsigned int> &skmg::getTriangles( short group ) const
+const std::vector<unsigned int> &skmg::getTriangles() const
+{
+  return itl;
+}
+const std::vector<unsigned int> &skmg::getOTriangles( short group ) const
 {
   static std::vector<unsigned int> emptyVec;
 
