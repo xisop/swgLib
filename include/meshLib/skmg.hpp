@@ -27,6 +27,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <map>
 
 #ifndef SKMG_HPP
 #define SKMG_HPP
@@ -45,9 +46,27 @@ namespace ml
     unsigned int readSKMG( std::istream &file );
     void print() const;
 
+    const std::string &getShader() const
+    {
+      return shaderFilename;
+    }
+
+    const std::string &getSkeleton() const
+    {
+      return skeletonFilename;
+    }
+
     unsigned int getNumVertex() const;
+
     void getVertex( unsigned int index, float &X, float &Y, float &Z ) const;
     void getNormal( unsigned int index, float &NX, float &NY, float &NZ ) const;
+    void getTexCoord( unsigned int index, float &U, float &V ) const;
+    unsigned int getNumGroups() const
+    {
+      return numBones;
+    }
+
+    const std::vector<unsigned int> &getTriangles( short group ) const;
 
   protected:
     unsigned int readINFO( std::istream &file );
@@ -104,6 +123,14 @@ namespace ml
     std::vector<float> nx;
     std::vector<float> ny;
     std::vector<float> nz;
+
+    std::vector<float> u;
+    std::vector<float> v;
+
+    std::vector<unsigned int> pidx;
+    std::vector<unsigned int> nidx;
+
+    std::map< short, std::vector<unsigned int> > oitl;
   };
 }
 #endif

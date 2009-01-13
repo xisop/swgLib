@@ -324,11 +324,11 @@ unsigned int skmg::readFOZC( std::istream &file )
     total += base::read( file, num );
     std::cout << "Num: " << num << std::endl;
 
-    unsigned short x;
+    unsigned short u1;
     for( unsigned int i = 0; i < num; ++i )
       {
-	total += base::read( file, x );
-	std::cout << x << std::endl;
+	total += base::read( file, u1 );
+	std::cout << u1 << std::endl;
       }
 
     if( fozcSize == total )
@@ -358,14 +358,14 @@ unsigned int skmg::readOZC( std::istream &file )
     }
     std::cout << "Found " << type << std::endl;
 
-    unsigned short x;
+    unsigned short u1;
     while( total < ozcSize )
       {
-	total += base::read( file, x );
-	std::cout << x << " ";
+	total += base::read( file, u1 );
+	std::cout << u1 << " ";
 
-	total += base::read( file, x );
-	std::cout << x << std::endl;
+	total += base::read( file, u1 );
+	std::cout << u1 << std::endl;
       }
 
     if( ozcSize == total )
@@ -395,11 +395,11 @@ unsigned int skmg::readZTO( std::istream &file )
     }
     std::cout << "Found " << type << std::endl;
 
-    unsigned short x;
+    unsigned short u1;
     while( total < ztoSize )
       {
-	total += base::read( file, x );
-	std::cout << x << std::endl;
+	total += base::read( file, u1 );
+	std::cout << u1 << std::endl;
       }
 
     if( ztoSize == total )
@@ -459,12 +459,12 @@ unsigned int skmg::readTXCI( std::istream &file )
     }
     std::cout << "Found " << type << std::endl;
 
-    unsigned int x;
-    total += base::read( file, x );
-    std::cout << x << std::endl;
+    unsigned int u1;
+    total += base::read( file, u1 );
+    std::cout << u1 << std::endl;
 
-    total += base::read( file, x );
-    std::cout << x << std::endl;
+    total += base::read( file, u1 );
+    std::cout << u1 << std::endl;
 
     if( txciSize == total )
     {
@@ -568,12 +568,16 @@ unsigned int skmg::readTCSD( std::istream &file )
 
     std::cout << "Num TCSD: " << numIndex << std::endl;
     // Texture coords?
-    float u, v;
+    float tempU, tempV;
     for( unsigned int i = 0; i < numIndex; ++i )
       {
-	total += base::read( file, u );
-	total += base::read( file, v );
-	std::cout << u << ", " << v << std::endl;;
+	total += base::read( file, tempU );
+	total += base::read( file, tempV );
+	
+	u.push_back( tempU );
+	v.push_back( tempV );
+
+	std::cout << "UV: " << tempU << ", " << tempV << std::endl;;
       }
 
     if( tcsdSize == total )
@@ -608,17 +612,17 @@ unsigned int skmg::readITL( std::istream &file )
     total += base::read( file, numITL );
     std::cout << "Num ITL: " << numITL << std::endl;;
 
-    unsigned int x;
+    unsigned int u1;
     for( unsigned int i = 0; i < numITL; ++i )
       {
-	total += base::read( file, x );
-	std::cout << x << ", ";
+	total += base::read( file, u1 );
+	std::cout << u1 << ", ";
 	
-	total += base::read( file, x );
-	std::cout << x << ", ";
+	total += base::read( file, u1 );
+	std::cout << u1 << ", ";
 
-	total += base::read( file, x );
-	std::cout << x << std::endl;
+	total += base::read( file, u1 );
+	std::cout << u1 << std::endl;
       }
 
     if( itlSize == total )
@@ -653,21 +657,23 @@ unsigned int skmg::readOITL( std::istream &file )
     total += base::read( file, numOITL );
     std::cout << "Num OITL: " << numOITL << std::endl;;
 
-    unsigned int x;
-    short y;
+    short group;
+    unsigned int i1, i2, i3;
     for( unsigned int i = 0; i < numOITL; ++i )
       {
-	total += base::read( file, y );
-	std::cout << y << " ";
+	total += base::read( file, group );
+	total += base::read( file, i1 );
+	total += base::read( file, i2 );
+	total += base::read( file, i3 );
 
-	total += base::read( file, x );
-	std::cout << x << " ";
+	oitl[group].push_back( i1 );
+	oitl[group].push_back( i2 );
+	oitl[group].push_back( i3 );
 
-	total += base::read( file, x );
-	std::cout << x << " ";
-
-	total += base::read( file, x );
-	std::cout << x << std::endl;
+	std::cout << "Group " << group << ": "
+		  << i1 << ", "
+		  << i2 << ", "
+		  << i3 << std::endl;
       }
 
     if( oitlSize == total )
@@ -1085,11 +1091,11 @@ unsigned int skmg::readTWHD( std::istream &file )
     std::cout << "Found " << type << std::endl;
 
     std::cout << "Num points: " << numPoints << std::endl;
-    unsigned int x;
+    unsigned int u1;
     for( unsigned int i = 0; i < numPoints; ++i )
       {
-	total += base::read( file, x );
-	std::cout << x << " ";
+	total += base::read( file, u1 );
+	std::cout << u1 << " ";
       }
 	std::cout << std::endl;
 
@@ -1122,15 +1128,15 @@ unsigned int skmg::readTWDT( std::istream &file )
     std::cout << "Found " << type << std::endl;
 
     std::cout << "Num TWDT:  " << numTwdt << std::endl;
-    unsigned int x;
-    float y;
+    unsigned int u1;
+    float u2;
     for( unsigned int i = 0; i < numTwdt; ++i )
       {
-	total += base::read( file, x );
-	std::cout << x << " ";
+	total += base::read( file, u1 );
+	std::cout << u1 << " ";
 
-	total += base::read( file, y );
-	std::cout << std::fixed << y << std::endl;
+	total += base::read( file, u2 );
+	std::cout << std::fixed << u2 << std::endl;
       }
 
     if( twdtSize == total )
@@ -1168,6 +1174,7 @@ unsigned int skmg::readPIDX( std::istream &file )
     for( unsigned int i = 0; i < numIndex; ++i )
       {
 	total += base::read( file, index );
+	pidx.push_back( index );
 	std::cout << index << std::endl;
       }
 
@@ -1204,6 +1211,7 @@ unsigned int skmg::readNIDX( std::istream &file )
     for( unsigned int i = 0; i < numIndex; ++i )
       {
 	total += base::read( file, index );
+	nidx.push_back( index );
 	std::cout << index << std::endl;
       }
 
@@ -1291,20 +1299,42 @@ void skmg::print() const
 
 unsigned int skmg::getNumVertex() const
 {
-  return x.size();
+  return pidx.size();
 }
 
 void skmg::getVertex( unsigned int index, float &X, float &Y, float &Z) const
 {
-  X = x[index];
-  Y = y[index];
-  Z = z[index];
+  X = x[pidx[index]];
+  Y = y[pidx[index]];
+  Z = z[pidx[index]];
 }
 
 void skmg::getNormal( unsigned int index, float &NX, float &NY, float &NZ) const
 {
-  NX = nx[index];
-  NY = ny[index];
-  NZ = nz[index];
+  NX = nx[nidx[index]];
+  NY = ny[nidx[index]];
+  NZ = nz[nidx[index]];
 }
 
+void skmg::getTexCoord( unsigned int index, float &U, float &V ) const
+{
+  U = u[index];
+  V = v[index];
+}
+
+const std::vector<unsigned int> &skmg::getTriangles( short group ) const
+{
+  static std::vector<unsigned int> emptyVec;
+
+  std::map< short, std::vector<unsigned int> >
+    ::const_iterator triangles = oitl.find( group );
+
+  if( oitl.end() == triangles )
+    {
+      return emptyVec;
+    }
+  else
+    {
+      return triangles->second;
+    }
+}
