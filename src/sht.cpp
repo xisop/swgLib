@@ -31,7 +31,8 @@
 
 using namespace ml;
 
-sht::sht()
+sht::sht():
+  mainTextureUnit( 0 )
 {
 }
 
