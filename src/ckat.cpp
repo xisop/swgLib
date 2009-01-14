@@ -59,6 +59,12 @@ unsigned int ckat::readCKAT( std::istream &file, std::string path )
 	    << ": " << size-4 << " bytes"
 	    << std::endl;
 
+  total += readINFO( file );
+  total += readXFRM( file );
+  total += readAROT( file );
+  total += readSROT( file );
+  total += readATRN( file );
+  total += readSTRN( file );
   total += readUnknown( file, ckatSize-total );
 
   if( ckatSize == total )
@@ -74,3 +80,270 @@ unsigned int ckat::readCKAT( std::istream &file, std::string path )
     
   return total;
 }
+
+unsigned int ckat::readINFO( std::istream &file )
+{
+    std::string type;
+    unsigned int infoSize;
+    unsigned int total = readRecordHeader( file, type, infoSize );
+    infoSize += 8;
+    if( type != "INFO" )
+    {
+        std::cout << "Expected record of type INFO: " << type << std::endl;
+        exit( 0 );
+    }
+    std::cout << "Found " << type << std::endl;
+
+    float u1;
+    short u2, u5, u6, u7;
+    total += base::read( file, u1 );
+    total += base::read( file, u2 );
+    total += base::read( file, numXFIN );
+    total += base::read( file, numQCHN );
+    total += base::read( file, u5 );
+    total += base::read( file, u6 );
+    total += base::read( file, u7 );
+    
+    std::cout << std::fixed << u1 << std::endl;
+	      std::cout << u2 << std::endl;
+	      std::cout << "Num XFIN: " << numXFIN << std::endl;
+	      std::cout << "Num QCHN: " << numQCHN << std::endl;
+	      std::cout << u5 << std::endl;
+	      std::cout << u6 << std::endl;
+	      std::cout << u7 << std::endl;
+
+    if( infoSize == total )
+    {
+        std::cout << "Finished reading INFO" << std::endl;
+    }
+    else
+    {
+        std::cout << "FAILED in reading INFO" << std::endl;
+        std::cout << "Read " << total << " out of " << infoSize
+                  << std::endl;
+     }
+
+    return total;
+}
+
+unsigned int ckat::readXFRM( std::istream &file )
+{
+    std::string type;
+    unsigned int xfrmSize;
+    unsigned int total = readFormHeader( file, "XFRM", xfrmSize );
+    xfrmSize += 8;
+    std::cout << "Found XFRM form"
+	      << ": " << xfrmSize-12 << " bytes"
+	      << std::endl;
+
+    for( unsigned short i = 0; i < numXFIN; ++i )
+      {
+	total += readXFIN( file );
+      }
+    //total += readUnknown( file, xfrmSize - total );
+    
+    if( xfrmSize == total )
+    {
+        std::cout << "Finished reading XFRM" << std::endl;
+    }
+    else
+    {
+        std::cout << "FAILED in reading XFRM" << std::endl;
+        std::cout << "Read " << total << " out of " << xfrmSize
+                  << std::endl;
+     }
+
+    return total;
+}
+
+unsigned int ckat::readAROT( std::istream &file )
+{
+    std::string type;
+    unsigned int arotSize;
+    unsigned int total = readFormHeader( file, "AROT", arotSize );
+    arotSize += 8;
+    std::cout << "Found AROT form"
+	      << ": " << arotSize-12 << " bytes"
+	      << std::endl;
+
+    for( unsigned short i = 0; i < numQCHN; ++i )
+      {
+	total += readQCHN( file );
+      }
+    
+    if( arotSize == total )
+    {
+        std::cout << "Finished reading AROT" << std::endl;
+    }
+    else
+    {
+        std::cout << "FAILED in reading AROT" << std::endl;
+        std::cout << "Read " << total << " out of " << arotSize
+                  << std::endl;
+     }
+
+    return total;
+}
+
+unsigned int ckat::readSROT( std::istream &file )
+{
+    std::string type;
+    unsigned int srotSize;
+    unsigned int total = readRecordHeader( file, type, srotSize );
+    srotSize += 8;
+    if( type != "SROT" )
+    {
+        std::cout << "Expected record of type SROT: " << type << std::endl;
+        exit( 0 );
+    }
+    std::cout << "Found " << type << std::endl;
+
+    total += readUnknown( file, srotSize - total );
+
+    if( srotSize == total )
+    {
+        std::cout << "Finished reading SROT" << std::endl;
+    }
+    else
+    {
+        std::cout << "FAILED in reading SROT" << std::endl;
+        std::cout << "Read " << total << " out of " << srotSize
+                  << std::endl;
+     }
+
+    return total;
+}
+
+unsigned int ckat::readATRN( std::istream &file )
+{
+    std::string type;
+    unsigned int atrnSize;
+    unsigned int total = readFormHeader( file, "ATRN", atrnSize );
+    atrnSize += 8;
+    std::cout << "Found ATRN form"
+	      << ": " << atrnSize-12 << " bytes"
+	      << std::endl;
+
+    total += readUnknown( file, atrnSize - total );
+    
+    if( atrnSize == total )
+    {
+        std::cout << "Finished reading ATRN" << std::endl;
+    }
+    else
+    {
+        std::cout << "FAILED in reading ATRN" << std::endl;
+        std::cout << "Read " << total << " out of " << atrnSize
+                  << std::endl;
+     }
+
+    return total;
+}
+
+unsigned int ckat::readSTRN( std::istream &file )
+{
+    std::string type;
+    unsigned int strnSize;
+    unsigned int total = readRecordHeader( file, type, strnSize );
+    strnSize += 8;
+    if( type != "STRN" )
+    {
+        std::cout << "Expected record of type STRN: " << type << std::endl;
+        exit( 0 );
+    }
+    std::cout << "Found " << type << std::endl;
+
+    total += readUnknown( file, strnSize - total );
+
+    if( strnSize == total )
+    {
+        std::cout << "Finished reading STRN" << std::endl;
+    }
+    else
+    {
+        std::cout << "FAILED in reading STRN" << std::endl;
+        std::cout << "Read " << total << " out of " << strnSize
+                  << std::endl;
+     }
+
+    return total;
+}
+
+unsigned int ckat::readXFIN( std::istream &file )
+{
+    std::string type;
+    unsigned int xfinSize;
+    unsigned int total = readRecordHeader( file, type, xfinSize );
+    xfinSize += 8;
+    if( type != "XFIN" )
+    {
+        std::cout << "Expected record of type XFIN: " << type << std::endl;
+        exit( 0 );
+    }
+    std::cout << "Found " << type << ": " << xfinSize-12 << " bytes"
+	      << std::endl;
+
+    std::string name;
+    total += base::read( file, name );
+    std::cout << "Name: " << name << std::endl;
+
+    short u1;
+    total += base::read( file, u1 );
+    std::cout << u1 << std::endl;
+
+    total += base::read( file, u1 );
+    std::cout << u1 << std::endl;
+
+    total += base::read( file, u1 );
+    std::cout << u1 << std::endl;
+
+    total += base::read( file, u1 );
+    std::cout << u1 << std::endl;
+
+    total += base::read( file, u1 );
+    std::cout << u1 << std::endl;
+
+    if( xfinSize == total )
+    {
+        std::cout << "Finished reading XFIN" << std::endl;
+    }
+    else
+    {
+        std::cout << "FAILED in reading XFIN" << std::endl;
+        std::cout << "Read " << total << " out of " << xfinSize
+                  << std::endl;
+     }
+
+    return total;
+}
+
+unsigned int ckat::readQCHN( std::istream &file )
+{
+    std::string type;
+    unsigned int qchnSize;
+    unsigned int total = readRecordHeader( file, type, qchnSize );
+    qchnSize += 8;
+    if( type != "QCHN" )
+    {
+        std::cout << "Expected record of type QCHN: " << type << std::endl;
+        exit( 0 );
+    }
+    std::cout << "Found " << type << ": " << qchnSize-12 << " bytes"
+	      << std::endl;
+
+    total += readUnknown( file, qchnSize - total );
+
+    if( qchnSize == total )
+    {
+        std::cout << "Finished reading QCHN" << std::endl;
+    }
+    else
+    {
+        std::cout << "FAILED in reading QCHN" << std::endl;
+        std::cout << "Read " << total << " out of " << qchnSize
+                  << std::endl;
+     }
+
+    return total;
+}
+
