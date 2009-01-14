@@ -28,8 +28,9 @@
 #include <cstdlib>
 
 #include <meshLib/apt.hpp>
-#include <meshLib/cmp.hpp>
 #include <meshLib/cclt.hpp>
+#include <meshLib/ckat.hpp>
+#include <meshLib/cmp.hpp>
 #include <meshLib/cshd.hpp>
 #include <meshLib/cstb.hpp>
 #include <meshLib/dtii.hpp>
@@ -97,6 +98,11 @@ int main( int argc, char **argv )
 	{
 	  ml::cclt misc;
 	  misc.readCCLT( infile );
+	}
+      else if( "CKAT" == fileType )
+	{
+	  ml::ckat misc;
+	  misc.readCKAT( infile );
 	}
       else if( "CMPA" == fileType )
 	{

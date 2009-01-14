@@ -14,6 +14,7 @@ OBJS = \
 	base.o \
 	box.o \
 	cclt.o \
+	ckat.o \
 	cmp.o \
 	cshd.o \
 	cstb.o \
@@ -96,6 +97,9 @@ box.o: box.cpp $(MESH_INC)/meshLib/box.hpp
 
 cclt.o: cclt.cpp $(MESH_INC)/meshLib/cclt.hpp $(MESH_INC)/meshLib/shot.hpp
 	$(CXX) $(CFLAG) -c cclt.cpp
+
+ckat.o: ckat.cpp $(MESH_INC)/meshLib/ckat.hpp
+	$(CXX) $(CFLAG) -c ckat.cpp
 
 cmp.o: cmp.cpp $(MESH_INC)/meshLib/cmp.hpp $(MESH_INC)/meshLib/vector3.hpp \
 	$(MESH_INC)/meshLib/matrix3.hpp
