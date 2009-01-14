@@ -1731,6 +1731,10 @@ int readRecord(
     {
 	readUnknown( file, size );
     }
+    else if( "MESG" == group )
+    {
+	readUnknown( file, size );
+    }
     else
     {
 	std::cout << "Unknown KEYWORD: " << group << std::endl;
