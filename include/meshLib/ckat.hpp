@@ -56,6 +56,7 @@ namespace ml
     unsigned int readCHNL( std::istream &file );
     unsigned int readMSGS( std::istream &file );
     unsigned int readMESG( std::istream &file );
+    unsigned int readLOCT( std::istream &file );
 	
     unsigned short numXFIN;
     unsigned short numQCHN;
