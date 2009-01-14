@@ -109,6 +109,8 @@ namespace ml
     std::string skeletonFilename;
     std::string shaderFilename;
 
+    std::vector< std::string > boneNames;
+
     unsigned int numBones;
     unsigned int numPoints;
     unsigned int numNorm;
@@ -133,6 +135,9 @@ namespace ml
 
     std::map< short, std::vector<unsigned int> > oitl;
     std::vector<unsigned int> itl;
+
+    std::vector<unsigned int> numVertexWeights;
+    std::vector< std::map<unsigned int, float> > vertexWeights;
   };
 }
 #endif

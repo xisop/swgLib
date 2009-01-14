@@ -258,6 +258,10 @@ unsigned int skmg::readBLT( std::istream &file )
 
     total += readBLTPOSN( file, numBLTPos );
     total += readBLTNORM( file, numBLTNorm );
+    if( total < bltSize )
+      {
+	total += readDOT3( file );
+      }
 
     if( bltSize == total )
     {
@@ -855,7 +859,8 @@ unsigned int skmg::readPOSN( std::istream &file )
 	total += base::read( file, tempX );
 	total += base::read( file, tempY );
 	total += base::read( file, tempZ );
-	std::cout << tempX << ",  " << tempY << ", " << tempZ << std::endl;
+	std::cout << "Vertex " << i << ": "
+		  << tempX << ",  " << tempY << ", " << tempZ << std::endl;
 	x.push_back( tempX );
 	y.push_back( tempY );
 	z.push_back( tempZ );
@@ -1092,13 +1097,15 @@ unsigned int skmg::readTWHD( std::istream &file )
     std::cout << "Found " << type << std::endl;
 
     std::cout << "Num points: " << numPoints << std::endl;
-    unsigned int u1;
+    numVertexWeights.reserve( numPoints );
+    unsigned int vertexWeight;
     for( unsigned int i = 0; i < numPoints; ++i )
       {
-	total += base::read( file, u1 );
-	std::cout << u1 << " ";
+	total += base::read( file, vertexWeight );
+	std::cout << "Num weights for vertex "
+		  << i << ": " << vertexWeight << std::endl;
+	numVertexWeights[i] = vertexWeight;
       }
-	std::cout << std::endl;
 
     if( twhdSize == total )
     {
@@ -1129,15 +1136,23 @@ unsigned int skmg::readTWDT( std::istream &file )
     std::cout << "Found " << type << std::endl;
 
     std::cout << "Num TWDT:  " << numTwdt << std::endl;
-    unsigned int u1;
-    float u2;
-    for( unsigned int i = 0; i < numTwdt; ++i )
+    vertexWeights.resize( numPoints );
+    unsigned int boneNum;
+    float weight;
+    for( unsigned int i = 0; i < numPoints; ++i )
       {
-	total += base::read( file, u1 );
-	std::cout << u1 << " ";
+	std::cout << "Vertex " <<  i << ": ";
+	for( unsigned int j = 0; j < numVertexWeights[i]; ++j )
+	  {
+	    total += base::read( file, boneNum );
+	    std::cout << "(" << boneNames[boneNum] << ": ";
+	    
+	    total += base::read( file, weight );
+	    std::cout << std::fixed << weight << ") ";
 
-	total += base::read( file, u2 );
-	std::cout << std::fixed << u2 << std::endl;
+	    (vertexWeights[i])[boneNum] = weight;
+	  }
+	std::cout << std::endl;
       }
 
     if( twdtSize == total )
@@ -1277,6 +1292,7 @@ unsigned int skmg::readXFNM( std::istream &file )
     for( unsigned int i = 0; i < numBones; ++i )
       {
 	total += base::read( file, boneName );
+	boneNames.push_back( boneName );
 	std::cout << "Bone " << i << ": " << boneName << std::endl;
       }
 
