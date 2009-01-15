@@ -191,6 +191,10 @@ unsigned int skmg::readPSDT( std::istream &file, psdt &newPsdt )
 	  {
 	    total += readNIDX( file, newPsdt );
 	  }
+	else if( form == "VDCL" )
+	  {
+	    total += readVDCL( file, newPsdt );
+	  }
 	else if( form == "TXCI" )
 	  {
 	    total += readTXCI( file, newPsdt );
@@ -1197,7 +1201,7 @@ unsigned int skmg::readPIDX( std::istream &file, psdt &newPsdt )
       {
 	total += base::read( file, index );
 	newPsdt.pidx.push_back( index );
-	std::cout << index << std::endl;
+	std::cout << "Vertex index " << i << ": " << index << std::endl;
       }
 
     if( pidxSize == total )
@@ -1234,7 +1238,7 @@ unsigned int skmg::readNIDX( std::istream &file, psdt &newPsdt )
       {
 	total += base::read( file, index );
 	newPsdt.nidx.push_back( index );
-	std::cout << index << std::endl;
+	std::cout << "Normal index " << i << ": " << index << std::endl;
       }
 
     if( nidxSize == total )
@@ -1245,6 +1249,41 @@ unsigned int skmg::readNIDX( std::istream &file, psdt &newPsdt )
     {
         std::cout << "FAILED in reading NIDX" << std::endl;
         std::cout << "Read " << total << " out of " << nidxSize
+                  << std::endl;
+     }
+
+    return total;
+}
+
+unsigned int skmg::readVDCL( std::istream &file, psdt &newPsdt )
+{
+    std::string type;
+    unsigned int vdclSize;
+    unsigned int total = readRecordHeader( file, type, vdclSize );
+    vdclSize += 8;
+    if( type != "VDCL" )
+    {
+        std::cout << "Expected record of type VDCL: " << type << std::endl;
+        exit( 0 );
+    }
+    std::cout << "Found " << type << ": " << vdclSize-8 << " bytes"
+              << std::endl;
+    
+    int index;
+    for( unsigned int i = 0; i < numIndex; ++i )
+      {
+	total += base::read( file, index );
+	std::cout << "?: " << index << std::endl;
+      }
+
+    if( vdclSize == total )
+    {
+        std::cout << "Finished reading VDCL" << std::endl;
+    }
+    else
+    {
+        std::cout << "FAILED in reading VDCL" << std::endl;
+        std::cout << "Read " << total << " out of " << vdclSize
                   << std::endl;
      }
 

@@ -153,6 +153,7 @@ namespace ml
 
     unsigned int readPIDX( std::istream &file, psdt &newPsdt );
     unsigned int readNIDX( std::istream &file, psdt &newPsdt );
+    unsigned int readVDCL( std::istream &file, psdt &newPsdt );
     unsigned int readTXCI( std::istream &file, psdt &newPsdt );
     unsigned int readTCSF( std::istream &file, psdt &newPsdt );
     unsigned int readTCSD( std::istream &file, psdt &newPsdt );
