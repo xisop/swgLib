@@ -36,6 +36,47 @@ namespace ml
 {
   class skmg : public base
   {
+
+    class psdt
+    {
+    public:
+#if 1
+      psdt( const skmg *newSkmg ):
+	parentSkmg( newSkmg )
+      {
+	
+      }
+#endif 
+      const std::vector<unsigned int> &getTriangles() const;
+      const std::vector<unsigned int> &getOTriangles( short group ) const;
+      unsigned int getNumVertex() const;
+
+      void getVertex( unsigned int index, float &X, float &Y, float &Z ) const;
+      void getNormal( unsigned int index, float &NX, float &NY, float &NZ ) const;
+      void getTexCoord( unsigned int index, float &U, float &V ) const;
+
+      std::string shaderFilename;
+      unsigned int numPos;
+      unsigned int numNorm;
+      std::vector<unsigned int> pidx;
+      std::vector<unsigned int> nidx;
+      std::vector<float> u;
+      std::vector<float> v;
+      std::map< short, std::vector<unsigned int> > oitl;
+      std::vector<unsigned int> itl;
+      const skmg *parentSkmg;
+    };
+
+    class blt
+    {
+    public:
+      std::string name;
+      unsigned int numPos;
+      unsigned int numNorm;
+
+      
+    };
+
   public:
     skmg();
     ~skmg();
@@ -56,18 +97,28 @@ namespace ml
       return skeletonFilename;
     }
 
-    unsigned int getNumVertex() const;
-
-    void getVertex( unsigned int index, float &X, float &Y, float &Z ) const;
-    void getNormal( unsigned int index, float &NX, float &NY, float &NZ ) const;
-    void getTexCoord( unsigned int index, float &U, float &V ) const;
     unsigned int getNumGroups() const
     {
       return numBones;
     }
 
-    const std::vector<unsigned int> &getTriangles() const;
-    const std::vector<unsigned int> &getOTriangles( short group ) const;
+    unsigned int getNumPsdt() const
+    {
+      return psdtList.size();
+    }
+
+    const psdt &getPsdt( unsigned int index ) const
+    {
+      return psdtList[index];
+    }
+    
+    const std::vector<float> &getXVector() const { return x; }
+    const std::vector<float> &getYVector() const { return y; }
+    const std::vector<float> &getZVector() const { return z; }
+
+    const std::vector<float> &getNXVector() const { return nx; }
+    const std::vector<float> &getNYVector() const { return ny; }
+    const std::vector<float> &getNZVector() const { return nz; }
 
   protected:
     unsigned int readINFO( std::istream &file );
@@ -79,31 +130,28 @@ namespace ml
     unsigned int readTWDT( std::istream &file );
     unsigned int readNORM( std::istream &file );
     unsigned int readDOT3( std::istream &file );
-    unsigned int readPSDT( std::istream &file );
-    unsigned int readNAME( std::istream &file );
+    unsigned int readPSDT( std::istream &file, psdt &newPsdt );
+    unsigned int readNAME( std::istream &file, psdt &newPsdt );
     unsigned int readBLTS( std::istream &file );
-    unsigned int readBLT( std::istream &file );
+    unsigned int readBLT( std::istream &file, blt &newBlt );
     unsigned int readBLTPOSN( std::istream &file, unsigned int num );
     unsigned int readBLTNORM( std::istream &file, unsigned int num );
     unsigned int readOZN( std::istream &file );
     unsigned int readFOZC( std::istream &file );
     unsigned int readOZC( std::istream &file );
     unsigned int readZTO( std::istream &file );
-    unsigned int readBLTINFO( std::istream &file,
-			      unsigned int &numBLTPos,
-			      unsigned int &numBLTNorm
-			      );
-    unsigned int readDOT3Index( std::istream &file );
+    unsigned int readBLTINFO( std::istream &file, blt &newBlt );
+    unsigned int readDOT3Index( std::istream &file, psdt &newPsdt );
 
-    unsigned int readPIDX( std::istream &file );
-    unsigned int readNIDX( std::istream &file );
-    unsigned int readTXCI( std::istream &file );
-    unsigned int readTCSF( std::istream &file );
-    unsigned int readTCSD( std::istream &file );
-    unsigned int readPRIM( std::istream &file );
-    unsigned int readPRIMINFO( std::istream &file );
-    unsigned int readITL( std::istream &file );
-    unsigned int readOITL( std::istream &file );
+    unsigned int readPIDX( std::istream &file, psdt &newPsdt );
+    unsigned int readNIDX( std::istream &file, psdt &newPsdt );
+    unsigned int readTXCI( std::istream &file, psdt &newPsdt );
+    unsigned int readTCSF( std::istream &file, psdt &newPsdt );
+    unsigned int readTCSD( std::istream &file, psdt &newPsdt );
+    unsigned int readPRIM( std::istream &file, psdt &newPsdt );
+    unsigned int readPRIMINFO( std::istream &file, psdt &newPsdt );
+    unsigned int readITL( std::istream &file, psdt &newPsdt );
+    unsigned int readOITL( std::istream &file, psdt &newPsdt );
 
   private:
     std::string skeletonFilename;
@@ -127,17 +175,12 @@ namespace ml
     std::vector<float> ny;
     std::vector<float> nz;
 
-    std::vector<float> u;
-    std::vector<float> v;
-
-    std::vector<unsigned int> pidx;
-    std::vector<unsigned int> nidx;
-
-    std::map< short, std::vector<unsigned int> > oitl;
-    std::vector<unsigned int> itl;
-
     std::vector<unsigned int> numVertexWeights;
     std::vector< std::map<unsigned int, float> > vertexWeights;
+
+    std::vector<blt> bltList;
+    std::vector<psdt> psdtList;
+
   };
 }
 #endif

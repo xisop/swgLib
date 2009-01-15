@@ -72,7 +72,9 @@ unsigned int skmg::readSKMG( std::istream &file )
 	  {
 	    if( type == "PSDT" )
 	      {
-		total += readPSDT( file );
+		psdt newPsdt( this );
+		psdtList.push_back( newPsdt );
+		total += readPSDT( file, psdtList.back() );
 	      }
 	    else if( type == "BLTS" )
 	      {
@@ -145,7 +147,7 @@ unsigned int skmg::readSKMG( std::istream &file )
     return total;
 }
 
-unsigned int skmg::readPSDT( std::istream &file )
+unsigned int skmg::readPSDT( std::istream &file, psdt &newPsdt )
 {
     unsigned int psdtSize;
     std::string type;
@@ -165,11 +167,11 @@ unsigned int skmg::readPSDT( std::istream &file )
 	  {
 	    if( type == "TCSF" )
 	      {
-		total += readTCSF( file );
+		total += readTCSF( file, newPsdt );
 	      }
 	    else if( type == "PRIM" )
 	      {
-		total += readPRIM( file );
+		total += readPRIM( file, newPsdt );
 	      }
 	    else
 	      {
@@ -179,23 +181,23 @@ unsigned int skmg::readPSDT( std::istream &file )
 	  }
 	else if( form == "NAME" )
 	  {
-	    total += readNAME( file );
+	    total += readNAME( file, newPsdt );
 	  }
 	else if( form == "PIDX" )
 	  {
-	    total += readPIDX( file );
+	    total += readPIDX( file, newPsdt );
 	  }
 	else if( form == "NIDX" )
 	  {
-	    total += readNIDX( file );
+	    total += readNIDX( file, newPsdt );
 	  }
 	else if( form == "TXCI" )
 	  {
-	    total += readTXCI( file );
+	    total += readTXCI( file, newPsdt );
 	  }
 	else if( form == "DOT3" )
 	  {
-	    total += readDOT3Index( file );
+	    total += readDOT3Index( file, newPsdt );
 	  }
 	else
 	  {
@@ -228,7 +230,9 @@ unsigned int skmg::readBLTS( std::istream &file )
     std::cout << "Num BLT: " << numBLT << std::endl;
     for( unsigned int i = 0; i < numBLT; ++i )
       {
-	total += readBLT( file );
+	blt newBlt;
+	total += readBLT( file, newBlt );
+	bltList.push_back( newBlt );
       }
 
     if( bltsSize == total )
@@ -245,19 +249,17 @@ unsigned int skmg::readBLTS( std::istream &file )
     return total;
 }
 
-unsigned int skmg::readBLT( std::istream &file )
+unsigned int skmg::readBLT( std::istream &file, blt &newBlt )
 {
     unsigned int bltSize;
     unsigned int total = readFormHeader( file, "BLT ", bltSize);
     bltSize += 8;
     std::cout << "Found BLT form" << std::endl;
 
-    unsigned int numBLTPos;
-    unsigned int numBLTNorm;
-    total += readBLTINFO( file, numBLTPos, numBLTNorm );
+    total += readBLTINFO( file, newBlt );
 
-    total += readBLTPOSN( file, numBLTPos );
-    total += readBLTNORM( file, numBLTNorm );
+    total += readBLTPOSN( file, newBlt.numPos );
+    total += readBLTNORM( file, newBlt.numNorm );
     if( total < bltSize )
       {
 	total += readDOT3( file );
@@ -450,7 +452,7 @@ unsigned int skmg::readSKTM( std::istream &file )
     return total;
 }
 
-unsigned int skmg::readTXCI( std::istream &file )
+unsigned int skmg::readTXCI( std::istream &file, psdt &newPsdt )
 {
     std::string type;
     unsigned int txciSize;
@@ -484,14 +486,14 @@ unsigned int skmg::readTXCI( std::istream &file )
     return total;
 }
 
-unsigned int skmg::readTCSF( std::istream &file )
+unsigned int skmg::readTCSF( std::istream &file, psdt &newPsdt )
 {
     unsigned int tcsfSize;
     unsigned int total = readFormHeader( file, "TCSF", tcsfSize );
     tcsfSize += 8;
     std::cout << "Found TCSF form" << std::endl;
 
-    total += readTCSD( file );
+    total += readTCSD( file, newPsdt );
 
     if( tcsfSize == total )
     {
@@ -507,14 +509,14 @@ unsigned int skmg::readTCSF( std::istream &file )
     return total;
 }
 
-unsigned int skmg::readPRIM( std::istream &file )
+unsigned int skmg::readPRIM( std::istream &file, psdt &newPsdt )
 {
     unsigned int primSize;
     unsigned int total = readFormHeader( file, "PRIM", primSize );
     primSize += 8;
     std::cout << "Found PRIM form" << std::endl;
 
-    total += readPRIMINFO( file );
+    total += readPRIMINFO( file, newPsdt );
 
     unsigned int size;
     std::string form, type;
@@ -530,11 +532,11 @@ unsigned int skmg::readPRIM( std::istream &file )
 	  }
 	else if( form == "ITL " )
 	  {
-	    total += readITL( file );
+	    total += readITL( file, newPsdt );
 	  }
 	else if( form == "OITL" )
 	  {
-	    total += readOITL( file );
+	    total += readOITL( file, newPsdt );
 	  }
 	else
 	  {
@@ -557,7 +559,7 @@ unsigned int skmg::readPRIM( std::istream &file )
     return total;
 }
 
-unsigned int skmg::readTCSD( std::istream &file )
+unsigned int skmg::readTCSD( std::istream &file, psdt &newPsdt )
 {
     std::string type;
     unsigned int tcsdSize;
@@ -578,8 +580,8 @@ unsigned int skmg::readTCSD( std::istream &file )
 	total += base::read( file, tempU );
 	total += base::read( file, tempV );
 	
-	u.push_back( tempU );
-	v.push_back( tempV );
+	newPsdt.u.push_back( tempU );
+	newPsdt.v.push_back( tempV );
 
 	std::cout << "UV: " << tempU << ", " << tempV << std::endl;;
       }
@@ -599,7 +601,7 @@ unsigned int skmg::readTCSD( std::istream &file )
 }
 
 // Index into Position/Normal/Texture index arrays.
-unsigned int skmg::readITL( std::istream &file )
+unsigned int skmg::readITL( std::istream &file, psdt &newPsdt )
 {
     std::string type;
     unsigned int itlSize;
@@ -623,9 +625,9 @@ unsigned int skmg::readITL( std::istream &file )
 	total += base::read( file, i2 );
 	total += base::read( file, i3 );
 
-	itl.push_back( i1 );
-	itl.push_back( i2 );
-	itl.push_back( i3 );
+	newPsdt.itl.push_back( i1 );
+	newPsdt.itl.push_back( i2 );
+	newPsdt.itl.push_back( i3 );
 
 	std::cout << i1 << ", " << i2 << ", " << i3 << std::endl;
       }
@@ -645,7 +647,7 @@ unsigned int skmg::readITL( std::istream &file )
 }
 
 // Index into Position/Normal/Texture index arrays.
-unsigned int skmg::readOITL( std::istream &file )
+unsigned int skmg::readOITL( std::istream &file, psdt &newPsdt )
 {
     std::string type;
     unsigned int oitlSize;
@@ -671,9 +673,9 @@ unsigned int skmg::readOITL( std::istream &file )
 	total += base::read( file, i2 );
 	total += base::read( file, i3 );
 
-	oitl[group].push_back( i1 );
-	oitl[group].push_back( i2 );
-	oitl[group].push_back( i3 );
+	newPsdt.oitl[group].push_back( i1 );
+	newPsdt.oitl[group].push_back( i2 );
+	newPsdt.oitl[group].push_back( i3 );
 
 	std::cout << "Group " << group << ": "
 		  << i1 << ", "
@@ -767,7 +769,7 @@ unsigned int skmg::readINFO( std::istream &file )
     return total;
 }
 
-unsigned int skmg::readPRIMINFO( std::istream &file )
+unsigned int skmg::readPRIMINFO( std::istream &file, psdt &newPsdt )
 {
     std::string type;
     unsigned int priminfoSize;
@@ -798,10 +800,7 @@ unsigned int skmg::readPRIMINFO( std::istream &file )
     return total;
 }
 
-unsigned int skmg::readBLTINFO( std::istream &file,
-				unsigned int &numBLTPos,
-				unsigned int &numBLTNorm
-				)
+unsigned int skmg::readBLTINFO( std::istream &file, blt &newBlt )
 {
     std::string type;
     unsigned int bltinfoSize;
@@ -814,15 +813,14 @@ unsigned int skmg::readBLTINFO( std::istream &file,
     }
     std::cout << "Found " << type << std::endl;
 
-    total += base::read( file, numBLTPos );
-    std::cout << "Num points: " << numBLTPos << std::endl;
+    total += base::read( file, newBlt.numPos );
+    std::cout << "Num points: " << newBlt.numPos << std::endl;
 
-    total += base::read( file, numBLTNorm );
-    std::cout << "Num normals: " << numBLTNorm << std::endl;
+    total += base::read( file, newBlt.numNorm );
+    std::cout << "Num normals: " << newBlt.numNorm << std::endl;
 
-    std::string blendName;
-    total += base::read( file, blendName );
-    std::cout << blendName << std::endl;
+    total += base::read( file, newBlt.name );
+    std::cout << newBlt.name << std::endl;
 
     if( bltinfoSize == total )
     {
@@ -967,7 +965,7 @@ unsigned int skmg::readDOT3( std::istream &file )
     return total;
 }
 
-unsigned int skmg::readDOT3Index( std::istream &file )
+unsigned int skmg::readDOT3Index( std::istream &file, psdt &newPsdt  )
 {
     std::string type;
     unsigned int dot3Size;
@@ -1170,7 +1168,7 @@ unsigned int skmg::readTWDT( std::istream &file )
 }
 
 // Index into points list
-unsigned int skmg::readPIDX( std::istream &file )
+unsigned int skmg::readPIDX( std::istream &file, psdt &newPsdt )
 {
     std::string type;
     unsigned int pidxSize;
@@ -1190,7 +1188,7 @@ unsigned int skmg::readPIDX( std::istream &file )
     for( unsigned int i = 0; i < numIndex; ++i )
       {
 	total += base::read( file, index );
-	pidx.push_back( index );
+	newPsdt.pidx.push_back( index );
 	std::cout << index << std::endl;
       }
 
@@ -1209,7 +1207,7 @@ unsigned int skmg::readPIDX( std::istream &file )
 }
 
 // Index into Normal array
-unsigned int skmg::readNIDX( std::istream &file )
+unsigned int skmg::readNIDX( std::istream &file, psdt &newPsdt )
 {
     std::string type;
     unsigned int nidxSize;
@@ -1227,7 +1225,7 @@ unsigned int skmg::readNIDX( std::istream &file )
     for( unsigned int i = 0; i < numIndex; ++i )
       {
 	total += base::read( file, index );
-	nidx.push_back( index );
+	newPsdt.nidx.push_back( index );
 	std::cout << index << std::endl;
       }
 
@@ -1245,7 +1243,7 @@ unsigned int skmg::readNIDX( std::istream &file )
     return total;
 }
 
-unsigned int skmg::readNAME( std::istream &file )
+unsigned int skmg::readNAME( std::istream &file, psdt &newPsdt )
 {
     std::string type;
     unsigned int nameSize;
@@ -1258,8 +1256,8 @@ unsigned int skmg::readNAME( std::istream &file )
     }
     std::cout << "Found " << type << std::endl;
 
-    total += base::read( file, shaderFilename );
-    std::cout << shaderFilename << std::endl;
+    total += base::read( file, newPsdt.shaderFilename );
+    std::cout << newPsdt.shaderFilename << std::endl;
 
     if( nameSize == total )
     {
@@ -1314,36 +1312,37 @@ void skmg::print() const
 {
 }
 
-unsigned int skmg::getNumVertex() const
+unsigned int skmg::psdt::getNumVertex() const
 {
   return pidx.size();
 }
 
-void skmg::getVertex( unsigned int index, float &X, float &Y, float &Z) const
+void skmg::psdt::getVertex( unsigned int index, float &X, float &Y, float &Z) const
 {
-  X = x[pidx[index]];
-  Y = y[pidx[index]];
-  Z = z[pidx[index]];
+  X = parentSkmg->getXVector()[pidx[index]];
+  Y = parentSkmg->getYVector()[pidx[index]];
+  Z = parentSkmg->getZVector()[pidx[index]];
 }
 
-void skmg::getNormal( unsigned int index, float &NX, float &NY, float &NZ) const
+void skmg::psdt::getNormal( unsigned int index, float &NX, float &NY, float &NZ) const
 {
-  NX = nx[nidx[index]];
-  NY = ny[nidx[index]];
-  NZ = nz[nidx[index]];
+  NX = parentSkmg->getNXVector()[nidx[index]];
+  NY = parentSkmg->getNYVector()[nidx[index]];
+  NZ = parentSkmg->getNZVector()[nidx[index]];
 }
 
-void skmg::getTexCoord( unsigned int index, float &U, float &V ) const
+void skmg::psdt::getTexCoord( unsigned int index, float &U, float &V ) const
 {
   U = u[index];
   V = v[index];
 }
 
-const std::vector<unsigned int> &skmg::getTriangles() const
+const std::vector<unsigned int> &skmg::psdt::getTriangles() const
 {
   return itl;
 }
-const std::vector<unsigned int> &skmg::getOTriangles( short group ) const
+
+const std::vector<unsigned int> &skmg::psdt::getOTriangles( short group ) const
 {
   static std::vector<unsigned int> emptyVec;
 
