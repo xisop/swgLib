@@ -435,8 +435,16 @@ unsigned int skmg::readSKTM( std::istream &file )
     }
     std::cout << "Found " << type << std::endl;
 
-    total += base::read( file, skeletonFilename );
-    std::cout << skeletonFilename << std::endl;
+    while( total < sktmSize )
+      {
+	std::string skeletonFilename;
+	total += base::read( file, skeletonFilename );
+	std::cout << skeletonFilename << std::endl;
+	
+	skeletonFilenameList.push_back( skeletonFilename );
+      }
+
+    total += readUnknown( file, sktmSize-total );
 
     if( sktmSize == total )
     {

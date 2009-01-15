@@ -95,9 +95,14 @@ namespace ml
       return shaderFilename;
     }
 
-    const std::string &getSkeleton() const
+    unsigned int getNumSkeletons() const
     {
-      return skeletonFilename;
+      return skeletonFilenameList.size();
+    }
+
+    const std::string &getSkeleton( unsigned int index ) const
+    {
+      return skeletonFilenameList[index];
     }
 
     unsigned int getNumGroups() const
@@ -157,7 +162,7 @@ namespace ml
     unsigned int readOITL( std::istream &file, psdt &newPsdt );
 
   private:
-    std::string skeletonFilename;
+    std::vector<std::string> skeletonFilenameList;
     std::string shaderFilename;
 
     std::vector< std::string > boneNames;
