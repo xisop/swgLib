@@ -37,6 +37,7 @@ OBJS = \
 	sktm.o \
 	skmg.o \
 	slod.o \
+	smat.o \
 	spam.o \
 	stat.o \
 	ster.o \
@@ -162,6 +163,9 @@ skmg.o: skmg.cpp $(MESH_INC)/meshLib/skmg.hpp
 
 slod.o: slod.cpp $(MESH_INC)/meshLib/slod.hpp
 	$(CXX) $(CFLAG) -c slod.cpp
+
+smat.o: smat.cpp $(MESH_INC)/meshLib/smat.hpp
+	$(CXX) $(CFLAG) -c smat.cpp
 
 spam.o: spam.cpp $(MESH_INC)/meshLib/spam.hpp
 	$(CXX) $(CFLAG) -c spam.cpp

@@ -49,6 +49,7 @@
 #include <meshLib/sktm.hpp>
 #include <meshLib/skmg.hpp>
 #include <meshLib/slod.hpp>
+#include <meshLib/smat.hpp>
 #include <meshLib/spam.hpp>
 #include <meshLib/stat.hpp>
 #include <meshLib/ster.hpp>
@@ -182,6 +183,12 @@ int main( int argc, char **argv )
 	{
 	  ml::spam misc;
 	  misc.readSPAM( infile );
+	  misc.print();
+	}
+      else if( "SMAT" == fileType )
+	{
+	  ml::smat misc;
+	  misc.readSMAT( infile );
 	  misc.print();
 	}
       else if( "SLOD" == fileType )
