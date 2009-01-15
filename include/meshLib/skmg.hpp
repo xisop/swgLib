@@ -36,17 +36,16 @@ namespace ml
 {
   class skmg : public base
   {
-
+  public:
+    
     class psdt
     {
     public:
-#if 1
       psdt( const skmg *newSkmg ):
 	parentSkmg( newSkmg )
       {
-	
       }
-#endif 
+
       const std::vector<unsigned int> &getTriangles() const;
       const std::vector<unsigned int> &getOTriangles( short group ) const;
       unsigned int getNumVertex() const;
@@ -54,6 +53,11 @@ namespace ml
       void getVertex( unsigned int index, float &X, float &Y, float &Z ) const;
       void getNormal( unsigned int index, float &NX, float &NY, float &NZ ) const;
       void getTexCoord( unsigned int index, float &U, float &V ) const;
+
+      const std::string &getShader() const
+      {
+	return shaderFilename;
+      }
 
       std::string shaderFilename;
       unsigned int numPos;
@@ -77,7 +81,6 @@ namespace ml
       
     };
 
-  public:
     skmg();
     ~skmg();
     bool isRightType( std::istream &file )
