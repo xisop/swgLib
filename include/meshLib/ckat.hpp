@@ -60,6 +60,10 @@ namespace ml
 	
     unsigned short numXFIN;
     unsigned short numQCHN;
+    unsigned short numSTRN;
+    unsigned short numSROT;
+    unsigned short numCHNL;
+
   private:
 
   };

@@ -96,22 +96,22 @@ unsigned int ckat::readINFO( std::istream &file )
     std::cout << "Found " << type << std::endl;
 
     float u1;
-    short u2, u5, u6, u7;
+    short u2;
     total += base::read( file, u1 );
     total += base::read( file, u2 );
     total += base::read( file, numXFIN );
     total += base::read( file, numQCHN );
-    total += base::read( file, u5 );
-    total += base::read( file, u6 );
-    total += base::read( file, u7 );
+    total += base::read( file, numSROT );
+    total += base::read( file, numCHNL );
+    total += base::read( file, numSTRN );
     
     std::cout << std::fixed << u1 << std::endl;
 	      std::cout << u2 << std::endl;
 	      std::cout << "Num XFIN: " << numXFIN << std::endl;
 	      std::cout << "Num QCHN: " << numQCHN << std::endl;
-	      std::cout << u5 << std::endl;
-	      std::cout << u6 << std::endl;
-	      std::cout << u7 << std::endl;
+	      std::cout << "Num SROT: " << numSROT << std::endl;
+	      std::cout << "Num CHNL: " << numCHNL << std::endl;
+	      std::cout << "Num STRN: " << numSTRN << std::endl;
 
     if( infoSize == total )
     {
@@ -197,7 +197,26 @@ unsigned int ckat::readSROT( std::istream &file )
         std::cout << "Expected record of type SROT: " << type << std::endl;
         exit( 0 );
     }
-    std::cout << "Found " << type << std::endl;
+    std::cout << "Found " << type << ": " << srotSize-8 << " bytes"
+	      << std::endl;
+
+    for( unsigned int i = 0; i < numSROT; ++i )
+      {
+	unsigned char u3;
+	total += base::read( file, u3 );
+	std::cout << (int)u3 << " ";
+
+	total += base::read( file, u3 );
+	std::cout << (int)u3 << " ";
+
+	total += base::read( file, u3 );
+	std::cout << (int)u3 << " ";
+
+	float u1;
+	total += base::read( file, u1 );
+	std::cout << u1 << std::endl;
+
+      }
 
     total += readUnknown( file, srotSize - total );
 
@@ -225,6 +244,10 @@ unsigned int ckat::readATRN( std::istream &file )
 	      << ": " << atrnSize-12 << " bytes"
 	      << std::endl;
 
+    for( unsigned int i = 0; i < numCHNL; ++i )
+      {
+	total += readCHNL( file );
+      }
     total += readUnknown( file, atrnSize - total );
     
     if( atrnSize == total )
@@ -254,6 +277,13 @@ unsigned int ckat::readSTRN( std::istream &file )
     }
     std::cout << "Found " << type << ": " << strnSize-8 << " bytes"
 	      << std::endl;
+
+    float u1;
+    for( unsigned int i = 0; i < numSTRN; ++i )
+      {
+	total += base::read( file, u1 );
+	std::cout << u1 << std::endl;
+      }
 
     total += readUnknown( file, strnSize - total );
 
@@ -341,6 +371,7 @@ unsigned int ckat::readQCHN( std::istream &file )
     total += base::read( file, num );
     std::cout << (int)num << std::endl;
 
+
     unsigned char u1;
     total += base::read( file, u1 );
     std::cout << (int)u1 << std::endl;
@@ -356,23 +387,21 @@ unsigned int ckat::readQCHN( std::istream &file )
 
     for( unsigned char i = 0; i < num; ++i )
       {
-	total += base::read( file, u1 );
-	std::cout << (int)u1 << " ";
+	short u2;
+	total += base::read( file, u2 );
+	std::cout << (int)u2 << " ";
 
 	total += base::read( file, u1 );
-	std::cout << (int)u1 << " ";
+	std::cout << (u1/255.0) << " ";
 
 	total += base::read( file, u1 );
-	std::cout << (int)u1 << " ";
+	std::cout << (u1/255.0) << " ";
 
 	total += base::read( file, u1 );
-	std::cout << (int)u1 << " ";
+	std::cout << (u1/255.0) << " ";
 
 	total += base::read( file, u1 );
-	std::cout << (int)u1 << " ";
-
-	total += base::read( file, u1 );
-	std::cout << (int)u1 << std::endl;
+	std::cout << (u1/255.0) << std::endl;
       }
 
     total += readUnknown( file, qchnSize - total );
@@ -491,6 +520,19 @@ unsigned int ckat::readLOCT( std::istream &file )
     std::cout << "Found " << type << ": " << loctSize-8 << " bytes"
 	      << std::endl;
 
+    short u1;
+    total += base::read( file, u1 );
+    std::cout << u1 << std::endl;
+
+    total += base::read( file, u1 );
+    std::cout << u1 << std::endl;
+
+    total += base::read( file, u1 );
+    std::cout << u1 << std::endl;
+
+    for( unsigned int i = 0; i < 82; ++i )
+      {
+      }
     total += readUnknown( file, loctSize - total );
 
     if( loctSize == total )
@@ -501,6 +543,61 @@ unsigned int ckat::readLOCT( std::istream &file )
     {
         std::cout << "FAILED in reading LOCT" << std::endl;
         std::cout << "Read " << total << " out of " << loctSize
+                  << std::endl;
+     }
+
+    return total;
+}
+
+unsigned int ckat::readCHNL( std::istream &file )
+{
+    std::string type;
+    unsigned int chnlSize;
+    unsigned int total = readRecordHeader( file, type, chnlSize );
+    chnlSize += 8;
+    if( type != "CHNL" )
+    {
+        std::cout << "Expected record of type CHNL: " << type << std::endl;
+        exit( 0 );
+    }
+    std::cout << "Found " << type << ": " << chnlSize-8 << " bytes"
+	      << std::endl;
+
+    unsigned short num;
+    total += base::read( file, num );
+    std::cout << "Num: " << num << std::endl;
+    unsigned char u1;
+    short u2;
+    for( unsigned int i = 0; i < 23; ++i )
+      {
+	total += base::read( file, u2 );
+	std::cout << u2 << " ";
+
+	total += base::read( file, u1 );
+	std::cout << (int)u1 << " ";
+
+	total += base::read( file, u1 );
+	std::cout << (int)u1 << " ";
+
+	total += base::read( file, u1 );
+	std::cout << (int)u1 << " ";
+
+	total += base::read( file, u1 );
+	std::cout << (int)u1 << " ";
+
+	std::cout << std::endl;
+      }
+
+    total += readUnknown( file, chnlSize - total );
+
+    if( chnlSize == total )
+    {
+        std::cout << "Finished reading CHNL" << std::endl;
+    }
+    else
+    {
+        std::cout << "FAILED in reading CHNL" << std::endl;
+        std::cout << "Read " << total << " out of " << chnlSize
                   << std::endl;
      }
 
