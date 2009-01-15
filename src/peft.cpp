@@ -63,6 +63,9 @@ unsigned int peft::readPEFT( std::istream &file, std::string path )
   total += readPTIM( file );
   unsigned int numEmitterGroups;
   total += read0000( file, numEmitterGroups );
+
+  std::cout << "Num emitters: " << numEmitterGroups << std::endl;
+
   for( unsigned int i = 0; i < numEmitterGroups; ++i )
     {
       total += readEMGP( file );
@@ -146,6 +149,22 @@ unsigned int peft::readEMTR( std::istream &file )
 	      << std::endl;
 
     total += readPTIM( file );
+    total += readWVFM( file );
+    total += readWVFM( file );
+    total += readWVFM( file );
+    total += readWVFM( file );
+    total += readWVFM( file );
+    total += readWVFM( file );
+    total += readWVFM( file );
+    total += readWVFM( file );
+    total += readWVFM( file );
+    total += readWVFM( file );
+    total += readWVFM( file );
+    total += readWVFM( file );
+    total += readWVFM( file );
+    total += readWVFM( file );
+    total += readWVFM( file );
+    total += readWVFM( file );
 
     total += readUnknown( file, emtrSize - total );
 
@@ -183,7 +202,7 @@ unsigned int peft::readPTIM( std::istream &file )
 	      << ": " << size << " bytes"
 	      << std::endl;
 
-    unsigned int x;
+    int x;
     for( unsigned int i = 0; i < 6; ++i )
       {
 	total += base::read( file, x );
@@ -198,6 +217,69 @@ unsigned int peft::readPTIM( std::istream &file )
     {
 	std::cout << "FAILED in reading PTIM" << std::endl;
 	std::cout << "Read " << total << " out of " << ptimSize
+                  << std::endl;
+    }
+
+    return total;
+}
+
+unsigned int peft::readWVFM( std::istream &file )
+{
+    unsigned int wvfmSize;
+    unsigned int total = readFormHeader( file, "WVFM", wvfmSize );
+    wvfmSize += 8;
+    std::cout << "Found FORM WVFM: " << wvfmSize-12 << " bytes"
+	      << std::endl;
+
+    unsigned int size;
+    std::string type;
+    total += readRecordHeader( file, type, size );
+    if( type != "0001" )
+    {
+        std::cout << "Expected record of type 0001: " << type << std::endl;
+        exit( 0 );
+    }
+    std::cout << "Found record " << type
+	      << ": " << size << " bytes"
+	      << std::endl;
+    
+    int u1;
+
+    total += base::read( file, u1 );
+    std::cout << u1 << std::endl;
+
+    total += base::read( file, u1 );
+    std::cout << u1 << std::endl;
+
+    int num;
+    total += base::read( file, num );
+    std::cout << "Num: " << num << std::endl;
+
+    float u2;
+    std::cout << std::fixed;
+    for( unsigned int i = 0; i < num; ++i )
+      {
+	total += base::read( file, u2 );
+	std::cout << u2 << " ";
+
+	total += base::read( file, u2 );
+	std::cout << u2 << " ";
+	
+	total += base::read( file, u2 );
+	std::cout << u2 << " ";
+	
+	total += base::read( file, u2 );
+	std::cout << u2 << std::endl;
+      }
+
+    if( wvfmSize == total )
+    {
+	std::cout << "Finished reading WVFM" << std::endl;
+    }
+    else
+    {
+	std::cout << "FAILED in reading WVFM" << std::endl;
+	std::cout << "Read " << total << " out of " << wvfmSize
                   << std::endl;
     }
 
