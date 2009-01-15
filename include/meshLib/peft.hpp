@@ -49,9 +49,11 @@ namespace ml
     unsigned int read0000( std::istream &file, unsigned int &num );
     unsigned int readEMGP( std::istream &file );
     unsigned int readEMTR( std::istream &file );
+    unsigned int readEMTR0000( std::istream &file );
     unsigned int readWVFM( std::istream &file );
     unsigned int readPTQD( std::istream &file );
     unsigned int readPTCL( std::istream &file );
+    unsigned int readPTCL0002( std::istream &file );
     unsigned int readCLRR( std::istream &file );
     unsigned int readPTEX( std::istream &file );
 				
