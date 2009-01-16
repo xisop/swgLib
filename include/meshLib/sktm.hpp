@@ -46,18 +46,28 @@ namespace ml
     void print() const;
 
   protected:
-    unsigned int readINFO( std::istream &file, unsigned short &value );
-    unsigned int readINFO( std::istream &file, unsigned int &value );
-    unsigned int readNAME( std::istream &file, unsigned int num );
-    unsigned int readPRNT( std::istream &file, unsigned int num );
-    unsigned int readRPRE( std::istream &file, unsigned int num );
-    unsigned int readRPST( std::istream &file, unsigned int num );
-    unsigned int readBPTR( std::istream &file, unsigned int num );
-    unsigned int readBPRO( std::istream &file, unsigned int num );
-    unsigned int readJROR( std::istream &file, unsigned int num );
+    unsigned int readINFO( std::istream &file );
+    unsigned int readNAME( std::istream &file );
+    unsigned int readPRNT( std::istream &file );
+    unsigned int readRPRE( std::istream &file );
+    unsigned int readRPST( std::istream &file );
+    unsigned int readBPTR( std::istream &file );
+    unsigned int readBPRO( std::istream &file );
+    unsigned int readJROR( std::istream &file );
 
   private:
-    std::vector<std::string> groupNames;
+    unsigned int numBones;
+    std::vector<std::string> boneName;
+    std::vector<unsigned int> boneParent;
+    
+    std::vector< float > boneXOffset;
+    std::vector< float > boneYOffset;
+    std::vector< float > boneZOffset;
+
+    std::vector< float > boneQXOffset;
+    std::vector< float > boneQYOffset;
+    std::vector< float > boneQZOffset;
+    std::vector< float > boneQWOffset;
   };
 }
 #endif

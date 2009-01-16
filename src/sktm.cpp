@@ -60,15 +60,14 @@ unsigned int sktm::readSKTM( std::istream &file )
     }
     std::cout << "Found form of type: " << type<< std::endl;
 
-    unsigned int num;
-    total += readINFO( file, num );
-    total += readNAME( file, num );
-    total += readPRNT( file, num );
-    total += readRPRE( file, num );
-    total += readRPST( file, num );
-    total += readBPTR( file, num );
-    total += readBPRO( file, num );
-    total += readJROR( file, num );
+    total += readINFO( file );
+    total += readNAME( file );
+    total += readPRNT( file );
+    total += readRPRE( file );
+    total += readRPST( file );
+    total += readBPTR( file );
+    total += readBPRO( file );
+    total += readJROR( file );
     
     if( sktmSize == total )
     {
@@ -84,7 +83,7 @@ unsigned int sktm::readSKTM( std::istream &file )
     return total;
 }
 
-unsigned int sktm::readINFO( std::istream &file, unsigned int &value )
+unsigned int sktm::readINFO( std::istream &file )
 {
     std::string type;
     unsigned int infoSize;
@@ -97,7 +96,8 @@ unsigned int sktm::readINFO( std::istream &file, unsigned int &value )
     }
     std::cout << "Found " << type << std::endl;
 
-    total += base::read( file, value );
+    total += base::read( file, numBones );
+    std::cout << "Num bones: " << numBones << std::endl;
 
     if( infoSize == total )
     {
@@ -113,7 +113,7 @@ unsigned int sktm::readINFO( std::istream &file, unsigned int &value )
     return total;
 }
 
-unsigned int sktm::readNAME( std::istream &file, unsigned int num )
+unsigned int sktm::readNAME( std::istream &file )
 {
     std::string type;
     unsigned int nameSize;
@@ -127,11 +127,11 @@ unsigned int sktm::readNAME( std::istream &file, unsigned int num )
     std::cout << "Found " << type << std::endl;
 
     std::string filename;
-    for( unsigned int i = 0; i < num; ++i )
+    for( unsigned int i = 0; i < numBones; ++i )
       {
 	total += base::read( file, filename );
 	std::cout << i << ": " << filename << std::endl;
-	groupNames.push_back( filename );
+	boneName.push_back( filename );
       }
 
     if( nameSize == total )
@@ -153,7 +153,7 @@ void sktm::print() const
 }
 
 /// Parent bone
-unsigned int sktm::readPRNT( std::istream &file, unsigned int num )
+unsigned int sktm::readPRNT( std::istream &file )
 {
     std::string type;
     unsigned int prntSize;
@@ -166,25 +166,25 @@ unsigned int sktm::readPRNT( std::istream &file, unsigned int num )
     }
     std::cout << "Found " << type << std::endl;
 
-    if( (prntSize-8)/num != 4 )
+    if( (prntSize-8)/numBones != 4 )
       {
 	std::cout << "Expected 4 byte values" << std::endl;
 	exit( 0 );
       }
 
     int value;
-    for( unsigned int i = 0; i < num; ++i )
+    for( unsigned int i = 0; i < numBones; ++i )
       {
 	total += base::read( file, value );
 	//std::cout << value << std::endl;
-	std::cout << "Bone " << groupNames[i];
+	std::cout << "Bone " << boneName[i];
 	if( value < 0 )
 	  {
 	    std::cout  << " has no parent.";
 	  }
 	else
 	  {
-	    std::cout  << " has parent bone " << groupNames[value];
+	    std::cout  << " has parent bone " << boneName[value];
 	  }
 	std::cout << std::endl;
       }
@@ -204,7 +204,7 @@ unsigned int sktm::readPRNT( std::istream &file, unsigned int num )
 }
 
 
-unsigned int sktm::readRPRE( std::istream &file, unsigned int num )
+unsigned int sktm::readRPRE( std::istream &file )
 {
     std::string type;
     unsigned int rpreSize;
@@ -217,7 +217,7 @@ unsigned int sktm::readRPRE( std::istream &file, unsigned int num )
     }
     std::cout << "Found " << type << std::endl;
 
-    if( (rpreSize-8)/num != 16 )
+    if( (rpreSize-8)/numBones != 16 )
       {
 	std::cout << "Expected 16 byte values" << std::endl;
 	exit( 0 );
@@ -225,11 +225,11 @@ unsigned int sktm::readRPRE( std::istream &file, unsigned int num )
 
     std::cout << std::fixed;
     float value;
-    for( unsigned int i = 0; i < num; ++i )
+    for( unsigned int i = 0; i < numBones; ++i )
       {
 	std::cout << "Bone ";
 	std::cout.width( 10 );
-	std::cout << groupNames[i] << ": ";
+	std::cout << boneName[i] << ": ";
 
 	total += base::read( file, value );
 	std::cout << value << " ";
@@ -259,7 +259,7 @@ unsigned int sktm::readRPRE( std::istream &file, unsigned int num )
     return total;
 }
 
-unsigned int sktm::readRPST( std::istream &file, unsigned int num )
+unsigned int sktm::readRPST( std::istream &file )
 {
     std::string type;
     unsigned int rpstSize;
@@ -272,18 +272,18 @@ unsigned int sktm::readRPST( std::istream &file, unsigned int num )
     }
     std::cout << "Found " << type << std::endl;
 
-    if( (rpstSize-8)/num != 16 )
+    if( (rpstSize-8)/numBones != 16 )
       {
 	std::cout << "Expected 16 byte values" << std::endl;
 	exit( 0 );
       }
 
     float value;
-    for( unsigned int i = 0; i < num; ++i )
+    for( unsigned int i = 0; i < numBones; ++i )
       {
 	std::cout << "Bone ";
 	std::cout.width( 10 );
-	std::cout << groupNames[i] << ": ";
+	std::cout << boneName[i] << ": ";
 
 	total += base::read( file, value );
 	std::cout << value << " ";
@@ -313,7 +313,7 @@ unsigned int sktm::readRPST( std::istream &file, unsigned int num )
     return total;
 }
 
-unsigned int sktm::readBPTR( std::istream &file, unsigned int num )
+unsigned int sktm::readBPTR( std::istream &file )
 {
     std::string type;
     unsigned int bptrSize;
@@ -326,28 +326,28 @@ unsigned int sktm::readBPTR( std::istream &file, unsigned int num )
     }
     std::cout << "Found " << type << std::endl;
 
-    if( (bptrSize-8)/num != 12 )
+    if( (bptrSize-8)/numBones != 12 )
       {
 	std::cout << "Expected 12 byte values" << std::endl;
 	exit( 0 );
       }
 
-    float value;
-    for( unsigned int i = 0; i < num; ++i )
+    float x, y, z;
+    for( unsigned int i = 0; i < numBones; ++i )
       {
+	total += base::read( file, x );
+	total += base::read( file, y );
+	total += base::read( file, z );
+	boneXOffset.push_back( x );
+	boneYOffset.push_back( y );
+	boneZOffset.push_back( z );
+
 	std::cout << "Bone ";
 	std::cout.width( 10 );
-	std::cout << groupNames[i] << ": ";
-
-	total += base::read( file, value );
-	std::cout << value << " ";
-
-	total += base::read( file, value );
-	std::cout << value << " ";
-
-	total += base::read( file, value );
-	std::cout << value << " ";
-	std::cout << std::endl;
+	std::cout << boneName[i] << ": "
+		  << x << " "
+		  << y << " "
+		  << z << std::endl;
       }
 
     if( bptrSize == total )
@@ -364,7 +364,7 @@ unsigned int sktm::readBPTR( std::istream &file, unsigned int num )
     return total;
 }
 
-unsigned int sktm::readBPRO( std::istream &file, unsigned int num )
+unsigned int sktm::readBPRO( std::istream &file )
 {
     std::string type;
     unsigned int bproSize;
@@ -377,18 +377,18 @@ unsigned int sktm::readBPRO( std::istream &file, unsigned int num )
     }
     std::cout << "Found " << type << std::endl;
 
-    if( (bproSize-8)/num != 16 )
+    if( (bproSize-8)/numBones != 16 )
       {
 	std::cout << "Expected 16 byte values" << std::endl;
 	exit( 0 );
       }
 
     float value;
-    for( unsigned int i = 0; i < num; ++i )
+    for( unsigned int i = 0; i < numBones; ++i )
       {
 	std::cout << "Bone ";
 	std::cout.width( 10 );
-	std::cout << groupNames[i] << ": ";
+	std::cout << boneName[i] << ": ";
 
 	total += base::read( file, value );
 	std::cout << value << " ";
@@ -418,7 +418,7 @@ unsigned int sktm::readBPRO( std::istream &file, unsigned int num )
     return total;
 }
 
-unsigned int sktm::readJROR( std::istream &file, unsigned int num )
+unsigned int sktm::readJROR( std::istream &file )
 {
     std::string type;
     unsigned int jrorSize;
@@ -431,18 +431,18 @@ unsigned int sktm::readJROR( std::istream &file, unsigned int num )
     }
     std::cout << "Found " << type << std::endl;
 
-    if( (jrorSize-8)/num != 4 )
+    if( (jrorSize-8)/numBones != 4 )
       {
 	std::cout << "Expected 4 byte values" << std::endl;
 	exit( 0 );
       }
 
     unsigned int value;
-    for( unsigned int i = 0; i < num; ++i )
+    for( unsigned int i = 0; i < numBones; ++i )
       {
 	std::cout << "Bone ";
 	std::cout.width( 10 );
-	std::cout << groupNames[i] << ": ";
+	std::cout << boneName[i] << ": ";
 
 	total += base::read( file, value );
 	std::cout << value << std::endl;
