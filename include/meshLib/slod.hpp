@@ -23,6 +23,7 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include <meshLib/base.hpp>
+#include <meshLib/sktm.hpp>
 
 #include <fstream>
 #include <string>
@@ -44,20 +45,21 @@ namespace ml
     unsigned int readSLOD( std::istream &file );
     void print() const;
 
+    unsigned short getNumSkeletons() const
+    {
+      return skeletonList.size();
+    }
+
+    const ml::sktm &getSkeleton( unsigned short index ) const
+    {
+      return skeletonList[index];
+    }
+
   protected:
     unsigned int readINFO( std::istream &file, unsigned short &value );
-    unsigned int readINFO( std::istream &file, unsigned int &value );
-    unsigned int readNAME( std::istream &file, unsigned int num );
-    unsigned int readSKTM( std::istream &file );
-    unsigned int readPRNT( std::istream &file, unsigned int num );
-    unsigned int readRPRE( std::istream &file, unsigned int num );
-    unsigned int readRPST( std::istream &file, unsigned int num );
-    unsigned int readBPTR( std::istream &file, unsigned int num );
-    unsigned int readBPRO( std::istream &file, unsigned int num );
-    unsigned int readJROR( std::istream &file, unsigned int num );
 
   private:
-    std::vector<std::string> groupNames;
+    std::vector<ml::sktm> skeletonList;
   };
 }
 #endif

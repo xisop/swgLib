@@ -62,9 +62,7 @@ unsigned int sktm::readSKTM( std::istream &file )
 
     unsigned int num;
     total += readINFO( file, num );
-
     total += readNAME( file, num );
-
     total += readPRNT( file, num );
     total += readRPRE( file, num );
     total += readRPST( file, num );
@@ -80,35 +78,6 @@ unsigned int sktm::readSKTM( std::istream &file )
     {
 	std::cout << "FAILED in reading SKTM" << std::endl;
 	std::cout << "Read " << total << " out of " << sktmSize
-                  << std::endl;
-     }
-
-    return total;
-}
-
-unsigned int sktm::readINFO( std::istream &file, unsigned short &value )
-{
-    std::string type;
-    unsigned int infoSize;
-    unsigned int total = readRecordHeader( file, type, infoSize );
-    infoSize += 8;
-    if( type != "INFO" )
-    {
-        std::cout << "Expected record of type INFO: " << type << std::endl;
-        exit( 0 );
-    }
-    std::cout << "Found " << type << std::endl;
-
-    total += base::read( file, value );
-
-    if( infoSize == total )
-    {
-        std::cout << "Finished reading INFO" << std::endl;
-    }
-    else
-    {
-        std::cout << "FAILED in reading INFO" << std::endl;
-        std::cout << "Read " << total << " out of " << infoSize
                   << std::endl;
      }
 
@@ -203,13 +172,21 @@ unsigned int sktm::readPRNT( std::istream &file, unsigned int num )
 	exit( 0 );
       }
 
-    unsigned int value;
+    int value;
     for( unsigned int i = 0; i < num; ++i )
       {
 	total += base::read( file, value );
-	std::cout << value << " ";
+	//std::cout << value << std::endl;
+	std::cout << "Bone " << groupNames[i];
+	if( value < 0 )
+	  {
+	    std::cout  << " has no parent.";
+	  }
+	else
+	  {
+	    std::cout  << " has parent bone " << groupNames[value];
+	  }
 	std::cout << std::endl;
-
       }
 
     if( prntSize == total )
@@ -225,6 +202,7 @@ unsigned int sktm::readPRNT( std::istream &file, unsigned int num )
 
     return total;
 }
+
 
 unsigned int sktm::readRPRE( std::istream &file, unsigned int num )
 {
@@ -245,9 +223,14 @@ unsigned int sktm::readRPRE( std::istream &file, unsigned int num )
 	exit( 0 );
       }
 
+    std::cout << std::fixed;
     float value;
     for( unsigned int i = 0; i < num; ++i )
       {
+	std::cout << "Bone ";
+	std::cout.width( 10 );
+	std::cout << groupNames[i] << ": ";
+
 	total += base::read( file, value );
 	std::cout << value << " ";
 
@@ -298,6 +281,10 @@ unsigned int sktm::readRPST( std::istream &file, unsigned int num )
     float value;
     for( unsigned int i = 0; i < num; ++i )
       {
+	std::cout << "Bone ";
+	std::cout.width( 10 );
+	std::cout << groupNames[i] << ": ";
+
 	total += base::read( file, value );
 	std::cout << value << " ";
 
@@ -348,6 +335,10 @@ unsigned int sktm::readBPTR( std::istream &file, unsigned int num )
     float value;
     for( unsigned int i = 0; i < num; ++i )
       {
+	std::cout << "Bone ";
+	std::cout.width( 10 );
+	std::cout << groupNames[i] << ": ";
+
 	total += base::read( file, value );
 	std::cout << value << " ";
 
@@ -395,6 +386,10 @@ unsigned int sktm::readBPRO( std::istream &file, unsigned int num )
     float value;
     for( unsigned int i = 0; i < num; ++i )
       {
+	std::cout << "Bone ";
+	std::cout.width( 10 );
+	std::cout << groupNames[i] << ": ";
+
 	total += base::read( file, value );
 	std::cout << value << " ";
 
@@ -445,8 +440,12 @@ unsigned int sktm::readJROR( std::istream &file, unsigned int num )
     unsigned int value;
     for( unsigned int i = 0; i < num; ++i )
       {
+	std::cout << "Bone ";
+	std::cout.width( 10 );
+	std::cout << groupNames[i] << ": ";
+
 	total += base::read( file, value );
-	std::cout << value << " ";
+	std::cout << value << std::endl;
       }
     std::cout << std::endl;
 
