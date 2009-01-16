@@ -198,7 +198,8 @@ unsigned int smat::readLATX( std::istream &file )
         std::cout << "Expected record of type LATX: " << type << std::endl;
         exit( 0 );
     }
-    std::cout << "Found " << type << std::endl;
+    std::cout << "Found " << type << ": " << latxSize-8 << " bytes"
+	      << std::endl;
 
     unsigned short num;
     total += base::read( file, num );
@@ -278,34 +279,40 @@ unsigned int smat::readLDTBINFO( std::istream &file )
         std::cout << "Expected record of type INFO: " << type << std::endl;
         exit( 0 );
     }
-    std::cout << "Found " << type << std::endl;
+    std::cout << "Found " << type << ": " << infoSize-8 << " bytes"
+	      << std::endl;
 
-    unsigned int u1;
-    total += base::read( file, u1 );
-    std::cout << u1 << std::endl;
+    unsigned short num;
+    total += base::read( file, num );
+    std::cout << num << std::endl;
 
-    total += base::read( file, u1 );
-    std::cout << u1 << std::endl;
+    for( unsigned int i = 0; i < num; ++i )
+      {
+	unsigned char u1;
+	total += base::read( file, u1 );
+	std::cout << (int)u1 << " ";
 
-    total += base::read( file, u1 );
-    std::cout << u1 << std::endl;
+	total += base::read( file, u1 );
+	std::cout << (int)u1 << " ";
 
-    total += base::read( file, u1 );
-    std::cout << u1 << std::endl;
+	total += base::read( file, u1 );
+	std::cout << (int)u1 << " ";
 
-    total += base::read( file, u1 );
-    std::cout << u1 << std::endl;
+	total += base::read( file, u1 );
+	std::cout << (int)u1 << " ";
 
-    total += base::read( file, u1 );
-    std::cout << u1 << std::endl;
+	total += base::read( file, u1 );
+	std::cout << (int)u1 << " ";
 
-    total += base::read( file, u1 );
-    std::cout << u1 << std::endl;
+	total += base::read( file, u1 );
+	std::cout << (int)u1 << " ";
 
-    total += base::read( file, u1 );
-    std::cout << u1 << std::endl;
+	total += base::read( file, u1 );
+	std::cout << (int)u1 << " ";
 
-    total += readUnknown( file, infoSize - total );
+	total += base::read( file, u1 );
+	std::cout << (int)u1 << std::endl;
+      }
 
     if( infoSize == total )
     {
