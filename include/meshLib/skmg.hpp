@@ -22,7 +22,7 @@
  along with meshLib; if not, write to the Free Software
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include <meshLib/base.hpp>
+#include <meshLib/model.hpp>
 
 #include <fstream>
 #include <string>
@@ -34,7 +34,7 @@
 
 namespace ml
 {
-  class skmg : public base
+  class skmg : public model
   {
   public:
     
@@ -144,10 +144,12 @@ namespace ml
     unsigned int readBLT( std::istream &file, blt &newBlt );
     unsigned int readBLTPOSN( std::istream &file, unsigned int num );
     unsigned int readBLTNORM( std::istream &file, unsigned int num );
+    unsigned int readBLTHPTS( std::istream &file );
     unsigned int readOZN( std::istream &file );
     unsigned int readFOZC( std::istream &file );
     unsigned int readOZC( std::istream &file );
     unsigned int readZTO( std::istream &file );
+    unsigned int readTRTS( std::istream &file );
     unsigned int readBLTINFO( std::istream &file, blt &newBlt );
     unsigned int readDOT3Index( std::istream &file, psdt &newPsdt );
 

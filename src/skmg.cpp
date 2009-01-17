@@ -80,6 +80,14 @@ unsigned int skmg::readSKMG( std::istream &file )
 	      {
 		total += readBLTS( file );
 	      }
+	    else if( type == "HPTS" )
+	      {
+		total += readHPTS( file );
+	      }
+	    else if( type == "TRTS" )
+	      {
+		total += readTRTS( file );
+	      }
 	    else
 	      {
 		std::cout << "Unexpected form: " << type << std::endl;
@@ -224,6 +232,29 @@ unsigned int skmg::readPSDT( std::istream &file, psdt &newPsdt )
     return total;
 }
 
+unsigned int skmg::readTRTS( std::istream &file )
+{
+    unsigned int trtsSize;
+    unsigned int total = readFormHeader( file, "TRTS", trtsSize );
+    trtsSize += 8;
+    std::cout << "Found TRTS form" << std::endl;
+
+    total += readUnknown( file, trtsSize - total );
+
+    if( trtsSize == total )
+    {
+	std::cout << "Finished reading TRTS" << std::endl;
+    }
+    else
+    {
+	std::cout << "FAILED in reading TRTS" << std::endl;
+	std::cout << "Read " << total << " out of " << trtsSize
+                  << std::endl;
+     }
+
+    return total;
+}
+
 unsigned int skmg::readBLTS( std::istream &file )
 {
     unsigned int bltsSize;
@@ -267,6 +298,11 @@ unsigned int skmg::readBLT( std::istream &file, blt &newBlt )
     if( total < bltSize )
       {
 	total += readDOT3( file );
+      }
+
+    if( total < bltSize )
+      {
+	total += readBLTHPTS( file );
       }
 
     if( bltSize == total )
@@ -1404,4 +1440,33 @@ const std::vector<unsigned int> &skmg::psdt::getOTriangles( short group ) const
     {
       return triangles->second;
     }
+}
+
+unsigned int skmg::readBLTHPTS( std::istream &file )
+{
+    std::string type;
+    unsigned int hptsSize;
+    unsigned int total = readRecordHeader( file, type, hptsSize );
+    hptsSize += 8;
+    if( type != "HPTS" )
+    {
+        std::cout << "Expected record of type HPTS: " << type << std::endl;
+        exit( 0 );
+    }
+    std::cout << "Found " << type << std::endl;
+
+    total += readUnknown( file, hptsSize - total );
+
+    if( hptsSize == total )
+    {
+        std::cout << "Finished reading HPTS" << std::endl;
+    }
+    else
+    {
+        std::cout << "FAILED in reading HPTS" << std::endl;
+        std::cout << "Read " << total << " out of " << hptsSize
+                  << std::endl;
+     }
+
+    return total;
 }
