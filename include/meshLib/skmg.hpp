@@ -170,9 +170,11 @@ namespace ml
 
     std::vector< std::string > boneNames;
 
+    unsigned int numSkeletons;
     unsigned int numBones;
     unsigned int numPoints;
     unsigned int numNorm;
+    unsigned int numPSDT;
     unsigned int numDot3;
     unsigned int numTwdt;
     unsigned int numIndex;

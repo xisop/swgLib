@@ -475,7 +475,8 @@ unsigned int skmg::readSKTM( std::istream &file )
     }
     std::cout << "Found " << type << std::endl;
 
-    while( total < sktmSize )
+    for( unsigned int i = 0; i < numSkeletons; ++i )
+      //while( total < sktmSize )
       {
 	std::string skeletonFilename;
 	total += base::read( file, skeletonFilename );
@@ -760,11 +761,10 @@ unsigned int skmg::readINFO( std::istream &file )
 
     unsigned int u1;
     unsigned int u2;
-    unsigned int u3;
-    unsigned int u7;
-    short u8;
-    short u9;
-    int u10;
+    short u10;
+    short u11;
+    short u12;
+    short u13;
 
     total += base::read( file, u1 );
     std::cout << u1 << std::endl;
@@ -772,8 +772,8 @@ unsigned int skmg::readINFO( std::istream &file )
     total += base::read( file, u2 );
     std::cout << u2 << std::endl;
 
-    total += base::read( file, u3 );
-    std::cout << u3 << std::endl;
+    total += base::read( file, numSkeletons );
+    std::cout << "Num skeletons: " << numSkeletons << std::endl;
 
     total += base::read( file, numBones);
     std::cout << "Num bones: " << numBones << std::endl;
@@ -785,23 +785,26 @@ unsigned int skmg::readINFO( std::istream &file )
     std::cout << "Num twdt: " << numTwdt << std::endl;
 
     total += base::read( file, numNorm );
-    std::cout << numNorm << std::endl;
+    std::cout << "Num normals: " << numNorm << std::endl;
 
-    total += base::read( file, u7 );
-    std::cout << u7 << std::endl;
+    total += base::read( file, numPSDT );
+    std::cout << "Num PSDT: " << numPSDT << std::endl;
 
     total += base::read( file, numBLT );
-    std::cout << numBLT << std::endl;
+    std::cout << "Num blend tables: " << numBLT << std::endl;
 
-    total += base::read( file, u8 );
-    std::cout << u8 << std::endl;
-
-    total += base::read( file, u9 );
-    std::cout << u9 << std::endl;
-
-    // Something to do with OITL
     total += base::read( file, u10 );
     std::cout << u10 << std::endl;
+
+    total += base::read( file, u11 );
+    std::cout << u11 << std::endl;
+
+    // Something to do with OITL
+    total += base::read( file, u12 );
+    std::cout << u12 << std::endl;
+
+    total += base::read( file, u13 );
+    std::cout << u13 << std::endl;
 
     if( infoSize == total )
     {
