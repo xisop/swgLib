@@ -1735,6 +1735,10 @@ int readRecord(
     {
 	readUnknown( file, size );
     }
+    else if( "DYN " == group )
+    {
+	readUnknown( file, size );
+    }
     else
     {
 	std::cout << "Unknown KEYWORD: " << group << std::endl;
