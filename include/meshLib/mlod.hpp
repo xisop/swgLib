@@ -43,9 +43,21 @@ namespace ml
 
     unsigned int readMLOD( std::istream &file, const std::string &path="" );
 
+    unsigned int getNumMesh() const
+    {
+      return meshFilename.size();
+    }
+
+    const std::string &getMeshFilename( unsigned int index ) const
+    {
+      return meshFilename[index];
+    }
+
   protected:
     unsigned int readINFO( std::istream &file, unsigned short &num );
     unsigned int readNAME( std::istream &file, std::string &name );
+
+    std::vector< std::string > meshFilename;
 
   private:
   };

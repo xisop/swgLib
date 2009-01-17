@@ -64,6 +64,7 @@ unsigned int mlod::readMLOD( std::istream &file, const std::string &path )
     {
       std::string name;
       total += readNAME( file, name );
+      meshFilename.push_back( name );
       std::cout << "Name: " << name << std::endl;
     }
 
