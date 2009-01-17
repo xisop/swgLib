@@ -45,6 +45,77 @@ namespace ml
     unsigned int readSKTM( std::istream &file );
     void print() const;
 
+    unsigned int getNumBones() const
+    {
+      return boneName.size();
+    }
+
+    const std::string &getBoneName( unsigned int i ) const
+    {
+      return boneName[i];
+    }
+
+    const int &getBoneParent( unsigned int i ) const
+    {
+      return boneParent[i];
+    }
+
+    const float &getBoneXOffset( unsigned int i ) const
+    {
+      return boneXOffset[i];
+    }
+
+    const float &getBoneYOffset( unsigned int i ) const
+    {
+      return boneYOffset[i];
+    }
+
+    const float &getBoneZOffset( unsigned int i ) const
+    {
+      return boneZOffset[i];
+    }
+
+    const float &getBonePostQuatX( unsigned int i ) const
+    {
+      return bonePostQuatX[i];
+    }
+
+    const float &getBonePostQuatY( unsigned int i ) const
+    {
+      return bonePostQuatY[i];
+    }
+
+    const float &getBonePostQuatZ( unsigned int i ) const
+    {
+      return bonePostQuatZ[i];
+    }
+
+    const float &getBonePostQuatW( unsigned int i ) const
+    {
+      return bonePostQuatW[i];
+    }
+
+    const float &getBonePreQuatX( unsigned int i ) const
+    {
+      return bonePreQuatX[i];
+    }
+
+    const float &getBonePreQuatY( unsigned int i ) const
+    {
+      return bonePreQuatY[i];
+    }
+
+    const float &getBonePreQuatZ( unsigned int i ) const
+    {
+      return bonePreQuatZ[i];
+    }
+
+    const float &getBonePreQuatW( unsigned int i ) const
+    {
+      return bonePreQuatW[i];
+    }
+
+
   protected:
     unsigned int readINFO( std::istream &file );
     unsigned int readNAME( std::istream &file );
@@ -58,7 +129,7 @@ namespace ml
   private:
     unsigned int numBones;
     std::vector<std::string> boneName;
-    std::vector<unsigned int> boneParent;
+    std::vector<int> boneParent;
     
     std::vector< float > boneXOffset;
     std::vector< float > boneYOffset;
