@@ -155,10 +155,8 @@ unsigned int cmp::readPART( std::istream &file )
     }
     std::cout << "Found PART record" << std::endl;
 
-    char temp[255];
-    file.getline( temp, 255, 0 );
-    std::string partFilename( temp );
-    total += partFilename.size() + 1;
+    std::string partFilename;
+    total += base::read( file, partFilename );
 
     std::string filename("appearance/");
     filename += partFilename;
