@@ -64,10 +64,20 @@ namespace ml
     std::vector< float > boneYOffset;
     std::vector< float > boneZOffset;
 
-    std::vector< float > boneQXOffset;
-    std::vector< float > boneQYOffset;
-    std::vector< float > boneQZOffset;
-    std::vector< float > boneQWOffset;
+    std::vector< float > bonePostQuatX;
+    std::vector< float > bonePostQuatY;
+    std::vector< float > bonePostQuatZ;
+    std::vector< float > bonePostQuatW;
+
+    std::vector< float > bonePreQuatX;
+    std::vector< float > bonePreQuatY;
+    std::vector< float > bonePreQuatZ;
+    std::vector< float > bonePreQuatW;
+
+    std::vector< float > boneProQuatX;
+    std::vector< float > boneProQuatY;
+    std::vector< float > boneProQuatZ;
+    std::vector< float > boneProQuatW;
   };
 }
 #endif

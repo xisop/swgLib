@@ -224,25 +224,26 @@ unsigned int sktm::readRPRE( std::istream &file )
       }
 
     std::cout << std::fixed;
-    float value;
+    float x, y, z, w;
     for( unsigned int i = 0; i < numBones; ++i )
       {
+	total += base::read( file, x );
+	total += base::read( file, y );
+	total += base::read( file, z );
+	total += base::read( file, w );
+
+	bonePreQuatX.push_back( x );
+	bonePreQuatY.push_back( y );
+	bonePreQuatZ.push_back( z );
+	bonePreQuatW.push_back( w );
+
 	std::cout << "Bone ";
 	std::cout.width( 10 );
-	std::cout << boneName[i] << ": ";
-
-	total += base::read( file, value );
-	std::cout << value << " ";
-
-	total += base::read( file, value );
-	std::cout << value << " ";
-
-	total += base::read( file, value );
-	std::cout << value << " ";
-
-	total += base::read( file, value );
-	std::cout << value << " ";
-	std::cout << std::endl;
+	std::cout << boneName[i] << ": "
+		  << x << " "
+		  << y << " "
+		  << z << " "
+		  << w << std::endl;
       }
 
     if( rpreSize == total )
@@ -278,25 +279,27 @@ unsigned int sktm::readRPST( std::istream &file )
 	exit( 0 );
       }
 
-    float value;
+    std::cout << std::fixed;
+    float x, y, z, w;
     for( unsigned int i = 0; i < numBones; ++i )
       {
+	total += base::read( file, x );
+	total += base::read( file, y );
+	total += base::read( file, z );
+	total += base::read( file, w );
+
+	bonePostQuatX.push_back( x );
+	bonePostQuatY.push_back( y );
+	bonePostQuatZ.push_back( z );
+	bonePostQuatW.push_back( w );
+
 	std::cout << "Bone ";
 	std::cout.width( 10 );
-	std::cout << boneName[i] << ": ";
-
-	total += base::read( file, value );
-	std::cout << value << " ";
-
-	total += base::read( file, value );
-	std::cout << value << " ";
-
-	total += base::read( file, value );
-	std::cout << value << " ";
-
-	total += base::read( file, value );
-	std::cout << value << " ";
-	std::cout << std::endl;
+	std::cout << boneName[i] << ": "
+		  << x << " "
+		  << y << " "
+		  << z << " "
+		  << w << std::endl;
       }
 
     if( rpstSize == total )
