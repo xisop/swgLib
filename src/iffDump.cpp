@@ -1739,6 +1739,18 @@ int readRecord(
     {
 	readUnknown( file, size );
     }
+    else if( "TRTS" == group )
+    {
+	readUnknown( file, size );
+    }
+    else if( "TRT " == group )
+    {
+	readUnknown( file, size );
+    }
+    else if( "HPTS" == group )
+    {
+	readUnknown( file, size );
+    }
     else
     {
 	std::cout << "Unknown KEYWORD: " << group << std::endl;
