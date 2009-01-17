@@ -559,9 +559,20 @@ unsigned int model::readHPTS( std::istream &file )
     hptsSize += 8;
     std::cout << "Found HPTS form" << std::endl;
 
+    std::string form;
+    unsigned int size;
     while( total < hptsSize )
       {
-	total += readHPNT( file );
+	peekHeader( file, form, size, type );
+
+	if( "HPNT" == form )
+	  {
+	    total += readHPNT( file );
+	  }
+	else if( "DYN " == form )
+	  {
+	    total += readDYN( file );
+	  }
       }
 
     if( total == hptsSize )
@@ -807,3 +818,31 @@ unsigned int model::readDTAL( std::istream &file )
     return total;
 }
 
+unsigned int model::readDYN( std::istream &file )
+{
+  unsigned int size;
+  std::string type;
+  unsigned int total = readRecordHeader( file, type, size );
+  size += 8; // Size of header
+  if( type != "DYN " )
+    {
+      std::cout << "Expected record of type DYN : " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << "Found DYN  record" << std::endl;
+
+  total += readUnknown( file, size-total );
+
+  if( total == size )
+    {
+      std::cout << "Finished reading DYN ." << std::endl;
+    }
+  else
+    {
+      std::cout << "Error reading DYN !" << std::endl;
+      std::cout << "Read " << total << " out of " << size
+                << std::endl;
+    }
+
+  return total;
+}

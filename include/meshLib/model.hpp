@@ -93,6 +93,7 @@ namespace ml
     unsigned int readHPTS( std::istream &file );
     unsigned int readFLOR( std::istream &file );
     unsigned int readHPNT( std::istream &file );
+    unsigned int readDYN( std::istream &file );
 
   private:
   };
