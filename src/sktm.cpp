@@ -172,19 +172,20 @@ unsigned int sktm::readPRNT( std::istream &file )
 	exit( 0 );
       }
 
-    int value;
+    int parent;
     for( unsigned int i = 0; i < numBones; ++i )
       {
-	total += base::read( file, value );
-	//std::cout << value << std::endl;
+	total += base::read( file, parent );
+	boneParent.push_back( parent );
+
 	std::cout << "Bone " << boneName[i];
-	if( value < 0 )
+	if( parent < 0 )
 	  {
 	    std::cout  << " has no parent.";
 	  }
 	else
 	  {
-	    std::cout  << " has parent bone " << boneName[value];
+	    std::cout  << " has parent bone " << boneName[parent];
 	  }
 	std::cout << std::endl;
       }
