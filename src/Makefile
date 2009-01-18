@@ -13,6 +13,7 @@ OBJS = \
 	apt.o \
 	base.o \
 	box.o \
+	cach.o \
 	cclt.o \
 	ckat.o \
 	cmp.o \
@@ -95,6 +96,9 @@ base.o: base.cpp $(MESH_INC)/meshLib/base.hpp
 
 box.o: box.cpp $(MESH_INC)/meshLib/box.hpp
 	$(CXX) $(CFLAG) -c box.cpp
+
+cach.o: cach.cpp $(MESH_INC)/meshLib/cach.hpp
+	$(CXX) $(CFLAG) -c cach.cpp
 
 cclt.o: cclt.cpp $(MESH_INC)/meshLib/cclt.hpp $(MESH_INC)/meshLib/shot.hpp
 	$(CXX) $(CFLAG) -c cclt.cpp
