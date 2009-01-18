@@ -28,6 +28,7 @@
 #include <cstdlib>
 
 #include <meshLib/apt.hpp>
+#include <meshLib/cach.hpp>
 #include <meshLib/cclt.hpp>
 #include <meshLib/ckat.hpp>
 #include <meshLib/cmp.hpp>
@@ -94,6 +95,11 @@ int main( int argc, char **argv )
 	{
 	  ml::dtii datatable;
 	  datatable.readDTII( infile );
+	}
+      else if( "CACH" == fileType )
+	{
+	  ml::cach misc;
+	  misc.readCACH( infile );
 	}
       else if( "CCLT" == fileType )
 	{
