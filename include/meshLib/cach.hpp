@@ -45,7 +45,13 @@ namespace ml
     }
     unsigned int readCACH( std::istream &file, std::string path="" );
 
+    const std::vector<std::string> &getCacheVector() const
+    {
+      return cacheList;
+    }
+
   protected:
+    std::vector<std::string> cacheList;
 
   private:
 

@@ -47,25 +47,26 @@ unsigned int cach::readCACH( std::istream &file, std::string path )
   unsigned int cachSize;
   std::string type;
 
-  total += readFormHeader( file, form, cachSize, type );
+  total += readFormHeader( file, "CACH", cachSize );
   cachSize += 8;
-  if( form != "FORM" || type != "CACH" )
-    {
-      std::cout << "Expected Form of type CACH: " << type << std::endl;
-      exit( 0 );
-    }
   std::cout << "Found CACH form" << std::endl;
 
   unsigned int size;
-  total += readFormHeader( file, form, size, type );
-  if( form != "FORM" )
+  total += readRecordHeader( file, type, size );
+  if( type != "0000" )
     {
-      std::cout << "Expected Form " << std::endl;
+      std::cout << "Expected type " << std::endl;
       exit( 0 );
     }
-  std::cout << "Found form of type: " << type << std::endl;
-
-  total += readUnknown( file, cachSize - total );
+  std::cout << "Found type: " << type << std::endl;
+  
+  std::string name;
+  while( total < cachSize )
+    {
+      total += base::read( file, name );
+      cacheList.push_back( name );
+      std::cout << name << std::endl;
+    }
 
   if( cachSize == total )
     {
