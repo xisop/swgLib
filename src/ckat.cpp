@@ -61,12 +61,22 @@ unsigned int ckat::readCKAT( std::istream &file, std::string path )
 
   total += readINFO( file );
   total += readXFRM( file );
-  total += readAROT( file );
+  if( numQCHN > 0 )
+    {
+      total += readAROT( file );
+    }
   total += readSROT( file );
   total += readATRN( file );
   total += readSTRN( file );
-  total += readMSGS( file );
-  total += readLOCT( file );
+  if( ckatSize > total )
+    {
+      total += readMSGS( file );
+    }
+
+  if( ckatSize > total )
+    {
+      total += readLOCT( file );
+    }
 
   if( ckatSize == total )
     {
@@ -204,13 +214,13 @@ unsigned int ckat::readSROT( std::istream &file )
       {
 	unsigned char u3;
 	total += base::read( file, u3 );
-	std::cout << (int)u3 << " ";
+	std::cout << (u3/255.0) << " ";
 
 	total += base::read( file, u3 );
-	std::cout << (int)u3 << " ";
+	std::cout << (u3/255.0) << " ";
 
 	total += base::read( file, u3 );
-	std::cout << (int)u3 << " ";
+	std::cout << (u3/255.0) << " ";
 
 	float u1;
 	total += base::read( file, u1 );
@@ -218,7 +228,7 @@ unsigned int ckat::readSROT( std::istream &file )
 
       }
 
-    total += readUnknown( file, srotSize - total );
+    //total += readUnknown( file, srotSize - total );
 
     if( srotSize == total )
     {
@@ -248,7 +258,7 @@ unsigned int ckat::readATRN( std::istream &file )
       {
 	total += readCHNL( file );
       }
-    total += readUnknown( file, atrnSize - total );
+    //total += readUnknown( file, atrnSize - total );
     
     if( atrnSize == total )
     {
@@ -326,18 +336,21 @@ unsigned int ckat::readXFIN( std::istream &file )
     total += base::read( file, u2 );
     std::cout << (int)u2 << std::endl;
 
+    total += base::read( file, u2 );
+    std::cout << (int)u2 << std::endl;
+
+    total += base::read( file, u2 );
+    std::cout << (int)u2 << std::endl;
+
     short u1;
     total += base::read( file, u1 );
-    std::cout << u1 << std::endl;
+    std::cout << "STRN index: " << u1 << std::endl;
 
     total += base::read( file, u1 );
-    std::cout << u1 << std::endl;
+    std::cout << "STRN index: " << u1 << std::endl;
 
     total += base::read( file, u1 );
-    std::cout << u1 << std::endl;
-
-    total += base::read( file, u1 );
-    std::cout << u1 << std::endl;
+    std::cout << "STRN index: " << u1 << std::endl;
 
     if( xfinSize == total )
     {
@@ -371,7 +384,6 @@ unsigned int ckat::readQCHN( std::istream &file )
     total += base::read( file, num );
     std::cout << (int)num << std::endl;
 
-
     unsigned char u1;
     total += base::read( file, u1 );
     std::cout << (int)u1 << std::endl;
@@ -385,26 +397,30 @@ unsigned int ckat::readQCHN( std::istream &file )
     total += base::read( file, u1 );
     std::cout << (int)u1 << std::endl;
 
+    keyframe newKey;
+
+    unsigned short bone;
+    unsigned char x, y, z, w;
     for( unsigned char i = 0; i < num; ++i )
       {
-	short u2;
-	total += base::read( file, u2 );
-	std::cout << (int)u2 << " ";
+	total += base::read( file, bone );
+	total += base::read( file, x );
+	total += base::read( file, y );
+	total += base::read( file, z );
+	total += base::read( file, w );
 
-	total += base::read( file, u1 );
-	std::cout << (u1/255.0) << " ";
+	quat newQuat( x/255.0, y/255.0, z/255.0, w/255.0 );
+	newKey.quatMap[bone] = newQuat;
 
-	total += base::read( file, u1 );
-	std::cout << (u1/255.0) << " ";
-
-	total += base::read( file, u1 );
-	std::cout << (u1/255.0) << " ";
-
-	total += base::read( file, u1 );
-	std::cout << (u1/255.0) << std::endl;
+	std::cout << "Bone " << bone << ": ";
+	std::cout << (x/255.0) << ", ";
+	std::cout << (y/255.0) << ", ";
+	std::cout << (z/255.0) << ", ";
+	std::cout << (w/255.0) << std::endl;
       }
+    keyframeList.push_back( newKey );
 
-    total += readUnknown( file, qchnSize - total );
+    //total += readUnknown( file, qchnSize - total );
 
     if( qchnSize == total )
     {
@@ -568,27 +584,27 @@ unsigned int ckat::readCHNL( std::istream &file )
     std::cout << "Num: " << num << std::endl;
     unsigned char u1;
     short u2;
-    for( unsigned int i = 0; i < 23; ++i )
+    for( unsigned int i = 0; i < num; ++i )
       {
 	total += base::read( file, u2 );
 	std::cout << u2 << " ";
 
 	total += base::read( file, u1 );
-	std::cout << (int)u1 << " ";
+	std::cout << (u1/255.0) << " ";
 
 	total += base::read( file, u1 );
-	std::cout << (int)u1 << " ";
+	std::cout << (u1/255.0) << " ";
 
 	total += base::read( file, u1 );
-	std::cout << (int)u1 << " ";
+	std::cout << (u1/255.0) << " ";
 
 	total += base::read( file, u1 );
-	std::cout << (int)u1 << " ";
+	std::cout << (u1/255.0) << " ";
 
 	std::cout << std::endl;
       }
 
-    total += readUnknown( file, chnlSize - total );
+    //total += readUnknown( file, chnlSize - total );
 
     if( chnlSize == total )
     {

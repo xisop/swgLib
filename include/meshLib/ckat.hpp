@@ -23,6 +23,7 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include <meshLib/base.hpp>
+#include <meshLib/quat.hpp>
 
 #include <fstream>
 #include <string>
@@ -36,6 +37,13 @@ namespace ml
   class ckat : public base
   {
   public:
+
+    class keyframe
+    {
+    public:
+      std::map< unsigned int, quat > quatMap;
+    };
+
     ckat();
     ~ckat();
     bool isRightType( std::istream &file )
@@ -63,6 +71,8 @@ namespace ml
     unsigned short numSTRN;
     unsigned short numSROT;
     unsigned short numCHNL;
+
+    std::vector< keyframe > keyframeList;
 
   private:
 
