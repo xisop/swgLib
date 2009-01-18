@@ -411,12 +411,25 @@ unsigned int ckat::readQCHN( std::istream &file )
 
 	quat newQuat( x/255.0, y/255.0, z/255.0, w/255.0 );
 	newKey.quatMap[bone] = newQuat;
-
+#if 0
 	std::cout << "Bone " << bone << ": ";
 	std::cout << (x/255.0) << ", ";
 	std::cout << (y/255.0) << ", ";
 	std::cout << (z/255.0) << ", ";
 	std::cout << (w/255.0) << std::endl;
+#else
+	std::cout << "Bone ";
+	std::cout.width( 2 );
+	std::cout << bone << ": ";
+	std::cout.width( 3 );
+	std::cout << (int)x << ", ";
+	std::cout.width( 3 );
+	std::cout << (int)y << ", ";
+	std::cout.width( 3 );
+	std::cout << (int)z << ", ";
+	std::cout.width( 3 );
+	std::cout << (int)w << std::endl;
+#endif
       }
     keyframeList.push_back( newKey );
 
