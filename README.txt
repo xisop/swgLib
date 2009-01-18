@@ -15,5 +15,8 @@ work in windows, but I try to write cross-platform friendly code.  So
 if you have any portability issues with building under windows let me know and
 I'll fix the code.
 
+Contact Xunil at the SWGEmu forums if you have issues.
+http://www.swgemu.com/forums/index.php
+
 -Xunil
 
