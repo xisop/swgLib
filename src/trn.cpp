@@ -1617,12 +1617,7 @@ unsigned int trn::readAHFR( std::istream &file, const std::string &debugString )
 
   total += readIHDR( file, dbgStr );
 
-  total += readFormHeader( file, form, size, type );
-  if( form != "FORM" || type != "DATA" )
-    {
-      std::cout << "Expected Form of type DATA: " << type << std::endl;
-      exit( 0 );
-    }
+  total += readFormHeader( file, "DATA", size );
   std::cout << dbgStr << "Found DATA form" << std::endl;
 
   // PARM record
@@ -1642,8 +1637,7 @@ unsigned int trn::readAHFR( std::istream &file, const std::string &debugString )
   std::cout << u1 << " ";
 
   float u2;
-  file.read( (char*)&u2, sizeof( u2 ) );
-  total += sizeof( u2 );
+  total += base::read( file, u2 );
   std::cout << u2 << std::endl;
 
   if( ahfrSize == total )
