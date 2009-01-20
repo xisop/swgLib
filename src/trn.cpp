@@ -1217,19 +1217,27 @@ unsigned int trn::readLAYR( std::istream &file, const std::string &debugString )
 	    }
 	  else if( "BCIR" == type  )
 	    {
-	      total += readBCIR( file, dbgStr );
+	      bcir newBCIR;
+	      bcirList.push_back( newBCIR );
+	      total += readBCIR( file, dbgStr, bcirList.back() );
 	    }
 	  else if( "BPLN" == type  )
 	    {
-	      total += readBPLN( file, dbgStr );
+	      bpln newBPLN;
+	      bplnList.push_back( newBPLN );
+	      total += readBPLN( file, dbgStr, bplnList.back() );
 	    }
 	  else if( "BPOL" == type  )
 	    {
-	      total += readBPOL( file, dbgStr );
+	      bpol newBPOL;
+	      bpolList.push_back( newBPOL );
+	      total += readBPOL( file, dbgStr, bpolList.back() );
 	    }
 	  else if( "BREC" == type  )
 	    {
-	      total += readBREC( file, dbgStr );
+	      brec newBREC;
+	      brecList.push_back( newBREC );
+	      total += readBREC( file, dbgStr, brecList.back() );
 	    }
 	  else if( "FDIR" == type  )
 	    {
@@ -1520,7 +1528,9 @@ unsigned int trn::readAENV( std::istream &file, const std::string &debugString )
 
 
 // Boundary Rectangle.
-unsigned int trn::readBREC( std::istream &file, const std::string &debugString )
+unsigned int trn::readBREC( std::istream &file,
+			    const std::string &debugString,
+			    brec &newBREC )
 {
   std::string dbgStr = debugString + "BREC: ";
   unsigned int brecSize;
@@ -1548,41 +1558,36 @@ unsigned int trn::readBREC( std::istream &file, const std::string &debugString )
     }
   std::cout << dbgStr << "Found DATA record" << std::endl;
 
-  float u1;
-  total += base::read( file, u1 );
-  std::cout << dbgStr << u1 << std::endl;
+  total += base::read( file, newBREC.x1 );
+  total += base::read( file, newBREC.y1 );
+  total += base::read( file, newBREC.x2 );
+  total += base::read( file, newBREC.y2 );
 
-  total += base::read( file, u1 );
-  std::cout << dbgStr << u1 << std::endl;
+  std::cout << dbgStr << newBREC.x1 << ", "
+	    << newBREC.y1 << "..."
+	    << newBREC.x2 << ", "
+	    << newBREC.y2 << std::endl;
 
-  total += base::read( file, u1 );
-  std::cout << dbgStr << u1 << std::endl;
+  total += base::read( file, newBREC.u1 );
+  std::cout << dbgStr << newBREC.u1 << std::endl;
 
-  total += base::read( file, u1 );
-  std::cout << dbgStr << u1 << std::endl;
+  total += base::read( file, newBREC.u2 );
+  std::cout << dbgStr << newBREC.u2 << std::endl;
 
-  unsigned int u2;
-  total += base::read( file, u2 );
-  std::cout << dbgStr << u2 << std::endl;
+  total += base::read( file, newBREC.u3 );
+  std::cout << dbgStr << newBREC.u3 << std::endl;
 
-  total += base::read( file, u1 );
-  std::cout << dbgStr << u1 << std::endl;
+  total += base::read( file, newBREC.u4 );
+  std::cout << dbgStr << newBREC.u4 << std::endl;
 
-  total += base::read( file, u2 );
-  std::cout << dbgStr << u2 << std::endl;
+  total += base::read( file, newBREC.u5 );
+  std::cout << dbgStr << newBREC.u5 << std::endl;
 
-  total += base::read( file, u2 );
-  std::cout << dbgStr << u2 << std::endl;
+  total += base::read( file, newBREC.u6 );
+  std::cout << dbgStr << newBREC.u6 << std::endl;
 
-  total += base::read( file, u1 );
-  std::cout << dbgStr << u1 << std::endl;
-
-  total += base::read( file, u1 );
-  std::cout << dbgStr << u1 << std::endl;
-
-  std::string name;
-  total += base::read( file, name );
-  std::cout << dbgStr << name << std::endl;
+  total += base::read( file, newBREC.name );
+  std::cout << dbgStr << "'" << newBREC.name << "'" << std::endl;
 
   if( brecSize == total )
     {
@@ -1780,15 +1785,59 @@ unsigned int trn::readACCN( std::istream &file, const std::string &debugString )
 }
 
 // Boundary Polyline.
-unsigned int trn::readBPLN( std::istream &file, const std::string &debugString )
+unsigned int trn::readBPLN( std::istream &file,
+			    const std::string &debugString,
+			    bpln &newBPLN )
 {
   std::string dbgStr = debugString + "BPLN: ";
   unsigned int bplnSize;
   unsigned int total = readFormHeader( file, "BPLN", bplnSize );
   bplnSize += 8;
   std::cout << debugString << "Found BPLN form" << std::endl;
+  
+  unsigned int size;
+  std::string form, type;
+  total += readFormHeader( file, form, size, type );
+  if( form != "FORM" || type != "0001" )
+    {
+      std::cout << "Expected Form of type 0001: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << dbgStr << "Found 0001 form" << std::endl;
+  
+  total += readIHDR( file, dbgStr );
+  
+  total += readRecordHeader( file, type, size );
+  if( type != "DATA" )
+    {
+      std::cout << "Expected record of type DATA: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << dbgStr << "Found DATA record" << std::endl;
+  
+  unsigned int num;
+  total += base::read( file, num );
+  std::cout << dbgStr << num << std::endl;
 
-  total += readUnknown( file, bplnSize-total );
+  float x, y;
+  for( unsigned int i = 0; i < num; ++i )
+    {
+      total += base::read( file, x );
+      total += base::read( file, y );
+      newBPLN.x.push_back( x );
+      newBPLN.y.push_back( y );
+      
+      std::cout << dbgStr << x << ", " << y << std::endl;
+    }
+
+  total += base::read( file, newBPLN.u1 );
+  std::cout << dbgStr << newBPLN.u1 << std::endl;
+
+  total += base::read( file, newBPLN.u2 );
+  std::cout << dbgStr << newBPLN.u2 << std::endl;
+
+  total += base::read( file, newBPLN.u3 );
+  std::cout << dbgStr << newBPLN.u3 << std::endl;
 
   if( bplnSize == total )
     {
@@ -1804,7 +1853,9 @@ unsigned int trn::readBPLN( std::istream &file, const std::string &debugString )
 }
 
 // Boundary Polygon.
-unsigned int trn::readBPOL( std::istream &file, const std::string &debugString )
+unsigned int trn::readBPOL( std::istream &file,
+			    const std::string &debugString,
+			    bpol &newBPOL )
 {
   std::string dbgStr = debugString + "BPOL: ";
   unsigned int bpolSize;
@@ -1836,34 +1887,34 @@ unsigned int trn::readBPOL( std::istream &file, const std::string &debugString )
   total += base::read( file, num );
   std::cout << dbgStr << num << std::endl;
 
-  float u2;
+  float x, y;
   for( unsigned int i = 0; i < num; ++i )
     {
-      total += base::read( file, u2 );
-      std::cout << dbgStr << u2 << ", ";
-      total += base::read( file, u2 );
-      std::cout << u2 << std::endl;
+      total += base::read( file, x );
+      total += base::read( file, y );
+      newBPOL.x.push_back( x );
+      newBPOL.y.push_back( y );
+
+      std::cout << dbgStr << x << ", " << y << std::endl;
     }
 
-  unsigned int u1;
-  total += base::read( file, u1 );
-  std::cout << dbgStr << u1 << std::endl;
+  total += base::read( file, newBPOL.u1 );
+  std::cout << dbgStr << newBPOL.u1 << std::endl;
 
-  total += base::read( file, u2 );
-  std::cout << dbgStr << u2 << std::endl;
+  total += base::read( file, newBPOL.altitude );
+  std::cout << dbgStr << "Altitude: " << newBPOL.altitude << std::endl;
 
-  total += base::read( file, u1 );
-  std::cout << dbgStr << u1 << std::endl;
+  total += base::read( file, newBPOL.u3 );
+  std::cout << dbgStr << newBPOL.u3 << std::endl;
 
-  total += base::read( file, u1 );
-  std::cout << dbgStr << u1 << std::endl;
+  total += base::read( file, newBPOL.u4 );
+  std::cout << dbgStr << newBPOL.u4 << std::endl;
 
-  total += base::read( file, u2 );
-  std::cout << dbgStr << u2 << std::endl;
+  total += base::read( file, newBPOL.u5 );
+  std::cout << dbgStr << newBPOL.u5 << std::endl;
 
-  std::string name;
-  total += base::read( file, name );
-  std::cout << dbgStr << "'" << name << "'" << std::endl;
+  total += base::read( file, newBPOL.name );
+  std::cout << dbgStr << "'" << newBPOL.name << "'" << std::endl;
 
   if( bpolSize == total )
     {
@@ -1925,7 +1976,9 @@ unsigned int trn::readAEXC( std::istream &file, const std::string &debugString )
 }
 
 // Boundary Circle.
-unsigned int trn::readBCIR( std::istream &file, const std::string &debugString )
+unsigned int trn::readBCIR( std::istream &file,
+			    const std::string &debugString,
+			    bcir &newBCIR )
 {
   std::string dbgStr = debugString + "BCIR: ";
   unsigned int bcirSize;
@@ -1953,22 +2006,18 @@ unsigned int trn::readBCIR( std::istream &file, const std::string &debugString )
     }
   std::cout << dbgStr << "Found DATA record" << std::endl;
 
-  float u1;
-  total += base::read( file, u1 );
-  std::cout << dbgStr << u1 << std::endl;
+  total += base::read( file, newBCIR.x );
+  total += base::read( file, newBCIR.y );
+  std::cout << dbgStr << newBCIR.x << ", " << newBCIR.y << std::endl;
 
-  total += base::read( file, u1 );
-  std::cout << dbgStr << u1 << std::endl;
+  total += base::read( file, newBCIR.radius );
+  std::cout << dbgStr << newBCIR.radius << std::endl;
 
-  total += base::read( file, u1 );
-  std::cout << dbgStr << u1 << std::endl;
+  total += base::read( file, newBCIR.u1 );
+  std::cout << dbgStr << newBCIR.u1 << std::endl;
 
-  unsigned int u2;
-  total += base::read( file, u2 );
-  std::cout << dbgStr << u2 << std::endl;
-
-  total += base::read( file, u1 );
-  std::cout << dbgStr << u1 << std::endl;
+  total += base::read( file, newBCIR.u2 );
+  std::cout << dbgStr << newBCIR.u2 << std::endl;
 
   if( bcirSize == total )
     {
