@@ -1812,7 +1812,58 @@ unsigned int trn::readBPOL( std::istream &file, const std::string &debugString )
   bpolSize += 8;
   std::cout << debugString << "Found BPOL form" << std::endl;
 
-  total += readUnknown( file, bpolSize-total );
+  unsigned int size;
+  std::string form, type;
+  total += readFormHeader( file, form, size, type );
+  if( form != "FORM" || type != "0005" )
+    {
+      std::cout << "Expected Form of type 0005: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << dbgStr << "Found 0005 form" << std::endl;
+
+  total += readIHDR( file, dbgStr );
+
+  total += readRecordHeader( file, type, size );
+  if( type != "DATA" )
+    {
+      std::cout << "Expected record of type DATA: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << dbgStr << "Found DATA record" << std::endl;
+
+  unsigned int num;
+  total += base::read( file, num );
+  std::cout << dbgStr << num << std::endl;
+
+  float u2;
+  for( unsigned int i = 0; i < num; ++i )
+    {
+      total += base::read( file, u2 );
+      std::cout << dbgStr << u2 << ", ";
+      total += base::read( file, u2 );
+      std::cout << u2 << std::endl;
+    }
+
+  unsigned int u1;
+  total += base::read( file, u1 );
+  std::cout << dbgStr << u1 << std::endl;
+
+  total += base::read( file, u2 );
+  std::cout << dbgStr << u2 << std::endl;
+
+  total += base::read( file, u1 );
+  std::cout << dbgStr << u1 << std::endl;
+
+  total += base::read( file, u1 );
+  std::cout << dbgStr << u1 << std::endl;
+
+  total += base::read( file, u2 );
+  std::cout << dbgStr << u2 << std::endl;
+
+  std::string name;
+  total += base::read( file, name );
+  std::cout << dbgStr << "'" << name << "'" << std::endl;
 
   if( bpolSize == total )
     {
