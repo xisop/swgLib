@@ -116,6 +116,11 @@ namespace ml
       return brecList;
     }
 
+    const std::vector<bpln> &getBPLN() const
+    {
+      return bplnList;
+    }
+
   protected:
     unsigned int readTGEN( std::istream &file, const std::string & );
     unsigned int readTRNDATA( std::istream &file, const std::string & );
