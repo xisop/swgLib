@@ -409,25 +409,33 @@ unsigned int ckat::readQCHN( std::istream &file )
 	total += base::read( file, z );
 	total += base::read( file, w );
 
+	//quat newQuat( x/128.0, y/128.0, z/128.0, w/128.0 );
 	quat newQuat( x/255.0, y/255.0, z/255.0, w/255.0 );
 	newKey.quatMap[bone] = newQuat;
 #if 0
 	std::cout << "Bone " << bone << ": ";
+#if 1
 	std::cout << (x/255.0) << ", ";
 	std::cout << (y/255.0) << ", ";
 	std::cout << (z/255.0) << ", ";
 	std::cout << (w/255.0) << std::endl;
 #else
+	std::cout << (x/128.0) << ", ";
+	std::cout << (y/128.0) << ", ";
+	std::cout << (z/128.0) << ", ";
+	std::cout << (w/128.0) << std::endl;
+#endif
+#else
 	std::cout << "Bone ";
 	std::cout.width( 2 );
 	std::cout << bone << ": ";
-	std::cout.width( 3 );
+	std::cout.width( 4 );
 	std::cout << (int)x << ", ";
-	std::cout.width( 3 );
+	std::cout.width( 4 );
 	std::cout << (int)y << ", ";
-	std::cout.width( 3 );
+	std::cout.width( 4 );
 	std::cout << (int)z << ", ";
-	std::cout.width( 3 );
+	std::cout.width( 4 );
 	std::cout << (int)w << std::endl;
 #endif
       }
