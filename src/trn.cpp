@@ -220,7 +220,7 @@ unsigned int trn::readWMAP( std::istream &file, const std::string &debugString )
     {
       for( unsigned int j = 0; j < width; ++j )
 	{
-	  file.read( (char*)&x, sizeof( x ) );
+	  total += base::read( file, x );
 #if 0
 	  std::cout  << " 0 0 " << (unsigned int)x;
 #else
@@ -304,7 +304,9 @@ unsigned int trn::readSMAP( std::istream &file, const std::string &debugString )
   return total;
 }
 
-unsigned int trn::readSFAM( std::istream &file, const std::string &debugString )
+unsigned int trn::readSFAM( std::istream &file,
+			    const std::string &debugString,
+			    sfam &newSFAM )
 {
   std::string dbgStr = debugString + "SFAM: ";
   std::string form;
@@ -322,49 +324,48 @@ unsigned int trn::readSFAM( std::istream &file, const std::string &debugString )
 	    << sfamSize << std::endl;
 
   unsigned int x;
-  file.read( (char*)&x, sizeof( x ) );
-  total += sizeof( x );
+  total += base::read( file, x );
   std::cout << dbgStr << "Shader family number: " << x << std::endl;;
 
-  std::string name;
-  total += base::read( file, name );
-  std::cout << dbgStr << "'" << name << "'" << std::endl;
+  total += base::read( file, newSFAM.name );
+  std::cout << dbgStr << "'" << newSFAM.name << "'" << std::endl;
 
-  std::string name2;
-  total += base::read( file, name2 );
-  std::cout << dbgStr << "'" << name2 << "'" << std::endl;
+  total += base::read( file, newSFAM.abstract );
+  std::cout << dbgStr << "'" << newSFAM.abstract << "'" << std::endl;
 
   // Color color...
-  unsigned char rgb[3];
-  file.read( (char*)rgb, sizeof( unsigned char ) * 3 );
+  file.read( (char*)(newSFAM.rgb), sizeof( unsigned char ) * 3 );
   total += sizeof( unsigned char ) * 3;
-  std::cout << dbgStr << "rgb: " << (unsigned int)rgb[0] << ", "
-	    << (unsigned int)rgb[1] << ", "
-	    << (unsigned int)rgb[2] << std::endl;
+  std::cout << dbgStr << "rgb: "
+	    << (unsigned int)newSFAM.rgb[0] << ", "
+	    << (unsigned int)newSFAM.rgb[1] << ", "
+	    << (unsigned int)newSFAM.rgb[2] << std::endl;
 
-  for( unsigned int i = 0; i < 2; ++i )
+  total += base::read( file, newSFAM.u1 );
+  std::cout << dbgStr << newSFAM.u1 << std::endl;
+
+  total += base::read( file, newSFAM.u2 );
+  std::cout << dbgStr << newSFAM.u2 << std::endl;
+  
+  unsigned int numShaders;
+  total += base::read( file, numShaders );
+  std::cout << dbgStr << "numShaders: " << numShaders << std::endl;
+
+  for( unsigned int shader = 0; shader < numShaders; ++shader )
     {
-      float u1;
-      file.read( (char*)&u1, sizeof( u1 ) );
-      total += sizeof( u1 );
-      std::cout << dbgStr << u1 << std::endl;
-    }
-
-  unsigned int numLayers;
-  file.read( (char*)&numLayers, sizeof( numLayers ) );
-  total += sizeof( numLayers );
-  std::cout << dbgStr << "numLayers: " << numLayers << std::endl;
-
-  for( unsigned int layer = 0; layer < numLayers; ++layer )
-    {
-      std::string name3;
-      total += base::read( file, name3 );
-      std::cout << dbgStr << "'" << name3 << "'" << std::endl;
+      std::string tempName, shaderName;
+      total += base::read( file, tempName );
+      if( !tempName.empty() )
+	{
+	  shaderName = "shader/" + tempName;
+	}
+      std::cout << dbgStr << "'" << shaderName << "'" << std::endl;
 
       float u1;
-      file.read( (char*)&u1, sizeof( u1 ) );
-      total += sizeof( u1 );
+      total += base::read( file, u1 );
       std::cout << dbgStr << u1 << std::endl;
+
+      newSFAM.shaderMap[shaderName] = u1;
     }
 
   if( sfamSize == total )
@@ -404,11 +405,10 @@ unsigned int trn::readMapDATA( std::istream &file,
   std::cout << dbgStr << "Found DATA record of size: " << size << std::endl;
 
   float x1, x2;
-  file.read( (char*)&x1, sizeof( x1 ) );
-  file.read( (char*)&x2, sizeof( x2 ) );
-  file.read( (char*)&height, sizeof( height ) );
-  file.read( (char*)&width, sizeof( width ) );
-  total += 16;
+  total += base::read( file, x1 );
+  total += base::read( file, x2 );
+  total += base::read( file, height );
+  total += base::read( file, width );
 
   std::cout << dbgStr << " Terrain size(m): " << x1 << std::endl;
   std::cout << dbgStr << "   Block size(m): " << x2 << std::endl;
@@ -437,20 +437,13 @@ unsigned int trn::readMapDATA( std::istream &file,
 unsigned int trn::readSGRP( std::istream &file, const std::string &debugString )
 {
   std::string dbgStr = debugString + "SGRP: ";
-  std::string form;
   unsigned int sgrpSize;
-  std::string type;
-
-  unsigned int total = readFormHeader( file, form, sgrpSize, type );
+  unsigned int total = readFormHeader( file, "SGRP", sgrpSize );
   sgrpSize += 8;
-  if( form != "FORM" || type != "SGRP" )
-    {
-      std::cout << "Expected Form of type SGRP: " << type << std::endl;
-      exit( 0 );
-    }
   std::cout << debugString << "Found SGRP form" << std::endl;
 
   unsigned int size;
+  std::string form, type;
   total += readFormHeader( file, form, size, type );
   size += 8;
   if( form != "FORM" )
@@ -462,7 +455,9 @@ unsigned int trn::readSGRP( std::istream &file, const std::string &debugString )
 
   while( total < size-12 )
     {
-      total += readSFAM( file, dbgStr );
+      sfam newSFAM;
+      total += readSFAM( file, dbgStr, newSFAM );
+      sfamMap[newSFAM.familyNumber] = newSFAM;
     }
 
   if( sgrpSize == total )
@@ -493,39 +488,32 @@ unsigned int trn::readFFAM( std::istream &file, const std::string &debugString )
   std::cout << debugString << "Found FFAM record" << std::endl;
   
   unsigned int u1;
-  file.read( (char *)&u1, sizeof( u1 ) );
-  total += sizeof( u1 );
-  std::cout << dbgStr << u1 << std::endl;
+  total += base::read( file, u1 );
+  std::cout << dbgStr << "Fractal family number: " << u1 << std::endl;
 
   std::string name;
   total += base::read( file, name );
   std::cout << dbgStr << "'" << name << "'" << std::endl;
 
   unsigned short u2;
-  file.read( (char *)&u2, sizeof( u2 ) );
-  total += sizeof( u2 );
+  total += base::read( file, u2 );
   std::cout << dbgStr << u2 << std::endl;
 
-  file.read( (char *)&u2, sizeof( u2 ) );
-  total += sizeof( u2 );
+  total += base::read( file, u2 );
   std::cout << dbgStr << u2 << std::endl;
 
-  file.read( (char *)&u2, sizeof( u2 ) );
-  total += sizeof( u2 );
+  total += base::read( file, u2 );
   std::cout << dbgStr << u2 << std::endl;
 
   unsigned char u3;
-  file.read( (char *)&u3, sizeof( u3 ) );
-  total += sizeof( u3 );
+  total += base::read( file, u3 );
   std::cout << dbgStr << (unsigned int)u3 << std::endl;
 
-  file.read( (char *)&u1, sizeof( u1 ) );
-  total += sizeof( u1 );
+  total += base::read( file, u1 );
   std::cout << dbgStr << u1 << std::endl;
 
   unsigned int numApt;
-  file.read( (char *)&numApt, sizeof( numApt ) );
-  total += sizeof( numApt );
+  total += base::read( file, numApt );
   std::cout << dbgStr << "numApt: " << numApt << std::endl;
 
   for( unsigned int i = 0; i < numApt; ++i )
@@ -535,36 +523,28 @@ unsigned int trn::readFFAM( std::istream &file, const std::string &debugString )
       std::cout << dbgStr << "'" << aptName << "'" << std::endl;
 	  
       float u4;
-      file.read( (char *)&u4, sizeof( u4 ) );
-      total += sizeof( u4 );
+      total += base::read( file, u4 );
       std::cout << dbgStr << u4 << std::endl;
 	  
-      file.read( (char *)&u1, sizeof( u1 ) );
-      total += sizeof( u1 );
+      total += base::read( file, u1 );
       std::cout << dbgStr << u1 << std::endl;
 
-      file.read( (char *)&u4, sizeof( u4 ) );
-      total += sizeof( u4 );
+      total += base::read( file, u4 );
       std::cout << dbgStr << u4 << std::endl;
 
-      file.read( (char *)&u4, sizeof( u4 ) );
-      total += sizeof( u4 );
+      total += base::read( file, u4 );
       std::cout << dbgStr << u4 << std::endl;
 
-      file.read( (char *)&u1, sizeof( u1 ) );
-      total += sizeof( u1 );
+      total += base::read( file, u1 );
       std::cout << dbgStr << u1 << std::endl;
 
-      file.read( (char *)&u1, sizeof( u1 ) );
-      total += sizeof( u1 );
+      total += base::read( file, u1 );
       std::cout << dbgStr << u1 << std::endl;
 
-      file.read( (char *)&u4, sizeof( u4 ) );
-      total += sizeof( u4 );
+      total += base::read( file, u4 );
       std::cout << dbgStr << u4 << std::endl;
 
-      file.read( (char *)&u4, sizeof( u4 ) );
-      total += sizeof( u4 );
+      total += base::read( file, u4 );
       std::cout << dbgStr << u4 << std::endl;
     }
   
@@ -584,20 +564,13 @@ unsigned int trn::readFFAM( std::istream &file, const std::string &debugString )
 unsigned int trn::readFGRP( std::istream &file, const std::string &debugString )
 {
   std::string dbgStr = debugString + "FGRP: ";
-  std::string form;
   unsigned int fgrpSize;
-  std::string type;
-
-  unsigned int total = readFormHeader( file, form, fgrpSize, type );
+  unsigned int total = readFormHeader( file, "FGRP", fgrpSize );
   fgrpSize += 8;
-  if( form != "FORM" || type != "FGRP" )
-    {
-      std::cout << "Expected Form of type FGRP: " << type << std::endl;
-      exit( 0 );
-    }
   std::cout << debugString << "Found FGRP form" << std::endl;
 
   unsigned int size;
+  std::string form, type;
   total += readFormHeader( file, form, size, type );
   size += 8;
   if( form != "FORM" )
@@ -673,8 +646,16 @@ unsigned int trn::readRFAM( std::istream &file, const std::string &debugString )
 
   for( unsigned int i = 0; i < numApt; ++i )
     {
-      std::string aptName;
-      total += base::read( file, aptName );
+      std::string tempName, aptName;
+      total += base::read( file, tempName );
+      if( tempName.empty() )
+	{
+	  aptName = tempName;
+	}
+      else
+	{
+	  aptName = "shader/" + tempName;
+	}
       std::cout << dbgStr << "'" << aptName << "'" << std::endl;
 
       float u4;
@@ -1076,7 +1057,9 @@ unsigned int trn::readLYRS( std::istream &file, const std::string &debugString )
 
   while( total < lyrsSize )
     {
-      total += readLAYR( file, dbgStr );
+      layer newLayer;
+      layerList.push_back( newLayer );
+      total += readLAYR( file, dbgStr, layerList.back() );
     }
 
   if( lyrsSize == total )
@@ -1092,44 +1075,29 @@ unsigned int trn::readLYRS( std::istream &file, const std::string &debugString )
   return total;
 }
 
-unsigned int trn::readLAYR( std::istream &file, const std::string &debugString )
+unsigned int trn::readLAYR( std::istream &file,
+			    const std::string &debugString,
+			    layer &newLayer )
 {
   std::string dbgStr = debugString + "LAYR: ";
-  std::string form;
   unsigned int layrSize;
-  std::string type;
 
-  unsigned int total = readFormHeader( file, form, layrSize, type );
+  unsigned int total = readFormHeader( file, "LAYR", layrSize );
   layrSize += 8;
-  if( form != "FORM" || type != "LAYR" )
-    {
-      std::cout << "Expected Form of type LAYR: " << type << std::endl;
-      exit( 0 );
-    }
   std::cout << debugString << "Found LAYR form" << std::endl;
 
-
   unsigned int size;
-  total += readFormHeader( file, form, size, type );
-  if( form != "FORM" || type != "0003" )
-    {
-      std::cout << "Expected Form of type 0003: " << type << std::endl;
-      exit( 0 );
-    }
+  total += readFormHeader( file, "0003", size );
   std::cout << dbgStr << "Found 0003 form" << std::endl;
 
-  unsigned int u1;
-  std::string name;
-  total += readIHDR( file, dbgStr, u1, name );
+  total += readIHDR( file, dbgStr, newLayer.u1, newLayer.name );
   total += readADTA( file, dbgStr );
 
-  unsigned int position;
   while( total < layrSize )
     {
       // Peek at next record, but keep file at same place.
-      position = file.tellg();
-      readFormHeader( file, form, size, type );
-      file.seekg( position, std::ios_base::beg );
+      std::string form, type;
+      peekHeader( file, form, size, type );
 	
       if( form == "FORM" )
         {
@@ -1196,26 +1164,26 @@ unsigned int trn::readLAYR( std::istream &file, const std::string &debugString )
 	  else if( "BCIR" == type  )
 	    {
 	      bcir newBCIR;
-	      bcirList.push_back( newBCIR );
-	      total += readBCIR( file, dbgStr, bcirList.back() );
+	      newLayer.bcirList.push_back( newBCIR );
+	      total += readBCIR( file, dbgStr, newLayer.bcirList.back() );
 	    }
 	  else if( "BPLN" == type  )
 	    {
 	      bpln newBPLN;
-	      bplnList.push_back( newBPLN );
-	      total += readBPLN( file, dbgStr, bplnList.back() );
+	      newLayer.bplnList.push_back( newBPLN );
+	      total += readBPLN( file, dbgStr, newLayer.bplnList.back() );
 	    }
 	  else if( "BPOL" == type  )
 	    {
 	      bpol newBPOL;
-	      bpolList.push_back( newBPOL );
-	      total += readBPOL( file, dbgStr, bpolList.back() );
+	      newLayer.bpolList.push_back( newBPOL );
+	      total += readBPOL( file, dbgStr, newLayer.bpolList.back() );
 	    }
 	  else if( "BREC" == type  )
 	    {
 	      brec newBREC;
-	      brecList.push_back( newBREC );
-	      total += readBREC( file, dbgStr, brecList.back() );
+	      newLayer.brecList.push_back( newBREC );
+	      total += readBREC( file, dbgStr, newLayer.brecList.back() );
 	    }
 	  else if( "FDIR" == type  )
 	    {
@@ -1239,7 +1207,9 @@ unsigned int trn::readLAYR( std::istream &file, const std::string &debugString )
 	    }
 	  else if( "LAYR" == type  )
 	    {
-	      total += readLAYR( file, dbgStr );
+	      layer subLayer;
+	      newLayer.layerList.push_back( subLayer );
+	      total += readLAYR( file, dbgStr, newLayer.layerList.back() );
 	    }
 	  else
             {
@@ -1896,19 +1866,28 @@ unsigned int trn::readBPOL( std::istream &file,
   total += base::read( file, newBPOL.u1 );
   std::cout << dbgStr << newBPOL.u1 << std::endl;
 
-  total += base::read( file, newBPOL.altitude );
-  std::cout << dbgStr << "Altitude: " << newBPOL.altitude << std::endl;
+  total += base::read( file, newBPOL.u2 );
+  std::cout << dbgStr << newBPOL.u2 << std::endl;
 
   total += base::read( file, newBPOL.u3 );
   std::cout << dbgStr << newBPOL.u3 << std::endl;
 
-  total += base::read( file, newBPOL.u4 );
-  std::cout << dbgStr << newBPOL.u4 << std::endl;
+  total += base::read( file, newBPOL.altitude );
+  std::cout << dbgStr << "Altitude: " << newBPOL.altitude << std::endl;
 
   total += base::read( file, newBPOL.u5 );
   std::cout << dbgStr << newBPOL.u5 << std::endl;
 
-  total += base::read( file, newBPOL.name );
+  std::string tempName;
+  total += base::read( file, tempName );
+  if( !tempName.empty() )
+    {
+      newBPOL.name = "shader/" + tempName;
+    }
+  else
+    {
+      newBPOL.name = tempName;
+    }
   std::cout << dbgStr << "'" << newBPOL.name << "'" << std::endl;
 
   if( bpolSize == total )
@@ -2007,16 +1986,18 @@ unsigned int trn::readBCIR( std::istream &file,
 
   total += base::read( file, newBCIR.x );
   total += base::read( file, newBCIR.y );
-  std::cout << dbgStr << newBCIR.x << ", " << newBCIR.y << std::endl;
+  std::cout << dbgStr << "Center: "
+	    << newBCIR.x << ", "
+	    << newBCIR.y << std::endl;
 
   total += base::read( file, newBCIR.radius );
-  std::cout << dbgStr << newBCIR.radius << std::endl;
+  std::cout << dbgStr << "Radius: " << newBCIR.radius << std::endl;
+
+  total += base::read( file, newBCIR.featherType );
+  std::cout << dbgStr << "Feather type: " << newBCIR.featherType << std::endl;
 
   total += base::read( file, newBCIR.u1 );
-  std::cout << dbgStr << newBCIR.u1 << std::endl;
-
-  total += base::read( file, newBCIR.u2 );
-  std::cout << dbgStr << newBCIR.u2 << std::endl;
+  std::cout << dbgStr << "???: " << newBCIR.u1 << std::endl;
 
   if( bcirSize == total )
     {
@@ -2123,22 +2104,20 @@ unsigned int trn::readFHGT( std::istream &file, const std::string &debugString )
     }
   std::cout << dbgStr << "Found DATA record" << std::endl;
 
-  float u1;
-  file.read( (char *)&u1, sizeof( u1 ) );
-  total += sizeof( u1 );
-  std::cout << dbgStr << u1 << std::endl;
+  float minHeight;
+  total += base::read( file, minHeight );
+  std::cout << dbgStr << "Min height: " << minHeight << std::endl;
 
-  file.read( (char *)&u1, sizeof( u1 ) );
-  total += sizeof( u1 );
-  std::cout << dbgStr << u1 << std::endl;
+  float maxHeight;
+  total += base::read( file, maxHeight );
+  std::cout << dbgStr << "Max height: " << maxHeight << std::endl;
 
   unsigned int u2;
-  file.read( (char *)&u2, sizeof( u2 ) );
-  total += sizeof( u2 );
+  total += base::read( file, u2 );
   std::cout << dbgStr << u2 << std::endl;
 
-  file.read( (char *)&u1, sizeof( u1 ) );
-  total += sizeof( u1 );
+  float u1;
+  total += base::read( file, u1 );
   std::cout << dbgStr << u1 << std::endl;
 
   if( fhgtSize == total )
@@ -2359,25 +2338,20 @@ unsigned int trn::readAFSC( std::istream &file, const std::string &debugString )
   std::cout << dbgStr << "Found DATA record" << std::endl;
 
   unsigned int u1;
-  file.read( (char*)&u1, sizeof( u1 ) );
-  total += sizeof( u1 );
+  total += base::read( file, u1 );
   std::cout << dbgStr << u1 << std::endl;;
 
-  file.read( (char*)&u1, sizeof( u1 ) );
-  total += sizeof( u1 );
+  total += base::read( file, u1 );
   std::cout << dbgStr << u1 << std::endl;;
 
-  file.read( (char*)&u1, sizeof( u1 ) );
-  total += sizeof( u1 );
+  total += base::read( file, u1 );
   std::cout << dbgStr << u1 << std::endl;;
 
-  file.read( (char*)&u1, sizeof( u1 ) );
-  total += sizeof( u1 );
+  total += base::read( file, u1 );
   std::cout << dbgStr << u1 << std::endl;;
 
   float u2;
-  file.read( (char*)&u2, sizeof( u2 ) );
-  total += sizeof( u2 );
+  total += base::read( file, u2 );
   std::cout << dbgStr << u2 << std::endl;;
 
   if( afscSize == total )
@@ -2396,19 +2370,9 @@ unsigned int trn::readAFSC( std::istream &file, const std::string &debugString )
 unsigned int trn::readFSHD( std::istream &file, const std::string &debugString )
 {
   std::string dbgStr = debugString + "FSHD: ";
-  unsigned int total = 0;
-
-  std::string form;
   unsigned int fshdSize;
-  std::string type;
-
-  total += readFormHeader( file, form, fshdSize, type );
+  unsigned int total = readFormHeader( file, "FSHD", fshdSize );
   fshdSize += 8;
-  if( form != "FORM" || type != "FSHD" )
-    {
-      std::cout << "Expected Form of type FSHD: " << type << std::endl;
-      exit( 0 );
-    }
   std::cout << "Found FSHD form" << std::endl;
 
   total += readUnknown( file, fshdSize-total );
@@ -2433,13 +2397,8 @@ unsigned int trn::readAFDN( std::istream &file, const std::string &debugString )
   unsigned int afdnSize;
   std::string type;
 
-  unsigned int total = readFormHeader( file, form, afdnSize, type );
+  unsigned int total = readFormHeader( file, "AFDN", afdnSize );
   afdnSize += 8;
-  if( form != "FORM" || type != "AFDN" )
-    {
-      std::cout << "Expected Form of type AFDN: " << type << std::endl;
-      exit( 0 );
-    }
   std::cout << debugString << "Found AFDN form" << std::endl;
 
   unsigned int size;
@@ -2467,25 +2426,20 @@ unsigned int trn::readAFDN( std::istream &file, const std::string &debugString )
   std::cout << dbgStr << "Found DATA record" << std::endl;
 
   unsigned int u1;
-  file.read( (char*)&u1, sizeof( u1 ) );
-  total += sizeof( u1 );
+  total += base::read( file, u1 );
   std::cout << dbgStr << u1 << " ";
 
-  file.read( (char*)&u1, sizeof( u1 ) );
-  total += sizeof( u1 );
+  total += base::read( file, u1 );
   std::cout << u1 << " ";
 
-  file.read( (char*)&u1, sizeof( u1 ) );
-  total += sizeof( u1 );
+  total += base::read( file, u1 );
   std::cout << u1 << " ";
 
-  file.read( (char*)&u1, sizeof( u1 ) );
-  total += sizeof( u1 );
+  total += base::read( file, u1 );
   std::cout << u1 << " ";
 
   float u2;
-  file.read( (char*)&u2, sizeof( u2 ) );
-  total += sizeof( u2 );
+  total += base::read( file, u2 );
   std::cout << u2 << std::endl;;
 
   if( afdnSize == total )
@@ -2504,17 +2458,9 @@ unsigned int trn::readAFDN( std::istream &file, const std::string &debugString )
 unsigned int trn::readAFSN( std::istream &file, const std::string &debugString )
 {
   std::string dbgStr = debugString + "AFSN: ";
-  std::string form;
   unsigned int afsnSize;
-  std::string type;
-
-  unsigned int total = readFormHeader( file, form, afsnSize, type );
+  unsigned int total = readFormHeader( file, "AFSN", afsnSize );
   afsnSize += 8;
-  if( form != "FORM" || type != "AFSN" )
-    {
-      std::cout << "Expected Form of type AFSN: " << type << std::endl;
-      exit( 0 );
-    }
   std::cout << debugString << "Found AFSN form" << std::endl;
 
   total += readUnknown( file, afsnSize-total );
@@ -2535,19 +2481,9 @@ unsigned int trn::readAFSN( std::istream &file, const std::string &debugString )
 unsigned int trn::readAFDF( std::istream &file, const std::string &debugString )
 {
   std::string dbgStr = debugString + "AFDF: ";
-  unsigned int total = 0;
-
-  std::string form;
   unsigned int afdfSize;
-  std::string type;
-
-  total += readFormHeader( file, form, afdfSize, type );
+  unsigned int total = readFormHeader( file, "AFDF", afdfSize );
   afdfSize += 8;
-  if( form != "FORM" || type != "AFDF" )
-    {
-      std::cout << "Expected Form of type AFDF: " << type << std::endl;
-      exit( 0 );
-    }
   std::cout << "Found AFDF form" << std::endl;
 
   total += readUnknown( file, afdfSize-total );
@@ -2568,19 +2504,9 @@ unsigned int trn::readAFDF( std::istream &file, const std::string &debugString )
 unsigned int trn::readACRH( std::istream &file, const std::string &debugString )
 {
   std::string dbgStr = debugString + "ACRH: ";
-  unsigned int total = 0;
-
-  std::string form;
   unsigned int acrhSize;
-  std::string type;
-
-  total += readFormHeader( file, form, acrhSize, type );
+  unsigned int total = readFormHeader( file, "ACRH", acrhSize );
   acrhSize += 8;
-  if( form != "FORM" || type != "ACRH" )
-    {
-      std::cout << "Expected Form of type ACRH: " << type << std::endl;
-      exit( 0 );
-    }
   std::cout << "Found ACRH form" << std::endl;
 
   total += readUnknown( file, acrhSize-total );
@@ -2601,19 +2527,9 @@ unsigned int trn::readACRH( std::istream &file, const std::string &debugString )
 unsigned int trn::readAROA( std::istream &file, const std::string &debugString )
 {
   std::string dbgStr = debugString + "AROA: ";
-  unsigned int total = 0;
-
-  std::string form;
   unsigned int aroaSize;
-  std::string type;
-
-  total += readFormHeader( file, form, aroaSize, type );
+  unsigned int total = readFormHeader( file, "AROA", aroaSize );
   aroaSize += 8;
-  if( form != "FORM" || type != "AROA" )
-    {
-      std::cout << "Expected Form of type AROA: " << type << std::endl;
-      exit( 0 );
-    }
   std::cout << "Found AROA form" << std::endl;
 
   total += readUnknown( file, aroaSize-total );
@@ -2634,19 +2550,9 @@ unsigned int trn::readAROA( std::istream &file, const std::string &debugString )
 unsigned int trn::readFDIR( std::istream &file, const std::string &debugString )
 {
   std::string dbgStr = debugString + "FDIR: ";
-  unsigned int total = 0;
-
-  std::string form;
   unsigned int fdirSize;
-  std::string type;
-
-  total += readFormHeader( file, form, fdirSize, type );
+  unsigned int total = readFormHeader( file, "FDIR", fdirSize );
   fdirSize += 8;
-  if( form != "FORM" || type != "FDIR" )
-    {
-      std::cout << "Expected Form of type FDIR: " << type << std::endl;
-      exit( 0 );
-    }
   std::cout << "Found FDIR form" << std::endl;
 
   total += readUnknown( file, fdirSize-total );

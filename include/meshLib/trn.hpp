@@ -26,6 +26,8 @@
 
 #include <fstream>
 #include <string>
+#include <vector>
+#include <map>
 
 #ifndef TRN_HPP
 #define TRN_HPP
@@ -43,9 +45,9 @@ namespace ml
       std::vector< float > y;
 
       unsigned int u1;
-      float altitude;
+      float u2;
       unsigned int u3;
-      float u4;
+      float altitude;
       float u5;
       std::string name;
     };
@@ -70,8 +72,8 @@ namespace ml
       float y;
       float radius;
       
-      unsigned int u1;
-      float u2;
+      unsigned int featherType;
+      float u1;
     };
 
     // Boundary Rectangle.
@@ -95,14 +97,50 @@ namespace ml
     class layer
     {
     public:
+      const std::vector<bpol> &getBPOL() const
+      {
+	return bpolList;
+      }
+      
+      const std::vector<bcir> &getBCIR() const
+      {
+	return bcirList;
+      }
+      
+      const std::vector<brec> &getBREC() const
+      {
+	return brecList;
+      }
+      
+      const std::vector<bpln> &getBPLN() const
+      {
+	return bplnList;
+      }
+
       unsigned int u1;
       std::string name;
+
+      std::vector<layer> layerList;
 
       std::vector<bpol> bpolList;
       std::vector<bpln> bplnList;
       std::vector<bcir> bcirList;
       std::vector<brec> brecList;
 
+    };
+
+    class sfam
+    {
+    public:
+      unsigned int familyNumber;
+      std::string name;
+      std::string abstract;
+      unsigned char rgb[3];
+      float u1;
+      float u2;
+
+      std::map< std::string, float > shaderMap;
+      
     };
 
     trn();
@@ -113,26 +151,6 @@ namespace ml
     }
     unsigned int readTRN( std::istream &file,
 			  const std::string &debugString = "" );
-
-    const std::vector<bpol> &getBPOL() const
-    {
-      return bpolList;
-    }
-
-    const std::vector<bcir> &getBCIR() const
-    {
-      return bcirList;
-    }
-
-    const std::vector<brec> &getBREC() const
-    {
-      return brecList;
-    }
-
-    const std::vector<bpln> &getBPLN() const
-    {
-      return bplnList;
-    }
 
   protected:
     unsigned int readTGEN( std::istream &file, const std::string & );
@@ -146,7 +164,9 @@ namespace ml
     unsigned int readEGRP( std::istream &file, const std::string & );
     unsigned int readMGRP( std::istream &file, const std::string & );
     unsigned int readLYRS( std::istream &file, const std::string & );
-    unsigned int readLAYR( std::istream &file, const std::string & );
+    unsigned int readLAYR( std::istream &file,
+			   const std::string &,
+			   layer &newLayer );
 
     unsigned int readFFAM( std::istream &file, const std::string & );
     unsigned int readRFAM( std::istream &file, const std::string & );
@@ -177,7 +197,8 @@ namespace ml
     unsigned int readFSLP( std::istream &file, const std::string & );
     unsigned int readIHDR( std::istream &file, const std::string &,
 			   unsigned int &u1, std::string &name );
-    unsigned int readSFAM( std::istream &file, const std::string & );
+    unsigned int readSFAM( std::istream &file, const std::string &,
+			   sfam &newSFAM );
 
     unsigned int readBCIR( std::istream &file, const std::string &, bcir & );
     unsigned int readBPLN( std::istream &file, const std::string &, bpln & );
@@ -192,10 +213,9 @@ namespace ml
     unsigned int height;
     unsigned int width;
 
-    std::vector<bpol> bpolList;
-    std::vector<bpln> bplnList;
-    std::vector<bcir> bcirList;
-    std::vector<brec> brecList;
+    std::map<unsigned int, sfam> sfamMap;
+    std::vector<layer> layerList;
+
   };
 }
 #endif
