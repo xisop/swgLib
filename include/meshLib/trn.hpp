@@ -152,12 +152,12 @@ namespace ml
     unsigned int readTRN( std::istream &file,
 			  const std::string &debugString = "" );
 
-    const float &getHeight() const
+    const unsigned int &getHeight() const
     {
       return height;
     }
 
-    const float &getWidth() const
+    const unsigned int &getWidth() const
     {
       return width;
     }
