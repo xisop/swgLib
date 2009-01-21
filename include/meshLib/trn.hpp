@@ -152,6 +152,16 @@ namespace ml
     unsigned int readTRN( std::istream &file,
 			  const std::string &debugString = "" );
 
+    const float &getHeight() const
+    {
+      return height;
+    }
+
+    const float &getWidth() const
+    {
+      return width;
+    }
+
   protected:
     unsigned int readTGEN( std::istream &file, const std::string & );
     unsigned int readTRNDATA( std::istream &file, const std::string & );
