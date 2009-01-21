@@ -2212,26 +2212,13 @@ unsigned int trn::readAHTR( std::istream &file, const std::string &debugString )
 unsigned int trn::readACRF( std::istream &file, const std::string &debugString )
 {
   std::string dbgStr = debugString + "ACRF: ";
-  std::string form;
   unsigned int acrfSize;
-  std::string type;
-
-  unsigned int total = readFormHeader( file, form, acrfSize, type );
+  unsigned int total = readFormHeader( file, "ACRF", acrfSize );
   acrfSize += 8;
-  if( form != "FORM" || type != "ACRF" )
-    {
-      std::cout << "Expected Form of type ACRF: " << type << std::endl;
-      exit( 0 );
-    }
   std::cout << debugString << "Found ACRF form" << std::endl;
 
   unsigned int size;
-  total += readFormHeader( file, form, size, type );
-  if( form != "FORM" || type != "0001" )
-    {
-      std::cout << "Expected Form of type 0001: " << type << std::endl;
-      exit( 0 );
-    }
+  total += readFormHeader( file, "0001", size );
   std::cout << dbgStr << "Found 0001 form" << std::endl;
 
   {
@@ -2240,15 +2227,11 @@ unsigned int trn::readACRF( std::istream &file, const std::string &debugString )
     total += readIHDR( file, dbgStr, u1, name );
   }
 
-  total += readFormHeader( file, form, size, type );
-  if( form != "FORM" || type != "DATA" )
-    {
-      std::cout << "Expected Form of type DATA: " << type << std::endl;
-      exit( 0 );
-    }
+  total += readFormHeader( file, "DATA", size );
   std::cout << dbgStr << "Found DATA form" << std::endl;
 
   // PARM record
+  std::string type;
   total += readRecordHeader( file, type, size );
   if( type != "PARM" )
     {
@@ -2258,12 +2241,10 @@ unsigned int trn::readACRF( std::istream &file, const std::string &debugString )
   std::cout << dbgStr << "Found PARM record" << std::endl;
 
   unsigned int u1;
-  file.read( (char*)&u1, sizeof( u1 ) );
-  total += sizeof( u1 );
+  total += base::read( file, u1 );
   std::cout << dbgStr << u1 << " ";
 
-  file.read( (char*)&u1, sizeof( u1 ) );
-  total += sizeof( u1 );
+  total += base::read( file, u1 );
   std::cout << u1 << " ";
 
   std::string name;
@@ -2318,21 +2299,17 @@ unsigned int trn::readFSLP( std::istream &file, const std::string &debugString )
   std::cout << dbgStr << "Found DATA record" << std::endl;
 
   float u1;
-  file.read( (char*)&u1, sizeof( u1 ) );
-  total += sizeof( u1 );
+  total += base::read( file, u1 );
   std::cout << dbgStr << u1 << std::endl;;
 
-  file.read( (char*)&u1, sizeof( u1 ) );
-  total += sizeof( u1 );
+  total += base::read( file, u1 );
   std::cout << dbgStr << u1 << std::endl;;
 
   unsigned int u2;
-  file.read( (char*)&u2, sizeof( u2 ) );
-  total += sizeof( u2 );
+  total += base::read( file, u2 );
   std::cout << dbgStr << u2 << std::endl;;
 
-  file.read( (char*)&u1, sizeof( u1 ) );
-  total += sizeof( u1 );
+  total += base::read( file, u1 );
   std::cout << dbgStr << u1 << std::endl;;
 
   if( fslpSize == total )
