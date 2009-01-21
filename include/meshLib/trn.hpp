@@ -92,6 +92,19 @@ namespace ml
       std::string name;
     };
 
+    class layer
+    {
+    public:
+      unsigned int u1;
+      std::string name;
+
+      std::vector<bpol> bpolList;
+      std::vector<bpln> bplnList;
+      std::vector<bcir> bcirList;
+      std::vector<brec> brecList;
+
+    };
+
     trn();
     ~trn();
     bool isRightType( std::istream &file )
@@ -162,7 +175,8 @@ namespace ml
     unsigned int readFHGT( std::istream &file, const std::string & );
     unsigned int readFSHD( std::istream &file, const std::string & );
     unsigned int readFSLP( std::istream &file, const std::string & );
-    unsigned int readIHDR( std::istream &file, const std::string & );
+    unsigned int readIHDR( std::istream &file, const std::string &,
+			   unsigned int &u1, std::string &name );
     unsigned int readSFAM( std::istream &file, const std::string & );
 
     unsigned int readBCIR( std::istream &file, const std::string &, bcir & );

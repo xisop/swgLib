@@ -312,6 +312,7 @@ unsigned int trn::readSFAM( std::istream &file, const std::string &debugString )
   std::string type;
 
   unsigned int total = readRecordHeader( file, type, sfamSize );
+  sfamSize += 8;
   if( type != "SFAM" )
     {
       std::cout << "Expected record of type SFAM: " << type << std::endl;
@@ -325,16 +326,13 @@ unsigned int trn::readSFAM( std::istream &file, const std::string &debugString )
   total += sizeof( x );
   std::cout << dbgStr << "Shader family number: " << x << std::endl;;
 
-  char temp[255];
-  file.getline( temp, 255, 0 );
-  std::string name( temp );
-  std::cout << dbgStr << name << std::endl;
-  total += name.size() + 1;
+  std::string name;
+  total += base::read( file, name );
+  std::cout << dbgStr << "'" << name << "'" << std::endl;
 
-  file.getline( temp, 255, 0 );
-  std::string name2( temp );
-  std::cout << dbgStr << name2 << std::endl;
-  total += name2.size() + 1;
+  std::string name2;
+  total += base::read( file, name2 );
+  std::cout << dbgStr << "'" << name2 << "'" << std::endl;
 
   // Color color...
   unsigned char rgb[3];
@@ -359,18 +357,16 @@ unsigned int trn::readSFAM( std::istream &file, const std::string &debugString )
 
   for( unsigned int layer = 0; layer < numLayers; ++layer )
     {
-      file.getline( temp, 255, 0 );
-      std::string name3( temp );
-      std::cout << dbgStr << name3 << std::endl;
-      total += name3.size() + 1;
-	
+      std::string name3;
+      total += base::read( file, name3 );
+      std::cout << dbgStr << "'" << name3 << "'" << std::endl;
+
       float u1;
       file.read( (char*)&u1, sizeof( u1 ) );
       total += sizeof( u1 );
       std::cout << dbgStr << u1 << std::endl;
     }
 
-  sfamSize += 8;
   if( sfamSize == total )
     {
       std::cout << debugString << "Finished reading SFAM" << std::endl;
@@ -501,12 +497,9 @@ unsigned int trn::readFFAM( std::istream &file, const std::string &debugString )
   total += sizeof( u1 );
   std::cout << dbgStr << u1 << std::endl;
 
-  char temp[255];
   std::string name;
-  file.getline( temp, 255, 0 );
-  name = temp;
-  std::cout << dbgStr << name << std::endl;
-  total += name.size() + 1;
+  total += base::read( file, name );
+  std::cout << dbgStr << "'" << name << "'" << std::endl;
 
   unsigned short u2;
   file.read( (char *)&u2, sizeof( u2 ) );
@@ -538,10 +531,8 @@ unsigned int trn::readFFAM( std::istream &file, const std::string &debugString )
   for( unsigned int i = 0; i < numApt; ++i )
     {
       std::string aptName;
-      file.getline( temp, 255, 0 );
-      aptName = temp;
-      std::cout << dbgStr << aptName << std::endl;
-      total += aptName.size() + 1;
+      total += base::read( file, aptName );
+      std::cout << dbgStr << "'" << aptName << "'" << std::endl;
 	  
       float u4;
       file.read( (char *)&u4, sizeof( u4 ) );
@@ -653,12 +644,9 @@ unsigned int trn::readRFAM( std::istream &file, const std::string &debugString )
   total += sizeof( u1 );
   std::cout << dbgStr << u1 << std::endl;
 
-  char temp[255];
   std::string name;
-  file.getline( temp, 255, 0 );
-  name = temp;
-  std::cout << dbgStr << name << std::endl;
-  total += name.size() + 1;
+  total += base::read( file, name );
+  std::cout << dbgStr << "'" << name << "'" << std::endl;
 
   unsigned short u2;
   file.read( (char *)&u2, sizeof( u2 ) );
@@ -686,11 +674,9 @@ unsigned int trn::readRFAM( std::istream &file, const std::string &debugString )
   for( unsigned int i = 0; i < numApt; ++i )
     {
       std::string aptName;
-      file.getline( temp, 255, 0 );
-      aptName = temp;
-      std::cout << dbgStr << aptName << std::endl;
-      total += aptName.size() + 1;
-	  
+      total += base::read( file, aptName );
+      std::cout << dbgStr << "'" << aptName << "'" << std::endl;
+
       float u4;
       file.read( (char *)&u4, sizeof( u4 ) );
       total += sizeof( u4 );
@@ -790,18 +776,12 @@ unsigned int trn::readEFAM( std::istream &file, const std::string &debugString )
 {
   std::string dbgStr = debugString + "EFAM: ";
   unsigned int efamSize;
-  std::string form;
-  std::string type;
-  unsigned int total = readFormHeader( file, form, efamSize, type );
+  unsigned int total = readFormHeader( file, "EFAM", efamSize );
   efamSize += 8;
-  if( form != "FORM" || type != "EFAM" )
-    {
-      std::cout << "Expected Form of type EFAM: " << type << std::endl;
-      exit( 0 );
-    }
   std::cout << debugString << "Found EFAM form" << std::endl;
 
   unsigned int size;
+  std::string type;
   total += readRecordHeader( file, type, size );
   if( type != "DATA" )
     {
@@ -811,8 +791,7 @@ unsigned int trn::readEFAM( std::istream &file, const std::string &debugString )
   std::cout << dbgStr << "Found DATA record" << std::endl;
 
   unsigned int u1;
-  file.read( (char *)&u1, sizeof( u1 ) );
-  total += sizeof( u1 );
+  total += base::read( file, u1 );
   std::cout << dbgStr << u1 << std::endl;
 
   char temp[255];
@@ -820,21 +799,18 @@ unsigned int trn::readEFAM( std::istream &file, const std::string &debugString )
   file.read( temp, size - 12 );
   temp[size-12] = 0;
   name = temp;
-  std::cout << dbgStr << name << std::endl;
+  std::cout << dbgStr << "'" << name << "'" << std::endl;
   total += name.size();
 
   unsigned short u3;
-  file.read( (char *)&u3, sizeof( u3 ) );
-  total += sizeof( u3 );
+  total += base::read( file, u3 );
   std::cout << dbgStr << u3 << std::endl;
 
-  file.read( (char *)&u3, sizeof( u3 ) );
-  total += sizeof( u3 );
+  total += base::read( file, u3 );
   std::cout << dbgStr << u3 << std::endl;
 
   float u2;
-  file.read( (char *)&u2, sizeof( u2 ) );
-  total += sizeof( u2 );
+  total += base::read( file, u2 );
   std::cout << dbgStr << u2 << std::endl;
   
   if( efamSize == total )
@@ -1142,7 +1118,9 @@ unsigned int trn::readLAYR( std::istream &file, const std::string &debugString )
     }
   std::cout << dbgStr << "Found 0003 form" << std::endl;
 
-  total += readIHDR( file, dbgStr );
+  unsigned int u1;
+  std::string name;
+  total += readIHDR( file, dbgStr, u1, name );
   total += readADTA( file, dbgStr );
 
   unsigned int position;
@@ -1289,31 +1267,23 @@ unsigned int trn::readLAYR( std::istream &file, const std::string &debugString )
   return total;
 }
 
-unsigned int trn::readIHDR( std::istream &file, const std::string &debugString )
+unsigned int trn::readIHDR( std::istream &file,
+			    const std::string &debugString,
+			    unsigned int &u1,
+			    std::string &name )
 {
   std::string dbgStr = debugString + "IHDR: ";
-  std::string form;
   unsigned int ihdrSize;
-  std::string type;
 
-  unsigned int total = readFormHeader( file, form, ihdrSize, type );
+  unsigned int total = readFormHeader( file, "IHDR", ihdrSize );
   ihdrSize += 8;
-  if( form != "FORM" || type != "IHDR" )
-    {
-      std::cout << "Expected Form of type IHDR: " << type << std::endl;
-      exit( 0 );
-    }
   std::cout << debugString << "Found IHDR form" << std::endl;
 
   unsigned int size;
-  total += readFormHeader( file, form, size, type );
-  if( form != "FORM" || type != "0001" )
-    {
-      std::cout << "Expected Form of type 0001: " << type << std::endl;
-      exit( 0 );
-    }
+  total += readFormHeader( file, "0001", size );
   std::cout << dbgStr << "Found 0001 form" << std::endl;
 
+  std::string type;
   total += readRecordHeader( file, type, size );
   if( type != "DATA" )
     {
@@ -1322,16 +1292,11 @@ unsigned int trn::readIHDR( std::istream &file, const std::string &debugString )
     }
   std::cout << dbgStr << "Found DATA record" << std::endl;
 
-  unsigned int u1;
   file.read( (char *)&u1, sizeof( u1 ) );
   total += sizeof( u1 );
 
-  char temp[255];
-  file.read( temp, size-sizeof(u1) );
-  std::string dataString( temp );
-  total += dataString.size() + 1;
-
-  std::cout << dbgStr << u1 << " " << dataString << std::endl;
+  total += base::read( file, name );
+  std::cout << dbgStr << u1 << " " << name << std::endl;
 
   if( ihdrSize == total )
     {
@@ -1373,15 +1338,13 @@ unsigned int trn::readADTA( std::istream &file, const std::string &debugString )
   file.read( (char *)&u3, sizeof( u3 ) );
   total += sizeof( u3 );
 
-  char temp[255];
-  file.read( temp, adtaSize-(sizeof(u1)+sizeof(u2)+sizeof(u3) ) );
-  std::string dataString( temp );
-  total += dataString.size() + 1;
+  std::string name;
+  total += base::read( file, name );
 
   std::cout << dbgStr << u1 << " "
 	    << u2 << " "
 	    << u3 << " '"
-	    << dataString << "'" << std::endl;
+	    << name << "'" << std::endl;
 
   adtaSize += 8;
   if( adtaSize == total )
@@ -1425,7 +1388,11 @@ unsigned int trn::readASCN( std::istream &file, const std::string &debugString )
   std::cout << dbgStr << "Found 0001 form" << std::endl;
 
   // IHDR
-  total += readIHDR( file, dbgStr );
+  {
+    unsigned int u1;
+    std::string name;
+    total += readIHDR( file, dbgStr, u1, name );
+  }
 
   // DATA
   total += readRecordHeader( file, type, size );
@@ -1491,7 +1458,11 @@ unsigned int trn::readAENV( std::istream &file, const std::string &debugString )
   std::cout << dbgStr << "Found 0000 form" << std::endl;
 
   // IHDR
-  total += readIHDR( file, dbgStr );
+  {
+    unsigned int u1;
+    std::string name;
+    total += readIHDR( file, dbgStr, u1, name );
+  }
 
   // DATA
   total += readRecordHeader( file, type, size );
@@ -1548,7 +1519,11 @@ unsigned int trn::readBREC( std::istream &file,
     }
   std::cout << dbgStr << "Found 0003 form" << std::endl;
 
-  total += readIHDR( file, dbgStr );
+  {
+    unsigned int u1;
+    std::string name;
+    total += readIHDR( file, dbgStr, u1, name );
+  }
 
   total += readRecordHeader( file, type, size );
   if( type != "DATA" )
@@ -1620,7 +1595,11 @@ unsigned int trn::readAHFR( std::istream &file, const std::string &debugString )
     }
   std::cout << dbgStr << "Found 0003 form" << std::endl;
 
-  total += readIHDR( file, dbgStr );
+  {
+    unsigned int u1;
+    std::string name;
+    total += readIHDR( file, dbgStr, u1, name );
+  }
 
   total += readFormHeader( file, "DATA", size );
   std::cout << dbgStr << "Found DATA form" << std::endl;
@@ -1676,7 +1655,11 @@ unsigned int trn::readFFRA( std::istream &file, const std::string &debugString )
     }
   std::cout << dbgStr << "Found 0005 form" << std::endl;
 
-  total += readIHDR( file, dbgStr );
+  {
+    unsigned int u1;
+    std::string name;
+    total += readIHDR( file, dbgStr, u1, name );
+  }
 
   total += readFormHeader( file, form, size, type );
   if( form != "FORM" || type != "DATA" )
@@ -1746,7 +1729,11 @@ unsigned int trn::readACCN( std::istream &file, const std::string &debugString )
     }
   std::cout << dbgStr << "Found 0000 form" << std::endl;
 
-  total += readIHDR( file, dbgStr );
+  {
+    unsigned int u1;
+    std::string name;
+    total += readIHDR( file, dbgStr, u1, name );
+  }
 
   // DATA record
   total += readRecordHeader( file, type, size );
@@ -1805,7 +1792,11 @@ unsigned int trn::readBPLN( std::istream &file,
     }
   std::cout << dbgStr << "Found 0001 form" << std::endl;
   
-  total += readIHDR( file, dbgStr );
+  {
+    unsigned int u1;
+    std::string name;
+    total += readIHDR( file, dbgStr, u1, name );
+  }
   
   total += readRecordHeader( file, type, size );
   if( type != "DATA" )
@@ -1873,7 +1864,11 @@ unsigned int trn::readBPOL( std::istream &file,
     }
   std::cout << dbgStr << "Found 0005 form" << std::endl;
 
-  total += readIHDR( file, dbgStr );
+  {
+    unsigned int u1;
+    std::string name;
+    total += readIHDR( file, dbgStr, u1, name );
+  }
 
   total += readRecordHeader( file, type, size );
   if( type != "DATA" )
@@ -1996,7 +1991,11 @@ unsigned int trn::readBCIR( std::istream &file,
     }
   std::cout << dbgStr << "Found 0002 form" << std::endl;
 
-  total += readIHDR( file, dbgStr );
+  {
+    unsigned int u1;
+    std::string name;
+    total += readIHDR( file, dbgStr, u1, name );
+  }
 
   total += readRecordHeader( file, type, size );
   if( type != "DATA" )
@@ -2050,7 +2049,11 @@ unsigned int trn::readAHCN( std::istream &file, const std::string &debugString )
     }
   std::cout << dbgStr << "Found 0000 form" << std::endl;
 
-  total += readIHDR( file, dbgStr );
+  {
+    unsigned int u1;
+    std::string name;
+    total += readIHDR( file, dbgStr, u1, name );
+  }
 
   total += readRecordHeader( file, type, size );
   if( type != "DATA" )
@@ -2106,7 +2109,11 @@ unsigned int trn::readFHGT( std::istream &file, const std::string &debugString )
     }
   std::cout << dbgStr << "Found 0002 form" << std::endl;
 
-  total += readIHDR( file, dbgStr );
+  {
+    unsigned int u1;
+    std::string name;
+    total += readIHDR( file, dbgStr, u1, name );
+  }
 
   total += readRecordHeader( file, type, size );
   if( type != "DATA" )
@@ -2165,7 +2172,11 @@ unsigned int trn::readAHTR( std::istream &file, const std::string &debugString )
     }
   std::cout << dbgStr << "Found 0004 form" << std::endl;
 
-  total += readIHDR( file, dbgStr );
+  {
+    unsigned int u1;
+    std::string name;
+    total += readIHDR( file, dbgStr, u1, name );
+  }
 
   // DATA record
   total += readRecordHeader( file, type, size );
@@ -2223,7 +2234,11 @@ unsigned int trn::readACRF( std::istream &file, const std::string &debugString )
     }
   std::cout << dbgStr << "Found 0001 form" << std::endl;
 
-  total += readIHDR( file, dbgStr );
+  {
+    unsigned int u1;
+    std::string name;
+    total += readIHDR( file, dbgStr, u1, name );
+  }
 
   total += readFormHeader( file, form, size, type );
   if( form != "FORM" || type != "DATA" )
@@ -2251,11 +2266,10 @@ unsigned int trn::readACRF( std::istream &file, const std::string &debugString )
   total += sizeof( u1 );
   std::cout << u1 << " ";
 
-  char temp[255];
-  file.getline( temp, 255, 0 );
-  std::string name( temp );
-  std::cout << name << std::endl;
-  total += name.size() + 1;
+  std::string name;
+  total += base::read( file, name );
+  base::fixSlash( name );
+  std::cout << "'" << name << "'" << std::endl;
 
   if( acrfSize == total )
     {
@@ -2288,7 +2302,11 @@ unsigned int trn::readFSLP( std::istream &file, const std::string &debugString )
     }
   std::cout << dbgStr << "Found 0002 form" << std::endl;
 
-  total += readIHDR( file, dbgStr );
+  {
+    unsigned int u1;
+    std::string name;
+    total += readIHDR( file, dbgStr, u1, name );
+  }
 
   // DATA record
   total += readRecordHeader( file, type, size );
@@ -2348,7 +2366,11 @@ unsigned int trn::readAFSC( std::istream &file, const std::string &debugString )
     }
   std::cout << dbgStr << "Found 0004 form" << std::endl;
 
-  total += readIHDR( file, dbgStr );
+  {
+    unsigned int u1;
+    std::string name;
+    total += readIHDR( file, dbgStr, u1, name );
+  }
 
   // DATA record
   total += readRecordHeader( file, type, size );
@@ -2452,7 +2474,11 @@ unsigned int trn::readAFDN( std::istream &file, const std::string &debugString )
     }
   std::cout << dbgStr << "Found 0002 form" << std::endl;
 
-  total += readIHDR( file, dbgStr );
+  {
+    unsigned int u1;
+    std::string name;
+    total += readIHDR( file, dbgStr, u1, name );
+  }
 
   // DATA record
   total += readRecordHeader( file, type, size );
