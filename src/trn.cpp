@@ -208,29 +208,25 @@ unsigned int trn::readWMAP( std::istream &file, const std::string &debugString )
   std::cout << debugString << "Found WMAP record of size: "
 	    << wmapSize << std::endl;
 
-  if( ( wmapSize - 8 ) != ( height * width ) )
+  if( ( wmapSize - 8 ) != ( mapHeight * mapWidth ) )
     {
       std::cout << dbgStr << "WMAP size: " << wmapSize
 		<< " does not match expected size: "
-		<< ( height * width ) << std::endl;
+		<< ( mapHeight * mapWidth ) << std::endl;
       exit( 0 );
     }
 
   unsigned char x;
-  for( unsigned int i = 0; i < height; ++i )
+  for( unsigned int i = 0; i < mapHeight; ++i )
     {
-      for( unsigned int j = 0; j < width; ++j )
+      for( unsigned int j = 0; j < mapWidth; ++j )
 	{
 	  total += base::read( file, x );
 #if 0
-	  std::cout  << " 0 0 " << (unsigned int)x;
-#else
 	  std::cout  << (unsigned int)x << " ";
 #endif
 	}
-      std::cout << std::endl;
     }
-  std::cout << std::endl;
 
   if( wmapSize == total )
     {
@@ -261,30 +257,27 @@ unsigned int trn::readSMAP( std::istream &file, const std::string &debugString )
     }
   std::cout << debugString << "Found SMAP record of size: " << smapSize
 	    << std::endl;
+  
 
-  if( ( smapSize - 8 ) != ( height * width ) )
+  if( ( smapSize - 8 ) != ( mapHeight * mapWidth ) )
     {
       std::cout << "SMAP size: " << smapSize
 		<< " does not match expected size: "
-		<< ( height * width ) << std::endl;
+		<< ( mapHeight * mapWidth ) << std::endl;
       exit( 0 );
     }
 
   unsigned char x;
-  for( unsigned int i = 0; i < height; ++i )
+  for( unsigned int i = 0; i < mapHeight; ++i )
     {
-      for( unsigned int j = 0; j < width; ++j )
+      for( unsigned int j = 0; j < mapWidth; ++j )
 	{
 	  total += base::read( file, x );
 #if 0
-	  std::cout << (unsigned int)x << " 0 0 ";
-#else
 	  std::cout << (unsigned int)x << " ";
 #endif
 	}
-      std::cout << std::endl;
     }
-  std::cout << std::endl;
 
   if( smapSize == total )
     {
@@ -402,13 +395,13 @@ unsigned int trn::readMapDATA( std::istream &file,
   float x1, x2;
   total += base::read( file, x1 );
   total += base::read( file, x2 );
-  total += base::read( file, height );
-  total += base::read( file, width );
+  total += base::read( file, mapHeight );
+  total += base::read( file, mapWidth );
 
   std::cout << dbgStr << " Terrain size(m): " << x1 << std::endl;
   std::cout << dbgStr << "   Block size(m): " << x2 << std::endl;
-  std::cout << dbgStr << "      Map height: " << height << std::endl;
-  std::cout << dbgStr << "       Map width: " << width << std::endl;
+  std::cout << dbgStr << "      Map height: " << mapHeight << std::endl;
+  std::cout << dbgStr << "       Map width: " << mapWidth << std::endl;
 
   // WMAP
   total += readWMAP( file, dbgStr );

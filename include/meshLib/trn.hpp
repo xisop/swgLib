@@ -152,14 +152,9 @@ namespace ml
     unsigned int readTRN( std::istream &file,
 			  const std::string &debugString = "" );
 
-    const unsigned int &getHeight() const
+    const float &getTerrainSize() const
     {
-      return height;
-    }
-
-    const unsigned int &getWidth() const
-    {
-      return width;
+      return terrainSize;
     }
 
   protected:
@@ -220,8 +215,8 @@ namespace ml
     float blockSize;
     unsigned int tilesPerBlock;
 
-    unsigned int height;
-    unsigned int width;
+    unsigned int mapHeight;
+    unsigned int mapWidth;
 
     std::map<unsigned int, sfam> sfamMap;
     std::vector<layer> layerList;
