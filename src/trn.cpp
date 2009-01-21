@@ -199,6 +199,7 @@ unsigned int trn::readWMAP( std::istream &file, const std::string &debugString )
   std::string type;
 
   unsigned int total = readRecordHeader( file, type, wmapSize );
+  wmapSize += 8;
   if( type != "WMAP" )
     {
       std::cout << "Expected record of type WMAP: " << type << std::endl;
@@ -207,7 +208,7 @@ unsigned int trn::readWMAP( std::istream &file, const std::string &debugString )
   std::cout << debugString << "Found WMAP record of size: "
 	    << wmapSize << std::endl;
 
-  if( wmapSize != ( height * width ) )
+  if( ( wmapSize - 8 ) != ( height * width ) )
     {
       std::cout << dbgStr << "WMAP size: " << wmapSize
 		<< " does not match expected size: "
@@ -231,9 +232,6 @@ unsigned int trn::readWMAP( std::istream &file, const std::string &debugString )
     }
   std::cout << std::endl;
 
-  total += wmapSize;
-    
-  wmapSize += 8;
   if( wmapSize == total )
     {
       std::cout << "Finished reading WMAP" << std::endl;
@@ -251,11 +249,11 @@ unsigned int trn::readWMAP( std::istream &file, const std::string &debugString )
 unsigned int trn::readSMAP( std::istream &file, const std::string &debugString )
 {
   std::string dbgStr = debugString + "SMAP: ";
-  std::string form;
   unsigned int smapSize;
   std::string type;
-
   unsigned int total = readRecordHeader( file, type, smapSize );
+  smapSize += 8;
+
   if( type != "SMAP" )
     {
       std::cout << "Expected record of type SMAP: " << type << std::endl;
@@ -264,7 +262,7 @@ unsigned int trn::readSMAP( std::istream &file, const std::string &debugString )
   std::cout << debugString << "Found SMAP record of size: " << smapSize
 	    << std::endl;
 
-  if( smapSize != ( height * width ) )
+  if( ( smapSize - 8 ) != ( height * width ) )
     {
       std::cout << "SMAP size: " << smapSize
 		<< " does not match expected size: "
@@ -277,7 +275,7 @@ unsigned int trn::readSMAP( std::istream &file, const std::string &debugString )
     {
       for( unsigned int j = 0; j < width; ++j )
 	{
-	  file.read( (char*)&x, sizeof( x ) );
+	  total += base::read( file, x );
 #if 0
 	  std::cout << (unsigned int)x << " 0 0 ";
 #else
@@ -288,9 +286,6 @@ unsigned int trn::readSMAP( std::istream &file, const std::string &debugString )
     }
   std::cout << std::endl;
 
-  total += smapSize;
-
-  smapSize += 8;
   if( smapSize == total )
     {
       std::cout << debugString << "Finished reading SMAP" << std::endl;
