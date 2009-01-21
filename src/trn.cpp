@@ -489,7 +489,7 @@ unsigned int trn::readFFAM( std::istream &file, const std::string &debugString )
   
   unsigned int u1;
   total += base::read( file, u1 );
-  std::cout << dbgStr << "Fractal family number: " << u1 << std::endl;
+  std::cout << dbgStr << "Flora family number: " << u1 << std::endl;
 
   std::string name;
   total += base::read( file, name );
@@ -963,7 +963,7 @@ unsigned int trn::readMFAM( std::istream &file, const std::string &debugString )
 
   unsigned int u1;
   total += base::read( file, u1 );
-  std::cout << dbgStr << u1 << std::endl;
+  std::cout << dbgStr << "Fractal family number: " << u1 << std::endl;
 
   char temp[255];
   std::string name;
