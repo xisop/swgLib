@@ -96,39 +96,116 @@ unsigned int trn::readTRNDATA( std::istream &file,
   std::string name;
   total += base::read( file, name );
   std::cout << dbgStr << name << std::endl;
-
-  unsigned int x4;
-  float x5, x6;
     
   std::cout.flags ( std::ios_base::showpoint );
   total += base::read( file, terrainSize );
   std::cout << dbgStr << "Terrain size: " << terrainSize << std::endl;
   
-  total += base::read( file, blockSize );
-  std::cout << dbgStr << "Block size: " << blockSize << std::endl;
+  total += base::read( file, chunkWidth );
+  std::cout << dbgStr << "Chunk width: " << chunkWidth << std::endl;
 
-  total += base::read( file, tilesPerBlock );
-  std::cout << dbgStr << "Tiles per block: " << tilesPerBlock << std::endl;
+  total += base::read( file, tilesPerChunk );
+  std::cout << dbgStr << "Tiles per chunk: " << tilesPerChunk << std::endl;
     
+  unsigned int x4;
   total += base::read( file, x4 );
   std::cout << dbgStr << x4 << std::endl;
 
-  total += base::read( file, x5 );
-  std::cout << dbgStr << x5 << std::endl;
+  total += base::read( file, globalWaterTableHeight );
+  std::cout << dbgStr << "Global water table height: "
+	    << globalWaterTableHeight << std::endl;
     
-  total += base::read( file, x6 );
-  std::cout << dbgStr << x6 << std::endl;
+  total += base::read( file, globalWaterTableShaderSize );
+  std::cout << dbgStr << "Global water table shader size: "
+	    << globalWaterTableShaderSize << std::endl;
 
-  std::string waterShader;
-  total += base::read( file, waterShader );
-  std::cout << dbgStr << waterShader << std::endl;
+  total += base::read( file, globalWaterTableShader );
+  std::cout << dbgStr << "Global water table shader: "
+	    << globalWaterTableShader << std::endl;
 
-  float x;
-  for( unsigned int i = 0; i < 21; ++i )
-    {
-      total += base::read( file, x );
-      std::cout << dbgStr << x << std::endl;
-    }
+  float u1;
+  total += base::read( file, u1 );
+  std::cout << dbgStr << "???: " << u1 << std::endl;
+
+  total += base::read( file, collidableFloraMinDistance );
+  std::cout << dbgStr << "Collidable flora min distance: "
+	    << collidableFloraMinDistance << std::endl;
+
+  total += base::read( file, collidableFloraMaxDistance );
+  std::cout << dbgStr << "Collidable flora max distance: "
+	    << collidableFloraMaxDistance << std::endl;
+
+  total += base::read( file, collidableFloraTileSize );
+  std::cout << dbgStr << "Collidable flora tile size: "
+	    << collidableFloraTileSize << std::endl;
+
+  total += base::read( file, collidableFloraTileBorder );
+  std::cout << dbgStr << "Collidable flora tile border: "
+	    << collidableFloraTileBorder << std::endl;
+
+  total += base::read( file, collidableFloraSeed );
+  std::cout << dbgStr << "Collidable flora seed: "
+	    << collidableFloraSeed << std::endl;
+
+  total += base::read( file, nonCollidableFloraMinDistance );
+  std::cout << dbgStr << "Non-collidable flora min distance: "
+	    << nonCollidableFloraMinDistance << std::endl;
+
+  total += base::read( file, nonCollidableFloraMaxDistance );
+  std::cout << dbgStr << "Non-collidable flora max distance: "
+	    << nonCollidableFloraMaxDistance << std::endl;
+
+  total += base::read( file, nonCollidableFloraTileSize );
+  std::cout << dbgStr << "Non-collidable flora tile size: "
+	    << nonCollidableFloraTileSize << std::endl;
+
+  total += base::read( file, nonCollidableFloraTileBorder );
+  std::cout << dbgStr << "Non-collidable flora tile border: "
+	    << nonCollidableFloraTileBorder << std::endl;
+
+  total += base::read( file, nonCollidableFloraSeed );
+  std::cout << dbgStr << "Non-collidable flora seed: "
+	    << nonCollidableFloraSeed << std::endl;
+
+  total += base::read( file, nearRadialFloraMinDistance );
+  std::cout << dbgStr << "Near radial flora min distance: "
+	    << nearRadialFloraMinDistance << std::endl;
+
+  total += base::read( file, nearRadialFloraMaxDistance );
+  std::cout << dbgStr << "Near radial flora max distance: "
+	    << nearRadialFloraMaxDistance << std::endl;
+
+  total += base::read( file, nearRadialFloraTileSize );
+  std::cout << dbgStr << "Near radial flora tile size: "
+	    << nearRadialFloraTileSize << std::endl;
+
+  total += base::read( file, nearRadialFloraTileBorder );
+  std::cout << dbgStr << "Near radial flora tile border: "
+	    << nearRadialFloraTileBorder << std::endl;
+
+  total += base::read( file, nearRadialFloraSeed );
+  std::cout << dbgStr << "Near radial flora seed: "
+	    << nearRadialFloraSeed << std::endl;
+
+  total += base::read( file, farRadialFloraMinDistance );
+  std::cout << dbgStr << "Far radial flora min distance: "
+	    << farRadialFloraMinDistance << std::endl;
+
+  total += base::read( file, farRadialFloraMaxDistance );
+  std::cout << dbgStr << "Far radial flora max distance: "
+	    << farRadialFloraMaxDistance<< std::endl;
+
+  total += base::read( file, farRadialFloraTileSize );
+  std::cout << dbgStr << "Far radial flora tile size: "
+	    << farRadialFloraTileSize << std::endl;
+
+  total += base::read( file, farRadialFloraTileBorder );
+  std::cout << dbgStr << "Far radial flora tile border: "
+	    << farRadialFloraTileBorder << std::endl;
+
+  total += base::read( file, farRadialFloraSeed );
+  std::cout << dbgStr << "Far radial flora seed: "
+	    << farRadialFloraSeed << std::endl;
 
   if( size == total )
     {
@@ -1984,8 +2061,8 @@ unsigned int trn::readBCIR( std::istream &file,
   total += base::read( file, newBCIR.featherType );
   std::cout << dbgStr << "Feather type: " << newBCIR.featherType << std::endl;
 
-  total += base::read( file, newBCIR.u1 );
-  std::cout << dbgStr << "???: " << newBCIR.u1 << std::endl;
+  total += base::read( file, newBCIR.featherWidth );
+  std::cout << dbgStr << "???: " << newBCIR.featherWidth << std::endl;
 
   if( bcirSize == total )
     {

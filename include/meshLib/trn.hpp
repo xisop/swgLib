@@ -73,7 +73,7 @@ namespace ml
       float radius;
       
       unsigned int featherType;
-      float u1;
+      float featherWidth;
     };
 
     // Boundary Rectangle.
@@ -212,8 +212,39 @@ namespace ml
 					  
   private:
     float terrainSize;
-    float blockSize;
-    unsigned int tilesPerBlock;
+    float chunkWidth;
+    unsigned int tilesPerChunk;
+
+    float globalWaterTableHeight;
+    float globalWaterTableShaderSize;
+    std::string globalWaterTableShader;
+
+    float tileSize;
+
+    float collidableFloraMinDistance;
+    float collidableFloraMaxDistance;
+    float collidableFloraTileSize;
+    float collidableFloraTileBorder;
+    float collidableFloraSeed;
+
+    float nonCollidableFloraMinDistance;
+    float nonCollidableFloraMaxDistance;
+    float nonCollidableFloraTileSize;
+    float nonCollidableFloraTileBorder;
+    float nonCollidableFloraSeed;
+
+    float nearRadialFloraMinDistance;
+    float nearRadialFloraMaxDistance;
+    float nearRadialFloraTileSize;
+    float nearRadialFloraTileBorder;
+    float nearRadialFloraSeed;
+
+    float farRadialFloraMinDistance;
+    float farRadialFloraMaxDistance;
+    float farRadialFloraTileSize;
+    float farRadialFloraTileBorder;
+    float farRadialFloraSeed;
+
 
     unsigned int mapHeight;
     unsigned int mapWidth;
