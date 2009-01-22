@@ -424,13 +424,13 @@ unsigned int trn::readSFAM( std::istream &file,
 	{
 	  shaderName = "shader/" + tempName;
 	}
-      std::cout << dbgStr << "'" << shaderName << "'" << std::endl;
+      std::cout << dbgStr << "Shader name: '" << shaderName << "'" << std::endl;
 
-      float u1;
-      total += base::read( file, u1 );
-      std::cout << dbgStr << u1 << std::endl;
+      float shaderWeight;
+      total += base::read( file, shaderWeight );
+      std::cout << dbgStr << "Shader weight: " << shaderWeight << std::endl;
 
-      newSFAM.shaderMap[shaderName] = u1;
+      newSFAM.shaderMap[shaderName] = shaderWeight;
     }
 
   if( sfamSize == total )
