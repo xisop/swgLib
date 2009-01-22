@@ -1648,10 +1648,11 @@ unsigned int trn::readAHFR( std::istream &file, const std::string &debugString )
     }
   std::cout << dbgStr << "Found PARM record" << std::endl;
 
-  unsigned int u1;
-  total += base::read( file, u1 );
-  std::cout << dbgStr << u1 << " ";
+  unsigned int fractalFamily;
+  total += base::read( file, fractalFamily );
+  std::cout << dbgStr << "Fractal family: " << fractalFamily << " ";
 
+  unsigned int u1;
   total += base::read( file, u1 );
   std::cout << u1 << " ";
 
@@ -1696,12 +1697,7 @@ unsigned int trn::readFFRA( std::istream &file, const std::string &debugString )
     total += readIHDR( file, dbgStr, u1, name );
   }
 
-  total += readFormHeader( file, form, size, type );
-  if( form != "FORM" || type != "DATA" )
-    {
-      std::cout << "Expected Form of type DATA: " << type << std::endl;
-      exit( 0 );
-    }
+  total += readFormHeader( file, "DATA", size );
   std::cout << dbgStr << "Found DATA form" << std::endl;
 
   // PARM record
@@ -1713,25 +1709,29 @@ unsigned int trn::readFFRA( std::istream &file, const std::string &debugString )
     }
   std::cout << dbgStr << "Found PARM record" << std::endl;
 
-  unsigned int u1;
-  total += base::read( file, u1 );
-  std::cout << dbgStr << u1 << std::endl;
+  unsigned int fractalFamily;
+  total += base::read( file, fractalFamily );
+  std::cout << dbgStr << "Fractal family: " << fractalFamily << std::endl;
 
-  total += base::read( file, u1 );
-  std::cout << dbgStr << u1 << std::endl;;
+  unsigned int featherType;
+  total += base::read( file, featherType );
+  std::cout << dbgStr << featherType << std::endl;;
 
-  float u2;
-  total += base::read( file, u2 );
-  std::cout << dbgStr << u2 << std::endl;;
+  float filterSeed;
+  total += base::read( file, filterSeed );
+  std::cout << dbgStr << "Filter seed: " << filterSeed << std::endl;;
 
-  total += base::read( file, u1 );
-  std::cout << dbgStr << u2 << std::endl;;
+  float filterLow;
+  total += base::read( file, filterLow );
+  std::cout << dbgStr << "Filter low: " << filterLow << std::endl;;
 
-  total += base::read( file, u2 );
-  std::cout << dbgStr << u2 << std::endl;;
+  float filterHigh;
+  total += base::read( file, filterHigh );
+  std::cout << dbgStr << "Filter high: " << filterHigh << std::endl;;
 
-  total += base::read( file, u2 );
-  std::cout << dbgStr << u2 << std::endl;;
+  float featherWidth;
+  total += base::read( file, featherWidth );
+  std::cout << dbgStr << "Feathering width: " << featherWidth << std::endl;;
 
   if( ffraSize == total )
     {
@@ -2062,7 +2062,7 @@ unsigned int trn::readBCIR( std::istream &file,
   std::cout << dbgStr << "Feather type: " << newBCIR.featherType << std::endl;
 
   total += base::read( file, newBCIR.featherWidth );
-  std::cout << dbgStr << "???: " << newBCIR.featherWidth << std::endl;
+  std::cout << dbgStr << "Feather width: " << newBCIR.featherWidth << std::endl;
 
   if( bcirSize == total )
     {
@@ -2177,13 +2177,13 @@ unsigned int trn::readFHGT( std::istream &file, const std::string &debugString )
   total += base::read( file, maxHeight );
   std::cout << dbgStr << "Max height: " << maxHeight << std::endl;
 
-  unsigned int u2;
-  total += base::read( file, u2 );
-  std::cout << dbgStr << u2 << std::endl;
+  unsigned int featherType;
+  total += base::read( file, featherType );
+  std::cout << dbgStr << "Feathering type: " << featherType << std::endl;
 
-  float u1;
-  total += base::read( file, u1 );
-  std::cout << dbgStr << u1 << std::endl;
+  float featherWidth;
+  total += base::read( file, featherWidth );
+  std::cout << dbgStr << "Feathering width: " << featherWidth << std::endl;
 
   if( fhgtSize == total )
     {
@@ -2528,7 +2528,47 @@ unsigned int trn::readAFSN( std::istream &file, const std::string &debugString )
   afsnSize += 8;
   std::cout << debugString << "Found AFSN form" << std::endl;
 
-  total += readUnknown( file, afsnSize-total );
+  unsigned int size;
+  std::string form, type;
+  total += readFormHeader( file, form, size, type );
+  if( form != "FORM" || type != "0004" )
+    {
+      std::cout << "Expected Form of type 0004: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << dbgStr << "Found 0004 form" << std::endl;
+
+  {
+    unsigned int u1;
+    std::string name;
+    total += readIHDR( file, dbgStr, u1, name );
+  }
+
+  // DATA record
+  total += readRecordHeader( file, type, size );
+  if( type != "DATA" )
+    {
+      std::cout << "Expected DATA record: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << dbgStr << "Found DATA record" << std::endl;
+
+  unsigned int u1;
+  total += base::read( file, u1 );
+  std::cout << dbgStr << u1 << std::endl;
+
+  total += base::read( file, u1 );
+  std::cout << dbgStr << u1 << std::endl;
+
+  total += base::read( file, u1 );
+  std::cout << dbgStr << u1 << std::endl;
+
+  total += base::read( file, u1 );
+  std::cout << dbgStr << u1 << std::endl;
+
+  float u2;
+  total += base::read( file, u2 );
+  std::cout << dbgStr << u2 << std::endl;
 
   if( afsnSize == total )
     {
