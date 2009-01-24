@@ -42,8 +42,13 @@ namespace ml
 
     virtual bool isInBounds( const float &X,
 			     const float &Y ) const;
+    virtual unsigned int read( std::istream &file,
+			       const std::string &debugString );
+    unsigned int readIHDR( std::istream &file,
+			   const std::string &debugString );
 
   protected:
+    unsigned int u1;
     std::string name;
 
   };
@@ -54,16 +59,19 @@ namespace ml
   public:
     boundaryPolygon();
     ~boundaryPolygon();
-
+    
+    unsigned int read( std::istream &file, const std::string &debugString );
+    
   protected:
     std::vector<float> x;
     std::vector<float> y;
 
-    unsigned int u1;
-    float u2;
-    unsigned int u3;
+    unsigned int u2;
+    float u3;
+    unsigned int u4;
     float altitude;
-    float u5;
+    float u6;
+    std::string shaderName;
   };
 
   // Boundary Polyline
@@ -73,13 +81,15 @@ namespace ml
     boundaryPolyline();
     ~boundaryPolyline();
 
+    unsigned int read( std::istream &file, const std::string &debugString );
+
   protected:
     std::vector< float > x;
     std::vector< float > y;
     
-    unsigned int u1;
-    float u2;
+    unsigned int u2;
     float u3;
+    float u4;
   };
 
   // Boundary Circle.
@@ -90,7 +100,9 @@ namespace ml
     ~boundaryCircle();
     bool isInBounds( const float &X,
 		     const float &Y ) const;
-    
+
+    unsigned int read( std::istream &file, const std::string &debugString );
+
   protected:
     float x;
     float y;
@@ -102,7 +114,7 @@ namespace ml
   };
 
   // Boundary Rectangle.
-  class boundaryRectangle
+  class boundaryRectangle : public trnBoundary
   {
   public:
     boundaryRectangle();
@@ -110,18 +122,21 @@ namespace ml
     bool isInBounds( const float &X,
 		     const float &Y ) const;
 
+    unsigned int read( std::istream &file, const std::string &debugString );
+
   protected:
     float x1;
     float y1;
     float x2;
     float y2;
     
-    unsigned int u1;
-    float u2;
-    unsigned int u3;
+    unsigned int u2;
+    float u3;
     unsigned int u4;
-    float u5;
+    unsigned int u5;
     float u6;
+    float u7;
+    std::string name2;
   };
 
 
