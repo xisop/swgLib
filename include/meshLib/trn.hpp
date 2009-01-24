@@ -27,8 +27,10 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <list>
 #include <map>
 #include <cmath>
+#include <boost/shared_ptr.hpp>
 
 #include <meshLib/trnAffector.hpp>
 
@@ -114,7 +116,9 @@ namespace ml
     class layer
     {
     public:
-      ~layer(){}
+      ~layer()
+      {
+      }
 
       bool isInBounds( const float &X, const float &Y ) const;
 
@@ -150,7 +154,7 @@ namespace ml
       unsigned int u1;
       std::string name;
 
-      std::vector< trnAffector > affectors;
+      std::list< boost::shared_ptr<trnAffector> > affectors;
 
       std::vector<layer> layerList;
 
@@ -188,6 +192,14 @@ namespace ml
     {
       return terrainSize;
     }
+
+    bool applyLayers( const float &originX,
+		      const float &originY,
+		      const float &spacingX,
+		      const float &spacingY,
+		      const unsigned int &numRows,
+		      const unsigned int &numCols,
+		      float *data) const;
 
   protected:
     unsigned int readTGEN( std::istream &file, const std::string & );
@@ -243,14 +255,6 @@ namespace ml
     unsigned int readBPOL( std::istream &file, const std::string &, bpol & );
     unsigned int readBREC( std::istream &file, const std::string &, brec & );
 
-    bool applyLayers( const float &originX,
-		      const float &originY,
-		      const float &spacingX,
-		      const float &spacingY,
-		      const unsigned int &numRows,
-		      const unsigned int &numCols,
-		      float *data) const;
-    
   private:
     float terrainSize;
     float chunkWidth;

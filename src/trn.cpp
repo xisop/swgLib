@@ -1208,8 +1208,9 @@ unsigned int trn::readLAYR( std::istream &file,
 	    }
 	  else if( "AHFR" == type  )
 	    {
-	      affectorHeightFractal newAHFR;
-	      total += readAHFR( file, dbgStr, newAHFR );
+	      boost::shared_ptr<affectorHeightFractal>
+		newAHFR( new affectorHeightFractal );
+	      total += readAHFR( file, dbgStr, *(newAHFR.get()) );
 	      newLayer.affectors.push_back( newAHFR );
 	    }
 	  else if( "AHTR" == type  )
@@ -2757,12 +2758,12 @@ bool trn::layer::apply( const float &originX,
 
 	  unsigned int offset = (numCols * row)+col;
 
-	  for( std::vector< trnAffector >::const_iterator
+	  for( std::list< boost::shared_ptr<trnAffector> >::const_iterator
 		 affector = affectors.begin();
 	       affector != affectors.end();
 	       ++affector )
 	    {
-	      affector->apply( currentX, currentY, data[offset] );
+	      (*affector)->apply( currentX, currentY, data[offset] );
 	    }
 	}
     }
