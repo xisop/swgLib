@@ -1208,7 +1208,9 @@ unsigned int trn::readLAYR( std::istream &file,
 	    }
 	  else if( "AHFR" == type  )
 	    {
-	      total += readAHFR( file, dbgStr );
+	      affectorHeightFractal newAHFR;
+	      total += readAHFR( file, dbgStr, newAHFR );
+	      newLayer.affectors.push_back( newAHFR );
 	    }
 	  else if( "AHTR" == type  )
 	    {
@@ -1231,24 +1233,28 @@ unsigned int trn::readLAYR( std::istream &file,
 	      bcir newBCIR;
 	      newLayer.bcirList.push_back( newBCIR );
 	      total += readBCIR( file, dbgStr, newLayer.bcirList.back() );
+	      newLayer.isBounded = true;
 	    }
 	  else if( "BPLN" == type  )
 	    {
 	      bpln newBPLN;
 	      newLayer.bplnList.push_back( newBPLN );
 	      total += readBPLN( file, dbgStr, newLayer.bplnList.back() );
+	      newLayer.isBounded = true;
 	    }
 	  else if( "BPOL" == type  )
 	    {
 	      bpol newBPOL;
 	      newLayer.bpolList.push_back( newBPOL );
 	      total += readBPOL( file, dbgStr, newLayer.bpolList.back() );
+	      newLayer.isBounded = true;
 	    }
 	  else if( "BREC" == type  )
 	    {
 	      brec newBREC;
 	      newLayer.brecList.push_back( newBREC );
 	      total += readBREC( file, dbgStr, newLayer.brecList.back() );
+	      newLayer.isBounded = true;
 	    }
 	  else if( "FDIR" == type  )
 	    {
@@ -1612,7 +1618,9 @@ unsigned int trn::readBREC( std::istream &file,
   return total;
 }
 
-unsigned int trn::readAHFR( std::istream &file, const std::string &debugString )
+unsigned int trn::readAHFR( std::istream &file,
+			    const std::string &debugString,
+			    affectorHeightFractal &newAHFR )
 {
   std::string dbgStr = debugString + "AHFR: ";
   unsigned int ahfrSize;
@@ -1648,17 +1656,15 @@ unsigned int trn::readAHFR( std::istream &file, const std::string &debugString )
     }
   std::cout << dbgStr << "Found PARM record" << std::endl;
 
-  unsigned int fractalFamily;
-  total += base::read( file, fractalFamily );
-  std::cout << dbgStr << "Fractal family: " << fractalFamily << " ";
+  total += base::read( file, newAHFR.getFractalIndex() );
+  std::cout << dbgStr << "Fractal index: " << newAHFR.getFractalIndex()
+	    << std::endl;;
 
-  unsigned int u1;
-  total += base::read( file, u1 );
-  std::cout << u1 << " ";
+  total += base::read( file, newAHFR.getUnknown1() );
+  std::cout << dbgStr << newAHFR.getUnknown1() << std::endl;
 
-  float u2;
-  total += base::read( file, u2 );
-  std::cout << u2 << std::endl;
+  total += base::read( file, newAHFR.getHeight() );
+  std::cout << dbgStr << "Height: " << newAHFR.getHeight() << std::endl;
 
   if( ahfrSize == total )
     {
@@ -2056,6 +2062,7 @@ unsigned int trn::readBCIR( std::istream &file,
 	    << newBCIR.y << std::endl;
 
   total += base::read( file, newBCIR.radius );
+  newBCIR.radiusSqrd = pow( newBCIR.radius, 2.0 );
   std::cout << dbgStr << "Radius: " << newBCIR.radius << std::endl;
 
   total += base::read( file, newBCIR.featherType );
@@ -2675,3 +2682,80 @@ unsigned int trn::readFDIR( std::istream &file, const std::string &debugString )
   return total;
 }
 
+bool trn::layer::isInBounds(const float &X,
+			    const float &Y ) const
+{
+  for( std::vector<bcir>::const_iterator circle = bcirList.begin();
+       circle != bcirList.end();
+       ++circle )
+    {
+      if( circle->isInBounds( X, Y ) )
+	{
+	  return true;
+	}
+    }
+
+  for( std::vector<brec>::const_iterator rec = brecList.begin();
+       rec != brecList.end();
+       ++rec )
+    {
+      if( rec->isInBounds( X, Y ) )
+	{
+	  return true;
+	}
+    }
+
+  // Need to add check for polygon and line.
+
+  return false;
+}
+
+bool trn::layer::apply( const float &originX,
+			const float &originY,
+			const float &spacingX,
+			const float &spacingY,
+			const unsigned int &numRows,
+			const unsigned int &numCols,
+			float *data ) const
+{
+  
+  for( unsigned int row = 0; row < numRows; ++row )
+    {
+      float currentY = originY + ( spacingY * row );
+      for( unsigned int col = 0; col < numCols; ++col )
+	{
+	  float currentX = originX + ( spacingX * col );
+
+	  if( isBounded && !isInBounds( currentX, currentY ) )
+	    {
+	      continue;
+	    }
+
+	  unsigned int offset = (numCols * row)+col;
+
+	  for( std::vector< trnAffector >::const_iterator
+		 affector = affectors.begin();
+	       affector != affectors.end();
+	       ++affector )
+	    {
+	      affector->apply( currentX, currentY, data[offset] );
+	    }
+	}
+    }
+
+
+  for( std::vector<layer>::const_iterator currentLayer = layerList.begin();
+       currentLayer != layerList.end();
+       ++currentLayer )
+    {
+      currentLayer->apply( originX,
+			   originY,
+			   spacingX,
+			   spacingY,
+			   numRows,
+			   numCols,
+			   data ) ;
+    }
+  
+  return true;
+}

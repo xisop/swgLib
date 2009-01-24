@@ -28,6 +28,9 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <cmath>
+
+#include <meshLib/trnAffector.hpp>
 
 #ifndef TRN_HPP
 #define TRN_HPP
@@ -68,9 +71,17 @@ namespace ml
     class bcir
     {
     public:
+
+      bool isInBounds( const float &X,
+		       const float &Y ) const
+      {
+	return ( radiusSqrd > (pow( X-x, 2.0 ) + pow( Y-y, 2.0 )));
+      }
+
       float x;
       float y;
       float radius;
+      float radiusSqrd;
       
       unsigned int featherType;
       float featherWidth;
@@ -80,6 +91,12 @@ namespace ml
     class brec
     {
     public:
+      bool isInBounds( const float &X,
+		       const float &Y ) const
+      {
+	return( (X >= x1) & (X <= x2) && (Y >= y1) && (Y <= y2) );
+      }
+
       float x1;
       float y1;
       float x2;
@@ -97,6 +114,18 @@ namespace ml
     class layer
     {
     public:
+      ~layer(){}
+
+      bool isInBounds( const float &X, const float &Y ) const;
+
+      bool apply( const float &originX,
+		  const float &originY,
+		  const float &spacingX,
+		  const float &spacingY,
+		  const unsigned int &numRows,
+		  const unsigned int &numCols,
+		  float *data) const;
+
       const std::vector<bpol> &getBPOL() const
       {
 	return bpolList;
@@ -117,8 +146,11 @@ namespace ml
 	return bplnList;
       }
 
+      bool isBounded;
       unsigned int u1;
       std::string name;
+
+      std::vector< trnAffector > affectors;
 
       std::vector<layer> layerList;
 
@@ -190,7 +222,8 @@ namespace ml
     unsigned int readAFSC( std::istream &file, const std::string & );
     unsigned int readAFSN( std::istream &file, const std::string & );
     unsigned int readAHCN( std::istream &file, const std::string & );
-    unsigned int readAHFR( std::istream &file, const std::string & );
+    unsigned int readAHFR( std::istream &file, const std::string &,
+			   affectorHeightFractal &newAHFR );
     unsigned int readAHTR( std::istream &file, const std::string & );
     unsigned int readAROA( std::istream &file, const std::string & );
     unsigned int readASCN( std::istream &file, const std::string & );
