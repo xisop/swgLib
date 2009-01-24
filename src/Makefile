@@ -46,6 +46,7 @@ OBJS = \
 	str.o \
 	swts.o \
 	trn.o \
+	trnAffector.o \
 	ws.o
 
 MESH_OBJS = \
@@ -82,8 +83,9 @@ $(MESH_BIN)/readLOD: readLOD.cpp lod.o $(MESH_OBJS)
 	$(CXX) $(CFLAG) readLOD.cpp lod.o $(MESH_OBJS) \
 	$(LIBS) -o $(MESH_BIN)/readLOD
 
-$(MESH_BIN)/readTRN: readTRN.cpp trn.o base.o
-	$(CXX) $(CFLAG) readTRN.cpp trn.o base.o $(LIBS) -o $(MESH_BIN)/readTRN
+$(MESH_BIN)/readTRN: readTRN.cpp trn.o trnAffector.o base.o
+	$(CXX) $(CFLAG) readTRN.cpp trn.o base.o trnAffector.o \
+	$(LIBS) -o $(MESH_BIN)/readTRN
 
 $(MESH_BIN)/readSWG: readSWG.cpp $(OBJS)
 	$(CXX) $(CFLAG) readSWG.cpp $(OBJS) $(LIBS) -o $(MESH_BIN)/readSWG
@@ -191,6 +193,9 @@ swts.o: swts.cpp $(MESH_INC)/meshLib/swts.hpp
 
 trn.o: trn.cpp $(MESH_INC)/meshLib/trn.hpp
 	$(CXX) $(CFLAG) -c trn.cpp
+
+trnAffector.o: trnAffector.cpp $(MESH_INC)/meshLib/trnAffector.hpp
+	$(CXX) $(CFLAG) -c trnAffector.cpp
 
 ws.o: ws.cpp $(MESH_INC)/meshLib/ws.hpp $(MESH_INC)/meshLib/vector3.hpp \
 	$(MESH_INC)/meshLib/matrix3.hpp
