@@ -242,7 +242,15 @@ namespace ml
     unsigned int readBPLN( std::istream &file, const std::string &, bpln & );
     unsigned int readBPOL( std::istream &file, const std::string &, bpol & );
     unsigned int readBREC( std::istream &file, const std::string &, brec & );
-					  
+
+    bool applyLayers( const float &originX,
+		      const float &originY,
+		      const float &spacingX,
+		      const float &spacingY,
+		      const unsigned int &numRows,
+		      const unsigned int &numCols,
+		      float *data) const;
+    
   private:
     float terrainSize;
     float chunkWidth;

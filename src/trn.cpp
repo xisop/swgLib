@@ -2682,6 +2682,30 @@ unsigned int trn::readFDIR( std::istream &file, const std::string &debugString )
   return total;
 }
 
+bool trn::applyLayers( const float &originX,
+		       const float &originY,
+		       const float &spacingX,
+		       const float &spacingY,
+		       const unsigned int &numRows,
+		       const unsigned int &numCols,
+		       float *data) const
+{
+  for( std::vector<layer>::const_iterator currentLayer = layerList.begin();
+       currentLayer != layerList.end();
+       ++currentLayer )
+    {
+      currentLayer->apply( originX,
+			   originY,
+			   spacingX,
+			   spacingY,
+			   numRows,
+			   numCols,
+			   data ) ;
+    }
+
+  return true;
+}
+
 bool trn::layer::isInBounds(const float &X,
 			    const float &Y ) const
 {
