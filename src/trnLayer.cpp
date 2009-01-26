@@ -34,14 +34,52 @@ trnLayer::~trnLayer()
 {
 }
 
-void trnLayer::apply( const float &currentX,
-		      const float &currentY,
+void trnLayer::apply( const float &originX,
+		      const float &originY,
 		      const float &spacingX,
 		      const float &spacingY,
 		      const unsigned int &numRows,
 		      const unsigned int &numCols,
 		      float *data) const
 {
+  for( unsigned int row = 0; row < numRows; ++row )
+    {
+      float currentY = originY + ( spacingY * row );
+      for( unsigned int col = 0; col < numCols; ++col )
+	{
+	  float currentX = originX + ( spacingX * col );
+	  
+	  if( isBounded && !isInBounds( currentX, currentY ) )
+	    {
+	      continue;
+	    }
+	  
+	  unsigned int offset = (numCols * row)+col;
+	  
+	  for( std::list< boost::shared_ptr<trnAffector> >::const_iterator
+		 affector = affectorList.begin();
+	       affector != affectorList.end();
+	       ++affector )
+	    {
+	      (*affector)->apply( currentX, currentY, data[offset] );
+	    }
+	}
+    }
+  
+  
+  for( std::list< boost::shared_ptr<trnLayer> >::const_iterator
+	 currentLayer = layerList.begin();
+       currentLayer != layerList.end();
+       ++currentLayer )
+    {
+      (*currentLayer)->apply( originX,
+			      originY,
+			      spacingX,
+			      spacingY,
+			      numRows,
+			      numCols,
+			      data ) ;
+    }
 }
 
 unsigned int trnLayer::read( std::istream &file,
