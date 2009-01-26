@@ -42,8 +42,183 @@ namespace ml
     virtual void apply( const float &currentX,
 			const float &currentY,
 			float &data) const;
+    virtual unsigned int read( std::istream &file,
+			       const std::string &debugString );
+  protected:
+    unsigned int readIHDR( std::istream &file, const std::string &debugString );
+
+    unsigned int u1;
+    std::string name;
+
   };
 
+  // ACCN
+  class affectorColorConstant : public trnAffector
+  {
+  public:
+    affectorColorConstant();
+    ~affectorColorConstant();
+    void apply( const float &currentX,
+		const float &currentY,
+		float &data) const;
+    unsigned int read( std::istream &file,
+		       const std::string &debugString );
+
+  protected:
+    unsigned int u2;
+    char u3;
+    char u4;
+    char u5;
+  };
+
+  // ACRF
+  class affectorColorRampFractal : public trnAffector
+  {
+  public:
+    affectorColorRampFractal();
+    ~affectorColorRampFractal();
+    void apply( const float &currentX,
+		const float &currentY,
+		float &data) const;
+    unsigned int read( std::istream &file,
+		       const std::string &debugString );
+  protected:
+    unsigned int u2;
+    unsigned int u3;
+    std::string name2;
+  };
+
+  // ACRH
+  class affectorColorRampHeight : public trnAffector
+  {
+  public:
+    affectorColorRampHeight();
+    ~affectorColorRampHeight();
+    void apply( const float &currentX,
+		const float &currentY,
+		float &data) const;
+    unsigned int read( std::istream &file,
+		       const std::string &debugString );
+  };
+
+  // AENV
+  class affectorEnvironment : public trnAffector
+  {
+  public:
+    affectorEnvironment();
+    ~affectorEnvironment();
+    void apply( const float &currentX,
+		const float &currentY,
+		float &data) const;
+    unsigned int read( std::istream &file,
+		       const std::string &debugString );
+  protected:
+    unsigned int u2;
+    unsigned int u3;
+    float u4;
+  };
+
+  // AEXC
+  class affectorExclude : public trnAffector
+  {
+  public:
+    affectorExclude();
+    ~affectorExclude();
+    void apply( const float &currentX,
+		const float &currentY,
+		float &data) const;
+    unsigned int read( std::istream &file,
+		       const std::string &debugString );
+  };
+
+  // AFDF
+  class affectorRemoveRadialFar : public trnAffector
+  {
+  public:
+    affectorRemoveRadialFar();
+    ~affectorRemoveRadialFar();
+    void apply( const float &currentX,
+		const float &currentY,
+		float &data) const;
+    unsigned int read( std::istream &file,
+		       const std::string &debugString );
+  };
+
+  // AFDN
+  class affectorRadialConstant : public trnAffector
+  {
+  public:
+    affectorRadialConstant();
+    ~affectorRadialConstant();
+    void apply( const float &currentX,
+		const float &currentY,
+		float &data) const;
+    unsigned int read( std::istream &file,
+		       const std::string &debugString );
+
+  protected:
+    unsigned int u2;
+    unsigned int u3;
+    unsigned int u4;
+    unsigned int u5;
+    float u6;
+  };
+
+  // AFSC
+  class affectorFloraConstant : public trnAffector
+  {
+  public:
+    affectorFloraConstant();
+    ~affectorFloraConstant();
+    void apply( const float &currentX,
+		const float &currentY,
+		float &data) const;
+    unsigned int read( std::istream &file,
+		       const std::string &debugString );
+  protected:
+    unsigned int u2;
+    unsigned int u3;
+    unsigned int u4;
+    unsigned int u5;
+    float u6;
+  };
+
+  // AFSN
+  class affectorFloraNonCollidableConstant : public trnAffector
+  {
+  public:
+    affectorFloraNonCollidableConstant();
+    ~affectorFloraNonCollidableConstant();
+    void apply( const float &currentX,
+		const float &currentY,
+		float &data) const;
+    unsigned int read( std::istream &file,
+		       const std::string &debugString );
+  protected:
+    unsigned int u2;
+    unsigned int u3;
+    unsigned int u4;
+    unsigned int u5;
+    float u6;
+  };
+
+  // AHCN
+  class affectorHeightConstant : public trnAffector
+  {
+  public:
+    affectorHeightConstant();
+    ~affectorHeightConstant();
+    void apply( const float &currentX,
+		const float &currentY,
+		float &data) const;
+    unsigned int read( std::istream &file,
+		       const std::string &debugString );
+  protected:
+    unsigned int u2;
+    float u3;
+  };
+
+  // AHFR
   class affectorHeightFractal : public trnAffector
   {
   public:
@@ -52,7 +227,10 @@ namespace ml
     void apply( const float &currentX,
 		const float &currentY,
 		float &data) const;
-    
+
+    unsigned int read( std::istream &file,
+		       const std::string &debugString );
+
     void setFractalIndex( const unsigned int &index )
     {
       fractalIndex = index;
@@ -85,11 +263,153 @@ namespace ml
 
   protected:
     unsigned int fractalIndex;
-    unsigned int u1;
+    unsigned int u2;
     float height;
     
   };
 
+  // AHTR
+  class affectorHeightTerrace : public trnAffector
+  {
+  public:
+    affectorHeightTerrace();
+    ~affectorHeightTerrace();
+    void apply( const float &currentX,
+		const float &currentY,
+		float &data) const;
+    unsigned int read( std::istream &file,
+		       const std::string &debugString );
+  protected:
+    float u2;
+    float u3;
+  };
+
+  // AROA
+  class affectorRoad : public trnAffector
+  {
+  public:
+    affectorRoad();
+    ~affectorRoad();
+    void apply( const float &currentX,
+		const float &currentY,
+		float &data) const;
+    unsigned int read( std::istream &file,
+		       const std::string &debugString );
+  };
+
+  // ASCN
+  class affectorShaderConstant : public trnAffector
+  {
+  public:
+    affectorShaderConstant();
+    ~affectorShaderConstant();
+    void apply( const float &currentX,
+		const float &currentY,
+		float &data) const;
+    unsigned int read( std::istream &file,
+		       const std::string &debugString );
+  protected:
+    unsigned int u2;
+    unsigned int u3;
+    float u4;
+  };
+
+  // ASRP
+  class affectorShaderReplace : public trnAffector
+  {
+  public:
+    affectorShaderReplace();
+    ~affectorShaderReplace();
+    void apply( const float &currentX,
+		const float &currentY,
+		float &data) const;
+    unsigned int read( std::istream &file,
+		       const std::string &debugString );
+  };
+
+  // FDIR
+  class affectorFilterDirection : public trnAffector
+  {
+  public:
+    affectorFilterDirection();
+    ~affectorFilterDirection();
+    void apply( const float &currentX,
+		const float &currentY,
+		float &data) const;
+    unsigned int read( std::istream &file,
+		       const std::string &debugString );
+  };
+
+  // FFRA
+  class affectorFilterFractal : public trnAffector
+  {
+  public:
+    affectorFilterFractal();
+    ~affectorFilterFractal();
+    void apply( const float &currentX,
+		const float &currentY,
+		float &data) const;
+    unsigned int read( std::istream &file,
+		       const std::string &debugString );
+  protected:
+    unsigned int fractalFamily;
+    unsigned int featherType;
+    float filterSeed;
+    float filterLow;
+    float filterHigh;
+    float featherWidth;
+    
+  };
+
+  // FHGT
+  class affectorFilterHeight : public trnAffector
+  {
+  public:
+    affectorFilterHeight();
+    ~affectorFilterHeight();
+    void apply( const float &currentX,
+		const float &currentY,
+		float &data) const;
+    unsigned int read( std::istream &file,
+		       const std::string &debugString );
+  protected:
+    float minHeight;
+    float maxHeight;
+    unsigned int featherType;
+    float featherWidth;
+
+  };
+
+  // FSHD
+  class affectorFilterShader : public trnAffector
+  {
+  public:
+    affectorFilterShader();
+    ~affectorFilterShader();
+    void apply( const float &currentX,
+		const float &currentY,
+		float &data) const;
+    unsigned int read( std::istream &file,
+		       const std::string &debugString );
+  };
+
+  // FSLP
+  class affectorFilterSlope : public trnAffector
+  {
+  public:
+    affectorFilterSlope();
+    ~affectorFilterSlope();
+    void apply( const float &currentX,
+		const float &currentY,
+		float &data) const;
+    unsigned int read( std::istream &file,
+		       const std::string &debugString );
+  protected:
+    float u2;
+    float u3;
+    unsigned int u4;
+    unsigned int u5;
+  };
 
 }
 #endif

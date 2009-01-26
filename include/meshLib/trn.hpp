@@ -33,6 +33,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include <meshLib/trnAffector.hpp>
+#include <meshLib/trnLayer.hpp>
 
 #ifndef TRN_HPP
 #define TRN_HPP
@@ -113,57 +114,6 @@ namespace ml
       std::string name;
     };
 
-    class layer
-    {
-    public:
-      ~layer()
-      {
-      }
-
-      bool isInBounds( const float &X, const float &Y ) const;
-
-      bool apply( const float &originX,
-		  const float &originY,
-		  const float &spacingX,
-		  const float &spacingY,
-		  const unsigned int &numRows,
-		  const unsigned int &numCols,
-		  float *data) const;
-
-      const std::vector<bpol> &getBPOL() const
-      {
-	return bpolList;
-      }
-      
-      const std::vector<bcir> &getBCIR() const
-      {
-	return bcirList;
-      }
-      
-      const std::vector<brec> &getBREC() const
-      {
-	return brecList;
-      }
-      
-      const std::vector<bpln> &getBPLN() const
-      {
-	return bplnList;
-      }
-
-      bool isBounded;
-      unsigned int u1;
-      std::string name;
-
-      std::list< boost::shared_ptr<trnAffector> > affectors;
-
-      std::vector<layer> layerList;
-
-      std::vector<bpol> bpolList;
-      std::vector<bpln> bplnList;
-      std::vector<bcir> bcirList;
-      std::vector<brec> brecList;
-
-    };
 
     class sfam
     {
@@ -213,38 +163,13 @@ namespace ml
     unsigned int readEGRP( std::istream &file, const std::string & );
     unsigned int readMGRP( std::istream &file, const std::string & );
     unsigned int readLYRS( std::istream &file, const std::string & );
-    unsigned int readLAYR( std::istream &file,
-			   const std::string &,
-			   layer &newLayer );
-
     unsigned int readFFAM( std::istream &file, const std::string & );
     unsigned int readRFAM( std::istream &file, const std::string & );
     unsigned int readEFAM( std::istream &file, const std::string & );
     unsigned int readMFAM( std::istream &file, const std::string & );
     unsigned int readMFRC( std::istream &file, const std::string & );
 
-    unsigned int readACCN( std::istream &file, const std::string & );
-    unsigned int readACRF( std::istream &file, const std::string & );
-    unsigned int readACRH( std::istream &file, const std::string & );
     unsigned int readADTA( std::istream &file, const std::string & );
-    unsigned int readAENV( std::istream &file, const std::string & );
-    unsigned int readAEXC( std::istream &file, const std::string & );
-    unsigned int readAFDF( std::istream &file, const std::string & );
-    unsigned int readAFDN( std::istream &file, const std::string & );
-    unsigned int readAFSC( std::istream &file, const std::string & );
-    unsigned int readAFSN( std::istream &file, const std::string & );
-    unsigned int readAHCN( std::istream &file, const std::string & );
-    unsigned int readAHFR( std::istream &file, const std::string &,
-			   affectorHeightFractal &newAHFR );
-    unsigned int readAHTR( std::istream &file, const std::string & );
-    unsigned int readAROA( std::istream &file, const std::string & );
-    unsigned int readASCN( std::istream &file, const std::string & );
-    unsigned int readASRP( std::istream &file, const std::string & );
-    unsigned int readFDIR( std::istream &file, const std::string & );
-    unsigned int readFFRA( std::istream &file, const std::string & );
-    unsigned int readFHGT( std::istream &file, const std::string & );
-    unsigned int readFSHD( std::istream &file, const std::string & );
-    unsigned int readFSLP( std::istream &file, const std::string & );
     unsigned int readIHDR( std::istream &file, const std::string &,
 			   unsigned int &u1, std::string &name );
     unsigned int readSFAM( std::istream &file, const std::string &,
@@ -295,7 +220,7 @@ namespace ml
     unsigned int mapWidth;
 
     std::map<unsigned int, sfam> sfamMap;
-    std::vector<layer> layerList;
+    std::list<boost::shared_ptr<trnLayer> > layerList;
 
   };
 }
