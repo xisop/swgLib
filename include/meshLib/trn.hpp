@@ -43,78 +43,6 @@ namespace ml
   class trn : public base
   {
   public:
-    // Boundary Polygon
-    class bpol
-    {
-    public:
-      std::vector< float > x;
-      std::vector< float > y;
-
-      unsigned int u1;
-      float u2;
-      unsigned int u3;
-      float altitude;
-      float u5;
-      std::string name;
-    };
-
-    // Boundary Polyline
-    class bpln
-    {
-    public:
-      std::vector< float > x;
-      std::vector< float > y;
-
-      unsigned int u1;
-      float u2;
-      float u3;
-    };
-
-    // Boundary Circle.
-    class bcir
-    {
-    public:
-
-      bool isInBounds( const float &X,
-		       const float &Y ) const
-      {
-	return ( radiusSqrd > (pow( X-x, 2.0 ) + pow( Y-y, 2.0 )));
-      }
-
-      float x;
-      float y;
-      float radius;
-      float radiusSqrd;
-      
-      unsigned int featherType;
-      float featherWidth;
-    };
-
-    // Boundary Rectangle.
-    class brec
-    {
-    public:
-      bool isInBounds( const float &X,
-		       const float &Y ) const
-      {
-	return( (X >= x1) & (X <= x2) && (Y >= y1) && (Y <= y2) );
-      }
-
-      float x1;
-      float y1;
-      float x2;
-      float y2;
-      
-      unsigned int u1;
-      float u2;
-      unsigned int u3;
-      unsigned int u4;
-      float u5;
-      float u6;
-      std::string name;
-    };
-
-
     class sfam
     {
     public:
@@ -168,17 +96,9 @@ namespace ml
     unsigned int readEFAM( std::istream &file, const std::string & );
     unsigned int readMFAM( std::istream &file, const std::string & );
     unsigned int readMFRC( std::istream &file, const std::string & );
-
     unsigned int readADTA( std::istream &file, const std::string & );
-    unsigned int readIHDR( std::istream &file, const std::string &,
-			   unsigned int &u1, std::string &name );
     unsigned int readSFAM( std::istream &file, const std::string &,
 			   sfam &newSFAM );
-
-    unsigned int readBCIR( std::istream &file, const std::string &, bcir & );
-    unsigned int readBPLN( std::istream &file, const std::string &, bpln & );
-    unsigned int readBPOL( std::istream &file, const std::string &, bpol & );
-    unsigned int readBREC( std::istream &file, const std::string &, brec & );
 
   private:
     float terrainSize;
