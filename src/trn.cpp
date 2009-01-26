@@ -1204,12 +1204,12 @@ bool trn::applyLayers( const float &originX,
        ++currentLayer )
     {
       (*currentLayer)->apply( originX,
-			   originY,
-			   spacingX,
-			   spacingY,
-			   numRows,
-			   numCols,
-			   data ) ;
+			      originY,
+			      spacingX,
+			      spacingY,
+			      numRows,
+			      numCols,
+			      data ) ;
     }
 
   return true;
