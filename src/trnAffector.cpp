@@ -345,7 +345,26 @@ unsigned int affectorExclude::read( std::istream &file,
   aexcSize += 8;
   std::cout << debugString << "Found AEXC form" << std::endl;
 
-  total += base::readUnknown( file, aexcSize-total );
+  unsigned int size;
+  std::string form, type;
+  total += base::readFormHeader( file, form, size, type );
+  if( form != "FORM" || type != "0000" )
+    {
+      std::cout << "Expected Form of type 0000: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << dbgStr << "Found 0000 form" << std::endl;
+
+  total += readIHDR( file, dbgStr );
+
+  // DATA record
+  total += base::readRecordHeader( file, type, size );
+  if( type != "DATA" )
+    {
+      std::cout << "Expected DATA record: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << dbgStr << "Found DATA record" << std::endl;
 
   if( aexcSize == total )
     {
@@ -877,8 +896,34 @@ unsigned int affectorRoad::read( std::istream &file,
   unsigned int aroaSize;
   unsigned int total = base::readFormHeader( file, "AROA", aroaSize );
   aroaSize += 8;
-  std::cout << "Found AROA form" << std::endl;
+  std::cout << debugString << "Found AROA form" << std::endl;
+  unsigned int size;
+  std::string form, type;
+  total += base::readFormHeader( file, form, size, type );
+  if( form != "FORM" || type != "0005" )
+    {
+      std::cout << "Expected Form of type 0005: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << dbgStr << "Found 0005 form" << std::endl;
 
+  total += readIHDR( file, dbgStr );
+
+  // DATA form
+  total += base::readFormHeader( file, "DATA", size );
+  std::cout << dbgStr << "Found DATA form" << std::endl;
+
+#if 0
+  total += base::read( file, u2 );
+  total += base::read( file, u3 );
+  total += base::read( file, u4 );
+  total += base::read( file, u5 );
+
+  std::cout << dbgStr << u2 << std::endl;
+  std::cout << dbgStr << u3 << std::endl;
+  std::cout << dbgStr << u4 << std::endl;
+  std::cout << dbgStr << u5 << std::endl;
+#endif
   total += base::readUnknown( file, aroaSize-total );
 
   if( aroaSize == total )
