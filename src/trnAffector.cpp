@@ -100,9 +100,9 @@ unsigned int affectorColorConstant::read( std::istream &file,
   total += base::read( file, u5 );
 
   std::cout << dbgStr << u2 << std::endl;;
-  std::cout << dbgStr << u3 << std::endl;;
-  std::cout << dbgStr << u4 << std::endl;;
-  std::cout << dbgStr << u5 << std::endl;;
+  std::cout << dbgStr << (int)u3 << std::endl;;
+  std::cout << dbgStr << (int)u4 << std::endl;;
+  std::cout << dbgStr << (int)u5 << std::endl;;
 
   if( accnSize == total )
     {
