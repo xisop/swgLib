@@ -71,6 +71,11 @@ namespace ml
       return terrainSize;
     }
 
+    const float &getWaterTableHeight() const
+    {
+      return globalWaterTableHeight;
+    }
+
     bool applyLayers( const float &originX,
 		      const float &originY,
 		      const float &spacingX,
