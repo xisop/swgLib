@@ -209,7 +209,36 @@ unsigned int affectorColorRampHeight::read( std::istream &file,
   acrhSize += 8;
   std::cout << "Found ACRH form" << std::endl;
 
-  total += base::readUnknown( file, acrhSize-total );
+  unsigned int size;
+  std::string form, type;
+  total += base::readFormHeader( file, form, size, type );
+  if( form != "FORM" || type != "0000" )
+    {
+      std::cout << "Expected Form of type 0000: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << dbgStr << "Found 0000 form" << std::endl;
+
+  total += readIHDR( file, dbgStr );
+
+  // DATA record
+  total += base::readRecordHeader( file, type, size );
+  if( type != "DATA" )
+    {
+      std::cout << "Expected DATA record: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << dbgStr << "Found DATA record" << std::endl;
+
+  total += base::read( file, u2 );
+  total += base::read( file, u3 );
+  total += base::read( file, u4 );
+  total += base::read( file, name2 );
+
+  std::cout << dbgStr << u2 << std::endl;
+  std::cout << dbgStr << u3 << std::endl;
+  std::cout << dbgStr << u4 << std::endl;
+  std::cout << dbgStr << "'" << name2 << "'" << std::endl;
 
   if( acrhSize == total )
     {
@@ -333,22 +362,22 @@ unsigned int affectorExclude::read( std::istream &file,
 
 //*****************************************************************************
 // AFDF
-affectorRemoveRadialFar::affectorRemoveRadialFar()
+affectorRadialFarConstant::affectorRadialFarConstant()
 {
 }
 
-affectorRemoveRadialFar::~affectorRemoveRadialFar()
+affectorRadialFarConstant::~affectorRadialFarConstant()
 {
 }
 
-void affectorRemoveRadialFar::apply( const float &currentX,
-				     const float &currentY,
-				     float &data) const
+void affectorRadialFarConstant::apply( const float &currentX,
+				       const float &currentY,
+				       float &data) const
 {
 }
 
-unsigned int affectorRemoveRadialFar::read( std::istream &file,
-					    const std::string &debugString )
+unsigned int affectorRadialFarConstant::read( std::istream &file,
+					      const std::string &debugString )
 {
   std::string dbgStr = debugString + "AFDF: ";
   unsigned int afdfSize;
@@ -356,7 +385,41 @@ unsigned int affectorRemoveRadialFar::read( std::istream &file,
   afdfSize += 8;
   std::cout << "Found AFDF form" << std::endl;
 
-  total += base::readUnknown( file, afdfSize-total );
+  unsigned int size;
+  std::string form, type;
+  total += base::readFormHeader( file, form, size, type );
+  if( form != "FORM" || type != "0002" )
+    {
+      std::cout << "Expected Form of type 0002: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << dbgStr << "Found 0002 form" << std::endl;
+
+  total += readIHDR( file, dbgStr );
+
+  // DATA record
+  total += base::readRecordHeader( file, type, size );
+  if( type != "DATA" )
+    {
+      std::cout << "Expected DATA record: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << dbgStr << "Found DATA record" << std::endl;
+
+  total += base::read( file, u2 );
+  std::cout << dbgStr << u2 << std::endl;;
+
+  total += base::read( file, u3 );
+  std::cout << dbgStr << u3 << std::endl;;
+
+  total += base::read( file, u4 );
+  std::cout << dbgStr << u4 << std::endl;;
+
+  total += base::read( file, u5 );
+  std::cout << dbgStr << u5 << std::endl;;
+
+  total += base::read( file, u6 );
+  std::cout << dbgStr << u6 << std::endl;;
 
   if( afdfSize == total )
     {
@@ -1153,9 +1216,31 @@ unsigned int affectorFilterShader::read( std::istream &file,
   unsigned int fshdSize;
   unsigned int total = base::readFormHeader( file, "FSHD", fshdSize );
   fshdSize += 8;
-  std::cout << "Found FSHD form" << std::endl;
+  std::cout << debugString << "Found FSHD form" << std::endl;
 
-  total += base::readUnknown( file, fshdSize-total );
+  unsigned int size;
+  std::string form, type;
+  total += base::readFormHeader( file, form, size, type );
+  if( form != "FORM" || type != "0000" )
+    {
+      std::cout << "Expected Form of type 0000: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << dbgStr << "Found 0000 form" << std::endl;
+
+  total += readIHDR( file, dbgStr );
+
+  // DATA record
+  total += base::readRecordHeader( file, type, size );
+  if( type != "DATA" )
+    {
+      std::cout << "Expected DATA record: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << dbgStr << "Found DATA record" << std::endl;
+
+  total += base::read( file, u2 );
+  std::cout << dbgStr << u2 << std::endl;;
 
   if( fshdSize == total )
     {

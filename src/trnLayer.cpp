@@ -143,8 +143,8 @@ unsigned int trnLayer::read( std::istream &file,
             }
           else if( "AFDF" == type )
             {
-	      boost::shared_ptr<affectorRemoveRadialFar>
-		newAffector(new affectorRemoveRadialFar);
+	      boost::shared_ptr<affectorRadialFarConstant>
+		newAffector(new affectorRadialFarConstant);
 	      total += newAffector->read( file, dbgStr );
 	      affectorList.push_back( newAffector );
             }
