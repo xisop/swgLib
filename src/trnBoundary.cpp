@@ -99,6 +99,27 @@ boundaryPolygon::~boundaryPolygon()
 {
 }
 
+bool boundaryPolygon::isInBounds( const float &X,
+			      const float &Y ) const
+{
+  //int pnpoly(int nvert, float *vertx, float *verty, float testx, float testy)
+  
+  bool c = false;
+  unsigned int numVerts = x.size();
+  unsigned int i, j;
+  for( i = 0, j = numVerts-1; i < numVerts; j = i++)
+    {
+      if ( ( ( y[i] > Y ) != ( y[j] > Y ) )
+	   && ( X < ( x[j] - x[i] ) * ( Y - y[i] )
+		/ ( y[j] - y[i] ) + x[i]) )
+	{
+	  c = !c;
+	}
+    }
+
+  return c;
+}
+
 unsigned int boundaryPolygon::read( std::istream &file,
 				    const std::string &debugString )
 {

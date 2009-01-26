@@ -59,7 +59,7 @@ namespace ml
   public:
     boundaryPolygon();
     ~boundaryPolygon();
-    
+    bool isInBounds( const float &X, const float &Y ) const;
     unsigned int read( std::istream &file, const std::string &debugString );
     
   protected:
