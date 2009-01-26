@@ -99,6 +99,12 @@ namespace ml
 		float &data) const;
     unsigned int read( std::istream &file,
 		       const std::string &debugString );
+  protected:
+    unsigned int u2;
+    float u3;
+    float u4;
+    std::string name2;
+    
   };
 
   // AENV
@@ -132,16 +138,22 @@ namespace ml
   };
 
   // AFDF
-  class affectorRemoveRadialFar : public trnAffector
+  class affectorRadialFarConstant : public trnAffector
   {
   public:
-    affectorRemoveRadialFar();
-    ~affectorRemoveRadialFar();
+    affectorRadialFarConstant();
+    ~affectorRadialFarConstant();
     void apply( const float &currentX,
 		const float &currentY,
 		float &data) const;
     unsigned int read( std::istream &file,
 		       const std::string &debugString );
+  protected:
+    unsigned int u2;
+    unsigned int u3;
+    unsigned int u4;
+    unsigned int u5;
+    float u6;
   };
 
   // AFDN
@@ -391,6 +403,8 @@ namespace ml
 		float &data) const;
     unsigned int read( std::istream &file,
 		       const std::string &debugString );
+  protected:
+    unsigned int u2;
   };
 
   // FSLP
