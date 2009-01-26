@@ -988,7 +988,36 @@ unsigned int affectorShaderReplace::read( std::istream &file,
   asrpSize += 8;
   std::cout << debugString << "Found ASRP form" << std::endl;
 
-  total += base::readUnknown( file, asrpSize-total );
+  unsigned int size;
+  std::string form, type;
+  total += base::readFormHeader( file, form, size, type );
+  if( form != "FORM" || type != "0001" )
+    {
+      std::cout << "Expected Form of type 0001: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << dbgStr << "Found 0001 form" << std::endl;
+
+  total += readIHDR( file, dbgStr );
+
+  // DATA record
+  total += base::readRecordHeader( file, type, size );
+  if( type != "DATA" )
+    {
+      std::cout << "Expected DATA record: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << dbgStr << "Found DATA record" << std::endl;
+
+  total += base::read( file, u2 );
+  total += base::read( file, u3 );
+  total += base::read( file, u4 );
+  total += base::read( file, u5 );
+
+  std::cout << dbgStr << u2 << std::endl;
+  std::cout << dbgStr << u3 << std::endl;
+  std::cout << dbgStr << u4 << std::endl;
+  std::cout << dbgStr << u5 << std::endl;
 
   if( asrpSize == total )
     {

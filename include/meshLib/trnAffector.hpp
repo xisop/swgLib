@@ -307,6 +307,8 @@ namespace ml
 		float &data) const;
     unsigned int read( std::istream &file,
 		       const std::string &debugString );
+  protected:
+    
   };
 
   // ASCN
@@ -337,6 +339,11 @@ namespace ml
 		float &data) const;
     unsigned int read( std::istream &file,
 		       const std::string &debugString );
+  protected:
+    unsigned int u2;
+    unsigned int u3;
+    unsigned int u4;
+    float u5;
   };
 
   // FDIR
