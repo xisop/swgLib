@@ -66,7 +66,6 @@ void trnLayer::apply( const float &originX,
 	}
     }
   
-  
   for( std::list< boost::shared_ptr<trnLayer> >::const_iterator
 	 currentLayer = layerList.begin();
        currentLayer != layerList.end();

@@ -215,7 +215,7 @@ namespace ml
 		       const std::string &debugString );
   protected:
     unsigned int u2;
-    float u3;
+    float height;
   };
 
   // AHFR

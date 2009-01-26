@@ -599,6 +599,7 @@ void affectorHeightConstant::apply( const float &currentX,
 				    const float &currentY,
 				    float &data) const
 {
+  data += height;
 }
 
 unsigned int affectorHeightConstant::read( std::istream &file,
@@ -631,10 +632,10 @@ unsigned int affectorHeightConstant::read( std::istream &file,
   std::cout << dbgStr << "Found DATA record" << std::endl;
 
   total += base::read( file, u2 );
-  total += base::read( file, u3 );
+  total += base::read( file, height );
 
   std::cout << dbgStr << u2 << std::endl;
-  std::cout << dbgStr << u3 << std::endl;
+  std::cout << dbgStr << "Height: " << height << std::endl;
 
   if( ahcnSize == total )
     {
@@ -664,7 +665,7 @@ void affectorHeightFractal::apply( const float &currentX,
 				   const float &currentY,
 				   float &data) const
 {
-  data = height;
+  data += height;
 }
 
 unsigned int affectorHeightFractal::read( std::istream &file,
