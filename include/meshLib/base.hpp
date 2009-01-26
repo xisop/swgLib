@@ -94,12 +94,10 @@ namespace ml
 					 const unsigned int &size,
 					 char *buffer);
     
-
+    static bool fixSlash( std::string &filename );
 
   protected:
     bool isOfType( std::istream &file, const std::string &Type );
-
-    static bool fixSlash( std::string &filename );
 
     std::string basePath;
 					  
