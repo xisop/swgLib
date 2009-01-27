@@ -663,7 +663,9 @@ unsigned int trn::readFGRP( std::istream &file, const std::string &debugString )
   return total;
 }
 
-unsigned int trn::readRFAM( std::istream &file, const std::string &debugString )
+unsigned int trn::readRFAM( std::istream &file,
+			    const std::string &rgrpType,
+			    const std::string &debugString )
 {
   std::string dbgStr = debugString + "RFAM: ";
   unsigned int size;
@@ -677,11 +679,12 @@ unsigned int trn::readRFAM( std::istream &file, const std::string &debugString )
     }
   std::cout << debugString << "Found RFAM record" << std::endl;
   
+  
   unsigned int u1;
   file.read( (char *)&u1, sizeof( u1 ) );
   total += sizeof( u1 );
   std::cout << dbgStr << u1 << std::endl;
-
+  
   std::string name;
   total += base::read( file, name );
   std::cout << dbgStr << "'" << name << "'" << std::endl;
@@ -690,20 +693,20 @@ unsigned int trn::readRFAM( std::istream &file, const std::string &debugString )
   file.read( (char *)&u2, sizeof( u2 ) );
   total += sizeof( u2 );
   std::cout << dbgStr << u2 << std::endl;
-
+  
   file.read( (char *)&u2, sizeof( u2 ) );
   total += sizeof( u2 );
   std::cout << dbgStr << u2 << std::endl;
-
+  
   file.read( (char *)&u2, sizeof( u2 ) );
   total += sizeof( u2 );
   std::cout << dbgStr << u2 << std::endl;
-
+  
   unsigned char u3;
   file.read( (char *)&u3, sizeof( u3 ) );
   total += sizeof( u3 );
   std::cout << dbgStr << (unsigned int)u3 << std::endl;
-
+  
   unsigned int numApt;
   file.read( (char *)&numApt, sizeof( numApt ) );
   total += sizeof( numApt );
@@ -724,43 +727,46 @@ unsigned int trn::readRFAM( std::istream &file, const std::string &debugString )
       std::cout << dbgStr << "'" << aptName << "'" << std::endl;
 
       float u4;
-      file.read( (char *)&u4, sizeof( u4 ) );
-      total += sizeof( u4 );
+      total += base::read( file, u4 );
       std::cout << dbgStr << u4 << std::endl;
-	  
-      file.read( (char *)&u4, sizeof( u4 ) );
-      total += sizeof( u4 );
+      
+      total += base::read( file, u4 );
       std::cout << dbgStr << u4 << std::endl;
-
-      file.read( (char *)&u4, sizeof( u4 ) );
-      total += sizeof( u4 );
+      
+      total += base::read( file, u4 );
       std::cout << dbgStr << u4 << std::endl;
-
-      file.read( (char *)&u4, sizeof( u4 ) );
-      total += sizeof( u4 );
+      
+      total += base::read( file, u4 );
       std::cout << dbgStr << u4 << std::endl;
-
-      file.read( (char *)&u1, sizeof( u1 ) );
-      total += sizeof( u1 );
+      
+      total += base::read( file, u4 );
+      std::cout << dbgStr << u4 << std::endl;
+      
+      total += base::read( file, u4 );
+      std::cout << dbgStr << u4 << std::endl;
+      
+      total += base::read( file, u4 );
+      std::cout << dbgStr << u4 << std::endl;
+      
+      total += base::read( file, u1 );
       std::cout << dbgStr << u1 << std::endl;
-
-      file.read( (char *)&u4, sizeof( u4 ) );
-      total += sizeof( u4 );
+      
+      total += base::read( file, u4 );
       std::cout << dbgStr << u4 << std::endl;
+      
+      if( "0004" == rgrpType )
+	{
+	  total += base::read( file, u4 );
+	  std::cout << dbgStr << u4 << std::endl;
 
-      file.read( (char *)&u4, sizeof( u4 ) );
-      total += sizeof( u4 );
-      std::cout << dbgStr << u4 << std::endl;
+	  total += base::read( file, u1 );
+	  std::cout << dbgStr << u1 << std::endl;
 
-      file.read( (char *)&u1, sizeof( u1 ) );
-      total += sizeof( u1 );
-      std::cout << dbgStr << u1 << std::endl;
-
-      file.read( (char *)&u4, sizeof( u4 ) );
-      total += sizeof( u4 );
-      std::cout << dbgStr << u4 << std::endl;
+	  total += base::read( file, u4 );
+	  std::cout << dbgStr << u4 << std::endl;
+	}
     }
-  
+
   if( size == total )
     {
       std::cout << debugString << "Finished reading RFAM" << std::endl;
@@ -802,7 +808,7 @@ unsigned int trn::readRGRP( std::istream &file, const std::string &debugString )
 
   while( total < rgrpSize )
     {
-      total += readRFAM( file, dbgStr );
+      total += readRFAM( file, type, dbgStr );
     }
     
   if( rgrpSize == total )
@@ -952,7 +958,29 @@ unsigned int trn::readMFRC( std::istream &file, const std::string &debugString )
   total += base::read( file, u1 );
   std::cout << dbgStr << u1 << std::endl;
 
+  total += base::read( file, u1 );
+  std::cout << dbgStr << u1 << std::endl;
+
   float u2;
+  total += base::read( file, u2 );
+  std::cout << dbgStr << u2 << std::endl;
+
+  total += base::read( file, u1 );
+  std::cout << dbgStr << u1 << std::endl;
+
+  total += base::read( file, u2 );
+  std::cout << dbgStr << u2 << std::endl;
+
+  unsigned int octaves;
+  total += base::read( file, octaves );
+  std::cout << dbgStr << "Octaves: " << octaves << std::endl;
+
+  total += base::read( file, u2 );
+  std::cout << dbgStr << u2 << std::endl;
+
+  total += base::read( file, u2 );
+  std::cout << dbgStr << u2 << std::endl;
+
   total += base::read( file, u2 );
   std::cout << dbgStr << u2 << std::endl;
 
@@ -967,27 +995,6 @@ unsigned int trn::readMFRC( std::istream &file, const std::string &debugString )
 
   total += base::read( file, u1 );
   std::cout << dbgStr << u1 << std::endl;
-
-  total += base::read( file, u2 );
-  std::cout << dbgStr << u2 << std::endl;
-
-  total += base::read( file, u2 );
-  std::cout << dbgStr << u2 << std::endl;
-
-  total += base::read( file, u2 );
-  std::cout << dbgStr << u2 << std::endl;
-
-  total += base::read( file, u2 );
-  std::cout << dbgStr << u2 << std::endl;
-
-  total += base::read( file, u2 );
-  std::cout << dbgStr << u2 << std::endl;
-
-  total += base::read( file, u2 );
-  std::cout << dbgStr << u2 << std::endl;
-
-  total += base::read( file, u2 );
-  std::cout << dbgStr << u2 << std::endl;
 
   if( mfrcSize == total )
     {
@@ -1135,55 +1142,6 @@ unsigned int trn::readLYRS( std::istream &file, const std::string &debugString )
     {
       std::cout << "Failed in reading LYRS" << std::endl;
       std::cout << "Read " << total << " out of " << lyrsSize
-		<< std::endl;
-    }
-  return total;
-}
-
-unsigned int trn::readADTA( std::istream &file, const std::string &debugString )
-{
-  std::string dbgStr = debugString + "ADTA: ";
-  std::string form;
-  unsigned int adtaSize;
-  std::string type;
-
-  unsigned int total = readRecordHeader( file, type, adtaSize );
-  if( type != "ADTA" )
-    {
-      std::cout << "Expected record of type ADTA: " << type << std::endl;
-      exit( 0 );
-    }
-  std::cout << debugString << "Found ADTA record" << std::endl;
-
-  unsigned int u1;
-  file.read( (char *)&u1, sizeof( u1 ) );
-  total += sizeof( u1 );
-
-  unsigned int u2;
-  file.read( (char *)&u2, sizeof( u2 ) );
-  total += sizeof( u2 );
-
-  unsigned int u3;
-  file.read( (char *)&u3, sizeof( u3 ) );
-  total += sizeof( u3 );
-
-  std::string name;
-  total += base::read( file, name );
-
-  std::cout << dbgStr << u1 << " "
-	    << u2 << " "
-	    << u3 << " '"
-	    << name << "'" << std::endl;
-
-  adtaSize += 8;
-  if( adtaSize == total )
-    {
-      std::cout << debugString << "Finished reading ADTA" << std::endl;
-    }
-  else
-    {
-      std::cout << "Failed in reading ADTA" << std::endl;
-      std::cout << "Read " << total << " out of " << adtaSize
 		<< std::endl;
     }
   return total;
