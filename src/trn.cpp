@@ -228,13 +228,8 @@ unsigned int trn::readTGEN( std::istream &file, const std::string &debugString )
   unsigned int tgenSize;
   std::string type;
 
-  unsigned int total = readFormHeader( file, form, tgenSize, type );
+  unsigned int total = readFormHeader( file, "TGEN", tgenSize );
   tgenSize += 8;
-  if( form != "FORM" || type != "TGEN" )
-    {
-      std::cout << "Expected Form of type TGEN: " << type << std::endl;
-      exit( 0 );
-    }
   std::cout << debugString << "Found TGEN form" << std::endl;
 
   unsigned int size;
@@ -247,12 +242,47 @@ unsigned int trn::readTGEN( std::istream &file, const std::string &debugString )
     }
   std::cout << dbgStr << "Found FORM: " << type << std::endl;
 
-  total += readSGRP( file, dbgStr );
-  total += readFGRP( file, dbgStr );
-  total += readRGRP( file, dbgStr );
-  total += readEGRP( file, dbgStr );
-  total += readMGRP( file, dbgStr );
-  total += readLYRS( file, dbgStr );
+  while( total < tgenSize )
+    {
+      base::peekHeader( file, form, size, type );
+
+      if( "FORM" == form )
+	{
+	  if( "SGRP" == type )
+	    {
+	      total += readSGRP( file, dbgStr );
+	    }
+	  else if( "FGRP" == type )
+	    {
+	      total += readFGRP( file, dbgStr );
+	    }
+	  else if( "RGRP" == type )
+	    {
+	      total += readRGRP( file, dbgStr );
+	    }
+	  else if( "EGRP" == type )
+	    {
+	      total += readEGRP( file, dbgStr );
+	    }
+	  else if( "MGRP" == type )
+	    {
+	      total += readMGRP( file, dbgStr );
+	    }
+	  else if( "LYRS" == type )
+	    {
+	      total += readLYRS( file, dbgStr );
+	    }
+	  else
+	    {
+	      std::cout << "Unexpected FORM: " << type << std::endl;
+	    }
+	}
+      else
+	{
+	  std::cout << "Expected FORM, found: " << form << std::endl;
+	  std::exit( 0 );
+	}
+    }
 
   if( tgenSize == total )
     {
@@ -1013,18 +1043,12 @@ unsigned int trn::readMFAM( std::istream &file, const std::string &debugString )
 {
   std::string dbgStr = debugString + "MFAM: ";
   unsigned int mfamSize;
-  std::string form;
-  std::string type;
-  unsigned int total = readFormHeader( file, form, mfamSize, type );
+  unsigned int total = readFormHeader( file, "MFAM", mfamSize );
   mfamSize += 8;
-  if( form != "FORM" || type != "MFAM" )
-    {
-      std::cout << "Expected Form of type MFAM: " << type << std::endl;
-      exit( 0 );
-    }
   std::cout << debugString << "Found MFAM form" << std::endl;
 
   unsigned int size;
+  std::string type;
   total += readRecordHeader( file, type, size );
   if( type != "DATA" )
     {
@@ -1062,23 +1086,13 @@ unsigned int trn::readMFAM( std::istream &file, const std::string &debugString )
 unsigned int trn::readMGRP( std::istream &file, const std::string &debugString )
 {
   std::string dbgStr = debugString + "MGRP: ";
-  unsigned int total = 0;
-
-  std::string form;
   unsigned int mgrpSize;
-  std::string type;
-
-  total += readFormHeader( file, form, mgrpSize, type );
+  unsigned int total = readFormHeader( file, "MGRP", mgrpSize );
   mgrpSize += 8;
-  if( form != "FORM" || type != "MGRP" )
-    {
-      std::cout << "Expected Form of type MGRP: " << type << std::endl;
-      exit( 0 );
-    }
   std::cout << debugString << "Found MGRP form" << std::endl;
 
-
   unsigned int size;
+  std::string form, type;
   total += readFormHeader( file, form, size, type );
   size += 8;
   if( form != "FORM" )
@@ -1114,17 +1128,9 @@ unsigned int trn::readMGRP( std::istream &file, const std::string &debugString )
 unsigned int trn::readLYRS( std::istream &file, const std::string &debugString )
 {
   std::string dbgStr = debugString + "LYRS: ";
-  std::string form;
   unsigned int lyrsSize;
-  std::string type;
-
-  unsigned int total = readFormHeader( file, form, lyrsSize, type );
+  unsigned int total = readFormHeader( file, "LYRS", lyrsSize );
   lyrsSize += 8;
-  if( form != "FORM" || type != "LYRS" )
-    {
-      std::cout << "Expected Form of type LYRS: " << type << std::endl;
-      exit( 0 );
-    }
   std::cout << debugString << "Found LYRS form" << std::endl;
 
   while( total < lyrsSize )
