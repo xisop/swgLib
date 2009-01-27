@@ -190,6 +190,13 @@ unsigned int trnLayer::read( std::istream &file,
 	      total += newAffector->read( file, dbgStr );
 	      affectorList.push_back( newAffector );
             }
+          else if( "ARIV" == type )
+            {
+              boost::shared_ptr<affectorRiver>
+                newAffector( new affectorRiver );
+	      total += newAffector->read( file, dbgStr );
+	      affectorList.push_back( newAffector );
+            }
           else if( "AROA" == type )
             {
               boost::shared_ptr<affectorRoad>
