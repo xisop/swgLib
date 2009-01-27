@@ -369,8 +369,14 @@ unsigned int boundaryRectangle::read( std::istream &file,
   std::cout << debugString << "Found BREC form" << std::endl;
 
   unsigned int size;
-  total += base::readFormHeader( file, "0003", size );
-  std::cout << dbgStr << "Found 0003 form" << std::endl;
+  std::string form, brecType;
+  total += base::readFormHeader( file, form, size, brecType );
+  if( "FORM" != form )
+    {
+      std::cout << "Expected FORM" << std::endl;
+      std::exit( 0 );
+    }
+  std::cout << dbgStr << "Found " << brecType << " form" << std::endl;
 
   total += readIHDR( file, dbgStr );
 
@@ -383,36 +389,39 @@ unsigned int boundaryRectangle::read( std::istream &file,
     }
   std::cout << dbgStr << "Found DATA record" << std::endl;
 
-  total += base::read( file, x1 );
-  total += base::read( file, y1 );
-  total += base::read( file, x2 );
-  total += base::read( file, y2 );
-
-  std::cout << dbgStr << x1 << ", "
-            << y1 << "..."
-            << x2 << ", "
-            << y2 << std::endl;
-
-  total += base::read( file, u2 );
-  std::cout << dbgStr << u2 << std::endl;
-
-  total += base::read( file, u3 );
-  std::cout << dbgStr << u3 << std::endl;
-
-  total += base::read( file, u4 );
-  std::cout << dbgStr << u4 << std::endl;
-
-  total += base::read( file, u5 );
-  std::cout << dbgStr << u5 << std::endl;
-
-  total += base::read( file, u6 );
-  std::cout << dbgStr << u6 << std::endl;
-
-  total += base::read( file, u7 );
-  std::cout << dbgStr << u7 << std::endl;
-
-  total += base::read( file, name2 );
-  std::cout << dbgStr << "'" << name2 << "'" << std::endl;
+      total += base::read( file, x1 );
+      total += base::read( file, y1 );
+      total += base::read( file, x2 );
+      total += base::read( file, y2 );
+      
+      std::cout << dbgStr << x1 << ", "
+		<< y1 << "..."
+		<< x2 << ", "
+		<< y2 << std::endl;
+      
+      total += base::read( file, u2 );
+      std::cout << dbgStr << u2 << std::endl;
+      
+      total += base::read( file, u3 );
+      std::cout << dbgStr << u3 << std::endl;
+      
+  if( "0003" == brecType )
+    {
+      total += base::read( file, u4 );
+      std::cout << dbgStr << u4 << std::endl;
+      
+      total += base::read( file, u5 );
+      std::cout << dbgStr << u5 << std::endl;
+      
+      total += base::read( file, u6 );
+      std::cout << dbgStr << u6 << std::endl;
+      
+      total += base::read( file, u7 );
+      std::cout << dbgStr << u7 << std::endl;
+      
+      total += base::read( file, name2 );
+      std::cout << dbgStr << "'" << name2 << "'" << std::endl;
+    }
 
   if( brecSize == total )
     {
