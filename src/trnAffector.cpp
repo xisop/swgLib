@@ -860,6 +860,72 @@ unsigned int affectorHeightTerrace::read( std::istream &file,
 
 
 //*****************************************************************************
+// ARIV
+affectorRiver::affectorRiver()
+{
+}
+
+affectorRiver::~affectorRiver()
+{
+}
+
+void affectorRiver::apply( const float &currentX,
+			  const float &currentY,
+			  float &data) const
+{
+}
+
+unsigned int affectorRiver::read( std::istream &file,
+				 const std::string &debugString )
+{
+  std::string dbgStr = debugString + "ARIV: ";
+  unsigned int aroaSize;
+  unsigned int total = base::readFormHeader( file, "ARIV", aroaSize );
+  aroaSize += 8;
+  std::cout << debugString << "Found ARIV form" << std::endl;
+  unsigned int size;
+  std::string form, type;
+  total += base::readFormHeader( file, form, size, type );
+  if( form != "FORM" || type != "0005" )
+    {
+      std::cout << "Expected Form of type 0005: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << dbgStr << "Found 0005 form" << std::endl;
+
+  total += readIHDR( file, dbgStr );
+
+  // DATA form
+  total += base::readFormHeader( file, "DATA", size );
+  std::cout << dbgStr << "Found DATA form" << std::endl;
+
+#if 0
+  total += base::read( file, u2 );
+  total += base::read( file, u3 );
+  total += base::read( file, u4 );
+  total += base::read( file, u5 );
+
+  std::cout << dbgStr << u2 << std::endl;
+  std::cout << dbgStr << u3 << std::endl;
+  std::cout << dbgStr << u4 << std::endl;
+  std::cout << dbgStr << u5 << std::endl;
+#endif
+  total += base::readUnknown( file, aroaSize-total );
+
+  if( aroaSize == total )
+    {
+      std::cout << debugString << "Finished reading AROA" << std::endl;
+    }
+  else
+    {
+      std::cout << "Failed in reading AROA" << std::endl;
+      std::cout << "Read " << total << " out of " << aroaSize
+		<< std::endl;
+    }
+  return total;
+}
+
+//*****************************************************************************
 // AROA
 affectorRoad::affectorRoad()
 {

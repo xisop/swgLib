@@ -296,6 +296,21 @@ namespace ml
     float u3;
   };
 
+  // ARIV
+  class affectorRiver : public trnAffector
+  {
+  public:
+    affectorRiver();
+    ~affectorRiver();
+    void apply( const float &currentX,
+		const float &currentY,
+		float &data) const;
+    unsigned int read( std::istream &file,
+		       const std::string &debugString );
+  protected:
+    
+  };
+
   // AROA
   class affectorRoad : public trnAffector
   {
