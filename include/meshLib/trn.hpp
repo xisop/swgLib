@@ -97,7 +97,8 @@ namespace ml
     unsigned int readMGRP( std::istream &file, const std::string & );
     unsigned int readLYRS( std::istream &file, const std::string & );
     unsigned int readFFAM( std::istream &file, const std::string & );
-    unsigned int readRFAM( std::istream &file, const std::string & );
+    unsigned int readRFAM( std::istream &file, const std::string &rgrpType,
+			   const std::string & );
     unsigned int readEFAM( std::istream &file, const std::string & );
     unsigned int readMFAM( std::istream &file, const std::string & );
     unsigned int readMFRC( std::istream &file, const std::string & );
