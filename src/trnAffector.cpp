@@ -164,12 +164,12 @@ unsigned int affectorColorRampFractal::read( std::istream &file,
   total += base::read( file, u2 );
   total += base::read( file, u3 );
 
-  std::cout << dbgStr << u2 << " ";
-  std::cout << u3 << " ";
-
   total += base::read( file, name2 );
   base::fixSlash( name2 );
-  std::cout << "'" << name2 << "'" << std::endl;
+
+  std::cout << dbgStr << u2 << " "
+	    << u3 << " "
+	    << "'" << name2 << "'" << std::endl;
 
   if( acrfSize == total )
     {
@@ -299,13 +299,12 @@ unsigned int affectorEnvironment::read( std::istream &file,
   std::cout << dbgStr << "Found DATA record" << std::endl;
 
   total += base::read( file, u2 );
-  std::cout << dbgStr << u2 << " ";
-
   total += base::read( file, u3 );
-  std::cout << u3 << " ";
-
   total += base::read( file, u4 );
-  std::cout << u4 << std::endl;
+
+  std::cout << dbgStr << u2 << " "
+	    << u3 << " "
+	    << u4 << std::endl;
     
   if( aenvSize == total )
     {
@@ -402,21 +401,16 @@ unsigned int affectorRadialFarConstant::read( std::istream &file,
   unsigned int afdfSize;
   unsigned int total = base::readFormHeader( file, "AFDF", afdfSize );
   afdfSize += 8;
-  std::cout << "Found AFDF form" << std::endl;
+  std::cout << debugString << "Found AFDF form" << std::endl;
 
   unsigned int size;
-  std::string form, type;
-  total += base::readFormHeader( file, form, size, type );
-  if( form != "FORM" || type != "0002" )
-    {
-      std::cout << "Expected Form of type 0002: " << type << std::endl;
-      exit( 0 );
-    }
+  total += base::readFormHeader( file, "0002", size );
   std::cout << dbgStr << "Found 0002 form" << std::endl;
 
   total += readIHDR( file, dbgStr );
 
   // DATA record
+  std::string type;
   total += base::readRecordHeader( file, type, size );
   if( type != "DATA" )
     {
@@ -426,18 +420,15 @@ unsigned int affectorRadialFarConstant::read( std::istream &file,
   std::cout << dbgStr << "Found DATA record" << std::endl;
 
   total += base::read( file, u2 );
-  std::cout << dbgStr << u2 << std::endl;;
-
   total += base::read( file, u3 );
-  std::cout << dbgStr << u3 << std::endl;;
-
   total += base::read( file, u4 );
-  std::cout << dbgStr << u4 << std::endl;;
-
   total += base::read( file, u5 );
-  std::cout << dbgStr << u5 << std::endl;;
-
   total += base::read( file, u6 );
+
+  std::cout << dbgStr << u2 << std::endl;;
+  std::cout << dbgStr << u3 << std::endl;;
+  std::cout << dbgStr << u4 << std::endl;;
+  std::cout << dbgStr << u5 << std::endl;;
   std::cout << dbgStr << u6 << std::endl;;
 
   if( afdfSize == total )
@@ -622,18 +613,13 @@ affectorFloraNonCollidableConstant::read( std::istream &file,
   std::cout << debugString << "Found AFSN form" << std::endl;
 
   unsigned int size;
-  std::string form, type;
-  total += base::readFormHeader( file, form, size, type );
-  if( form != "FORM" || type != "0004" )
-    {
-      std::cout << "Expected Form of type 0004: " << type << std::endl;
-      exit( 0 );
-    }
+  total += base::readFormHeader( file, "0004", size );
   std::cout << dbgStr << "Found 0004 form" << std::endl;
 
   total += readIHDR( file, dbgStr );
 
   // DATA record
+  std::string type;
   total += base::readRecordHeader( file, type, size );
   if( type != "DATA" )
     {
@@ -642,17 +628,17 @@ affectorFloraNonCollidableConstant::read( std::istream &file,
     }
   std::cout << dbgStr << "Found DATA record" << std::endl;
 
-  std::cout << dbgStr << u2 << std::endl;
-  std::cout << dbgStr << u3 << std::endl;
-  std::cout << dbgStr << u4 << std::endl;
-  std::cout << dbgStr << u5 << std::endl;
-  std::cout << dbgStr << u6 << std::endl;
-
   total += base::read( file, u2 );
   total += base::read( file, u3 );
   total += base::read( file, u4 );
   total += base::read( file, u5 );
   total += base::read( file, u6 );
+
+  std::cout << dbgStr << u2 << std::endl;
+  std::cout << dbgStr << u3 << std::endl;
+  std::cout << dbgStr << u4 << std::endl;
+  std::cout << dbgStr << u5 << std::endl;
+  std::cout << dbgStr << u6 << std::endl;
 
   if( afsnSize == total )
     {
