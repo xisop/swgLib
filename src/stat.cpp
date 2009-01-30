@@ -35,15 +35,15 @@
 
 using namespace ml;
 
-stat::stat()
+ml::stat::stat()
 {
 }
 
-stat::~stat()
+ml::stat::~stat()
 {
 }
 
-unsigned int stat::readSTAT( std::istream &file )
+unsigned int ml::stat::readSTAT( std::istream &file )
 {
     unsigned int statSize;
     unsigned int total = readFormHeader( file, "STAT", statSize );
@@ -92,7 +92,7 @@ unsigned int stat::readSTAT( std::istream &file )
     return total;
 }
 
-void stat::print() const
+void ml::stat::print() const
 {
 }
 
