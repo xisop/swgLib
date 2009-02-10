@@ -42,9 +42,9 @@ namespace ml
   public:
     base() {};
     virtual ~base() {};
-    virtual bool isRightType( std::istream &file ){ return false; }
+    virtual bool isRightType(){ return false; }
     static std::string getType( std::istream &file );
-    unsigned int readBASE( std::istream &file ){ return 0; }
+    unsigned int readBASE(){ return 0; }
     virtual bool canWrite() const { return false; }
 
     static unsigned int readUnknown( std::istream &file,
