@@ -36,18 +36,6 @@ trnBoundary::~trnBoundary()
 {
 }
 
-bool trnBoundary::isInBounds( const float &X,
-			      const float &Y ) const
-{
-  return false;
-}
-
-unsigned int trnBoundary::read( std::istream &file,
-				const std::string &debugString )
-{
-  return 0;
-}
-
 unsigned int trnBoundary::readIHDR( std::istream &file,
 				    const std::string &debugString )
 {
