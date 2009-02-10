@@ -3,7 +3,7 @@ MESH_LIB = ../lib
 MESH_BIN = ../bin
 
 
-CFLAG = -I$(MESH_INC) -g -Wall -pedantic -fPIC
+CFLAG = -I$(MESH_INC) -g -pipe -W -Wall -pedantic -fPIC
 LIBS =
 
 OBJS = \
