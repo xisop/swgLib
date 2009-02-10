@@ -409,8 +409,8 @@ unsigned int ckat::readQCHN( std::istream &file )
 	total += base::read( file, z );
 	total += base::read( file, w );
 
-	//quat newQuat( x/128.0, y/128.0, z/128.0, w/128.0 );
-	quat newQuat( x/255.0, y/255.0, z/255.0, w/255.0 );
+	//quat newQuat( x/128.0f, y/128.0f, z/128.0f, w/128.0f );
+	quat newQuat( x/255.0f, y/255.0f, z/255.0f, w/255.0f );
 	newKey.quatMap[bone] = newQuat;
 #if 0
 	std::cout << "Bone " << bone << ": ";
