@@ -286,7 +286,7 @@ boundaryCircle::~boundaryCircle()
 bool boundaryCircle::isInBounds( const float &X,
 				 const float &Y ) const
 {
-  return ( radiusSqrd > (std::pow( X-x, 2.0 ) + std::pow( Y-y, 2.0 )));
+  return ( radiusSqrd > (std::pow( X-x, 2.0f ) + std::pow( Y-y, 2.0f )));
 }
 
 unsigned int boundaryCircle::read( std::istream &file,
@@ -320,7 +320,7 @@ unsigned int boundaryCircle::read( std::istream &file,
             << y << std::endl;
 
   total += base::read( file, radius );
-  radiusSqrd = std::pow( radius, 2.0 );
+  radiusSqrd = std::pow( radius, 2.0f );
   std::cout << dbgStr << "Radius: " << radius << std::endl;
 
   total += base::read( file, featherType );
