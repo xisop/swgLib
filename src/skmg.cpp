@@ -1146,7 +1146,7 @@ unsigned int skmg::readTWHD( std::istream &file )
     std::cout << "Found " << type << std::endl;
 
     std::cout << "Num points: " << numPoints << std::endl;
-    numVertexWeights.reserve( numPoints );
+    numVertexWeights.resize( numPoints );
     unsigned int vertexWeight;
     for( unsigned int i = 0; i < numPoints; ++i )
       {

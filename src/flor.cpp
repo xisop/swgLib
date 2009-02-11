@@ -95,7 +95,7 @@ unsigned int flor::readVERT( std::istream &file )
   total += read( file, numVerts );
   std::cout << "Number of vertices: " << numVerts << std::endl;
 
-  vertex.reserve( numVerts * 3 );
+  vertex.resize( numVerts * 3 );
   unsigned int numBytes = numVerts * 3 * sizeof( float );
   file.read( (char *)&(vertex[0]), numBytes );
   total += numBytes;
