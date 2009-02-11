@@ -40,9 +40,15 @@ namespace ml
     trnBoundary();
     virtual ~trnBoundary();
 
-    virtual bool isInBounds( const float &X, const float &Y ) const = 0;
+    virtual bool isInBounds( const float &X, const float &Y ) const
+    {
+      return false;
+    }
     virtual unsigned int read( std::istream &file,
-			       const std::string &debugString ) = 0;
+			       const std::string &debugString )
+    {
+      return 0;
+    }
     unsigned int readIHDR( std::istream &file,
 			   const std::string &debugString );
 
