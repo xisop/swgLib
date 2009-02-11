@@ -37,6 +37,8 @@ namespace ml
     box(){};
     
     unsigned int readBOX( std::istream &file );
+    unsigned int writeBOX( std::ostream &file ) const;
+
     void getCorner1( float &x, float &y, float &z ) const
     {
       x = x1;

@@ -69,44 +69,26 @@ unsigned int box::readBOX( std::istream &file )
   return total;
 }
 
-#if 0
-unsigned int box::writeBOX( std::ostream &file )
+unsigned int box::writeBOX( std::ostream &file ) const
 {
-  unsigned int size;
-  std::string type;
+  std::streampos recordStart = file.tellp();
 
-  unsigned int total = base::readRecordHeader( file, type, size );
-  size += 8; // Size of header
-  if( type != "BOX " )
-    {
-      std::cout << "Expected record of type BOX: " << type << std::endl;
-      exit( 0 );
-    }
-  std::cout << "Found BOX record" << std::endl;
+  unsigned int total = base::writeRecordHeader( file, "BOX ", 0 );
 
   // Read center and radius of bounding sphere
-  total += base::read( file, x1 );
-  total += base::read( file, y1 );
-  total += base::read( file, z1 );
-  total += base::read( file, x2 );
-  total += base::read( file, y2 );
-  total += base::read( file, z2 );
+  total += base::write( file, x1 );
+  total += base::write( file, y1 );
+  total += base::write( file, z1 );
+  total += base::write( file, x2 );
+  total += base::write( file, y2 );
+  total += base::write( file, z2 );
 
-  std::cout << "Bounding box corners: " << std::endl;
-  std::cout << "   " << x1 << ", " << y1 << ", " << z1 << std::endl;
-  std::cout << "   " << x2 << ", " << y2 << ", " << z2 << std::endl;
+  std::streampos recordEnd = file.tellp();
 
-  if( total == size )
-    {
-      std::cout << "Finished reading BOX." << std::endl;
-    }
-  else
-    {
-      std::cout << "Error reading BOX!" << std::endl;
-      std::cout << "Read " << total << " out of " << size
-		<< std::endl;
-    }
+  file.seekp( recordStart );
+  base::writeRecordHeader( file, "BOX ", total );
+
+  file.seekp( recordEnd );
 
   return total;
 }
-#endif
