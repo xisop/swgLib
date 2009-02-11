@@ -25,6 +25,7 @@
 
 #include <fstream>
 #include <istream>
+#include <ostream>
 #include <string>
 #include <vector>
 
@@ -50,14 +51,22 @@ namespace ml
     static unsigned int readUnknown( std::istream &file,
 				     const unsigned int size );
 
-    static unsigned int read( std::istream &file, char &data );
-    static unsigned int read( std::istream &file, unsigned char &data );
-    static unsigned int read( std::istream &file, short &data );
-    static unsigned int read( std::istream &file, unsigned short &data );
-    static unsigned int read( std::istream &file, int &data );
-    static unsigned int read( std::istream &file, unsigned int &data );
-    static unsigned int read( std::istream &file, float &data );
-    static unsigned int read( std::istream &file, std::string &data );
+    static unsigned int read(  std::istream &file, char &data );
+    static unsigned int write( std::ostream &file, const char &data );
+    static unsigned int read(  std::istream &file, unsigned char &data );
+    static unsigned int write( std::ostream &file, const unsigned char &data );
+    static unsigned int read(  std::istream &file, short &data );
+    static unsigned int write( std::ostream &file, const short &data );
+    static unsigned int read(  std::istream &file, unsigned short &data );
+    static unsigned int write( std::ostream &file, const unsigned short &data );
+    static unsigned int read(  std::istream &file, int &data );
+    static unsigned int write( std::ostream &file, const int &data );
+    static unsigned int read(  std::istream &file, unsigned int &data );
+    static unsigned int write( std::ostream &file, const unsigned int &data );
+    static unsigned int read(  std::istream &file, float &data );
+    static unsigned int write( std::ostream &file, const float &data );
+    static unsigned int read(  std::istream &file, std::string &data );
+    static unsigned int write( std::ostream &file, const std::string &data );
 
     static void peekHeader( std::istream &file,
 			    std::string &form,

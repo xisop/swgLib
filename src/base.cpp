@@ -225,11 +225,21 @@ unsigned int base::readUnknown( std::istream &file,
   return size;
 }
 
+// **************************************************
+
 unsigned int base::read( std::istream &file, char &data )
 {
   file.read( &data, sizeof( char ) );
   return sizeof( char );
 }
+
+unsigned int base::write( std::ostream &file, const char &data )
+{
+  file.write( &data, sizeof( char ) );
+  return sizeof( char );
+}
+
+// **************************************************
 
 unsigned int base::read( std::istream &file, unsigned char &data )
 {
@@ -237,11 +247,27 @@ unsigned int base::read( std::istream &file, unsigned char &data )
   return sizeof( unsigned char );
 }
 
+unsigned int base::write( std::ostream &file, const unsigned char &data )
+{
+  file.write( (char*)&data, sizeof( unsigned char ) );
+  return sizeof( unsigned char );
+}
+
+// **************************************************
+
 unsigned int base::read( std::istream &file, short &data )
 {
   file.read( (char*)&data, sizeof( short ) );
   return sizeof( short );
 }
+
+unsigned int base::write( std::ostream &file, const short &data )
+{
+  file.write( (char*)&data, sizeof( short ) );
+  return sizeof( short );
+}
+
+// **************************************************
 
 unsigned int base::read( std::istream &file, unsigned short &data )
 {
@@ -249,11 +275,27 @@ unsigned int base::read( std::istream &file, unsigned short &data )
   return sizeof( unsigned short );
 }
 
+unsigned int base::write( std::ostream &file, const unsigned short &data )
+{
+  file.write( (char*)&data, sizeof( unsigned short ) );
+  return sizeof( unsigned short );
+}
+
+// **************************************************
+
 unsigned int base::read( std::istream &file, int &data )
 {
   file.read( (char*)&data, sizeof( int ) );
   return sizeof( int );
 }
+
+unsigned int base::write( std::ostream &file, const int &data )
+{
+  file.write( (char*)&data, sizeof( int ) );
+  return sizeof( int );
+}
+
+// **************************************************
 
 unsigned int base::read( std::istream &file, unsigned int &data )
 {
@@ -261,19 +303,43 @@ unsigned int base::read( std::istream &file, unsigned int &data )
   return sizeof( unsigned int );
 }
 
+unsigned int base::write( std::ostream &file, const unsigned int &data )
+{
+  file.write( (char*)&data, sizeof( unsigned int ) );
+  return sizeof( unsigned int );
+}
+
+// **************************************************
+
 unsigned int base::read( std::istream &file, float &data )
 {
   file.read( (char*)&data, sizeof( float ) );
   return sizeof( float );
 }
 
+unsigned int base::write( std::ostream &file, const float &data )
+{
+  file.write( (char*)&data, sizeof( float ) );
+  return sizeof( float );
+}
+
+// **************************************************
+
 unsigned int base::read( std::istream &file, std::string &data )
 {
   char temp[255];
   file.getline( temp, 255, 0 );
   data = temp;
-  return (data.size() + 1);
+  return( data.size() + 1 );
 }
+
+unsigned int base::write( std::ostream &file, const std::string &data )
+{
+  file.write( data.c_str(), data.size()+1 );
+  return( data.size() + 1 );
+}
+
+// **************************************************
 
 bool base::fixSlash( std::string &filename )
 {
