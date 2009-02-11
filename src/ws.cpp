@@ -158,21 +158,21 @@ unsigned int ws::createWS( std::ofstream &outfile )
 
     // Write form with dummy size
     unsigned int form0Position = outfile.tellp();
-    writeFormHeader( outfile, "FORM", 0, "WSNP" );
+    writeFormHeader( outfile, 0, "WSNP" );
     // Write form with dummy size
     unsigned int form1Position = outfile.tellp();
-    writeFormHeader( outfile, "FORM", 0, "0001" );
+    writeFormHeader( outfile, 0, "0001" );
 
     total += writeNODS( outfile );
     total += writeOTNL( outfile );
 
     // Rewrite form with proper size.
     outfile.seekp( form1Position, std::ios_base::beg );
-    total += writeFormHeader( outfile, "FORM", total+4, "0001" );
+    total += writeFormHeader( outfile, total+4, "0001" );
 
     // Rewrite form with proper size.
     outfile.seekp( form0Position, std::ios_base::beg );
-    total += writeFormHeader( outfile, "FORM", total+4, "WSNP" );
+    total += writeFormHeader( outfile, total+4, "WSNP" );
 
     return total;
 }
@@ -239,7 +239,7 @@ unsigned int ws::writeNODS( std::ofstream &outfile )
     //FORM NODS
     // Write form with dummy size
     unsigned int form0Position = outfile.tellp();
-    writeFormHeader( outfile, "FORM", 0, "NODS" );
+    writeFormHeader( outfile, 0, "NODS" );
 
     // Start writing nodes from beginning of list
     currentNode = nodes.begin();
@@ -252,7 +252,7 @@ unsigned int ws::writeNODS( std::ofstream &outfile )
 
     //FORM NODS
     outfile.seekp( form0Position, std::ios_base::beg );
-    total += writeFormHeader( outfile, "FORM", total+4, "NODS" );
+    total += writeFormHeader( outfile, total+4, "NODS" );
 
     outfile.seekp( nodeEndPosition, std::ios_base::beg );
 
@@ -304,12 +304,12 @@ unsigned int ws::writeNODE( std::ofstream &outfile )
     // FORM NODE
     // Write form with dummy size
     unsigned int form0Position = outfile.tellp();
-    writeFormHeader( outfile, "FORM", 0, "NODE" );
+    writeFormHeader( outfile, 0, "NODE" );
 
     // FORM 0000
     // Write form with dummy size
     unsigned int form1Position = outfile.tellp();
-    writeFormHeader( outfile, "FORM", 0, "0000" );
+    writeFormHeader( outfile, 0, "0000" );
 
     total += writeRecordHeader( outfile, "DATA", 52 );
     currentNode->print();
@@ -330,12 +330,12 @@ unsigned int ws::writeNODE( std::ofstream &outfile )
     // FORM 0000
     // Rewrite form with proper size.
     outfile.seekp( form1Position, std::ios_base::beg );
-    total += writeFormHeader( outfile, "FORM", total+4, "0000" );
+    total += writeFormHeader( outfile, total+4, "0000" );
 
     // FORM NODE
     // Rewrite form with proper size.
     outfile.seekp( form0Position, std::ios_base::beg );
-    total += writeFormHeader( outfile, "FORM", total+4, "NODE" );
+    total += writeFormHeader( outfile, total+4, "NODE" );
 
     outfile.seekp( nodeEndPosition, std::ios_base::beg );
 

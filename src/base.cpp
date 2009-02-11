@@ -92,7 +92,7 @@ unsigned char base::readBigEndian( std::istream &file,
   return size;
 }
 
-unsigned char base::writeBigEndian( std::ofstream &file,
+unsigned char base::writeBigEndian( std::ostream &file,
 				    const unsigned int &size,
 				    char *buffer
 				    )
@@ -120,6 +120,8 @@ void base::peekHeader( std::istream &file,
   file.seekg( position, std::ios_base::beg );
 }
 
+// **************************************************
+
 unsigned int base::readRecordHeader( std::istream &file,
 				     std::string &type,
 				     unsigned int &size )
@@ -133,7 +135,7 @@ unsigned int base::readRecordHeader( std::istream &file,
   return 8;
 }
 
-unsigned int base::writeRecordHeader( std::ofstream &file,
+unsigned int base::writeRecordHeader( std::ostream &file,
 				      const std::string &type,
 				      const unsigned int &size )
 {
@@ -142,6 +144,8 @@ unsigned int base::writeRecordHeader( std::ofstream &file,
 
   return 8;
 }
+
+// **************************************************
 
 unsigned int base::readFormHeader( std::istream &file,
 				   std::string &form,
@@ -158,6 +162,19 @@ unsigned int base::readFormHeader( std::istream &file,
 
   return total;
 }
+
+unsigned int base::writeFormHeader( std::ostream &file,
+				    const unsigned int &size,
+				    const std::string &type )
+{
+  file.write( "FORM", 4 );
+  writeBigEndian( file, sizeof( size ), (char *)&size );
+  file.write( type.c_str(), 4 );
+
+  return 12;
+}
+
+// **************************************************
 
 unsigned int base::readFormHeader( std::istream &file,
 				   const std::string &expectedType,
@@ -184,21 +201,6 @@ unsigned int base::readFormHeader( std::istream &file,
       exit( 0 );
     }
 
-  return total;
-}
-
-unsigned int base::writeFormHeader( std::ofstream &file,
-				    const std::string &form,
-				    const unsigned int &size,
-				    const std::string &type )
-{
-  unsigned total = writeRecordHeader( file,
-				      form,
-				      size );
-  
-  file.write( type.c_str(), 4 );
-  total += 4;
-  
   return total;
 }
 

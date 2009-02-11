@@ -65,10 +65,10 @@ unsigned int ilf::createILF( std::istream &infile, std::ofstream &outfile )
 
     // Write form with dummy size
     unsigned int form0Position = outfile.tellp();
-    writeFormHeader( outfile, "FORM", 0, "INLY" );
+    writeFormHeader( outfile, 0, "INLY" );
     // Write form with dummy size
     unsigned int form1Position = outfile.tellp();
-    writeFormHeader( outfile, "FORM", 0, "0000" );
+    writeFormHeader( outfile, 0, "0000" );
 
     while( !infile.eof() )
     {
@@ -119,11 +119,11 @@ unsigned int ilf::createILF( std::istream &infile, std::ofstream &outfile )
 
     // Rewrite form with proper size.
     outfile.seekp( form1Position, std::ios_base::beg );
-    total += writeFormHeader( outfile, "FORM", total+4, "0000" );
+    total += writeFormHeader( outfile, total+4, "0000" );
 
     // Rewrite form with proper size.
     outfile.seekp( form0Position, std::ios_base::beg );
-    total += writeFormHeader( outfile, "FORM", total+4, "INLY" );
+    total += writeFormHeader( outfile, total+4, "INLY" );
 
     return total;
 }

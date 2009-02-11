@@ -81,9 +81,8 @@ namespace ml
     static unsigned int readFormHeader( std::istream &file,
 					const std::string &expectedType,
 					unsigned int &size );
-    
-    static unsigned int writeFormHeader( std::ofstream &file,
-					 const std::string &form,
+
+    static unsigned int writeFormHeader( std::ostream &file,
 					 const unsigned int &size,
 					 const std::string &type );
     
@@ -91,7 +90,7 @@ namespace ml
 					  std::string &type,
 					  unsigned int &size);
     
-    static unsigned int writeRecordHeader( std::ofstream &file,
+    static unsigned int writeRecordHeader( std::ostream &file,
 					   const std::string &type,
 					   const unsigned int &size);
     
@@ -99,7 +98,7 @@ namespace ml
 					const unsigned int &size,
 					char *buffer);
     
-    static unsigned char writeBigEndian( std::ofstream &file,
+    static unsigned char writeBigEndian( std::ostream &file,
 					 const unsigned int &size,
 					 char *buffer);
     

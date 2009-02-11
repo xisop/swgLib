@@ -69,3 +69,44 @@ unsigned int box::readBOX( std::istream &file )
   return total;
 }
 
+#if 0
+unsigned int box::writeBOX( std::ostream &file )
+{
+  unsigned int size;
+  std::string type;
+
+  unsigned int total = base::readRecordHeader( file, type, size );
+  size += 8; // Size of header
+  if( type != "BOX " )
+    {
+      std::cout << "Expected record of type BOX: " << type << std::endl;
+      exit( 0 );
+    }
+  std::cout << "Found BOX record" << std::endl;
+
+  // Read center and radius of bounding sphere
+  total += base::read( file, x1 );
+  total += base::read( file, y1 );
+  total += base::read( file, z1 );
+  total += base::read( file, x2 );
+  total += base::read( file, y2 );
+  total += base::read( file, z2 );
+
+  std::cout << "Bounding box corners: " << std::endl;
+  std::cout << "   " << x1 << ", " << y1 << ", " << z1 << std::endl;
+  std::cout << "   " << x2 << ", " << y2 << ", " << z2 << std::endl;
+
+  if( total == size )
+    {
+      std::cout << "Finished reading BOX." << std::endl;
+    }
+  else
+    {
+      std::cout << "Error reading BOX!" << std::endl;
+      std::cout << "Read " << total << " out of " << size
+		<< std::endl;
+    }
+
+  return total;
+}
+#endif
