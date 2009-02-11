@@ -48,8 +48,8 @@ unsigned int sht::readSHT( std::istream &file, std::string path )
   normalMapUnit = UINT_MAX;
   texTag.clear();
   coordMapping.clear();
-  texTag.reserve( 10 );
-  coordMapping.reserve( 10 );
+  texTag.resize( 10 );
+  coordMapping.resize( 10 );
   for( unsigned int i = 0; i < 10; ++i )
     {
       coordMapping[i] = UINT_MAX;
