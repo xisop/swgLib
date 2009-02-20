@@ -273,7 +273,8 @@ void swts::print() const
 {
   for( unsigned int i = 0; i < textureList.size(); ++i )
     {
-      std::cout << i << ": " << textureList[i] << std::endl;
+      std::cout << i << ": " << textureTagList[i] << " "
+		<< textureList[i] << std::endl;
     }
 }
 
