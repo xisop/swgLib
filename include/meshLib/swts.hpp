@@ -59,6 +59,11 @@ namespace ml
 			 std::string &textureFilename,
 			 std::string &textureTag ) const;
 
+    float getTime() const
+    {
+      return deltaTime;
+    }
+
     void print() const;
 
   protected:
