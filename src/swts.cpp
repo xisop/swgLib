@@ -130,13 +130,8 @@ unsigned int swts::readDTST( std::istream &file )
 	std::cout << "Expected size of 8: " << size << std::endl;
       }
 
-    unsigned int x;
-    total += base::read( file, x );
-    std::cout << x << std::endl;
-
-    float y;
-    total += base::read( file, y );
-    std::cout << y << std::endl;
+    total += base::read( file, numTextures );
+    total += base::read( file, deltaTime );
 
     if( dtstSize == total )
     {
