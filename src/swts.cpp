@@ -133,6 +133,8 @@ unsigned int swts::readDTST( std::istream &file )
     total += base::read( file, numTextures );
     total += base::read( file, deltaTime );
 
+    sequenceTime = deltaTime * numTextures;
+
     if( dtstSize == total )
     {
         std::cout << "Finished reading DTST" << std::endl;

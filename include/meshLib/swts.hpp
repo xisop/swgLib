@@ -59,7 +59,12 @@ namespace ml
 			 std::string &textureFilename,
 			 std::string &textureTag ) const;
 
-    float getTime() const
+    float getSequenceTime() const
+    {
+      return sequenceTime;
+    }
+
+    float getDeltaTime() const
     {
       return deltaTime;
     }
@@ -74,6 +79,7 @@ namespace ml
 
   private:
     unsigned int numTextures;
+    float sequenceTime;
     float deltaTime;
     std::string shaderFilename;
     std::vector<std::string> textureList;
