@@ -133,6 +133,9 @@ unsigned int swts::readDTST( std::istream &file )
     total += base::read( file, numTextures );
     total += base::read( file, deltaTime );
 
+    std::cout << "Num textures: " << numTextures << std::endl;
+    std::cout << "Delta time: " << deltaTime << std::endl;
+
     sequenceTime = deltaTime * numTextures;
 
     if( dtstSize == total )
@@ -172,17 +175,17 @@ unsigned int swts::readDRTS( std::istream &file )
 	std::cout << "Expected size of 12: " << size << std::endl;
       }
 
-    unsigned int x;
-    total += base::read( file, x );
-    std::cout << x << std::endl;
+    float u1;
 
-    float y;
-    total += base::read( file, y );
-    std::cout << y << std::endl;
+    total += base::read( file, numTextures );
+    total += base::read( file, deltaTime );
+    total += base::read( file, u1 );
 
-    float z;
-    total += base::read( file, z );
-    std::cout << z << std::endl;
+    std::cout << "Num textures: " << numTextures << std::endl;
+    std::cout << "Delta time: " << deltaTime << std::endl;
+    std::cout << "Unknown: " << u1 << std::endl;
+
+    sequenceTime = deltaTime * numTextures;
 
     if( dtstSize == total )
     {
