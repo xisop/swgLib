@@ -471,41 +471,23 @@ unsigned int peft::readCLRR( std::istream &file )
     total += base::read( file, u1 );
     std::cout << u1 << std::endl;
 
-    total += base::read( file, u1 );
-    std::cout << u1 << std::endl;
+    char u2, u3, u4, u5;
+    total += base::read( file, u2 );
+    total += base::read( file, u3 );
+    total += base::read( file, u4 );
+    total += base::read( file, u5 );
 
-    total += base::read( file, u1 );
-    std::cout << u1 << std::endl;
+    std::cout << (int)u2 << ", "
+	      << (int)u3 << ", "
+	      << (int)u4 << ", "
+	      << (int)u5 << std::endl;
 
-    total += base::read( file, u1 );
-    std::cout << u1 << std::endl;
-
-    total += base::read( file, u1 );
-    std::cout << u1 << std::endl;
-
-    total += base::read( file, u1 );
-    std::cout << u1 << std::endl;
-
-    total += base::read( file, u1 );
-    std::cout << u1 << std::endl;
-
-    total += base::read( file, u1 );
-    std::cout << u1 << std::endl;
-
-    total += base::read( file, u1 );
-    std::cout << u1 << std::endl;
-
-    total += base::read( file, u1 );
-    std::cout << u1 << std::endl;
-
-    total += base::read( file, u1 );
-    std::cout << u1 << std::endl;
-
-    total += base::read( file, u1 );
-    std::cout << u1 << std::endl;
-
-    total += base::read( file, u1 );
-    std::cout << u1 << std::endl;
+    unsigned int numFloats = u5/sizeof( float );
+    for( unsigned int i = 0; i < numFloats; ++i )
+      {
+	total += base::read( file, u1 );
+	std::cout << u1 << std::endl;
+      }
 
     if( clrrSize == total )
     {
