@@ -25,17 +25,18 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cstdlib>
 
 #include <meshLib/msh.hpp>
 
+#if 0
 #include <osg/Geometry>
 #include <osg/Geode>
 #include <osg/Group>
 #include <osgDB/WriteFile>
 #include <osg/Texture2D>
 #include <osgDB/ReadFile>
-
-
+#endif
 
 int main( int argc, char **argv )
 {
