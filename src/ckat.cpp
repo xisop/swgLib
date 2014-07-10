@@ -26,6 +26,7 @@
 
 #include <iostream>
 #include <cstdlib>
+#include <bitset>
 
 using namespace ml;
 
@@ -118,13 +119,15 @@ unsigned int ckat::readINFO( std::istream &file, const unsigned short &depth )
     total += base::read( file, numCHNL );
     total += base::read( file, numSTRN );
     
-    std::cout << std::string( depth, ' ' ) << std::fixed << u1 << "\n"
-	      << std::string( depth, ' ' ) << u2 << "\n"
-	      << std::string( depth, ' ' ) << "Num XFIN: " << numXFIN << "\n"
-	      << std::string( depth, ' ' ) << "Num QCHN: " << numQCHN << "\n"
-	      << std::string( depth, ' ' ) << "Num SROT: " << numSROT << "\n"
-	      << std::string( depth, ' ' ) << "Num CHNL: " << numCHNL << "\n"
-	      << std::string( depth, ' ' ) << "Num STRN: " << numSTRN
+    std::cout << std::string( depth+1, ' ' )
+	      << "Duration?: " << std::fixed << u1 << "\n"
+	      << std::string( depth+1, ' ' )
+	      << "Max bone index: " << u2 << "\n"
+	      << std::string( depth+1, ' ' ) << "Num XFIN: " << numXFIN << "\n"
+	      << std::string( depth+1, ' ' ) << "Num QCHN: " << numQCHN << "\n"
+	      << std::string( depth+1, ' ' ) << "Num SROT: " << numSROT << "\n"
+	      << std::string( depth+1, ' ' ) << "Num CHNL: " << numCHNL << "\n"
+	      << std::string( depth+1, ' ' ) << "Num STRN: " << numSTRN
 	      << std::endl;
 
     if( infoSize == total )
@@ -306,7 +309,7 @@ unsigned int ckat::readSTRN( std::istream &file, const unsigned short &depth )
     for( unsigned int i = 0; i < numSTRN; ++i )
       {
 	total += base::read( file, u1 );
-	std::cout << std::string( depth, ' ' ) << u1 << std::endl;
+	std::cout << std::string( depth+1, ' ' ) << u1 << std::endl;
       }
 
     total += readUnknown( file, strnSize - total );
@@ -343,30 +346,32 @@ unsigned int ckat::readXFIN( std::istream &file, const unsigned short &depth )
 
     std::string name;
     total += base::read( file, name );
-    std::cout << std::string( depth, ' ' ) << "Name: " << name << std::endl;
+    std::cout << std::string( depth+1, ' ' ) << "Name: " << name << std::endl;
 
     char u2;
     total += base::read( file, u2 );
-    std::cout << std::string( depth, ' ' ) << (int)u2 << std::endl;
+    std::cout << std::string( depth+1, ' ' )
+	      << "Bone group: " << (int)u2 << std::endl;
 
     total += base::read( file, u2 );
-    std::cout << std::string( depth, ' ' ) << (int)u2 << std::endl;
+    std::cout << std::string( depth+1, ' ' )
+	      << "Bone number: " << (int)u2 << std::endl;
 
     total += base::read( file, u2 );
-    std::cout << std::string( depth, ' ' ) << (int)u2 << std::endl;
+    std::cout << std::string( depth+1, ' ' ) << (int)u2 << std::endl;
 
     total += base::read( file, u2 );
-    std::cout << std::string( depth, ' ' ) << (int)u2 << std::endl;
+    std::cout << std::string( depth+1, ' ' ) << (int)u2 << std::endl;
 
     short u1;
     total += base::read( file, u1 );
-    std::cout << std::string( depth, ' ' ) << "STRN index: " << u1 << std::endl;
+    std::cout << std::string( depth+1, ' ' ) << "STRN index: " << u1 << std::endl;
 
     total += base::read( file, u1 );
-    std::cout << std::string( depth, ' ' ) << "STRN index: " << u1 << std::endl;
+    std::cout << std::string( depth+1, ' ' ) << "STRN index: " << u1 << std::endl;
 
     total += base::read( file, u1 );
-    std::cout << std::string( depth, ' ' ) << "STRN index: " << u1 << std::endl;
+    std::cout << std::string( depth+1, ' ' ) << "STRN index: " << u1 << std::endl;
 
     if( xfinSize == total )
     {
@@ -398,22 +403,24 @@ unsigned int ckat::readQCHN( std::istream &file, const unsigned short &depth )
 	      << "Found " << type << ": " << qchnSize-8 << " bytes"
 	      << std::endl;
 
-    unsigned char num;
+    unsigned short num;
     total += base::read( file, num );
-    std::cout << std::string( depth, ' ' ) << (int)num << std::endl;
+    std::cout << std::string( depth+1, ' ' )
+	      << "Num bones: " << (int)num << std::endl;
 
     unsigned char u1;
+    /*
     total += base::read( file, u1 );
-    std::cout << std::string( depth, ' ' ) << (int)u1 << std::endl;
+    std::cout << std::string( depth+1, ' ' ) << (int)u1 << std::endl;
+    */
+    total += base::read( file, u1 );
+    std::cout << std::string( depth+1, ' ' ) << std::bitset<8>(u1) << std::endl;
 
     total += base::read( file, u1 );
-    std::cout << std::string( depth, ' ' ) << (int)u1 << std::endl;
+    std::cout << std::string( depth+1, ' ' ) << std::bitset<8>(u1) << std::endl;
 
     total += base::read( file, u1 );
-    std::cout << std::string( depth, ' ' ) << (int)u1 << std::endl;
-
-    total += base::read( file, u1 );
-    std::cout << std::string( depth, ' ' ) << (int)u1 << std::endl;
+    std::cout << std::string( depth+1, ' ' ) << std::bitset<8>(u1) << std::endl;
 
     keyframe newKey;
 
@@ -431,7 +438,7 @@ unsigned int ckat::readQCHN( std::istream &file, const unsigned short &depth )
 	quat newQuat( x/255.0f, y/255.0f, z/255.0f, w/255.0f );
 	newKey.quatMap[bone] = newQuat;
 #if 0
-	std::cout << std::string( depth, ' ' ) << "Bone " << bone << ": ";
+	std::cout << std::string( depth+1, ' ' ) << "Bone " << bone << ": ";
 #if 1
 	std::cout << (x/255.0) << ", ";
 	std::cout << (y/255.0) << ", ";
@@ -444,7 +451,7 @@ unsigned int ckat::readQCHN( std::istream &file, const unsigned short &depth )
 	std::cout << (w/128.0) << std::endl;
 #endif
 #else
-	std::cout << std::string( depth, ' ' ) << "Bone ";
+	std::cout << std::string( depth+1, ' ' ) << "Bone ";
 	std::cout.width( 2 );
 	std::cout << bone << ": ";
 	std::cout.width( 4 );
