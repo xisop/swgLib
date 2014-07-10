@@ -37,13 +37,15 @@ ckat::~ckat()
 {
 }
 
-unsigned int ckat::readCKAT( std::istream &file, std::string path )
+unsigned int ckat::readCKAT( std::istream &file, std::string path,
+			     const unsigned short &depth )
 {
   basePath = path;
   unsigned int ckatSize;
   unsigned int total = readFormHeader( file, "CKAT", ckatSize );
   ckatSize += 8;
-  std::cout << "Found CKAT form"
+  std::cout << std::string( depth, ' ' )
+	    << "Found CKAT form"
 	    << ": " << ckatSize-12 << " bytes"
 	    << std::endl;
 
@@ -59,28 +61,29 @@ unsigned int ckat::readCKAT( std::istream &file, std::string path )
 	    << ": " << size-4 << " bytes"
 	    << std::endl;
 
-  total += readINFO( file );
-  total += readXFRM( file );
+  total += readINFO( file, depth+1 );
+  total += readXFRM( file, depth+1 );
   if( numQCHN > 0 )
     {
-      total += readAROT( file );
+      total += readAROT( file, depth+1 );
     }
-  total += readSROT( file );
-  total += readATRN( file );
-  total += readSTRN( file );
+  total += readSROT( file, depth+1 );
+  total += readATRN( file, depth+1 );
+  total += readSTRN( file, depth+1 );
   if( ckatSize > total )
     {
-      total += readMSGS( file );
+      total += readMSGS( file, depth+1 );
     }
 
   if( ckatSize > total )
     {
-      total += readLOCT( file );
+      total += readLOCT( file, depth+1 );
     }
 
   if( ckatSize == total )
     {
-      std::cout << "Finished reading CKAT" << std::endl;
+      std::cout  << std::string( depth, ' ' )
+		 << "Finished reading CKAT" << std::endl;
     }
   else
     {
@@ -92,7 +95,7 @@ unsigned int ckat::readCKAT( std::istream &file, std::string path )
   return total;
 }
 
-unsigned int ckat::readINFO( std::istream &file )
+unsigned int ckat::readINFO( std::istream &file, const unsigned short &depth )
 {
     std::string type;
     unsigned int infoSize;
@@ -103,7 +106,7 @@ unsigned int ckat::readINFO( std::istream &file )
         std::cout << "Expected record of type INFO: " << type << std::endl;
         exit( 0 );
     }
-    std::cout << "Found " << type << std::endl;
+    std::cout << std::string( depth, ' ' ) << "Found " << type << std::endl;
 
     float u1;
     short u2;
@@ -115,17 +118,19 @@ unsigned int ckat::readINFO( std::istream &file )
     total += base::read( file, numCHNL );
     total += base::read( file, numSTRN );
     
-    std::cout << std::fixed << u1 << std::endl;
-	      std::cout << u2 << std::endl;
-	      std::cout << "Num XFIN: " << numXFIN << std::endl;
-	      std::cout << "Num QCHN: " << numQCHN << std::endl;
-	      std::cout << "Num SROT: " << numSROT << std::endl;
-	      std::cout << "Num CHNL: " << numCHNL << std::endl;
-	      std::cout << "Num STRN: " << numSTRN << std::endl;
+    std::cout << std::string( depth, ' ' ) << std::fixed << u1 << "\n"
+	      << std::string( depth, ' ' ) << u2 << "\n"
+	      << std::string( depth, ' ' ) << "Num XFIN: " << numXFIN << "\n"
+	      << std::string( depth, ' ' ) << "Num QCHN: " << numQCHN << "\n"
+	      << std::string( depth, ' ' ) << "Num SROT: " << numSROT << "\n"
+	      << std::string( depth, ' ' ) << "Num CHNL: " << numCHNL << "\n"
+	      << std::string( depth, ' ' ) << "Num STRN: " << numSTRN
+	      << std::endl;
 
     if( infoSize == total )
     {
-        std::cout << "Finished reading INFO" << std::endl;
+        std::cout << std::string( depth, ' ' )
+		  << "Finished reading INFO" << std::endl;
     }
     else
     {
@@ -137,25 +142,27 @@ unsigned int ckat::readINFO( std::istream &file )
     return total;
 }
 
-unsigned int ckat::readXFRM( std::istream &file )
+unsigned int ckat::readXFRM( std::istream &file, const unsigned short &depth )
 {
     std::string type;
     unsigned int xfrmSize;
     unsigned int total = readFormHeader( file, "XFRM", xfrmSize );
     xfrmSize += 8;
-    std::cout << "Found XFRM form"
+    std::cout << std::string( depth, ' ' ) 
+	      << "Found XFRM form"
 	      << ": " << xfrmSize-12 << " bytes"
 	      << std::endl;
 
     for( unsigned short i = 0; i < numXFIN; ++i )
       {
-	total += readXFIN( file );
+	total += readXFIN( file, depth+1 );
       }
     //total += readUnknown( file, xfrmSize - total );
     
     if( xfrmSize == total )
     {
-        std::cout << "Finished reading XFRM" << std::endl;
+        std::cout << std::string( depth, ' ' )
+		  << "Finished reading XFRM" << std::endl;
     }
     else
     {
@@ -167,24 +174,26 @@ unsigned int ckat::readXFRM( std::istream &file )
     return total;
 }
 
-unsigned int ckat::readAROT( std::istream &file )
+unsigned int ckat::readAROT( std::istream &file, const unsigned short &depth )
 {
     std::string type;
     unsigned int arotSize;
     unsigned int total = readFormHeader( file, "AROT", arotSize );
     arotSize += 8;
-    std::cout << "Found AROT form"
+    std::cout << std::string( depth, ' ' ) 
+	      << "Found AROT form"
 	      << ": " << arotSize-12 << " bytes"
 	      << std::endl;
 
     for( unsigned short i = 0; i < numQCHN; ++i )
       {
-	total += readQCHN( file );
+	total += readQCHN( file, depth+1 );
       }
     
     if( arotSize == total )
     {
-        std::cout << "Finished reading AROT" << std::endl;
+        std::cout << std::string( depth, ' ' ) 
+		  << "Finished reading AROT" << std::endl;
     }
     else
     {
@@ -196,7 +205,7 @@ unsigned int ckat::readAROT( std::istream &file )
     return total;
 }
 
-unsigned int ckat::readSROT( std::istream &file )
+unsigned int ckat::readSROT( std::istream &file, const unsigned short &depth )
 {
     std::string type;
     unsigned int srotSize;
@@ -207,14 +216,15 @@ unsigned int ckat::readSROT( std::istream &file )
         std::cout << "Expected record of type SROT: " << type << std::endl;
         exit( 0 );
     }
-    std::cout << "Found " << type << ": " << srotSize-8 << " bytes"
+    std::cout << std::string( depth, ' ' ) 
+	      << "Found " << type << ": " << srotSize-8 << " bytes"
 	      << std::endl;
 
     for( unsigned int i = 0; i < numSROT; ++i )
       {
 	unsigned char u3;
 	total += base::read( file, u3 );
-	std::cout << (u3/255.0) << " ";
+	std::cout << std::string( depth, ' ' ) << (u3/255.0) << " ";
 
 	total += base::read( file, u3 );
 	std::cout << (u3/255.0) << " ";
@@ -232,7 +242,8 @@ unsigned int ckat::readSROT( std::istream &file )
 
     if( srotSize == total )
     {
-        std::cout << "Finished reading SROT" << std::endl;
+        std::cout << std::string( depth, ' ' )
+		  << "Finished reading SROT" << std::endl;
     }
     else
     {
@@ -244,25 +255,27 @@ unsigned int ckat::readSROT( std::istream &file )
     return total;
 }
 
-unsigned int ckat::readATRN( std::istream &file )
+unsigned int ckat::readATRN( std::istream &file, const unsigned short &depth )
 {
     std::string type;
     unsigned int atrnSize;
     unsigned int total = readFormHeader( file, "ATRN", atrnSize );
     atrnSize += 8;
-    std::cout << "Found ATRN form"
+    std::cout << std::string( depth, ' ' )
+	      << "Found ATRN form"
 	      << ": " << atrnSize-12 << " bytes"
 	      << std::endl;
 
     for( unsigned int i = 0; i < numCHNL; ++i )
       {
-	total += readCHNL( file );
+	total += readCHNL( file, depth+1 );
       }
     //total += readUnknown( file, atrnSize - total );
     
     if( atrnSize == total )
     {
-        std::cout << "Finished reading ATRN" << std::endl;
+        std::cout << std::string( depth, ' ' )
+		  << "Finished reading ATRN" << std::endl;
     }
     else
     {
@@ -274,7 +287,7 @@ unsigned int ckat::readATRN( std::istream &file )
     return total;
 }
 
-unsigned int ckat::readSTRN( std::istream &file )
+unsigned int ckat::readSTRN( std::istream &file, const unsigned short &depth )
 {
     std::string type;
     unsigned int strnSize;
@@ -285,21 +298,23 @@ unsigned int ckat::readSTRN( std::istream &file )
         std::cout << "Expected record of type STRN: " << type << std::endl;
         exit( 0 );
     }
-    std::cout << "Found " << type << ": " << strnSize-8 << " bytes"
+    std::cout << std::string( depth, ' ' ) 
+	      << "Found " << type << ": " << strnSize-8 << " bytes"
 	      << std::endl;
 
     float u1;
     for( unsigned int i = 0; i < numSTRN; ++i )
       {
 	total += base::read( file, u1 );
-	std::cout << u1 << std::endl;
+	std::cout << std::string( depth, ' ' ) << u1 << std::endl;
       }
 
     total += readUnknown( file, strnSize - total );
 
     if( strnSize == total )
     {
-        std::cout << "Finished reading STRN" << std::endl;
+        std::cout << std::string( depth, ' ' )
+		  << "Finished reading STRN" << std::endl;
     }
     else
     {
@@ -311,7 +326,7 @@ unsigned int ckat::readSTRN( std::istream &file )
     return total;
 }
 
-unsigned int ckat::readXFIN( std::istream &file )
+unsigned int ckat::readXFIN( std::istream &file, const unsigned short &depth )
 {
     std::string type;
     unsigned int xfinSize;
@@ -322,39 +337,41 @@ unsigned int ckat::readXFIN( std::istream &file )
         std::cout << "Expected record of type XFIN: " << type << std::endl;
         exit( 0 );
     }
-    std::cout << "Found " << type << ": " << xfinSize-8 << " bytes"
+    std::cout << std::string( depth, ' ' )
+	      << "Found " << type << ": " << xfinSize-8 << " bytes"
 	      << std::endl;
 
     std::string name;
     total += base::read( file, name );
-    std::cout << "Name: " << name << std::endl;
+    std::cout << std::string( depth, ' ' ) << "Name: " << name << std::endl;
 
     char u2;
     total += base::read( file, u2 );
-    std::cout << (int)u2 << std::endl;
+    std::cout << std::string( depth, ' ' ) << (int)u2 << std::endl;
 
     total += base::read( file, u2 );
-    std::cout << (int)u2 << std::endl;
+    std::cout << std::string( depth, ' ' ) << (int)u2 << std::endl;
 
     total += base::read( file, u2 );
-    std::cout << (int)u2 << std::endl;
+    std::cout << std::string( depth, ' ' ) << (int)u2 << std::endl;
 
     total += base::read( file, u2 );
-    std::cout << (int)u2 << std::endl;
+    std::cout << std::string( depth, ' ' ) << (int)u2 << std::endl;
 
     short u1;
     total += base::read( file, u1 );
-    std::cout << "STRN index: " << u1 << std::endl;
+    std::cout << std::string( depth, ' ' ) << "STRN index: " << u1 << std::endl;
 
     total += base::read( file, u1 );
-    std::cout << "STRN index: " << u1 << std::endl;
+    std::cout << std::string( depth, ' ' ) << "STRN index: " << u1 << std::endl;
 
     total += base::read( file, u1 );
-    std::cout << "STRN index: " << u1 << std::endl;
+    std::cout << std::string( depth, ' ' ) << "STRN index: " << u1 << std::endl;
 
     if( xfinSize == total )
     {
-        std::cout << "Finished reading XFIN" << std::endl;
+        std::cout << std::string( depth, ' ' )
+		  << "Finished reading XFIN" << std::endl;
     }
     else
     {
@@ -366,7 +383,7 @@ unsigned int ckat::readXFIN( std::istream &file )
     return total;
 }
 
-unsigned int ckat::readQCHN( std::istream &file )
+unsigned int ckat::readQCHN( std::istream &file, const unsigned short &depth )
 {
     std::string type;
     unsigned int qchnSize;
@@ -377,25 +394,26 @@ unsigned int ckat::readQCHN( std::istream &file )
         std::cout << "Expected record of type QCHN: " << type << std::endl;
         exit( 0 );
     }
-    std::cout << "Found " << type << ": " << qchnSize-8 << " bytes"
+    std::cout << std::string( depth, ' ' )
+	      << "Found " << type << ": " << qchnSize-8 << " bytes"
 	      << std::endl;
 
     unsigned char num;
     total += base::read( file, num );
-    std::cout << (int)num << std::endl;
+    std::cout << std::string( depth, ' ' ) << (int)num << std::endl;
 
     unsigned char u1;
     total += base::read( file, u1 );
-    std::cout << (int)u1 << std::endl;
+    std::cout << std::string( depth, ' ' ) << (int)u1 << std::endl;
 
     total += base::read( file, u1 );
-    std::cout << (int)u1 << std::endl;
+    std::cout << std::string( depth, ' ' ) << (int)u1 << std::endl;
 
     total += base::read( file, u1 );
-    std::cout << (int)u1 << std::endl;
+    std::cout << std::string( depth, ' ' ) << (int)u1 << std::endl;
 
     total += base::read( file, u1 );
-    std::cout << (int)u1 << std::endl;
+    std::cout << std::string( depth, ' ' ) << (int)u1 << std::endl;
 
     keyframe newKey;
 
@@ -413,7 +431,7 @@ unsigned int ckat::readQCHN( std::istream &file )
 	quat newQuat( x/255.0f, y/255.0f, z/255.0f, w/255.0f );
 	newKey.quatMap[bone] = newQuat;
 #if 0
-	std::cout << "Bone " << bone << ": ";
+	std::cout << std::string( depth, ' ' ) << "Bone " << bone << ": ";
 #if 1
 	std::cout << (x/255.0) << ", ";
 	std::cout << (y/255.0) << ", ";
@@ -426,7 +444,7 @@ unsigned int ckat::readQCHN( std::istream &file )
 	std::cout << (w/128.0) << std::endl;
 #endif
 #else
-	std::cout << "Bone ";
+	std::cout << std::string( depth, ' ' ) << "Bone ";
 	std::cout.width( 2 );
 	std::cout << bone << ": ";
 	std::cout.width( 4 );
@@ -445,7 +463,8 @@ unsigned int ckat::readQCHN( std::istream &file )
 
     if( qchnSize == total )
     {
-        std::cout << "Finished reading QCHN" << std::endl;
+        std::cout << std::string( depth, ' ' )
+		  << "Finished reading QCHN" << std::endl;
     }
     else
     {
@@ -457,13 +476,14 @@ unsigned int ckat::readQCHN( std::istream &file )
     return total;
 }
 
-unsigned int ckat::readMSGS( std::istream &file )
+unsigned int ckat::readMSGS( std::istream &file, const unsigned short &depth )
 {
     std::string type;
     unsigned int msgsSize;
     unsigned int total = readFormHeader( file, "MSGS", msgsSize );
     msgsSize += 8;
-    std::cout << "Found MSGS form"
+    std::cout << std::string( depth, ' ' )
+	      << "Found MSGS form"
 	      << ": " << msgsSize-12 << " bytes"
 	      << std::endl;
 
@@ -475,21 +495,24 @@ unsigned int ckat::readMSGS( std::istream &file )
         std::cout << "Expected record of type INFO: " << type << std::endl;
         exit( 0 );
     }
-    std::cout << "Found " << type << ": " << infoSize-8 << " bytes"
+    std::cout << std::string( depth, ' ' )
+	      << "Found " << type << ": " << infoSize-8 << " bytes"
 	      << std::endl;
 
     unsigned short numMESG;
     total += base::read( file, numMESG );
-    std::cout << "Num MESG: " << numMESG << std::endl;
+    std::cout << std::string( depth, ' ' )
+	      << "Num MESG: " << numMESG << std::endl;
 
     for( unsigned short i = 0; i < numMESG; ++i )
       {
-	total += readMESG( file );
+	total += readMESG( file, depth+1 );
       }
 
     if( msgsSize == total )
     {
-        std::cout << "Finished reading MSGS" << std::endl;
+        std::cout << std::string( depth, ' ' )
+		  << "Finished reading MSGS" << std::endl;
     }
     else
     {
@@ -501,7 +524,7 @@ unsigned int ckat::readMSGS( std::istream &file )
     return total;
 }
 
-unsigned int ckat::readMESG( std::istream &file )
+unsigned int ckat::readMESG( std::istream &file, const unsigned short &depth )
 {
     std::string type;
     unsigned int mesgSize;
@@ -512,12 +535,13 @@ unsigned int ckat::readMESG( std::istream &file )
         std::cout << "Expected record of type MESG: " << type << std::endl;
         exit( 0 );
     }
-    std::cout << "Found " << type << ": " << mesgSize-8 << " bytes"
+    std::cout << std::string( depth, ' ' )
+	      << "Found " << type << ": " << mesgSize-8 << " bytes"
 	      << std::endl;
 
     unsigned short u1;
     total += base::read( file, u1 );
-    std::cout << u1 << " ";
+    std::cout << std::string( depth, ' ' ) << u1 << " ";
 
     std::string name;
     total += base::read( file, name );
@@ -531,7 +555,8 @@ unsigned int ckat::readMESG( std::istream &file )
 
     if( mesgSize == total )
     {
-        std::cout << "Finished reading MESG" << std::endl;
+        std::cout << std::string( depth, ' ' )
+		  << "Finished reading MESG" << std::endl;
     }
     else
     {
@@ -543,7 +568,7 @@ unsigned int ckat::readMESG( std::istream &file )
     return total;
 }
 
-unsigned int ckat::readLOCT( std::istream &file )
+unsigned int ckat::readLOCT( std::istream &file, const unsigned short &depth )
 {
     std::string type;
     unsigned int loctSize;
@@ -554,18 +579,19 @@ unsigned int ckat::readLOCT( std::istream &file )
         std::cout << "Expected record of type LOCT: " << type << std::endl;
         exit( 0 );
     }
-    std::cout << "Found " << type << ": " << loctSize-8 << " bytes"
+    std::cout << std::string( depth, ' ' )
+	      << "Found " << type << ": " << loctSize-8 << " bytes"
 	      << std::endl;
 
     short u1;
     total += base::read( file, u1 );
-    std::cout << u1 << std::endl;
+    std::cout << std::string( depth, ' ' ) << u1 << std::endl;
 
     total += base::read( file, u1 );
-    std::cout << u1 << std::endl;
+    std::cout << std::string( depth, ' ' ) << u1 << std::endl;
 
     total += base::read( file, u1 );
-    std::cout << u1 << std::endl;
+    std::cout << std::string( depth, ' ' ) << u1 << std::endl;
 
     for( unsigned int i = 0; i < 82; ++i )
       {
@@ -574,7 +600,8 @@ unsigned int ckat::readLOCT( std::istream &file )
 
     if( loctSize == total )
     {
-        std::cout << "Finished reading LOCT" << std::endl;
+        std::cout << std::string( depth, ' ' )
+		  << "Finished reading LOCT" << std::endl;
     }
     else
     {
@@ -586,7 +613,7 @@ unsigned int ckat::readLOCT( std::istream &file )
     return total;
 }
 
-unsigned int ckat::readCHNL( std::istream &file )
+unsigned int ckat::readCHNL( std::istream &file, const unsigned short &depth )
 {
     std::string type;
     unsigned int chnlSize;
@@ -597,18 +624,19 @@ unsigned int ckat::readCHNL( std::istream &file )
         std::cout << "Expected record of type CHNL: " << type << std::endl;
         exit( 0 );
     }
-    std::cout << "Found " << type << ": " << chnlSize-8 << " bytes"
+    std::cout << std::string( depth, ' ' )
+	      << "Found " << type << ": " << chnlSize-8 << " bytes"
 	      << std::endl;
 
     unsigned short num;
     total += base::read( file, num );
-    std::cout << "Num: " << num << std::endl;
+    std::cout << std::string( depth, ' ' ) << "Num: " << num << std::endl;
     unsigned char u1;
     short u2;
     for( unsigned int i = 0; i < num; ++i )
       {
 	total += base::read( file, u2 );
-	std::cout << u2 << " ";
+	std::cout << std::string( depth, ' ' ) << u2 << " ";
 
 	total += base::read( file, u1 );
 	std::cout << (u1/255.0) << " ";
@@ -629,7 +657,8 @@ unsigned int ckat::readCHNL( std::istream &file )
 
     if( chnlSize == total )
     {
-        std::cout << "Finished reading CHNL" << std::endl;
+        std::cout << std::string( depth, ' ' )
+		  << "Finished reading CHNL" << std::endl;
     }
     else
     {

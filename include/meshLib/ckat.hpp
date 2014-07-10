@@ -50,21 +50,23 @@ namespace ml
     {
       return isOfType( file, "CKAT" );
     }
-    unsigned int readCKAT( std::istream &file, std::string path="" );
+    unsigned int readCKAT( std::istream &file,
+			   std::string path="",
+			   const unsigned short &depth=0 );
 
   protected:
-    unsigned int readINFO( std::istream &file );
-    unsigned int readXFRM( std::istream &file );
-    unsigned int readAROT( std::istream &file );
-    unsigned int readSROT( std::istream &file );
-    unsigned int readATRN( std::istream &file );
-    unsigned int readSTRN( std::istream &file );
-    unsigned int readXFIN( std::istream &file );
-    unsigned int readQCHN( std::istream &file );
-    unsigned int readCHNL( std::istream &file );
-    unsigned int readMSGS( std::istream &file );
-    unsigned int readMESG( std::istream &file );
-    unsigned int readLOCT( std::istream &file );
+    unsigned int readINFO( std::istream &file, const unsigned short &depth=0 );
+    unsigned int readXFRM( std::istream &file, const unsigned short &depth=0 );
+    unsigned int readAROT( std::istream &file, const unsigned short &depth=0 );
+    unsigned int readSROT( std::istream &file, const unsigned short &depth=0 );
+    unsigned int readATRN( std::istream &file, const unsigned short &depth=0 );
+    unsigned int readSTRN( std::istream &file, const unsigned short &depth=0 );
+    unsigned int readXFIN( std::istream &file, const unsigned short &depth=0 );
+    unsigned int readQCHN( std::istream &file, const unsigned short &depth=0 );
+    unsigned int readCHNL( std::istream &file, const unsigned short &depth=0 );
+    unsigned int readMSGS( std::istream &file, const unsigned short &depth=0 );
+    unsigned int readMESG( std::istream &file, const unsigned short &depth=0 );
+    unsigned int readLOCT( std::istream &file, const unsigned short &depth=0 );
 	
     unsigned short numXFIN;
     unsigned short numQCHN;
