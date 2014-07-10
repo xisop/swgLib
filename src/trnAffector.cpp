@@ -36,14 +36,14 @@ trnAffector::~trnAffector()
 {
 }
 
-void trnAffector::apply( const float &currentX,
-			 const float &currentY,
-			 float &data) const
+void trnAffector::apply( const float &/*currentX*/,
+			 const float &/*currentY*/,
+			 float &/*data*/) const
 {
 }
 
-unsigned int trnAffector::read( std::istream &file,
-				const std::string &debugString )
+unsigned int trnAffector::read( std::istream &/*file*/,
+				const std::string &/*debugString*/ )
 {
   return 0;
 }
@@ -58,9 +58,9 @@ affectorColorConstant::~affectorColorConstant()
 {
 }
 
-void affectorColorConstant::apply( const float &currentX,
-				   const float &currentY,
-				   float &data) const
+void affectorColorConstant::apply( const float &/*currentX*/,
+				   const float &/*currentY*/,
+				   float &/*data*/) const
 {
 }
 
@@ -127,9 +127,9 @@ affectorColorRampFractal::~affectorColorRampFractal()
 {
 }
 
-void affectorColorRampFractal::apply( const float &currentX,
-				      const float &currentY,
-				      float &data) const
+void affectorColorRampFractal::apply( const float &/*currentX*/,
+				      const float &/*currentY*/,
+				      float &/*data*/) const
 {
 }
 
@@ -194,9 +194,9 @@ affectorColorRampHeight::~affectorColorRampHeight()
 {
 }
 
-void affectorColorRampHeight::apply( const float &currentX,
-				     const float &currentY,
-				     float &data) const
+void affectorColorRampHeight::apply( const float &/*currentX*/,
+				     const float &/*currentY*/,
+				     float &/*data*/) const
 {
 }
 
@@ -263,9 +263,9 @@ affectorEnvironment::~affectorEnvironment()
 {
 }
 
-void affectorEnvironment::apply( const float &currentX,
-				 const float &currentY,
-				 float &data) const
+void affectorEnvironment::apply( const float &/*currentX*/,
+				 const float &/*currentY*/,
+				 float &/*data*/) const
 {
 }
 
@@ -329,9 +329,9 @@ affectorExclude::~affectorExclude()
 {
 }
 
-void affectorExclude::apply( const float &currentX,
-			     const float &currentY,
-			     float &data) const
+void affectorExclude::apply( const float &/*currentX*/,
+			     const float &/*currentY*/,
+			     float &/*data*/) const
 {
 }
 
@@ -388,9 +388,9 @@ affectorRadialFarConstant::~affectorRadialFarConstant()
 {
 }
 
-void affectorRadialFarConstant::apply( const float &currentX,
-				       const float &currentY,
-				       float &data) const
+void affectorRadialFarConstant::apply( const float &/*currentX*/,
+				       const float &/*currentY*/,
+				       float &/*data*/) const
 {
 }
 
@@ -454,9 +454,9 @@ affectorRadialConstant::~affectorRadialConstant()
 {
 }
 
-void affectorRadialConstant::apply( const float &currentX,
-				    const float &currentY,
-				    float &data) const
+void affectorRadialConstant::apply( const float &/*currentX*/,
+				    const float &/*currentY*/,
+				    float &/*data*/) const
 {
 }
 
@@ -525,9 +525,9 @@ affectorFloraConstant::~affectorFloraConstant()
 {
 }
 
-void affectorFloraConstant::apply( const float &currentX,
-				   const float &currentY,
-				   float &data) const
+void affectorFloraConstant::apply( const float &/*currentX*/,
+				   const float &/*currentY*/,
+				   float &/*data*/) const
 {
 }
 
@@ -596,9 +596,9 @@ affectorFloraNonCollidableConstant::~affectorFloraNonCollidableConstant()
 {
 }
 
-void affectorFloraNonCollidableConstant::apply( const float &currentX,
-						const float &currentY,
-						float &data) const
+void affectorFloraNonCollidableConstant::apply( const float &/*currentX*/,
+						const float &/*currentY*/,
+						float &/*data*/) const
 {
 }
 
@@ -663,8 +663,8 @@ affectorHeightConstant::~affectorHeightConstant()
 {
 }
 
-void affectorHeightConstant::apply( const float &currentX,
-				    const float &currentY,
+void affectorHeightConstant::apply( const float &/*currentX*/,
+				    const float &/*currentY*/,
 				    float &data) const
 {
   data += height;
@@ -729,8 +729,8 @@ affectorHeightFractal::~affectorHeightFractal()
 {
 }
 
-void affectorHeightFractal::apply( const float &currentX,
-				   const float &currentY,
+void affectorHeightFractal::apply( const float &/*currentX*/,
+				   const float &/*currentY*/,
 				   float &data) const
 {
   data += height;
@@ -802,9 +802,9 @@ affectorHeightTerrace::~affectorHeightTerrace()
 {
 }
 
-void affectorHeightTerrace::apply( const float &currentX,
-				   const float &currentY,
-				   float &data) const
+void affectorHeightTerrace::apply( const float &/*currentX*/,
+				   const float &/*currentY*/,
+				   float &/*data*/) const
 {
 }
 
@@ -869,9 +869,9 @@ affectorRiver::~affectorRiver()
 {
 }
 
-void affectorRiver::apply( const float &currentX,
-			  const float &currentY,
-			  float &data) const
+void affectorRiver::apply( const float &/*currentX*/,
+			  const float &/*currentY*/,
+			  float &/*data*/) const
 {
 }
 
@@ -935,9 +935,9 @@ affectorRoad::~affectorRoad()
 {
 }
 
-void affectorRoad::apply( const float &currentX,
-			  const float &currentY,
-			  float &data) const
+void affectorRoad::apply( const float &/*currentX*/,
+			  const float &/*currentY*/,
+			  float &/*data*/) const
 {
 }
 
@@ -1001,9 +1001,9 @@ affectorShaderConstant::~affectorShaderConstant()
 {
 }
 
-void affectorShaderConstant::apply( const float &currentX,
-				    const float &currentY,
-				    float &data) const
+void affectorShaderConstant::apply( const float &/*currentX*/,
+				    const float &/*currentY*/,
+				    float &/*data*/) const
 {
 }
 
@@ -1070,9 +1070,9 @@ affectorShaderReplace::~affectorShaderReplace()
 {
 }
 
-void affectorShaderReplace::apply( const float &currentX,
-				   const float &currentY,
-				   float &data) const
+void affectorShaderReplace::apply( const float &/*currentX*/,
+				   const float &/*currentY*/,
+				   float &/*data*/) const
 {
 }
 
@@ -1139,9 +1139,9 @@ affectorFilterDirection::~affectorFilterDirection()
 {
 }
 
-void affectorFilterDirection::apply( const float &currentX,
-				     const float &currentY,
-				     float &data) const
+void affectorFilterDirection::apply( const float &/*currentX*/,
+				     const float &/*currentY*/,
+				     float &/*data*/) const
 {
 }
 
@@ -1179,9 +1179,9 @@ affectorFilterFractal::~affectorFilterFractal()
 {
 }
 
-void affectorFilterFractal::apply( const float &currentX,
-				   const float &currentY,
-				   float &data) const
+void affectorFilterFractal::apply( const float &/*currentX*/,
+				   const float &/*currentY*/,
+				   float &/*data*/) const
 {
 }
 
@@ -1259,9 +1259,9 @@ affectorFilterHeight::~affectorFilterHeight()
 {
 }
 
-void affectorFilterHeight::apply( const float &currentX,
-				  const float &currentY,
-				  float &data) const
+void affectorFilterHeight::apply( const float &/*currentX*/,
+				  const float &/*currentY*/,
+				  float &/*data*/) const
 {
 }
 
@@ -1329,9 +1329,9 @@ affectorFilterShader::~affectorFilterShader()
 {
 }
 
-void affectorFilterShader::apply( const float &currentX,
-				  const float &currentY,
-				  float &data) const
+void affectorFilterShader::apply( const float &/*currentX*/,
+				  const float &/*currentY*/,
+				  float &/*data*/) const
 {
 }
 
@@ -1391,9 +1391,9 @@ affectorFilterSlope::~affectorFilterSlope()
 {
 }
 
-void affectorFilterSlope::apply( const float &currentX,
-				 const float &currentY,
-				 float &data) const
+void affectorFilterSlope::apply( const float &/*currentX*/,
+				 const float &/*currentY*/,
+				 float &/*data*/) const
 {
 }
 

@@ -501,7 +501,7 @@ unsigned int skmg::readSKTM( std::istream &file )
     return total;
 }
 
-unsigned int skmg::readTXCI( std::istream &file, psdt &newPsdt )
+unsigned int skmg::readTXCI( std::istream &file, psdt &/*newPsdt*/ )
 {
     std::string type;
     unsigned int txciSize;
@@ -820,7 +820,7 @@ unsigned int skmg::readINFO( std::istream &file )
     return total;
 }
 
-unsigned int skmg::readPRIMINFO( std::istream &file, psdt &newPsdt )
+unsigned int skmg::readPRIMINFO( std::istream &file, psdt &/*newPsdt*/ )
 {
     std::string type;
     unsigned int priminfoSize;
@@ -1016,7 +1016,7 @@ unsigned int skmg::readDOT3( std::istream &file )
     return total;
 }
 
-unsigned int skmg::readDOT3Index( std::istream &file, psdt &newPsdt  )
+unsigned int skmg::readDOT3Index( std::istream &file, psdt &/*newPsdt*/ )
 {
     std::string type;
     unsigned int dot3Size;
@@ -1294,7 +1294,7 @@ unsigned int skmg::readNIDX( std::istream &file, psdt &newPsdt )
     return total;
 }
 
-unsigned int skmg::readVDCL( std::istream &file, psdt &newPsdt )
+unsigned int skmg::readVDCL( std::istream &file, psdt &/*newPsdt*/ )
 {
     std::string type;
     unsigned int vdclSize;

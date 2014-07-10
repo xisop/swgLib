@@ -594,7 +594,7 @@ int readRecord(
 {
     static unsigned int numVerts = 0;
 
-    bool isMainTexture = false;
+    //bool isMainTexture = false;
 
     std::cout << std::endl;
     char buffer[10000];
@@ -741,7 +741,7 @@ int readRecord(
 	    file.read( tempType, 4 );
 	    std::string textureType( tempType );
 
-	    isMainTexture = false;
+	    //isMainTexture = false;
 	    if( "PUKL" == textureType  )
 	    {
 		std::cout << "Specular lookup texture ";
@@ -753,7 +753,7 @@ int readRecord(
 	    else if( "NIAM" == textureType  )
 	    {
 		std::cout << "Main texture ";
-		isMainTexture = true;
+		//isMainTexture = true;
 	    }
 	    else if( "LMRN" == textureType  )
 	    {
