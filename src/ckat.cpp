@@ -120,7 +120,7 @@ unsigned int ckat::readINFO( std::istream &file, const unsigned short &depth )
     total += base::read( file, numSTRN );
     
     std::cout << std::string( depth+1, ' ' )
-	      << "Duration?: " << std::fixed << u1 << "\n"
+	      << "Frames per second?: " << std::fixed << u1 << "\n"
 	      << std::string( depth+1, ' ' )
 	      << "Max bone index: " << u2 << "\n"
 	      << std::string( depth+1, ' ' ) << "Num XFIN: " << numXFIN << "\n"
@@ -351,7 +351,7 @@ unsigned int ckat::readXFIN( std::istream &file, const unsigned short &depth )
     char u2;
     total += base::read( file, u2 );
     std::cout << std::string( depth+1, ' ' )
-	      << "Bone group: " << (int)u2 << std::endl;
+	      << "Bone group?: " << (int)u2 << std::endl;
 
     total += base::read( file, u2 );
     std::cout << std::string( depth+1, ' ' )
@@ -546,19 +546,20 @@ unsigned int ckat::readMESG( std::istream &file, const unsigned short &depth )
 	      << "Found " << type << ": " << mesgSize-8 << " bytes"
 	      << std::endl;
 
-    unsigned short u1;
-    total += base::read( file, u1 );
-    std::cout << std::string( depth, ' ' ) << u1 << " ";
+    unsigned short num;
+    total += base::read( file, num );
+    std::cout << std::string( depth, ' ' ) << "Num: " << num << std::endl;
 
     std::string name;
     total += base::read( file, name );
-    std::cout << name << " ";
+    std::cout << std::string( depth, ' ' ) << name << std::endl;
 
-    total += base::read( file, u1 );
-    std::cout << u1 << " ";
-
-    total += base::read( file, u1 );
-    std::cout << u1 << std::endl;
+    unsigned short u1;
+    for( unsigned i=0; i < num; ++i )
+      {
+	total += base::read( file, u1 );
+	std::cout << std::string( depth, ' ' ) << u1 << std::endl;
+      }
 
     if( mesgSize == total )
     {
@@ -590,20 +591,48 @@ unsigned int ckat::readLOCT( std::istream &file, const unsigned short &depth )
 	      << "Found " << type << ": " << loctSize-8 << " bytes"
 	      << std::endl;
 
-    short u1;
+    unsigned char u1;
     total += base::read( file, u1 );
-    std::cout << std::string( depth, ' ' ) << u1 << std::endl;
-
+    std::cout << std::string( depth, ' ' ) << (int)u1 << std::endl;
     total += base::read( file, u1 );
-    std::cout << std::string( depth, ' ' ) << u1 << std::endl;
-
+    std::cout << std::string( depth, ' ' ) << (int)u1 << std::endl;
     total += base::read( file, u1 );
-    std::cout << std::string( depth, ' ' ) << u1 << std::endl;
+    std::cout << std::string( depth, ' ' ) << (int)u1 << std::endl;
+    total += base::read( file, u1 );
+    std::cout << std::string( depth, ' ' ) << (int)u1 << std::endl;
+    unsigned short num;
+    total += base::read( file, num );
+    std::cout << std::string( depth, ' ' ) << "Num: " << num << std::endl;
+    //total += base::read( file, u1 );
+    //std::cout << std::string( depth, ' ' ) << (int)u1 << std::endl;
 
-    for( unsigned int i = 0; i < 82; ++i )
+#if 1
+    unsigned short u2;
+    float u3;
+    short u4;
+    for( unsigned int i = 0; i < num; ++i )
       {
+	total += base::read( file, u2 );
+	std::cout << std::string( depth, ' ' ) << (int)u2 << " ";
+
+	total += base::read( file, u4 );
+	std::cout << std::string( depth, ' ' ) << u4 << " ";
+
+	total += base::read( file, u4 );
+	std::cout << std::string( depth, ' ' ) << u4 << " ";
+
+	total += base::read( file, u4 );
+	std::cout << std::string( depth, ' ' ) << u4 << " ";
+
+	total += base::read( file, u4 );
+	std::cout << std::string( depth, ' ' ) << u4 << " ";
+
+	total += base::read( file, u3 );
+	std::cout << std::string( depth, ' ' ) << u3 << std::endl;
       }
+#else
     total += readUnknown( file, loctSize - total );
+#endif
 
     if( loctSize == total )
     {
