@@ -1,10 +1,9 @@
+*_s
 iffDump
-iffDump_s
 readLOD
-readLOD_s
 readMSH
-readMSH_s
 readSWG
-readSWG_s
 readTRN
-readTRN_s
+testArchive
+treBuild
+treDump
