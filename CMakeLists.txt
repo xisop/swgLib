@@ -11,6 +11,16 @@ option( BUILD_32BIT  "Build 32-bit instead of 64-bit" OFF)
 option( BUILD_STATIC "Build static libs" OFF)
 option( BUILD_SHARED "Build shared libs" ON)
 
+option( BUILD_SWGLIB "Build swgLib" ON)
+option( BUILD_TRELIB "Build treLib" ON)
+
+if( BUILD_TRELIB )
+  find_package( ZLIB REQUIRED )
+  if( ZLIB_FOUND )
+    include_directories( ${ZLIB_INCLUDE_DIRS} )
+  endif( ZLIB_FOUND )
+endif( BUILD_TRELIB )
+
 if( WIN32 )
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D_WIN32_WINNT=0x0502")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D_SCL_SECURE_NO_WARNINGS")
@@ -48,104 +58,168 @@ set( APPS_DIR "${PROJECT_SOURCE_DIR}/apps" )
 # Library sources                                                              #
 ################################################################################
 
-file( GLOB SWG_HDR "${PROJECT_SOURCE_DIR}/include/swgLib/*.hpp" )
-file( GLOB SWG_SRC "${PROJECT_SOURCE_DIR}/src/swgLib/*.cpp" )
-file( GLOB TRE_HDR "${PROJECT_SOURCE_DIR}/include/treLib/*.hpp" )
-file( GLOB TRE_SRC "${PROJECT_SOURCE_DIR}/src/treLib/*.cpp" )
 
-# Shared libraries
-if( BUILD_SHARED )
+if( BUILD_SWGLIB )
+  file( GLOB SWG_HDR "${PROJECT_SOURCE_DIR}/include/swgLib/*.hpp" )
+  file( GLOB SWG_SRC "${PROJECT_SOURCE_DIR}/src/swgLib/*.cpp" )
+
+  # Shared swgLib
+  if( BUILD_SHARED )
     # Library swgLib
     add_library( swg-shared SHARED ${SWG_HDR} ${SWG_SRC} )
     set_target_properties( swg-shared PROPERTIES OUTPUT_NAME swgLib )
     set_target_properties( swg-shared PROPERTIES CLEAN_DIRECT_OUTPUT 1 )
 
-    # Library treLib
-    add_library( tre-shared SHARED ${TRE_HDR} ${TRE_SRC} )
-    set_target_properties( tre-shared PROPERTIES OUTPUT_NAME treLib )
-    set_target_properties( tre-shared PROPERTIES CLEAN_DIRECT_OUTPUT 1 )
-
     if(BUILD_32BIT)
-        install( TARGETS swg-shared tre-shared
+        install( TARGETS swg-shared
              RUNTIME DESTINATION lib
              LIBRARY DESTINATION lib
              COMPONENT sharedLib )
     else(BUILD_32BIT)
-        install( TARGETS swg-shared tre-shared
+        install( TARGETS swg-shared
              RUNTIME DESTINATION lib64
              LIBRARY DESTINATION lib64
              COMPONENT sharedLib )
     endif(BUILD_32BIT)
-endif( BUILD_SHARED )
+  endif( BUILD_SHARED )
 
-#Static libraries
-if( BUILD_STATIC )
+  #Static libraries
+  if( BUILD_STATIC )
     # Library swgLib
     add_library( swg-static STATIC ${SWG_HDR} ${SWG_SRC} )
 
-    # Library treLib
-    add_library( tre-static STATIC ${TRE_HDR} ${TRE_SRC} )
-
     if( WIN32)
         set_target_properties( swg-static PROPERTIES OUTPUT_NAME swgLib_s )
-        set_target_properties( tre-static PROPERTIES OUTPUT_NAME treLib_s )
     else( WIN32 )
         set_target_properties( swg-static PROPERTIES OUTPUT_NAME swgLib )
-        set_target_properties( tre-static PROPERTIES OUTPUT_NAME treLib )
     endif( WIN32 )
 
     set_target_properties( swg-static PROPERTIES CLEAN_DIRECT_OUTPUT 1 )
-    set_target_properties( tre-static PROPERTIES CLEAN_DIRECT_OUTPUT 1 )
 
     if(BUILD_32BIT)
-        install( TARGETS swg-static tre-static
+        install( TARGETS swg-static
                  ARCHIVE DESTINATION lib
                  COMPONENT staticLib )
     else(BUILD_32BIT)
-        install( TARGETS swg-static tre-static
+        install( TARGETS swg-static
                  ARCHIVE DESTINATION lib64
                  COMPONENT staticLib )
     endif(BUILD_32BIT)
-endif( BUILD_STATIC )
+  endif( BUILD_STATIC )
 
-install( DIRECTORY include/swgLib include/treLib
-         DESTINATION include
-         COMPONENT headers )
+  install( DIRECTORY include/swgLib
+  	   DESTINATION include
+           COMPONENT headers )
+endif( BUILD_SWGLIB )
+
+if( BUILD_TRELIB )
+  file( GLOB TRE_HDR "${PROJECT_SOURCE_DIR}/include/treLib/*.hpp"
+  	     	     "${PROJECT_SOURCE_DIR}/include/md5.h" )
+  file( GLOB TRE_SRC "${PROJECT_SOURCE_DIR}/src/treLib/*.cpp"
+  	     	     "${PROJECT_SOURCE_DIR}/src/md5.c" )
+
+  if( BUILD_SHARED )
+    # Library treLib
+    add_library( tre-shared SHARED ${TRE_HDR} ${TRE_SRC} )
+    set_target_properties( tre-shared PROPERTIES OUTPUT_NAME treLib )
+    set_target_properties( tre-shared PROPERTIES CLEAN_DIRECT_OUTPUT 1 )
+    target_link_libraries( tre-shared ${ZLIB_LIBRARIES} )
+
+    if(BUILD_32BIT)
+        install( TARGETS tre-shared
+             RUNTIME DESTINATION lib
+             LIBRARY DESTINATION lib
+             COMPONENT sharedLib )
+    else(BUILD_32BIT)
+        install( TARGETS tre-shared
+             RUNTIME DESTINATION lib64
+             LIBRARY DESTINATION lib64
+             COMPONENT sharedLib )
+    endif(BUILD_32BIT)
+  endif( BUILD_SHARED )
+
+  #Static libraries
+  if( BUILD_STATIC )
+    # Library treLib
+    add_library( tre-static STATIC ${TRE_HDR} ${TRE_SRC} )
+    target_link_libraries( tre-static ${ZLIB_LIBRARIES} )
+
+    if( WIN32)
+        set_target_properties( tre-static PROPERTIES OUTPUT_NAME treLib_s )
+    else( WIN32 )
+        set_target_properties( tre-static PROPERTIES OUTPUT_NAME treLib )
+    endif( WIN32 )
+
+    set_target_properties( tre-static PROPERTIES CLEAN_DIRECT_OUTPUT 1 )
+
+    if(BUILD_32BIT)
+        install( TARGETS tre-static
+                 ARCHIVE DESTINATION lib
+                 COMPONENT staticLib )
+    else(BUILD_32BIT)
+        install( TARGETS tre-static
+                 ARCHIVE DESTINATION lib64
+                 COMPONENT staticLib )
+    endif(BUILD_32BIT)
+  endif( BUILD_STATIC )
+
+  install( DIRECTORY include/treLib
+  	   DESTINATION include
+           COMPONENT headers )
+
+endif( BUILD_TRELIB )
+
 
 ################################################################################
 # Applications                                                                 #
 ################################################################################
 
 if( BUILD_SHARED )
-  add_executable( iffDump ${APPS_DIR}/iffDump.cpp )
-  target_link_libraries( iffDump swg-shared )
+  if( BUILD_SWGLIB )
+    #swgLib apps
+    add_executable( iffDump ${APPS_DIR}/iffDump.cpp )
+    target_link_libraries( iffDump swg-shared )
 
-  add_executable( readLOD ${APPS_DIR}/readLOD.cpp )
-  target_link_libraries( readLOD swg-shared )
+    add_executable( readLOD ${APPS_DIR}/readLOD.cpp )
+    target_link_libraries( readLOD swg-shared )
 
-  add_executable( readMSH ${APPS_DIR}/readMSH.cpp )
-  target_link_libraries( readMSH swg-shared )
+    add_executable( readMSH ${APPS_DIR}/readMSH.cpp )
+    target_link_libraries( readMSH swg-shared )
 
-  add_executable( readSWG ${APPS_DIR}/readSWG.cpp )
-  target_link_libraries( readSWG swg-shared )
+    add_executable( readSWG ${APPS_DIR}/readSWG.cpp )
+    target_link_libraries( readSWG swg-shared )
 
-  add_executable( readTRN ${APPS_DIR}/readTRN.cpp )
-  target_link_libraries( readTRN swg-shared )
+    add_executable( readTRN ${APPS_DIR}/readTRN.cpp )
+    target_link_libraries( readTRN swg-shared )
+  endif( BUILD_SWGLIB )
+
+  if( BUILD_TRELIB )
+    #treLib apps
+    add_executable( treDump ${APPS_DIR}/treDump.cpp )
+    target_link_libraries( treDump tre-shared )
+  endif( BUILD_TRELIB )
+
 endif( BUILD_SHARED )
 
 if( BUILD_STATIC )
-  add_executable( iffDump_s ${APPS_DIR}/iffDump.cpp )
-  target_link_libraries( iffDump_s swg-static )
+  if( BUILD_SWGLIB )
+    #swgLib apps
+    add_executable( iffDump_s ${APPS_DIR}/iffDump.cpp )
+    target_link_libraries( iffDump_s swg-static )
 
-  add_executable( readLOD_s ${APPS_DIR}/readLOD.cpp )
-  target_link_libraries( readLOD_s swg-shared )
+    add_executable( readLOD_s ${APPS_DIR}/readLOD.cpp )
+    target_link_libraries( readLOD_s swg-shared )
 
-  add_executable( readMSH_s ${APPS_DIR}/readMSH.cpp )
-  target_link_libraries( readMSH_s swg-shared )
+    add_executable( readMSH_s ${APPS_DIR}/readMSH.cpp )
+    target_link_libraries( readMSH_s swg-shared )
 
-  add_executable( readSWG_s ${APPS_DIR}/readSWG.cpp )
-  target_link_libraries( readSWG_s swg-shared )
+    add_executable( readSWG_s ${APPS_DIR}/readSWG.cpp )
+    target_link_libraries( readSWG_s swg-shared )
 
-  add_executable( readTRN_s ${APPS_DIR}/readTRN.cpp )
-  target_link_libraries( readTRN_s swg-shared )
+    add_executable( readTRN_s ${APPS_DIR}/readTRN.cpp )
+    target_link_libraries( readTRN_s swg-shared )
+  endif( BUILD_SWGLIB )
+
+# treLib apps
+
 endif( BUILD_STATIC )
