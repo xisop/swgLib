@@ -40,8 +40,10 @@ if(CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wsign-promo")
   if(BUILD_32BIT)
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32")
+      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32")
   else(BUILD_32BIT)
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m64")
+      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m64")
   endif(BUILD_32BIT)
 endif()
 
@@ -72,12 +74,10 @@ if( BUILD_SWGLIB )
 
     if(BUILD_32BIT)
         install( TARGETS swg-shared
-             RUNTIME DESTINATION lib
              LIBRARY DESTINATION lib
              COMPONENT sharedLib )
     else(BUILD_32BIT)
         install( TARGETS swg-shared
-             RUNTIME DESTINATION lib64
              LIBRARY DESTINATION lib64
              COMPONENT sharedLib )
     endif(BUILD_32BIT)
@@ -127,12 +127,10 @@ if( BUILD_TRELIB )
 
     if(BUILD_32BIT)
         install( TARGETS tre-shared
-             RUNTIME DESTINATION lib
              LIBRARY DESTINATION lib
              COMPONENT sharedLib )
     else(BUILD_32BIT)
         install( TARGETS tre-shared
-             RUNTIME DESTINATION lib64
              LIBRARY DESTINATION lib64
              COMPONENT sharedLib )
     endif(BUILD_32BIT)
