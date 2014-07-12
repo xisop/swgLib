@@ -49,7 +49,9 @@ set( APPS_DIR "${PROJECT_SOURCE_DIR}/apps" )
 ################################################################################
 
 file( GLOB SWG_HDR "${PROJECT_SOURCE_DIR}/include/swgLib/*.hpp" )
-file( GLOB SWG_SRC "${PROJECT_SOURCE_DIR}/src/*.cpp" )
+file( GLOB SWG_SRC "${PROJECT_SOURCE_DIR}/src/swgLib/*.cpp" )
+file( GLOB TRE_HDR "${PROJECT_SOURCE_DIR}/include/treLib/*.hpp" )
+file( GLOB TRE_SRC "${PROJECT_SOURCE_DIR}/src/treLib/*.cpp" )
 
 # Shared libraries
 if( BUILD_SHARED )
@@ -58,13 +60,18 @@ if( BUILD_SHARED )
     set_target_properties( swg-shared PROPERTIES OUTPUT_NAME swgLib )
     set_target_properties( swg-shared PROPERTIES CLEAN_DIRECT_OUTPUT 1 )
 
+    # Library treLib
+    add_library( tre-shared SHARED ${TRE_HDR} ${TRE_SRC} )
+    set_target_properties( tre-shared PROPERTIES OUTPUT_NAME treLib )
+    set_target_properties( tre-shared PROPERTIES CLEAN_DIRECT_OUTPUT 1 )
+
     if(BUILD_32BIT)
-        install( TARGETS swg-shared
+        install( TARGETS swg-shared tre-shared
              RUNTIME DESTINATION lib
              LIBRARY DESTINATION lib
              COMPONENT sharedLib )
     else(BUILD_32BIT)
-        install( TARGETS swg-shared
+        install( TARGETS swg-shared tre-shared
              RUNTIME DESTINATION lib64
              LIBRARY DESTINATION lib64
              COMPONENT sharedLib )
@@ -75,25 +82,33 @@ endif( BUILD_SHARED )
 if( BUILD_STATIC )
     # Library swgLib
     add_library( swg-static STATIC ${SWG_HDR} ${SWG_SRC} )
+
+    # Library treLib
+    add_library( tre-static STATIC ${TRE_HDR} ${TRE_SRC} )
+
     if( WIN32)
         set_target_properties( swg-static PROPERTIES OUTPUT_NAME swgLib_s )
+        set_target_properties( tre-static PROPERTIES OUTPUT_NAME treLib_s )
     else( WIN32 )
         set_target_properties( swg-static PROPERTIES OUTPUT_NAME swgLib )
+        set_target_properties( tre-static PROPERTIES OUTPUT_NAME treLib )
     endif( WIN32 )
+
     set_target_properties( swg-static PROPERTIES CLEAN_DIRECT_OUTPUT 1 )
+    set_target_properties( tre-static PROPERTIES CLEAN_DIRECT_OUTPUT 1 )
 
     if(BUILD_32BIT)
-        install( TARGETS swg-static
+        install( TARGETS swg-static tre-static
                  ARCHIVE DESTINATION lib
                  COMPONENT staticLib )
     else(BUILD_32BIT)
-        install( TARGETS swg-static
+        install( TARGETS swg-static tre-static
                  ARCHIVE DESTINATION lib64
                  COMPONENT staticLib )
     endif(BUILD_32BIT)
 endif( BUILD_STATIC )
 
-install( DIRECTORY include/swgLib
+install( DIRECTORY include/swgLib include/treLib
          DESTINATION include
          COMPONENT headers )
 
