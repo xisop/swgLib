@@ -40,7 +40,6 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
 include_directories( ${PROJECT_SOURCE_DIR}/include )
-include_directories( ${PROJECT_SOURCE_DIR}/include )
 link_directories(    ${PROJECT_SOURCE_DIR}/lib )
 
 set( APPS_DIR "${PROJECT_SOURCE_DIR}/apps" )
@@ -49,7 +48,7 @@ set( APPS_DIR "${PROJECT_SOURCE_DIR}/apps" )
 # Library sources                                                              #
 ################################################################################
 
-file( GLOB SWG_HDR "${PROJECT_SOURCE_DIR}/include/*.hpp" )
+file( GLOB SWG_HDR "${PROJECT_SOURCE_DIR}/include/swgLib/*.hpp" )
 file( GLOB SWG_SRC "${PROJECT_SOURCE_DIR}/src/*.cpp" )
 
 # Shared libraries
@@ -94,7 +93,7 @@ if( BUILD_STATIC )
     endif(BUILD_32BIT)
 endif( BUILD_STATIC )
 
-install( DIRECTORY include
+install( DIRECTORY include/swgLib
          DESTINATION include
          COMPONENT headers )
 
