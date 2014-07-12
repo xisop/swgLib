@@ -195,8 +195,13 @@ if( BUILD_SHARED )
     #treLib apps
     add_executable( treDump ${APPS_DIR}/treDump.cpp )
     target_link_libraries( treDump tre-shared )
-  endif( BUILD_TRELIB )
 
+    add_executable( treBuild ${APPS_DIR}/treBuild.cpp )
+    target_link_libraries( treBuild tre-shared )
+
+    add_executable( testArchive ${APPS_DIR}/testArchive.cpp )
+    target_link_libraries( testArchive tre-shared )
+  endif( BUILD_TRELIB )
 endif( BUILD_SHARED )
 
 if( BUILD_STATIC )
@@ -218,6 +223,16 @@ if( BUILD_STATIC )
     target_link_libraries( readTRN_s swg-shared )
   endif( BUILD_SWGLIB )
 
-# treLib apps
+  if( BUILD_TRELIB )
+    #treLib apps
+    add_executable( treDump_s ${APPS_DIR}/treDump.cpp )
+    target_link_libraries( treDump_s tre-shared )
+
+    add_executable( treBuild_s ${APPS_DIR}/treBuild.cpp )
+    target_link_libraries( treBuild_s tre-shared )
+
+    add_executable( testArchive_s ${APPS_DIR}/testArchive.cpp )
+    target_link_libraries( testArchive_s tre-shared )
+  endif( BUILD_TRELIB )
 
 endif( BUILD_STATIC )
