@@ -40,13 +40,15 @@ eft::~eft()
 {
 }
 
-unsigned int eft::readEFT( std::istream &file, std::string path )
+unsigned int eft::readEFT( std::istream &file, std::string path,
+			   const unsigned short &depth )
 {
   basePath = path;
   unsigned int eftSize;
   unsigned int total = readFormHeader( file, "EFCT", eftSize );
   eftSize += 8;
-  std::cout << "Found EFCT form"
+  std::cout << std::string( depth, ' ' )
+	    << "Found EFCT form"
 	    << ": " << eftSize-12 << " bytes"
 	    << std::endl;
 
@@ -82,12 +84,13 @@ unsigned int eft::readEFT( std::istream &file, std::string path )
 
   for( unsigned short i = 0; i < numIMPL; ++i )
     {
-      total += readIMPL( file );
+      total += readIMPL( file, depth+1 );
     }
 
   if( eftSize == total )
     {
-      std::cout << "Finished reading EFCT" << std::endl;
+      std::cout << std::string( depth, ' ' )
+		<< "Finished reading EFCT" << std::endl;
     }
   else
     {
@@ -99,12 +102,13 @@ unsigned int eft::readEFT( std::istream &file, std::string path )
   return total;
 }
 
-unsigned int eft::readIMPL( std::istream &file )
+unsigned int eft::readIMPL( std::istream &file, const unsigned short &depth )
 {
     unsigned int implSize;
     unsigned int total = readFormHeader( file, "IMPL", implSize );
     implSize += 8;
-    std::cout << "Found FORM IMPL: " << implSize-12 << " bytes"
+    std::cout << std::string( depth, ' ' )
+	      << "Found FORM IMPL: " << implSize-12 << " bytes"
 	      << std::endl;
 
     unsigned int size;
@@ -126,19 +130,19 @@ unsigned int eft::readIMPL( std::istream &file )
 
 	if( form == "SCAP" )
 	{
-	    total += readSCAP( file );
+	  total += readSCAP( file, depth+1 );
 	}
 	else if( form == "OPTN" )
 	{
-	    total += readOPTN( file );
+	    total += readOPTN( file, depth+1 );
 	}
 	else if( form == "DATA" )
 	{
-	    total += readIMPLDATA( file );
+	    total += readIMPLDATA( file, depth+1 );
 	}
 	else if( form == "FORM" && type == "PASS" )
 	{
-	    total += readPASS( file );
+	    total += readPASS( file, depth+1 );
 	}
 	else
 	{
@@ -149,7 +153,8 @@ unsigned int eft::readIMPL( std::istream &file )
     }
     if( implSize == total )
     {
-	std::cout << "Finished reading IMPL" << std::endl;
+	std::cout << std::string( depth, ' ' )
+		  << "Finished reading IMPL" << std::endl;
     }
     else
     {
@@ -162,7 +167,7 @@ unsigned int eft::readIMPL( std::istream &file )
 }
 
 
-unsigned int eft::readSCAP( std::istream &file )
+unsigned int eft::readSCAP( std::istream &file, const unsigned short &depth )
 {
     unsigned int scapSize;
     std::string type;
@@ -172,7 +177,8 @@ unsigned int eft::readSCAP( std::istream &file )
         std::cout << "Expected record of type SCAP: " << type << std::endl;
         exit( 0 );
     }
-    std::cout << "Found record " << type 
+    std::cout << std::string( depth, ' ' )
+	      << "Found record " << type 
 	      << " (Set Capabilities?) "
 	      << scapSize << " bytes"
 	      << std::endl;
@@ -185,23 +191,23 @@ unsigned int eft::readSCAP( std::istream &file )
       total += base::read( file, data );
       std::cout << std::bitset<32>( data ) << " " << std::endl;
     }
-    total += scapSize;
 
     if( scapSize == (total-8) )
     {
-	std::cout << "Finished reading SCAP" << std::endl;
+	std::cout << std::string( depth, ' ' )
+		  << "Finished reading SCAP" << std::endl;
     }
     else
     {
 	std::cout << "FAILED in reading SCAP" << std::endl;
-	std::cout << "Read " << total << " out of " << scapSize
+	std::cout << "Read " << total << " out of " << (scapSize+8)
                   << std::endl;
     }
 
     return total;
 }
 
-unsigned int eft::readOPTN( std::istream &file )
+unsigned int eft::readOPTN( std::istream &file, const unsigned short &depth )
 {
     unsigned int optnSize;
     std::string type;
@@ -211,7 +217,8 @@ unsigned int eft::readOPTN( std::istream &file )
         std::cout << "Expected record of type OPTN: " << type << std::endl;
         exit( 0 );
     }
-    std::cout << "Found record " << type
+    std::cout << std::string( depth, ' ' )
+	      << "Found record " << type
 	      << ": " << optnSize << " bytes"
 	      << std::endl;
 
@@ -220,7 +227,8 @@ unsigned int eft::readOPTN( std::istream &file )
 
     if( optnSize == (total-8) )
     {
-	std::cout << "Finished reading OPTN" << std::endl;
+	std::cout << std::string( depth, ' ' )
+		  << "Finished reading OPTN" << std::endl;
     }
     else
     {
@@ -232,7 +240,7 @@ unsigned int eft::readOPTN( std::istream &file )
     return total;
 }
 
-unsigned int eft::readIMPLDATA( std::istream &file )
+unsigned int eft::readIMPLDATA( std::istream &file, const unsigned short &depth )
 {
     unsigned int impldataSize;
     std::string type;
@@ -242,7 +250,8 @@ unsigned int eft::readIMPLDATA( std::istream &file )
         std::cout << "Expected record of type DATA: " << type << std::endl;
         exit( 0 );
     }
-    std::cout << "Found record " << type
+    std::cout << std::string( depth, ' ' )
+	      << "Found record " << type
 	      << ": " << impldataSize << " bytes" 
 	      << std::endl;
 
@@ -263,12 +272,13 @@ unsigned int eft::readIMPLDATA( std::istream &file )
     return total;
 }
 
-unsigned int eft::readPASS( std::istream &file )
+unsigned int eft::readPASS( std::istream &file, const unsigned short &depth )
 {
     unsigned int passSize;
     unsigned int total = readFormHeader( file, "PASS", passSize );
     passSize += 8;
-    std::cout << "Found FORM PASS: " << passSize-12 << " bytes"
+    std::cout << std::string( depth, ' ' )
+	      << "Found FORM PASS: " << passSize-12 << " bytes"
 	      << std::endl;
 
     unsigned int size;
@@ -279,7 +289,8 @@ unsigned int eft::readPASS( std::istream &file )
         std::cout << "Expected FORM not: " << form << std::endl;
         exit( 0 );
     }
-    std::cout << "Found " << form << " " << type
+    std::cout << std::string( depth, ' ' )
+	      << "Found " << form << " " << type
 	      << ": " << size-4 << " bytes"
 	      << std::endl;
 
@@ -289,7 +300,8 @@ unsigned int eft::readPASS( std::istream &file )
         std::cout << "Expected record of type DATA: " << type << std::endl;
         exit( 0 );
     }
-    std::cout << "Found record " << type
+    std::cout << std::string( depth, ' ' )
+	      << "Found record " << type
 	      << ": " << size << " bytes" 
 	      << std::endl;
 
@@ -300,16 +312,16 @@ unsigned int eft::readPASS( std::istream &file )
 
     if( form == "FORM" && type == "PVSH" )
     {
-	total += readPVSH( file );
-	total += readPPSH( file );
+	total += readPVSH( file, depth+1 );
+	total += readPPSH( file, depth+1 );
     }
     else if( form == "FORM" && type == "PFFP" )
     {
-	total += readPFFP( file );
-	total += readSTAG( file );
+	total += readPFFP( file, depth+1 );
+	total += readSTAG( file, depth+1 );
 	if( total < passSize )
 	{
-	    total += readSTAG( file );
+	    total += readSTAG( file, depth+1 );
 	}
     }
     else
@@ -320,7 +332,8 @@ unsigned int eft::readPASS( std::istream &file )
 
     if( passSize == total )
     {
-	std::cout << "Finished reading PASS" << std::endl;
+	std::cout << std::string( depth, ' ' )
+		  << "Finished reading PASS" << std::endl;
     }
     else
     {
@@ -332,12 +345,13 @@ unsigned int eft::readPASS( std::istream &file )
     return total;
 }
 
-unsigned int eft::readPVSH( std::istream &file )
+unsigned int eft::readPVSH( std::istream &file, const unsigned short &depth )
 {
     unsigned int pvshSize;
     unsigned int total = readFormHeader( file, "PVSH", pvshSize );
     pvshSize += 8;
-    std::cout << "Found FORM PVSH (Vertex shader)"
+    std::cout << std::string( depth, ' ' )
+	      << "Found FORM PVSH (Vertex shader)"
 	      << ": " << pvshSize-12 << " bytes"
 	      << std::endl;
 
@@ -359,7 +373,8 @@ unsigned int eft::readPVSH( std::istream &file )
 
     if( pvshSize == total )
     {
-	std::cout << "Finished reading PVSH" << std::endl;
+	std::cout << std::string( depth, ' ' )
+		  << "Finished reading PVSH" << std::endl;
     }
     else
     {
@@ -371,12 +386,13 @@ unsigned int eft::readPVSH( std::istream &file )
     return total;
 }
 
-unsigned int eft::readPFFP( std::istream &file )
+unsigned int eft::readPFFP( std::istream &file, const unsigned short &depth )
 {
     unsigned int pffpSize;
     unsigned int total = readFormHeader( file, "PFFP", pffpSize );
     pffpSize += 8;
-    std::cout << "Found FORM PFFP (Fixed Function Pipeline)"
+    std::cout << std::string( depth, ' ' )
+	      << "Found FORM PFFP (Fixed Function Pipeline)"
 	      << ": " << pffpSize-12 << " bytes"
 	      << std::endl;
 
@@ -396,7 +412,8 @@ unsigned int eft::readPFFP( std::istream &file )
 
     if( pffpSize == total )
     {
-	std::cout << "Finished reading PFFP" << std::endl;
+	std::cout << std::string( depth, ' ' )
+		  << "Finished reading PFFP" << std::endl;
     }
     else
     {
@@ -408,12 +425,13 @@ unsigned int eft::readPFFP( std::istream &file )
     return total;
 }
 
-unsigned int eft::readSTAG( std::istream &file )
+unsigned int eft::readSTAG( std::istream &file, const unsigned short &depth )
 {
     unsigned int stagSize;
     unsigned int total = readFormHeader( file, "STAG", stagSize );
     stagSize += 8;
-    std::cout << "Found FORM STAG: " << stagSize-12 << " bytes"
+    std::cout << std::string( depth, ' ' )
+	      << "Found FORM STAG: " << stagSize-12 << " bytes"
 	      << std::endl;
 
     unsigned int size;
@@ -433,7 +451,8 @@ unsigned int eft::readSTAG( std::istream &file )
 
     if( stagSize == total )
     {
-	std::cout << "Finished reading STAG" << std::endl;
+	std::cout << std::string( depth, ' ' )
+		  << "Finished reading STAG" << std::endl;
     }
     else
     {
@@ -445,12 +464,13 @@ unsigned int eft::readSTAG( std::istream &file )
     return total;
 }
 
-unsigned int eft::readPPSH( std::istream &file )
+unsigned int eft::readPPSH( std::istream &file, const unsigned short &depth )
 {
     unsigned int ppshSize;
     unsigned int total = readFormHeader( file, "PPSH", ppshSize );
     ppshSize += 8;
-    std::cout << "Found FORM PPSH (Pixel shader)"
+    std::cout << std::string( depth, ' ' )
+	      << "Found FORM PPSH (Pixel shader)"
 	      << ": " << ppshSize-12 << " bytes"
 	      << std::endl;
 
@@ -462,7 +482,8 @@ unsigned int eft::readPPSH( std::istream &file )
         std::cout << "Expected FORM not: " << form << std::endl;
         exit( 0 );
     }
-    std::cout << "Found " << form << " " << type
+    std::cout << std::string( depth, ' ' )
+	      << "Found " << form << " " << type
 	      << ": " << size-4 << " bytes"
 	      << std::endl;
 
@@ -472,7 +493,8 @@ unsigned int eft::readPPSH( std::istream &file )
         std::cout << "Expected record of type DATA: " << type << std::endl;
         exit( 0 );
     }
-    std::cout << "Found record " << type
+    std::cout << std::string( depth, ' ' )
+	      << "Found record " << type
 	      << ": " << size << " bytes" 
 	      << std::endl;
 
@@ -486,12 +508,13 @@ unsigned int eft::readPPSH( std::istream &file )
 
     while( total < ppshSize )
     {
-	total += readPTXM( file );
+	total += readPTXM( file, depth+1 );
     }
 
     if( ppshSize == total )
     {
-	std::cout << "Finished reading PPSH" << std::endl;
+	std::cout << std::string( depth, ' ' )
+		  << "Finished reading PPSH" << std::endl;
     }
     else
     {
@@ -503,12 +526,13 @@ unsigned int eft::readPPSH( std::istream &file )
     return total;
 }
 
-unsigned int eft::readPTXM( std::istream &file )
+unsigned int eft::readPTXM( std::istream &file, const unsigned short &depth )
 {
     unsigned int ptxmSize;
     unsigned int total = readFormHeader( file, "PTXM", ptxmSize );
     ptxmSize += 8;
-    std::cout << "Found FORM PTXM: " << ptxmSize-12 << " bytes"
+    std::cout << std::string( depth, ' ' )
+	      << "Found FORM PTXM: " << ptxmSize-12 << " bytes"
 	      << std::endl;
 
     unsigned int size;
@@ -521,7 +545,8 @@ unsigned int eft::readPTXM( std::istream &file )
         exit( 0 );
     }
 #endif
-    std::cout << "Found record " << type
+    std::cout << std::string( depth, ' ' )
+	      << "Found record " << type
 	      << ": " << size << " bytes"
 	      << std::endl;
 
@@ -529,9 +554,9 @@ unsigned int eft::readPTXM( std::istream &file )
     unsigned char num;
     total += base::read( file, num );
 #if 1
-    file.width( size - sizeof( unsigned char ) );
+    file.width( size - 1 );
     file >> name;
-    total += size;
+    total += size-1;
 #else
     total += base::read( file, name );
 #endif
@@ -540,7 +565,8 @@ unsigned int eft::readPTXM( std::istream &file )
 
     if( ptxmSize == total )
     {
-	std::cout << "Finished reading PTXM" << std::endl;
+	std::cout << std::string( depth, ' ' )
+		  << "Finished reading PTXM" << std::endl;
     }
     else
     {

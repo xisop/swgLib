@@ -42,19 +42,20 @@ namespace ml
     {
       return isOfType( file, "EFCT" );
     }
-    unsigned int readEFT( std::istream &file, std::string path="" );
+    unsigned int readEFT( std::istream &file, std::string path="",
+			  const unsigned short &depth=0 );
 
   protected:
-    unsigned int readIMPL( std::istream &file );
-    unsigned int readPASS( std::istream &file );
-    unsigned int readPVSH( std::istream &file );
-    unsigned int readPPSH( std::istream &file );
-    unsigned int readPFFP( std::istream &file );
-    unsigned int readSTAG( std::istream &file );
-    unsigned int readPTXM( std::istream &file );
-    unsigned int readSCAP( std::istream &file );
-    unsigned int readOPTN( std::istream &file );
-    unsigned int readIMPLDATA( std::istream &file );
+    unsigned int readIMPL( std::istream &file, const unsigned short &depth=0 );
+    unsigned int readPASS( std::istream &file, const unsigned short &depth=0 );
+    unsigned int readPVSH( std::istream &file, const unsigned short &depth=0 );
+    unsigned int readPPSH( std::istream &file, const unsigned short &depth=0 );
+    unsigned int readPFFP( std::istream &file, const unsigned short &depth=0 );
+    unsigned int readSTAG( std::istream &file, const unsigned short &depth=0 );
+    unsigned int readPTXM( std::istream &file, const unsigned short &depth=0 );
+    unsigned int readSCAP( std::istream &file, const unsigned short &depth=0 );
+    unsigned int readOPTN( std::istream &file, const unsigned short &depth=0 );
+    unsigned int readIMPLDATA( std::istream &file, const unsigned short &depth=0 );
 				
   private:
     unsigned int numTextures;
