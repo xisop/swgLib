@@ -4,7 +4,7 @@
  *  \author Kenneth R. Sewell III
 
  swgLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006-2009 Kenneth R. Sewell III
+ Copyright (C) 2006-2014 Kenneth R. Sewell III
 
  This file is part of swgLib.
 
@@ -42,7 +42,8 @@ namespace ml
     {
       return isOfType( file, "SSHT" );
     }
-    unsigned int readSHT( std::istream &file, std::string path="" );
+    unsigned int readSHT( std::istream &file, std::string path="",
+			  const unsigned short &depth=0 );
   
 #if 0
     bool hasNormalMap() const { return normalMap; }
@@ -82,15 +83,15 @@ namespace ml
     std::vector<unsigned int> coordMapping;
   
   protected:
-    unsigned int readMATS( std::istream &file );
-    unsigned int readTXMS( std::istream &file );
-    unsigned int readTXM( std::istream &file );
-    unsigned int readTCSS( std::istream &file );
-    unsigned int readTFNS( std::istream &file );
-    unsigned int readTSNS( std::istream &file );
-    unsigned int readARVS( std::istream &file );
-    unsigned int readNAME( std::istream &file );
-    unsigned int readEFCT( std::istream &file );
+    unsigned int readMATS( std::istream &file, const unsigned short &depth=0 );
+    unsigned int readTXMS( std::istream &file, const unsigned short &depth=0 );
+    unsigned int readTXM( std::istream &file, const unsigned short &depth=0 );
+    unsigned int readTCSS( std::istream &file, const unsigned short &depth=0 );
+    unsigned int readTFNS( std::istream &file, const unsigned short &depth=0 );
+    unsigned int readTSNS( std::istream &file, const unsigned short &depth=0 );
+    unsigned int readARVS( std::istream &file, const unsigned short &depth=0 );
+    unsigned int readNAME( std::istream &file, const unsigned short &depth=0 );
+    unsigned int readEFCT( std::istream &file, const unsigned short &depth=0 );
   
     std::vector<std::string> texTag;
 
