@@ -289,7 +289,7 @@ unsigned int eft::readPASS( std::istream &file, const unsigned short &depth )
         std::cout << "Expected FORM not: " << form << std::endl;
         exit( 0 );
     }
-    std::cout << std::string( depth, ' ' )
+    std::cout << std::string( depth+1, ' ' )
 	      << "Found " << form << " " << type
 	      << ": " << size-4 << " bytes"
 	      << std::endl;
@@ -300,7 +300,7 @@ unsigned int eft::readPASS( std::istream &file, const unsigned short &depth )
         std::cout << "Expected record of type DATA: " << type << std::endl;
         exit( 0 );
     }
-    std::cout << std::string( depth, ' ' )
+    std::cout << std::string( depth+2, ' ' )
 	      << "Found record " << type
 	      << ": " << size << " bytes" 
 	      << std::endl;
@@ -312,16 +312,16 @@ unsigned int eft::readPASS( std::istream &file, const unsigned short &depth )
 
     if( form == "FORM" && type == "PVSH" )
     {
-	total += readPVSH( file, depth+1 );
-	total += readPPSH( file, depth+1 );
+	total += readPVSH( file, depth+3 );
+	total += readPPSH( file, depth+3 );
     }
     else if( form == "FORM" && type == "PFFP" )
     {
-	total += readPFFP( file, depth+1 );
-	total += readSTAG( file, depth+1 );
+	total += readPFFP( file, depth+3 );
+	total += readSTAG( file, depth+3 );
 	if( total < passSize )
 	{
-	    total += readSTAG( file, depth+1 );
+	    total += readSTAG( file, depth+3 );
 	}
     }
     else
@@ -363,13 +363,15 @@ unsigned int eft::readPVSH( std::istream &file, const unsigned short &depth )
         std::cout << "Expected record of type 0000: " << type << std::endl;
         exit( 0 );
     }
-    std::cout << "Found record " << type
+    std::cout << std::string( depth+1, ' ' )
+	      << "Found record " << type
 	      << ": " << size << " bytes"
 	      << std::endl;
 
     std::string vertexProgramName;
     total += base::read( file, vertexProgramName );
-    std::cout << "Vertex program: " << vertexProgramName << std::endl;
+    std::cout << std::string( depth+2, ' ' )
+	      << "Vertex program: " << vertexProgramName << std::endl;
 
     if( pvshSize == total )
     {
@@ -404,7 +406,8 @@ unsigned int eft::readPFFP( std::istream &file, const unsigned short &depth )
         std::cout << "Expected record of type 0001: " << type << std::endl;
         exit( 0 );
     }
-    std::cout << "Found record " << type
+    std::cout << std::string( depth+1, ' ' )
+	      << "Found record " << type
 	      << ": " << size << " bytes"
 	      << std::endl;
 
@@ -442,7 +445,8 @@ unsigned int eft::readSTAG( std::istream &file, const unsigned short &depth )
         std::cout << "Expected record of type 0000: " << type << std::endl;
         exit( 0 );
     }
-    std::cout << "Found record " << type
+    std::cout << std::string( depth+1, ' ' )
+	      << "Found record " << type
 	      << ": " << size << " bytes"
 	      << std::endl;
 
