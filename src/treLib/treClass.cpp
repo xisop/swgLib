@@ -26,7 +26,6 @@
 #include <treLib/treClass.hpp>
 #include <iostream>
 #include <sstream>
-#include <zlib.h> // For compress, uncompress...
 #include <md5.h> // For md5
 #include <cstring> // For memcpy
 
