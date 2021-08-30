@@ -30,7 +30,7 @@
 #include <list>
 #include <map>
 #include <cmath>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <swgLib/trnAffector.hpp>
 #include <swgLib/trnLayer.hpp>
@@ -146,8 +146,7 @@ namespace ml
     unsigned int mapWidth;
 
     std::map<unsigned int, sfam> sfamMap;
-    std::list<boost::shared_ptr<trnLayer> > layerList;
-
+    std::list<std::shared_ptr<trnLayer> > layerList;
   };
 }
 #endif

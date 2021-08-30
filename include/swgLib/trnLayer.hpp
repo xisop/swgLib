@@ -23,7 +23,7 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include <swgLib/base.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <string>
 #include <list>
 
@@ -59,9 +59,9 @@ namespace ml
     unsigned int u1;
     std::string name;
 
-    std::list< boost::shared_ptr<trnAffector> > affectorList;
-    std::list< boost::shared_ptr<trnLayer> > layerList;
-    std::list< boost::shared_ptr<trnBoundary> > boundaryList;
+    std::list< std::shared_ptr<trnAffector> > affectorList;
+    std::list< std::shared_ptr<trnLayer> > layerList;
+    std::list< std::shared_ptr<trnBoundary> > boundaryList;
   };
 }
 #endif
