@@ -29,8 +29,7 @@
 #include <md5.h> // For md5
 #include <memory.h>
 
-treDataBlock::treDataBlock()
-    :
+treDataBlock::treDataBlock():
     data( NULL ),
     compData( NULL )
 {
