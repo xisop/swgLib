@@ -28,6 +28,7 @@
 #include <iostream>
 #include <bitset>
 #include <cstdlib>
+#include <memory>
 
 using namespace ml;
 
@@ -1135,7 +1136,7 @@ unsigned int trn::readLYRS( std::istream &file, const std::string &debugString )
 
   while( total < lyrsSize )
     {
-      boost::shared_ptr<trnLayer> newLayer( new trnLayer );
+      std::shared_ptr<trnLayer> newLayer( new trnLayer );
       total += newLayer->read( file, dbgStr );
       layerList.push_back( newLayer );
     }
@@ -1162,7 +1163,7 @@ bool trn::applyLayers( const float &originX,
 		       const unsigned int &numCols,
 		       float *data) const
 {
-  for( std::list< boost::shared_ptr<trnLayer> >::const_iterator
+  for( std::list< std::shared_ptr<trnLayer> >::const_iterator
 	 currentLayer = layerList.begin();
        currentLayer != layerList.end();
        ++currentLayer )

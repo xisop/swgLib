@@ -23,11 +23,13 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include <swgLib/trnLayer.hpp>
+#include <memory>
 
 using namespace ml;
 
-trnLayer::trnLayer()
-{
+trnLayer::trnLayer():
+    isBounded(false),
+    u1(0) {
 }
 
 trnLayer::~trnLayer()
@@ -56,7 +58,7 @@ void trnLayer::apply( const float &originX,
 	  
 	  unsigned int offset = (numCols * row)+col;
 	  
-	  for( std::list< boost::shared_ptr<trnAffector> >::const_iterator
+	  for( std::list< std::shared_ptr<trnAffector> >::const_iterator
 		 affector = affectorList.begin();
 	       affector != affectorList.end();
 	       ++affector )
@@ -66,7 +68,7 @@ void trnLayer::apply( const float &originX,
 	}
     }
   
-  for( std::list< boost::shared_ptr<trnLayer> >::const_iterator
+  for( std::list< std::shared_ptr<trnLayer> >::const_iterator
 	 currentLayer = layerList.begin();
        currentLayer != layerList.end();
        ++currentLayer )
@@ -108,119 +110,119 @@ unsigned int trnLayer::read( std::istream &file,
         {
           if( "ACCN" == type )
             {
-	      boost::shared_ptr<affectorColorConstant>
+	      std::shared_ptr<affectorColorConstant>
 		newAffector(new affectorColorConstant);
 	      total += newAffector->read( file, dbgStr );
 	      affectorList.push_back( newAffector );
             }
           else if( "ACRF" == type )
             {
-	      boost::shared_ptr<affectorColorRampFractal>
+	      std::shared_ptr<affectorColorRampFractal>
 		newAffector(new affectorColorRampFractal);
 	      total += newAffector->read( file, dbgStr );
 	      affectorList.push_back( newAffector );
             }
           else if( "ACRH" == type )
             {
-	      boost::shared_ptr<affectorColorRampHeight>
+	      std::shared_ptr<affectorColorRampHeight>
 		newAffector(new affectorColorRampHeight);
 	      total += newAffector->read( file, dbgStr );
 	      affectorList.push_back( newAffector );
             }
           else if( "AENV" == type )
             {
-	      boost::shared_ptr<affectorEnvironment>
+	      std::shared_ptr<affectorEnvironment>
 		newAffector(new affectorEnvironment);
 	      total += newAffector->read( file, dbgStr );
 	      affectorList.push_back( newAffector );
             }
           else if( "AEXC" == type )
             {
-	      boost::shared_ptr<affectorExclude>
+	      std::shared_ptr<affectorExclude>
 		newAffector(new affectorExclude);
 	      total += newAffector->read( file, dbgStr );
 	      affectorList.push_back( newAffector );
             }
           else if( "AFDF" == type )
             {
-	      boost::shared_ptr<affectorRadialFarConstant>
+	      std::shared_ptr<affectorRadialFarConstant>
 		newAffector(new affectorRadialFarConstant);
 	      total += newAffector->read( file, dbgStr );
 	      affectorList.push_back( newAffector );
             }
           else if( "AFDN" == type )
             {
-	      boost::shared_ptr<affectorRadialConstant>
+	      std::shared_ptr<affectorRadialConstant>
 		newAffector(new affectorRadialConstant);
 	      total += newAffector->read( file, dbgStr );
 	      affectorList.push_back( newAffector );
             }
           else if( "AFSC" == type )
             {
-	      boost::shared_ptr<affectorFloraConstant>
+	      std::shared_ptr<affectorFloraConstant>
 		newAffector(new affectorFloraConstant);
 	      total += newAffector->read( file, dbgStr );
 	      affectorList.push_back( newAffector );
             }
           else if( "AFSN" == type )
             {
-	      boost::shared_ptr<affectorFloraNonCollidableConstant>
+	      std::shared_ptr<affectorFloraNonCollidableConstant>
 		newAffector(new affectorFloraNonCollidableConstant);
 	      total += newAffector->read( file, dbgStr );
 	      affectorList.push_back( newAffector );
             }
           else if( "AHCN" == type )
             {
-	      boost::shared_ptr<affectorHeightConstant>
+	      std::shared_ptr<affectorHeightConstant>
 		newAffector(new affectorHeightConstant);
 	      total += newAffector->read( file, dbgStr );
 	      affectorList.push_back( newAffector );
             }
           else if( "AHFR" == type )
             {
-              boost::shared_ptr<affectorHeightFractal>
+              std::shared_ptr<affectorHeightFractal>
                 newAffector( new affectorHeightFractal );
 	      total += newAffector->read( file, dbgStr );
 	      affectorList.push_back( newAffector );
             }
           else if( "AHTR" == type )
             {
-              boost::shared_ptr<affectorHeightTerrace>
+              std::shared_ptr<affectorHeightTerrace>
                 newAffector( new affectorHeightTerrace );
 	      total += newAffector->read( file, dbgStr );
 	      affectorList.push_back( newAffector );
             }
           else if( "ARIV" == type )
             {
-              boost::shared_ptr<affectorRiver>
+              std::shared_ptr<affectorRiver>
                 newAffector( new affectorRiver );
 	      total += newAffector->read( file, dbgStr );
 	      affectorList.push_back( newAffector );
             }
           else if( "AROA" == type )
             {
-              boost::shared_ptr<affectorRoad>
+              std::shared_ptr<affectorRoad>
                 newAffector( new affectorRoad );
 	      total += newAffector->read( file, dbgStr );
 	      affectorList.push_back( newAffector );
             }
           else if( "ASCN" == type )
             {
-              boost::shared_ptr<affectorShaderConstant>
+              std::shared_ptr<affectorShaderConstant>
                 newAffector( new affectorShaderConstant );
 	      total += newAffector->read( file, dbgStr );
 	      affectorList.push_back( newAffector );
             }
           else if( "ASRP" == type )
             {
-              boost::shared_ptr<affectorShaderReplace>
+              std::shared_ptr<affectorShaderReplace>
                 newAffector( new affectorShaderReplace );
 	      total += newAffector->read( file, dbgStr );
 	      affectorList.push_back( newAffector );
             }
           else if( "BCIR" == type  )
             {
-	      boost::shared_ptr<boundaryCircle>
+	      std::shared_ptr<boundaryCircle>
 		newBoundary( new boundaryCircle );
 	      total += newBoundary->read( file, dbgStr );
 	      boundaryList.push_back( newBoundary );
@@ -228,7 +230,7 @@ unsigned int trnLayer::read( std::istream &file,
             }
           else if( "BPLN" == type  )
             {
-	      boost::shared_ptr<boundaryPolyline>
+	      std::shared_ptr<boundaryPolyline>
 		newBoundary( new boundaryPolyline );
 	      total += newBoundary->read( file, dbgStr );
 	      boundaryList.push_back( newBoundary );
@@ -236,7 +238,7 @@ unsigned int trnLayer::read( std::istream &file,
             }
           else if( "BPOL" == type  )
             {
-	      boost::shared_ptr<boundaryPolygon>
+	      std::shared_ptr<boundaryPolygon>
 		newBoundary( new boundaryPolygon );
 	      total += newBoundary->read( file, dbgStr );
 	      boundaryList.push_back( newBoundary );
@@ -244,7 +246,7 @@ unsigned int trnLayer::read( std::istream &file,
             }
           else if( "BREC" == type  )
             {
-	      boost::shared_ptr<boundaryRectangle>
+	      std::shared_ptr<boundaryRectangle>
 		newBoundary( new boundaryRectangle );
 	      total += newBoundary->read( file, dbgStr );
 	      boundaryList.push_back( newBoundary );
@@ -252,42 +254,42 @@ unsigned int trnLayer::read( std::istream &file,
             }
           else if( "FDIR" == type  )
             {
-              boost::shared_ptr<affectorFilterDirection>
+              std::shared_ptr<affectorFilterDirection>
                 newAffector( new affectorFilterDirection );
 	      total += newAffector->read( file, dbgStr );
 	      affectorList.push_back( newAffector );
             }
           else if( "FFRA" == type )
             {
-              boost::shared_ptr<affectorFilterFractal>
+              std::shared_ptr<affectorFilterFractal>
                 newAffector( new affectorFilterFractal );
 	      total += newAffector->read( file, dbgStr );
 	      affectorList.push_back( newAffector );
             }
           else if( "FHGT" == type )
             {
-              boost::shared_ptr<affectorFilterHeight>
+              std::shared_ptr<affectorFilterHeight>
                 newAffector( new affectorFilterHeight );
 	      total += newAffector->read( file, dbgStr );
 	      affectorList.push_back( newAffector );
             }
           else if( "FSHD" == type )
             {
-              boost::shared_ptr<affectorFilterShader>
+              std::shared_ptr<affectorFilterShader>
                 newAffector( new affectorFilterShader );
 	      total += newAffector->read( file, dbgStr );
 	      affectorList.push_back( newAffector );
             }
           else if( "FSLP" == type )
             {
-              boost::shared_ptr<affectorFilterSlope>
+              std::shared_ptr<affectorFilterSlope>
                 newAffector( new affectorFilterSlope );
 	      total += newAffector->read( file, dbgStr );
 	      affectorList.push_back( newAffector );
             }
           else if( "LAYR" == type  )
             {
-	      boost::shared_ptr< trnLayer > subLayer( new trnLayer );
+	      std::shared_ptr< trnLayer > subLayer( new trnLayer );
               layerList.push_back( subLayer );
               total += subLayer->read( file, dbgStr );
             }
@@ -319,7 +321,7 @@ unsigned int trnLayer::read( std::istream &file,
 
 bool trnLayer::isInBounds( const float &X, const float &Y ) const
 {
-  for( std::list< boost::shared_ptr<trnBoundary> >::const_iterator
+  for( std::list< std::shared_ptr<trnBoundary> >::const_iterator
 	 currentBoundary = boundaryList.begin();
        currentBoundary != boundaryList.end();
        ++currentBoundary )
