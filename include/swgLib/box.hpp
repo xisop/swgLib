@@ -34,7 +34,10 @@ namespace ml
   class box
   {
   public:
-    box(){};
+    box():
+        x1(0.0f), y1(0.0f), z1(0.0f),
+        x2(0.0f), y2(0.0f), z2(0.0f)
+    {};
     
     unsigned int readBOX( std::istream &file );
     unsigned int writeBOX( std::ostream &file ) const;
