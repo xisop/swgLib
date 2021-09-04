@@ -214,11 +214,11 @@ bool treFileRecord::operator==( const treFileRecord &src ) const
 {
     return(
 	( this->checksum         == src.checksum ) &&
-	( this->uncompressedSize == uncompressedSize ) &&
-	( this->offset           == offset ) &&
-	( this->format           == format ) &&
-	( this->size             == size ) &&
-	( this->nameOffset       == nameOffset )
+	( this->uncompressedSize == src.uncompressedSize ) &&
+	( this->offset           == src.offset ) &&
+	( this->format           == src.format ) &&
+	( this->size             == src.size ) &&
+	( this->nameOffset       == src.nameOffset )
 	);
 }
 
