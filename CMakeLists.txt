@@ -11,6 +11,8 @@ option( BUILD_32BIT  "Build 32-bit instead of 64-bit" OFF)
 option( BUILD_STATIC "Build static libs" OFF)
 option( BUILD_SHARED "Build shared libs" ON)
 
+set (CMAKE_CXX_STANDARD 11)
+
 if( WIN32 )
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D_WIN32_WINNT=0x0502")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D_SCL_SECURE_NO_WARNINGS")
@@ -20,7 +22,6 @@ endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX)
 #    configure_file(swgLib.pc.in_cmake swgLib.pc)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pipe")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
