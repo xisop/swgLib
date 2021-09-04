@@ -185,7 +185,7 @@ unsigned int ws::readWS( std::istream &file )
 
     unsigned int total = readFormHeader( file, "WSNP", wsSize );
     wsSize += 8;
-#if DEBUG
+#ifdef DEBUG
     std::cout << "Found WSNP form"
 	      << ": " << wsSize-12 << " bytes"
 	      << std::endl;
@@ -199,7 +199,7 @@ unsigned int ws::readWS( std::istream &file )
 	std::cout << "Expected FORM: " << form << std::endl;
 	exit( 0 );
     }
-#if DEBUG
+#ifdef DEBUG
     std::cout << "Found " << form << " " << type
 	      << ": " << size-4 << " bytes"
 	      << std::endl;
@@ -218,7 +218,7 @@ unsigned int ws::readWS( std::istream &file )
 
     if( wsSize == total )
     {
-#if DEBUG
+#ifdef DEBUG
 	sd::cout << "Finished reading WS" << std::endl;
 #endif
     }
@@ -264,7 +264,7 @@ unsigned int ws::readNODS( std::istream &file )
     unsigned int nodsSize;
     unsigned int total = readFormHeader( file, "NODS", nodsSize );
     nodsSize += 8;
-#if DEBUG
+#ifdef DEBUG
     std::cout << "Found NODS form"
 	      << ": " << nodsSize-12 << " bytes"
 	      << std::endl;
@@ -277,13 +277,13 @@ unsigned int ws::readNODS( std::istream &file )
 	++numNodes;
     }
 
-#if DEBUG
+#ifdef DEBUG
     std::cout << "Number of nodes found: " << numNodes << std::endl;
 #endif
 
     if( nodsSize == total )
     {
-#if DEBUG
+#ifdef DEBUG
 	std::cout << "Finished reading NODS" << std::endl;
 #endif
     }
@@ -350,7 +350,7 @@ unsigned int ws::readNODE( std::istream &file, unsigned int level )
     // FORM NODE
     unsigned int total = readFormHeader( file, "NODE", nodeSize );
     nodeSize += 8;
-#if DEBUG
+#ifdef DEBUG
     std::cout << "Found NODE form"
 	      << ": " << nodeSize-12 << " bytes"
 	      << std::endl;
@@ -360,7 +360,7 @@ unsigned int ws::readNODE( std::istream &file, unsigned int level )
     unsigned int size;
     total += readFormHeader( file, "0000", size );
     size += 8;
-#if DEBUG
+#ifdef DEBUG
     std::cout << "Found 0000 form"
 	      << ": " << size-12 << " bytes"
 	      << std::endl;
@@ -372,7 +372,7 @@ unsigned int ws::readNODE( std::istream &file, unsigned int level )
 	std::cout << "Expected record of type DATA: " << type << std::endl;
 	exit( 0 );
     }
-#if DEBUG
+#ifdef DEBUG
     std::cout << "Found DATA record"
 	      << ": " << size << " bytes"
 	      << std::endl;
@@ -396,7 +396,7 @@ unsigned int ws::readNODE( std::istream &file, unsigned int level )
 
     if( nodeSize == total )
     {
-#if DEBUG
+#ifdef DEBUG
 	std::cout << "Finished reading NODE" << std::endl;
 #endif
     }
@@ -464,7 +464,7 @@ unsigned int ws::readOTNL( std::istream &file )
 	std::cout << "Expected record of type OTNL: " << type << std::endl;
 	exit( 0 );
     }
-#if DEBUG
+#ifdef DEBUG
     std::cout << "Found OTNL record"
 	      << ": " << otnlSize << " bytes"
 	      << std::endl;
@@ -472,7 +472,7 @@ unsigned int ws::readOTNL( std::istream &file )
 
     unsigned int numObjects;
     total += base::read( file, numObjects );
-#if DEBUG
+#ifdef DEBUG
     std::cout << "Num objects: " << numObjects << std::endl;
 #endif
 
@@ -485,7 +485,7 @@ unsigned int ws::readOTNL( std::istream &file )
 
     if( otnlSize == total )
     {
-#if DEBUG
+#ifdef DEBUG
 	std::cout << "Finished reading OTNL" << std::endl;
 #endif
     }

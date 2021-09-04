@@ -145,7 +145,7 @@ unsigned int ilf::readILF( std::istream &file )
 	std::cout << "Expected FORM: " << form << std::endl;
 	exit( 0 );
     }
-#if DEBUG
+#ifdef DEBUG
     std::cout << "Found " << form << " " << type
 	      << ": " << size-4 << " bytes"
 	      << std::endl;
@@ -158,7 +158,7 @@ unsigned int ilf::readILF( std::istream &file )
 
     if( ilfSize == total )
     {
-#if DEBUG
+#ifdef DEBUG
 	sd::cout << "Finished reading ILF" << std::endl;
 #endif
     }
@@ -222,7 +222,7 @@ unsigned int ilf::readNODE( std::istream &file )
 
     if( nodeSize == total )
     {
-#if DEBUG
+#ifdef DEBUG
 	std::cout << "Finished reading NODE" << std::endl;
 #endif
     }
