@@ -104,52 +104,106 @@ unsigned int stot::readSTOTXXXX( std::istream &file )
     std::string property;
     total += base::read( file, property );
     std::cout << "Property: " << property << std::endl;
-    total += property.size() + 1;
 
+    unsigned char enabled;
     if( property == "paletteColorCustomizationVariables" )
       {
-        file.seekg( xxxxSize - (property.size() + 1 ), std::ios_base::cur );
-        total += xxxxSize - ( property.size() + 1 );
+	total += base::read( file, enabled );
+	if( enabled > 0 ) {
+	  unsigned char junk1, junk2, junk3, junk4;
+	  total += base::read( file, junk1 );
+	  total += base::read( file, junk2 );
+	  total += base::read( file, junk3 );
+	  total += base::read( file, junk4 );
+	}
       }
     else if( property == "rangedIntCustomizationVariables" )
       {
-        file.seekg( xxxxSize - (property.size() + 1 ), std::ios_base::cur );
-        total += xxxxSize - ( property.size() + 1 );
+	total += base::read( file, enabled );
+	if( enabled > 0 ) {
+	  unsigned char junk1, junk2, junk3, junk4;
+	  total += base::read( file, junk1 );
+	  total += base::read( file, junk2 );
+	  total += base::read( file, junk3 );
+	  total += base::read( file, junk4 );
+	}
       }
     else if( property == "constStringCustomizationVariables" )
       {
-        file.seekg( xxxxSize - (property.size() + 1 ), std::ios_base::cur );
-        total += xxxxSize - ( property.size() + 1 );
+	total += base::read( file, enabled );
+	if( enabled > 0 ) {
+	  unsigned char junk1, junk2, junk3, junk4;
+	  total += base::read( file, junk1 );
+	  total += base::read( file, junk2 );
+	  total += base::read( file, junk3 );
+	  total += base::read( file, junk4 );
+	}
       }
     else if( property == "socketDestinations" )
       {
-        file.seekg( xxxxSize - (property.size() + 1 ), std::ios_base::cur );
-        total += xxxxSize - ( property.size() + 1 );
+	total += base::read( file, enabled );
+	if( enabled > 0 ) {
+	  unsigned char junk1, junk2, junk3, junk4;
+	  total += base::read( file, junk1 );
+	  total += base::read( file, junk2 );
+	  total += base::read( file, junk3 );
+	  total += base::read( file, junk4 );
+	}
       }
     else if( property == "structureFootprintFileName" )
       {
-        file.seekg( xxxxSize - (property.size() + 1 ), std::ios_base::cur );
-        total += xxxxSize - ( property.size() + 1 );
+	total += base::read( file, enabled );
+	if( enabled > 0 ) {
+	  unsigned char junk1, junk2, junk3, junk4;
+	  total += base::read( file, junk1 );
+	  total += base::read( file, junk2 );
+	  total += base::read( file, junk3 );
+	  total += base::read( file, junk4 );
+	}
       }
     else if( property == "useStructureFootprintOutline" )
       {
-        file.seekg( xxxxSize - (property.size() + 1 ), std::ios_base::cur );
-        total += xxxxSize - ( property.size() + 1 );
+	total += base::read( file, enabled );
+	if( enabled > 0 ) {
+	  unsigned char junk1, junk2, junk3, junk4;
+	  total += base::read( file, junk1 );
+	  total += base::read( file, junk2 );
+	  total += base::read( file, junk3 );
+	  total += base::read( file, junk4 );
+	}
       }
     else if( property == "targetable" )
       {
-        file.seekg( xxxxSize - (property.size() + 1 ), std::ios_base::cur );
-        total += xxxxSize - ( property.size() + 1 );
+	total += base::read( file, enabled );
+	if( enabled > 0 ) {
+	  unsigned char junk1, junk2, junk3, junk4;
+	  total += base::read( file, junk1 );
+	  total += base::read( file, junk2 );
+	  total += base::read( file, junk3 );
+	  total += base::read( file, junk4 );
+	}
       }
     else if( property == "certificationsRequired" )
       {
-        file.seekg( xxxxSize - (property.size() + 1 ), std::ios_base::cur );
-        total += xxxxSize - ( property.size() + 1 );
+	total += base::read( file, enabled );
+	if( enabled > 0 ) {
+	  unsigned char junk1, junk2, junk3, junk4;
+	  total += base::read( file, junk1 );
+	  total += base::read( file, junk2 );
+	  total += base::read( file, junk3 );
+	  total += base::read( file, junk4 );
+	}
       }
     else if( property == "customizationVariableMapping" )
       {
-        file.seekg( xxxxSize - (property.size() + 1 ), std::ios_base::cur );
-        total += xxxxSize - ( property.size() + 1 );
+	total += base::read( file, enabled );
+	if( enabled > 0 ) {
+	  unsigned char junk1, junk2, junk3, junk4;
+	  total += base::read( file, junk1 );
+	  total += base::read( file, junk2 );
+	  total += base::read( file, junk3 );
+	  total += base::read( file, junk4 );
+	}
       }
     else
       {

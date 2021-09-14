@@ -90,8 +90,11 @@ namespace ml
     unsigned int readAPPR( std::istream &file );
 
     unsigned int readNULL( std::istream &file );
+
+    // Read record containing Hardpoint records
     unsigned int readHPTS( std::istream &file );
     unsigned int readFLOR( std::istream &file );
+    // Read one hardpoint record
     unsigned int readHPNT( std::istream &file );
     unsigned int readDYN( std::istream &file );
 

@@ -107,6 +107,7 @@ unsigned int shot::readDERV( std::istream &file, std::string &filename )
     std::cout << "Found " << type << std::endl;
 
     total += base::read( file, filename );
+    std::cout << "Filename: " << filename << std::endl;
 
     if( dervSize == total )
     {
