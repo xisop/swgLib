@@ -64,7 +64,11 @@ namespace ml
     {
       return portalLayoutFilename;
     }
-  
+
+    const std::string &getBaseObjectFilename() const {
+      return shotBaseObjectFilename;
+    }
+
   protected:
     unsigned int readDERV( std::istream &file, std::string &filename );
     unsigned int readPCNT( std::istream &file, unsigned int &num );
