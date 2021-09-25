@@ -548,10 +548,6 @@ std::size_t readRecord(
 	std::deque<std::string> parentForms
 )
 {
-	static unsigned int numVerts = 0;
-
-	//bool isMainTexture = false;
-
 	std::cout << std::endl;
 	char buffer[10000];
 
@@ -710,7 +706,7 @@ std::size_t readRecord(
 		else if (type == "PGRF")
 		{
 			ml::base::readFormHeader(file, group, size, type);
-			std::cout << "Type: " << type << " (Portal something???)" << std::endl;
+			std::cout << "Type: " << type << " (Portal something?)" << std::endl;
 		}
 		else if (type == "DTLA")
 		{
@@ -750,17 +746,17 @@ std::size_t readRecord(
 		else if (type == "DATA")
 		{
 			ml::base::readFormHeader(file, group, size, type);
-			std::cout << "Type: " << type << " (???)" << std::endl;
+			std::cout << "Type: " << type << " (?)" << std::endl;
 		}
 		else if (type == "TEST")
 		{
 			ml::base::readFormHeader(file, group, size, type);
-			std::cout << "Type: " << type << " (???)" << std::endl;
+			std::cout << "Type: " << type << " (?)" << std::endl;
 		}
 		else if (type == "WRIT")
 		{
 			ml::base::readFormHeader(file, group, size, type);
-			std::cout << "Type: " << type << " (???)" << std::endl;
+			std::cout << "Type: " << type << " (?)" << std::endl;
 		}
 		else if (type == "NULL")
 		{
@@ -1015,7 +1011,7 @@ std::size_t readRecord(
 
 				unsigned char u1;
 				ml::base::read(file, u1);
-				std::cout << "???: " << (unsigned int)u1 << std::endl;
+				std::cout << "?: " << (unsigned int)u1 << std::endl;
 
 				std::string cellName;
 				ml::base::read(file, cellName);
@@ -1103,10 +1099,10 @@ std::size_t readRecord(
 
 		if ("INDX" == group)
 		{
-			int32_t numIndices;
+		        uint32_t numIndices;
 			ml::base::read(file, numIndices);
 
-			bool index16(((size - 4) / 2) == numIndices);
+			bool index16( ((size - 4) / 2) == numIndices );
 
 			const uint32_t numTriangles(numIndices / 3);
 			if (index16) {
@@ -2018,7 +2014,7 @@ std::size_t readRecord(
 
 			std::string name;
 			totalRead += ml::base::read(file, name);
-			std::cout << "???: " << name << std::endl;
+			std::cout << "?: " << name << std::endl;
 
 			std::cout << "Bytes left: " << size - totalRead << "\n";
 			ml::base::readUnknown(file, size - totalRead);

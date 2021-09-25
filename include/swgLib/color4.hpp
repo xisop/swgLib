@@ -24,7 +24,7 @@
 */
 
 #include <iostream>
-#include <swglib/base.hpp>
+#include <swgLib/base.hpp>
 
 #ifndef COLOR4_HPP
 #define COLOR4_HPP 1

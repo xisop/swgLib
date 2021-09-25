@@ -38,8 +38,8 @@ namespace ml
 		~idtl();
 
 		std::size_t read(std::istream& file);
-		static std::size_t idtl::readVERT(std::istream& file, std::vector<vector3>& vec);
-		static std::size_t idtl::readINDX(std::istream& file, std::vector<int32_t>& index);
+		static std::size_t readVERT(std::istream& file, std::vector<vector3>& vec);
+		static std::size_t readINDX(std::istream& file, std::vector<int32_t>& index);
 
 	protected:
 

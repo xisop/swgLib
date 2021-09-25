@@ -46,7 +46,7 @@ namespace ml
 		std::size_t readHPTS(std::istream& file);
 
 		void getBoundingSphere(vector3& center, float& radius) const;
-		void appr::getBoundingBox(vector3& corner1, vector3& corner2);
+		void getBoundingBox(vector3& corner1, vector3& corner2);
 
 	protected:
 		std::size_t readFLOR(std::istream& file);

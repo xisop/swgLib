@@ -73,7 +73,7 @@ std::size_t idtl::readVERT(std::istream& file, std::vector<vector3>& vec)
 	unsigned int numVerts = (vertSize - 8) / (sizeof(float) * 3);
 	std::cout << "Number of vertices: " << numVerts << std::endl;
 	vec.resize(numVerts);
-	int32_t count = 0;
+
 	for (auto& v : vec) {
 		total += v.read(file);
 

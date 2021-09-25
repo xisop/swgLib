@@ -224,7 +224,7 @@ std::size_t sht::readTCSS(std::istream& file)
 	const uint32_t num = uint32_t(size / 5);
 	tag texTag;
 	uint8_t index;
-	for (auto i = 0; i < num; ++i) {
+	for (uint32_t i = 0; i < num; ++i) {
 		total += base::read(file, texTag);
 		total += base::read(file, index);
 		_texCoordSet[texTag] = index;
@@ -366,7 +366,7 @@ std::size_t sht::readTFNS(std::istream& file)
 	std::cout << "Found record 0000: " << size << " bytes\n";
 
 	const uint32_t num = uint32_t(size / 8);
-	for(auto i=0; i < num; ++i ) {
+	for(uint32_t i=0; i < num; ++i ) {
 		tag texTag;
 		total += base::read(file, texTag);
 
@@ -404,7 +404,7 @@ std::size_t sht::readARVS(std::istream& file)
 
 	const uint32_t num = uint32_t(size / 5);
 
-	for (auto i = 0; i < num; ++i) {
+	for (uint32_t i = 0; i < num; ++i) {
 		tag alphaTag;
 		uint8_t alphaReferenceValue;
 		total += base::read(file, alphaTag);
@@ -440,7 +440,7 @@ std::size_t sht::readSRVS(std::istream& file)
 
 	const uint32_t num = uint32_t(size / 5);
 
-	for (auto i = 0; i < num; ++i) {
+	for (uint32_t i = 0; i < num; ++i) {
 		tag stencilTag;
 		uint32_t stencilReferenceValue;
 		total += base::read(file, stencilTag);

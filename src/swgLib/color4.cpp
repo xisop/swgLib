@@ -23,8 +23,8 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include <swglib/color4.hpp>
-#include <swglib/base.hpp>
+#include <swgLib/color4.hpp>
+#include <swgLib/base.hpp>
 #include <cstring>
 
 using namespace ml;
