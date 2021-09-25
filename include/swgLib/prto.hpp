@@ -1,10 +1,10 @@
 /** -*-c++-*-
  *  \class  prto
  *  \file   prto.hpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- swgLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006-2009 Kenneth R. Sewell III
+ swgLib is used for the parsing and exporting SWG models.
+ Copyright (C) 2006-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -22,82 +22,46 @@
  along with swgLib; if not, write to the Free Software
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include <swgLib/model.hpp>
-#include <swgLib/matrix3.hpp>
-#include <swgLib/vector3.hpp>
-#include <swgLib/cell.hpp>
 
-#include <fstream>
-#include <string>
-#include <map>
+#include <swgLib/base.hpp>
+#include <swgLib/cell.hpp>
+#include <swgLib/portalGeometry.hpp>
+#include <swgLib/pgrf.hpp>
+
+#include <istream>
 
 #ifndef PRTO_HPP
-#define PRTO_HPP
+#define PRTO_HPP 1
 
 namespace ml
 {
-  class prto : public model
-  {
-  public:
-    prto();
-    ~prto();
-    bool isRightType( std::istream &file )
-    {
-      return isOfType( file, "PRTO" );
-    }
-    unsigned int readPRTO( std::istream &file, std::string path="" );
-
-    unsigned int getNumCells() const
-    {
-      return numCells;
-    }
-    
-    unsigned int getNumPortals() const
-    {
-      return numPortals;
-    }
-    
-
-    cell &getCell( unsigned int i )
-    {
-      if( i < numCells )
+	class prto : public base
 	{
-	  return cells[i];
-	}
-      else
-	{
-	  return cells[ numCells-1 ];
-	}
-    }
+	public:
+		prto();
+		~prto();
 
-  protected:
-    unsigned int readDATA( std::istream &file );
-    unsigned int readPRTS( std::istream &file );
-    unsigned int readPRTL( std::istream &file,
-			   ml::matrix3 &mat,
-			   ml::vector3 &vec );
-    unsigned int readPRTLRecord( std::istream &file );
-    unsigned int readCELS( std::istream &file );
-    unsigned int readCELL( std::istream &file );
-    unsigned int readCELLDATA( std::istream &file,
-			       unsigned int &numCellPortals );
-    unsigned int readLGHT( std::istream &file );
-    unsigned int readPGRF( std::istream &file );
-    unsigned int readMETA( std::istream &file );
-    unsigned int readPNOD( std::istream &file );
-    unsigned int readPEDG( std::istream &file );
-    unsigned int readECNT( std::istream &file );
-    unsigned int readESTR( std::istream &file );
-    unsigned int readCRC( std::istream &file );
+		bool isRightType(std::istream& file);
 
-    unsigned int numAdjCells;
-    unsigned int numPortals;
-    unsigned int numCells;
-    unsigned int crc;
-		
-    std::vector<cell> cells;
-  private:
+		std::size_t readPRTO(std::istream& file, std::string path = "");
 
-  };
+		const int32_t &getNumCells() const;
+		const int32_t &getNumPortals() const;
+
+	protected:
+		uint8_t _version;
+		int32_t _numPortals;
+		int32_t _numCells;
+
+		std::vector<portalGeometry> _portalGeometry;
+		std::vector<cell> _cells;
+
+		pgrf _pgrf;
+
+		int32_t _crc;
+
+	private:
+
+	};
 }
 #endif

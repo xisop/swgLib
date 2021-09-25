@@ -1,10 +1,10 @@
 /** -*-c++-*-
  *  \class  vector3
  *  \file   vector3.hpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- swgLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006-2009 Kenneth R. Sewell III
+ swgLib is used for the parsing and exporting SWG models.
+ Copyright (C) 2006-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -24,83 +24,41 @@
 */
 
 #include <iostream>
-#include <cstring>
 
 #ifndef VECTOR3_HPP
-#define VECTOR3_HPP
+#define VECTOR3_HPP 1
 
 namespace ml
 {
-  class vector3
-  {
-  public:
-    vector3()
-    {v[0] = v[1] = v[2] = 0.0;}
+	class vector3
+	{
+	public:
+		vector3();
+		vector3(const float* V);
+		vector3(const float& X, const float& Y, const float& Z);
+		~vector3();
 
-    vector3( const float *V )
-    {
-      memcpy( v, V, sizeof( float ) * 3 );
-    }
+		std::size_t read(std::istream& file);
+		std::size_t write(std::ostream& file) const;
 
-    vector3( const float &X, const float &Y, const float &Z )
-    {
-      v[0] = X;
-      v[1] = Y;
-      v[2] = Z;
-    }
+		void get(float& X, float& Y, float& Z) const;
+		float getX() const;
+		float getY() const;
+		float getZ() const;
 
-    ~vector3(){}
+		void set(const float& X, const float& Y, const float& Z);
+		void set(const float* V);
+		void set(const vector3& vec);
 
-    void get( float &X, float &Y, float &Z ) const
-    {
-      X = v[0];
-      Y = v[1];
-      Z = v[2];
-    }
+		void print(std::ostream& os) const;
 
-    float getX() const
-    {
-      return v[0];
-    }
+	protected:
 
-    float getY() const
-    {
-      return v[1];
-    }
-
-    float getZ() const
-    {
-      return v[2];
-    }
-
-    void set( const float &X, const float &Y, const float &Z )
-    {
-      v[0] = X;
-      v[1] = Y;
-      v[2] = Z;
-    }
-
-    void set( const float *V )
-    {
-      memcpy( v, V, sizeof( float ) * 3 );
-    }
-
-    void set( const vector3 &vec )
-    {
-      memcpy( v, vec.v, sizeof( float ) * 3 );
-    }
-
-    void print() const
-    {
-      std::cout << std::fixed << v[0] << ", "
-		<< v[1] << ", "
-		<< v[2] << std::endl;
-    }
-  
-  protected:
-
-  private:
-    float v[3];
-  };
+	private:
+		float v[3];
+	};
 }
+
+std::ostream& operator<<(std::ostream& os, const ml::vector3& v);
+
 #endif

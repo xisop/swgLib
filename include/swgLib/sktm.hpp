@@ -1,10 +1,10 @@
 /** -*-c++-*-
  *  \class  sktm
  *  \file   sktm.hpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- swgLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006-2009 Kenneth R. Sewell III
+ swgLib is used for the parsing and exporting SWG models.
+ Copyright (C) 2006-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -29,7 +29,7 @@
 #include <vector>
 
 #ifndef SKTM_HPP
-#define SKTM_HPP
+#define SKTM_HPP 1
 
 namespace ml
 {
@@ -45,9 +45,9 @@ namespace ml
     unsigned int readSKTM( std::istream &file );
     void print() const;
 
-    unsigned int getNumBones() const
+    uint32_t getNumBones() const
     {
-      return boneName.size();
+      return uint32_t(boneName.size());
     }
 
     const std::string &getBoneName( unsigned int i ) const

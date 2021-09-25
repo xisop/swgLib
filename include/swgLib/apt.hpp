@@ -1,10 +1,10 @@
 /** -*-c++-*-
  *  \class  apt
  *  \file   apt.hpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- swgLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006-2009 Kenneth R. Sewell III
+ swgLib is used for the parsing and exporting SWG models.
+ Copyright (C) 2006-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -32,28 +32,28 @@
 
 namespace ml
 {
-  class apt : public base
-  {
-  public:
-    apt();
-    ~apt();
-    bool isRightType( std::istream &file )
-    {
-      return isOfType( file, "APT " );
-    }
-    unsigned int readAPT( std::istream &file );
-    void print() const;
-    std::string getChildFilename() const
-    {
-      return childFilename;
-    }
-    
-  protected:
-    unsigned int readNAME( std::istream &file, std::string &filename );
-    
-  private:
-    std::string childFilename;
-  };
+	class apt : public base
+	{
+	public:
+		apt();
+		~apt();
+		bool isRightType(std::istream& file)
+		{
+			return isOfType(file, "APT ");
+		}
+		std::size_t readAPT(std::istream& file);
+		void print() const;
+		std::string getChildFilename() const
+		{
+			return childFilename;
+		}
+
+	protected:
+		std::size_t readNAME(std::istream& file, std::string& filename);
+
+	private:
+		std::string childFilename;
+	};
 }
 
 #endif

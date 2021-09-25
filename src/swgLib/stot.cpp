@@ -1,10 +1,10 @@
 /** -*-c++-*-
  *  \class  stot
  *  \file   stot.cpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- swgLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006-2009 Kenneth R. Sewell III
+ swgLib is used for the parsing and exporting SWG models.
+ Copyright (C) 2006-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -43,184 +43,184 @@ stot::~stot()
 {
 }
 
-unsigned int stot::readSTOT( std::istream &file )
+unsigned int stot::readSTOT(std::istream& file)
 {
-    unsigned int stotSize;
-    unsigned int total = readFormHeader( file, "STOT", stotSize );
-    stotSize += 8;
-    std::cout << "Found STOT form" << std::endl;
+	std::size_t stotSize;
+	std::size_t total = readFormHeader(file, "STOT", stotSize);
+	stotSize += 8;
+	std::cout << "Found STOT form" << std::endl;
 
-    total += readDERV( file, stotBaseObjectFilename );
+	total += readDERV(file, stotBaseObjectFilename);
 
-    unsigned int size;
-    std::string form, type;
-    total += readFormHeader( file, form, size, type );
-    size += 8;
-    if( form != "FORM" )
-    {
-	std::cout << "Expected FORM: " << form << std::endl;
-	exit( 0 );
-    }
-    std::cout << "Found FORM:" << type << std::endl;
+	std::size_t size;
+	std::string form, type;
+	total += readFormHeader(file, form, size, type);
+	size += 8;
+	if (form != "FORM")
+	{
+		std::cout << "Expected FORM: " << form << std::endl;
+		exit(0);
+	}
+	std::cout << "Found FORM:" << type << std::endl;
 
-    total += readPCNT( file, numNodes );
-    for( unsigned int i = 0; i < numNodes; ++i )
-      {
-	total += readSTOTXXXX( file );
-      }
+	total += readPCNT(file, numNodes);
+	for (unsigned int i = 0; i < numNodes; ++i)
+	{
+		total += readSTOTXXXX(file);
+	}
 
-    total += readSHOT( file );
+	total += readSHOT(file);
 
-    if( stotSize == total )
-    {
-	std::cout << "Finished reading STOT" << std::endl;
-    }
-    else
-    {
-	std::cout << "FAILED in reading STOT" << std::endl;
-	std::cout << "Read " << total << " out of " << stotSize
-                  << std::endl;
-     }
+	if (stotSize == total)
+	{
+		std::cout << "Finished reading STOT" << std::endl;
+	}
+	else
+	{
+		std::cout << "FAILED in reading STOT" << std::endl;
+		std::cout << "Read " << total << " out of " << stotSize
+			<< std::endl;
+	}
 
-    return total;
+	return total;
 }
 
 void stot::print() const
 {
 }
 
-unsigned int stot::readSTOTXXXX( std::istream &file )
+unsigned int stot::readSTOTXXXX(std::istream& file)
 {
-    unsigned int xxxxSize;
-    std::string type;
-    unsigned int total = readRecordHeader( file, type, xxxxSize );
-    if( type != "XXXX" )
-    {
-        std::cout << "Expected record of type XXXX: " << type << std::endl;
-        exit( 0 );
-    }
-    std::cout << "Found " << type << std::endl;
+	std::size_t xxxxSize;
+	std::string type;
+	std::size_t total = readRecordHeader(file, type, xxxxSize);
+	if (type != "XXXX")
+	{
+		std::cout << "Expected record of type XXXX: " << type << std::endl;
+		exit(0);
+	}
+	std::cout << "Found " << type << std::endl;
 
-    std::string property;
-    total += base::read( file, property );
-    std::cout << "Property: " << property << std::endl;
+	std::string property;
+	total += base::read(file, property);
+	std::cout << "Property: " << property << std::endl;
 
-    unsigned char enabled;
-    if( property == "paletteColorCustomizationVariables" )
-      {
-	total += base::read( file, enabled );
-	if( enabled > 0 ) {
-	  unsigned char junk1, junk2, junk3, junk4;
-	  total += base::read( file, junk1 );
-	  total += base::read( file, junk2 );
-	  total += base::read( file, junk3 );
-	  total += base::read( file, junk4 );
+	unsigned char enabled;
+	if (property == "paletteColorCustomizationVariables")
+	{
+		total += base::read(file, enabled);
+		if (enabled > 0) {
+			unsigned char junk1, junk2, junk3, junk4;
+			total += base::read(file, junk1);
+			total += base::read(file, junk2);
+			total += base::read(file, junk3);
+			total += base::read(file, junk4);
+		}
 	}
-      }
-    else if( property == "rangedIntCustomizationVariables" )
-      {
-	total += base::read( file, enabled );
-	if( enabled > 0 ) {
-	  unsigned char junk1, junk2, junk3, junk4;
-	  total += base::read( file, junk1 );
-	  total += base::read( file, junk2 );
-	  total += base::read( file, junk3 );
-	  total += base::read( file, junk4 );
+	else if (property == "rangedIntCustomizationVariables")
+	{
+		total += base::read(file, enabled);
+		if (enabled > 0) {
+			unsigned char junk1, junk2, junk3, junk4;
+			total += base::read(file, junk1);
+			total += base::read(file, junk2);
+			total += base::read(file, junk3);
+			total += base::read(file, junk4);
+		}
 	}
-      }
-    else if( property == "constStringCustomizationVariables" )
-      {
-	total += base::read( file, enabled );
-	if( enabled > 0 ) {
-	  unsigned char junk1, junk2, junk3, junk4;
-	  total += base::read( file, junk1 );
-	  total += base::read( file, junk2 );
-	  total += base::read( file, junk3 );
-	  total += base::read( file, junk4 );
+	else if (property == "constStringCustomizationVariables")
+	{
+		total += base::read(file, enabled);
+		if (enabled > 0) {
+			unsigned char junk1, junk2, junk3, junk4;
+			total += base::read(file, junk1);
+			total += base::read(file, junk2);
+			total += base::read(file, junk3);
+			total += base::read(file, junk4);
+		}
 	}
-      }
-    else if( property == "socketDestinations" )
-      {
-	total += base::read( file, enabled );
-	if( enabled > 0 ) {
-	  unsigned char junk1, junk2, junk3, junk4;
-	  total += base::read( file, junk1 );
-	  total += base::read( file, junk2 );
-	  total += base::read( file, junk3 );
-	  total += base::read( file, junk4 );
+	else if (property == "socketDestinations")
+	{
+		total += base::read(file, enabled);
+		if (enabled > 0) {
+			unsigned char junk1, junk2, junk3, junk4;
+			total += base::read(file, junk1);
+			total += base::read(file, junk2);
+			total += base::read(file, junk3);
+			total += base::read(file, junk4);
+		}
 	}
-      }
-    else if( property == "structureFootprintFileName" )
-      {
-	total += base::read( file, enabled );
-	if( enabled > 0 ) {
-	  unsigned char junk1, junk2, junk3, junk4;
-	  total += base::read( file, junk1 );
-	  total += base::read( file, junk2 );
-	  total += base::read( file, junk3 );
-	  total += base::read( file, junk4 );
+	else if (property == "structureFootprintFileName")
+	{
+		total += base::read(file, enabled);
+		if (enabled > 0) {
+			unsigned char junk1, junk2, junk3, junk4;
+			total += base::read(file, junk1);
+			total += base::read(file, junk2);
+			total += base::read(file, junk3);
+			total += base::read(file, junk4);
+		}
 	}
-      }
-    else if( property == "useStructureFootprintOutline" )
-      {
-	total += base::read( file, enabled );
-	if( enabled > 0 ) {
-	  unsigned char junk1, junk2, junk3, junk4;
-	  total += base::read( file, junk1 );
-	  total += base::read( file, junk2 );
-	  total += base::read( file, junk3 );
-	  total += base::read( file, junk4 );
+	else if (property == "useStructureFootprintOutline")
+	{
+		total += base::read(file, enabled);
+		if (enabled > 0) {
+			unsigned char junk1, junk2, junk3, junk4;
+			total += base::read(file, junk1);
+			total += base::read(file, junk2);
+			total += base::read(file, junk3);
+			total += base::read(file, junk4);
+		}
 	}
-      }
-    else if( property == "targetable" )
-      {
-	total += base::read( file, enabled );
-	if( enabled > 0 ) {
-	  unsigned char junk1, junk2, junk3, junk4;
-	  total += base::read( file, junk1 );
-	  total += base::read( file, junk2 );
-	  total += base::read( file, junk3 );
-	  total += base::read( file, junk4 );
+	else if (property == "targetable")
+	{
+		total += base::read(file, enabled);
+		if (enabled > 0) {
+			unsigned char junk1, junk2, junk3, junk4;
+			total += base::read(file, junk1);
+			total += base::read(file, junk2);
+			total += base::read(file, junk3);
+			total += base::read(file, junk4);
+		}
 	}
-      }
-    else if( property == "certificationsRequired" )
-      {
-	total += base::read( file, enabled );
-	if( enabled > 0 ) {
-	  unsigned char junk1, junk2, junk3, junk4;
-	  total += base::read( file, junk1 );
-	  total += base::read( file, junk2 );
-	  total += base::read( file, junk3 );
-	  total += base::read( file, junk4 );
+	else if (property == "certificationsRequired")
+	{
+		total += base::read(file, enabled);
+		if (enabled > 0) {
+			unsigned char junk1, junk2, junk3, junk4;
+			total += base::read(file, junk1);
+			total += base::read(file, junk2);
+			total += base::read(file, junk3);
+			total += base::read(file, junk4);
+		}
 	}
-      }
-    else if( property == "customizationVariableMapping" )
-      {
-	total += base::read( file, enabled );
-	if( enabled > 0 ) {
-	  unsigned char junk1, junk2, junk3, junk4;
-	  total += base::read( file, junk1 );
-	  total += base::read( file, junk2 );
-	  total += base::read( file, junk3 );
-	  total += base::read( file, junk4 );
+	else if (property == "customizationVariableMapping")
+	{
+		total += base::read(file, enabled);
+		if (enabled > 0) {
+			unsigned char junk1, junk2, junk3, junk4;
+			total += base::read(file, junk1);
+			total += base::read(file, junk2);
+			total += base::read(file, junk3);
+			total += base::read(file, junk4);
+		}
 	}
-      }
-    else
-      {
-	std::cout << "Unknown: " << property << std::endl;
-	exit( 0 );
-      }
+	else
+	{
+		std::cout << "Unknown: " << property << std::endl;
+		exit(0);
+	}
 
-    if( xxxxSize == (total-8) )
-    {
-        std::cout << "Finished reading XXXX" << std::endl;
-    }
-    else
-    {
-        std::cout << "FAILED in reading XXXX" << std::endl;
-        std::cout << "Read " << total << " out of " << xxxxSize
-                  << std::endl;
-    }
+	if (xxxxSize == (total - 8))
+	{
+		std::cout << "Finished reading XXXX" << std::endl;
+	}
+	else
+	{
+		std::cout << "FAILED in reading XXXX" << std::endl;
+		std::cout << "Read " << total << " out of " << xxxxSize
+			<< std::endl;
+	}
 
-    return total;
+	return total;
 }

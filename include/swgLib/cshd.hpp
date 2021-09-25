@@ -1,10 +1,10 @@
 /** -*-c++-*-
  *  \class  cshd
  *  \file   cshd.hpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- swgLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006-2009 Kenneth R. Sewell III
+ swgLib is used for the parsing and exporting SWG models.
+ Copyright (C) 2006-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -29,31 +29,28 @@
 #include <string>
 
 #ifndef CSHD_HPP
-#define CSHD_HPP
+#define CSHD_HPP 1
 
 namespace ml
 {
 
-  class cshd : public sht
-  {
-  public:
-    cshd();
-    ~cshd();
-    bool isRightType( std::istream &file )
-    {
-      return isOfType( file, "CSHD" );
-    }
-    unsigned int readCSHD( std::istream &file, std::string path="" );
-  
-  protected:
-    unsigned int readTFAC( std::istream &file );
-    unsigned int readPAL( std::istream &file );
-    unsigned int readTXTR( std::istream &file );
-    unsigned int readCUST( std::istream &file );
-    unsigned int readTX1D( std::istream &file );
+	class cshd : public sht
+	{
+	public:
+		cshd();
+		~cshd();
 
-  private:
+		unsigned int readCSHD(std::istream& file, std::string path = "");
 
-  };
+	protected:
+		unsigned int readTFAC(std::istream& file);
+		unsigned int readPAL(std::istream& file);
+		unsigned int readTXTR(std::istream& file);
+		unsigned int readCUST(std::istream& file);
+		unsigned int readTX1D(std::istream& file);
+
+	private:
+
+	};
 }
 #endif

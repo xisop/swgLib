@@ -1,9 +1,9 @@
 /** -*-c++-*-
  *  \file   readLOD.cpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- swgLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006-2009 Kenneth R. Sewell III
+ swgLib is used for the parsing and exporting SWG models.
+ Copyright (C) 2006-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -29,26 +29,26 @@
 #include <string>
 #include <cstdlib>
 
-int main( int argc, char **argv )
+int main(int argc, char** argv)
 {
-    if( 2 != argc )
-    {
-	std::cout << "readLOD <file>" << std::endl;
+	if (2 != argc)
+	{
+		std::cout << "readLOD <file>" << std::endl;
+		return 0;
+	}
+
+	std::ifstream meshFile(argv[1], std::ios_base::binary);
+
+	if (!meshFile.is_open())
+	{
+		std::cout << "Unable to open file: " << argv[1] << std::endl;
+		exit(0);
+	}
+
+	ml::lod mesh;
+	mesh.readLOD(meshFile);
+
+	meshFile.close();
+
 	return 0;
-    }
-
-    std::ifstream meshFile( argv[1], std::ios_base::binary );
-
-    if( !meshFile.is_open() )
-    {
-	std::cout << "Unable to open file: " << argv[1] << std::endl;
-	exit( 0 );
-    }
-
-    ml::lod mesh;
-    mesh.readLOD( meshFile );
-
-    meshFile.close();
-
-    return 0;
 }

@@ -1,10 +1,10 @@
 /** -*-c++-*-
  *  \class  model
  *  \file   model.hpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- swgLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006-2009 Kenneth R. Sewell III
+ swgLib is used for the parsing and exporting SWG models.
+ Copyright (C) 2006-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -33,72 +33,71 @@
 
 namespace ml
 {
-  class model : public base
-  {
-  public:
-    model() {};
-    ~model() {};
+	class model : public base
+	{
+	public:
+		model() {};
+		~model() {};
 
-  protected:
-    std::vector<box> bbox;
-    float bsX, bsY, bsZ, bsRadius;
+		static unsigned int readVERT(std::istream& file,
+			std::vector<vector3>& vec
+		);
 
-    static unsigned int readEXBX( std::istream &file,
-				  float &cx, float &cy, float &cz,
-				  float &radius,
-				  box &box1
-				  );
-    static unsigned int readEXSP( std::istream &file,
-				  float &cx, float &cy, float &cz,
-				  float &radius
-				  );
-    static unsigned int readXCYL( std::istream &file,
-				  float &u1, float &u2, float &u3,
-				  float &u4, float &u5
-				  );
-    static unsigned int readSPHR( std::istream &file,
-				  float &cx, float &cy, float &cz,
-				  float &radius
-				  );
+		static unsigned int readINDX(std::istream& file,
+			std::vector<int32_t>& index);
 
-    static unsigned int readCYLN( std::istream &file,
-				  float &u1, float &u2, float &u3,
-				  float &u4, float &u5
-				  );
+		static unsigned int readIDTL(std::istream& file,
+			std::vector<vector3>& vec,
+			std::vector<int32_t>& index
+		);
 
-    static unsigned int readMatrixAndPosition( std::istream &file,
-					       matrix3 &matrix,
-					       vector3 &position
-					       );
+		static unsigned int readEXBX(std::istream& file,
+			float& cx, float& cy, float& cz,
+			float& radius,
+			box& box1
+		);
+		static unsigned int readEXSP(std::istream& file,
+			float& cx, float& cy, float& cz,
+			float& radius
+		);
+		static unsigned int readXCYL(std::istream& file,
+			float& u1, float& u2, float& u3,
+			float& u4, float& u5
+		);
+		static unsigned int readSPHR(std::istream& file,
+			float& cx, float& cy, float& cz,
+			float& radius
+		);
 
-    static unsigned int readVERT( std::istream &file,
-				  std::vector<vector3> &vec
-				  );
+		static unsigned int readCYLN(std::istream& file,
+			float& u1, float& u2, float& u3,
+			float& u4, float& u5
+		);
 
-    static unsigned int readINDX( std::istream &file,
-				  std::vector<unsigned int> &index );
+		static unsigned int readTransformMatrix(std::istream& file, matrix3x4& matrix );
 
-    static unsigned int readIDTL( std::istream &file,
-				  std::vector<vector3> &vec,
-				  std::vector<unsigned int> &index
-				  );
-    unsigned int readCMSH( std::istream &file );
-    unsigned int readCMPT( std::istream &file );
-    unsigned int readCPST( std::istream &file );
-    unsigned int readDTAL( std::istream &file );
+		unsigned int readAPPR(std::istream& file);
 
-    unsigned int readAPPR( std::istream &file );
+	protected:
+		std::vector<box> bbox;
+		float bsX, bsY, bsZ, bsRadius;
 
-    unsigned int readNULL( std::istream &file );
+		unsigned int readCMSH(std::istream& file);
+		unsigned int readCMPT(std::istream& file);
+		unsigned int readCPST(std::istream& file);
+		unsigned int readDTAL(std::istream& file);
 
-    // Read record containing Hardpoint records
-    unsigned int readHPTS( std::istream &file );
-    unsigned int readFLOR( std::istream &file );
-    // Read one hardpoint record
-    unsigned int readHPNT( std::istream &file );
-    unsigned int readDYN( std::istream &file );
 
-  private:
-  };
+		unsigned int readNULL(std::istream& file);
+
+		// Read record containing Hardpoint records
+		unsigned int readHPTS(std::istream& file);
+		unsigned int readFLOR(std::istream& file);
+		// Read one hardpoint record
+		unsigned int readHPNT(std::istream& file);
+		unsigned int readDYN(std::istream& file);
+
+	private:
+	};
 }
 #endif

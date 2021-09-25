@@ -1,10 +1,10 @@
 /** -*-c++-*-
  *  \class  portal
  *  \file   portal.hpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- swgLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006-2009 Kenneth R. Sewell III
+ swgLib is used for the parsing and exporting SWG models.
+ Copyright (C) 2006-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -22,98 +22,67 @@
  along with swgLib; if not, write to the Free Software
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include <iostream>
+#include <istream>
 #include <string>
-#include <vector>
 #include <swgLib/matrix3.hpp>
 #include <swgLib/vector3.hpp>
 
 #ifndef PORTAL_HPP
-#define PORTAL_HPP
+#define PORTAL_HPP 1
 
 namespace ml
 {
-  class portal
-  {
-  public:
-    portal(){}
-    ~portal(){}
+	class portal
+	{
+	public:
+		portal();
+		~portal();
 
-    void setMatrix( const matrix3 &matrix )
-    {
-      mat.set( matrix );
-    }
+		std::size_t read(std::istream& file);
 
-    void setPosition( const vector3 &position )
-    {
-      pos.set( position );
-    }
+		//void setPortalID(const unsigned int& id);
+		//unsigned int getPortalID() const;
 
-    matrix3 getMatrix() const
-    {
-      return mat;
-    }
-    
-    vector3 getPosition() const
-    {
-      return pos;
-    }
-    
-    void setPortalID( const unsigned int &id )
-    {
-      portalId = id;
-    }
-    
-    unsigned int getPortalID() const
-    {
-      return portalId;
-    }
+		void setDisabled(bool disabled = true);
+		bool isDisabled() const;
 
-    void setPortalGeometryIndex( const unsigned int &index )
-    {
-      portalGeometryIndex = index;
-    }
-    
-    unsigned int getPortalGeometryIndex() const
-    {
-      return portalGeometryIndex;
-    }
+		void setPassable(bool passable = true);
+		bool isPassable() const;
 
-    void setDestinationCell( const unsigned int &destination )
-    {
-      destinationCell = destination;
-    }
+		void setGeometryIndex(const int32_t& geomIndex);
+		const int32_t& getGeometryIndex() const;
 
-    unsigned int getDestinationCell() const
-    {
-      return destinationCell;
-    }
+		void setGeometryClockwise(bool clockwise = true);
+		bool isGeometryClockwise() const;
 
-    void print() const
-    {
-      std::cout << "Portal: " << portalId << std::endl;
-      std::cout << "Portal geometry index: " << portalGeometryIndex
-		<< std::endl;
-      std::cout << "Destination cell: " << destinationCell << std::endl;
-      std::cout << "Portal model filename: " << portalModelFilename
-		<< std::endl;
-      std::cout << "Portal matrix: " << std::endl;
-      mat.print();
-      
-      std::cout << "Portal position: ";
-      pos.print();
-    }
+		void setTargetCellIndex(const int32_t& index);
+		const int32_t& getTargetCellIndex() const;
 
-  protected:
-    unsigned int portalId;
-    unsigned int portalGeometryIndex;
-    unsigned int destinationCell;
-    std::string  portalModelFilename;
-    matrix3      mat;
-    vector3      pos;
-    
-  private:
-  };
+		void setDoorStyle(const std::string& doorStyle);
+		const std::string& getDoorStyle() const;
+
+		void setHasDoorHardpoint(bool hasDoorHardpoint = true);
+		bool hasDoorHardpoint() const;
+
+		void setDoorHardpointTransform(const matrix3x4& matrix);
+		const matrix3x4& getDoorHardpointTransformMatrix() const;
+
+		void print() const;
+
+	protected:
+		uint8_t _version;
+		bool _disabled;
+		bool _passable;
+		int32_t _geometryIndex;
+		bool _geometryWindClockwise;
+		// Portal geometry...
+		int32_t _targetCellIndex;
+		std::string _doorStyle;
+		bool _hasDoorHardpoint;
+		matrix3x4 _doorHardpointTransform;
+
+	private:
+	};
 }
 
 #endif

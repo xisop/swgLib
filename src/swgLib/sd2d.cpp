@@ -1,10 +1,10 @@
 /** -*-c++-*-
  *  \class  sd2d
  *  \file   sd2d.cpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- swgLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006-2009 Kenneth R. Sewell III
+ swgLib is used for the parsing and exporting SWG models.
+ Copyright (C) 2006-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -43,95 +43,95 @@ sd2d::~sd2d()
 {
 }
 
-unsigned int sd2d::readSD2D( std::istream &file )
+unsigned int sd2d::readSD2D(std::istream& file)
 {
-    unsigned int sd2dSize;
-    unsigned int total = readFormHeader( file, "SD2D", sd2dSize );
-    sd2dSize += 8;
-    std::cout << "Found SD2D form" << std::endl;
+	std::size_t sd2dSize;
+	std::size_t total = readFormHeader(file, "SD2D", sd2dSize);
+	sd2dSize += 8;
+	std::cout << "Found SD2D form" << std::endl;
 
-    total += read0003( file );
-    
-    if( sd2dSize == total )
-    {
-	std::cout << "Finished reading SD2D" << std::endl;
-    }
-    else
-    {
-	std::cout << "FAILED in reading SD2D" << std::endl;
-	std::cout << "Read " << total << " out of " << sd2dSize
-                  << std::endl;
-     }
+	total += read0003(file);
 
-    return total;
+	if (sd2dSize == total)
+	{
+		std::cout << "Finished reading SD2D" << std::endl;
+	}
+	else
+	{
+		std::cout << "FAILED in reading SD2D" << std::endl;
+		std::cout << "Read " << total << " out of " << sd2dSize
+			<< std::endl;
+	}
+
+	return total;
 }
 
-unsigned int sd2d::read0003( std::istream &file )
+unsigned int sd2d::read0003(std::istream& file)
 {
-    std::string type;
-    unsigned int size;
-    unsigned int total = readRecordHeader( file, type, size );
-    size += 8;
-    if( type != "0003" )
-    {
-        std::cout << "Expected record of type 0003: " << type << std::endl;
-        exit( 0 );
-    }
-    std::cout << "Found " << type << std::endl;
+	std::string type;
+	std::size_t size;
+	std::size_t total = readRecordHeader(file, type, size);
+	size += 8;
+	if (type != "0003")
+	{
+		std::cout << "Expected record of type 0003: " << type << std::endl;
+		exit(0);
+	}
+	std::cout << "Found " << type << std::endl;
 
-    total += base::read( file, numSamples );
-    std::cout << "Num samples: " << numSamples << std::endl;
+	total += base::read(file, numSamples);
+	std::cout << "Num samples: " << numSamples << std::endl;
 
-    std::string sampleName;
-    for( unsigned int i = 0; i < numSamples; ++i )
-      {
-	total += base::read( file, sampleName );
-	base::fixSlash( sampleName );
-	std::cout << "Sample: " << sampleName << std::endl;
-	samples.push_back( sampleName );
-      }
+	std::string sampleName;
+	for (unsigned int i = 0; i < numSamples; ++i)
+	{
+		total += base::read(file, sampleName);
+		base::fixSlash(sampleName);
+		std::cout << "Sample: " << sampleName << std::endl;
+		samples.push_back(sampleName);
+	}
 
-    unsigned char x;
-    for( unsigned int i = 0; i < 28; ++i )
-      {
-	total += base::read( file, x );
-	std::cout << (unsigned int)x << " ";
+	unsigned char x;
+	for (unsigned int i = 0; i < 28; ++i)
+	{
+		total += base::read(file, x);
+		std::cout << (unsigned int)x << " ";
 
-	total += base::read( file, x );
-	std::cout << (unsigned int)x << " ";
+		total += base::read(file, x);
+		std::cout << (unsigned int)x << " ";
 
-	total += base::read( file, x );
-	std::cout << (unsigned int)x << " ";
+		total += base::read(file, x);
+		std::cout << (unsigned int)x << " ";
 
-	total += base::read( file, x );
-	std::cout << (unsigned int)x << std::endl;
-      }
-	
-    if( size == total )
-    {
-        std::cout << "Finished reading 0003" << std::endl;
-    }
-    else
-    {
-        std::cout << "FAILED in reading 0003" << std::endl;
-        std::cout << "Read " << total << " out of " << size
-                  << std::endl;
-     }
+		total += base::read(file, x);
+		std::cout << (unsigned int)x << std::endl;
+	}
 
-    return total;
+	if (size == total)
+	{
+		std::cout << "Finished reading 0003" << std::endl;
+	}
+	else
+	{
+		std::cout << "FAILED in reading 0003" << std::endl;
+		std::cout << "Read " << total << " out of " << size
+			<< std::endl;
+	}
+
+	return total;
 }
 
-bool sd2d::getSample( const unsigned int &index,
-		      std::string &sampleName ) const
+bool sd2d::getSample(const unsigned int& index,
+	std::string& sampleName) const
 {
-  if( index >= numSamples )
-    {
-      return false;
-    }
+	if (index >= numSamples)
+	{
+		return false;
+	}
 
-  sampleName = samples[index];
+	sampleName = samples[index];
 
-  return true;
+	return true;
 }
 
 void sd2d::print() const

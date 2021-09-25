@@ -1,10 +1,10 @@
 /** -*-c++-*-
  *  \class  cstb
  *  \file   cstb.cpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- swgLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006-2009 Kenneth R. Sewell III
+ swgLib is used for the parsing and exporting SWG models.
+ Copyright (C) 2006-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -39,201 +39,201 @@ cstb::~cstb()
 {
 }
 
-unsigned int cstb::readCSTB( std::istream &file )
+unsigned int cstb::readCSTB(std::istream& file)
 {
-    unsigned int cstbSize;
-    unsigned int total = readFormHeader( file, "CSTB", cstbSize );
-    cstbSize += 8;
-    std::cout << "Found CSTB form"
-	      << ": " << cstbSize-12 << " bytes"
-	      << std::endl;
+	std::size_t cstbSize;
+	std::size_t total = readFormHeader(file, "CSTB", cstbSize);
+	cstbSize += 8;
+	std::cout << "Found CSTB form"
+		<< ": " << cstbSize - 12 << " bytes"
+		<< std::endl;
 
-    unsigned int size;
-    std::string form, type;
-    total += readFormHeader( file, form, size, type );
-    if( form != "FORM" )
-    {
-	std::cout << "Expected FORM: " << form << std::endl;
-	exit( 0 );
-    }
-    std::cout << "Found " << form << " " << type
-	      << ": " << size-4 << " bytes"
-	      << std::endl;
+	std::size_t size;
+	std::string form, type;
+	total += readFormHeader(file, form, size, type);
+	if (form != "FORM")
+	{
+		std::cout << "Expected FORM: " << form << std::endl;
+		exit(0);
+	}
+	std::cout << "Found " << form << " " << type
+		<< ": " << size - 4 << " bytes"
+		<< std::endl;
 
-    total += readDATA( file );
-    total += readCRCT( file );
-    total += readSTRT( file );
-    total += readSTNG( file );
+	total += readDATA(file);
+	total += readCRCT(file);
+	total += readSTRT(file);
+	total += readSTNG(file);
 
-    if( cstbSize == total )
-    {
-	std::cout << "Finished reading CSTB" << std::endl;
-    }
-    else
-    {
-	std::cout << "FAILED in reading CSTB" << std::endl;
-	std::cout << "Possibly a corrupt or non-finished file" << std::endl;
-	std::cout << "Read " << total << " out of " << cstbSize
-                  << std::endl;
-    }
-    
-    return total;
+	if (cstbSize == total)
+	{
+		std::cout << "Finished reading CSTB" << std::endl;
+	}
+	else
+	{
+		std::cout << "FAILED in reading CSTB" << std::endl;
+		std::cout << "Possibly a corrupt or non-finished file" << std::endl;
+		std::cout << "Read " << total << " out of " << cstbSize
+			<< std::endl;
+	}
+
+	return total;
 }
 
 
-unsigned int cstb::readDATA( std::istream &file )
+unsigned int cstb::readDATA(std::istream& file)
 {
-    unsigned int size;
-    std::string type;
+	std::size_t size;
+	std::string type;
 
-    unsigned int total = readRecordHeader( file, type, size );
-    size += 8;
-    if( type != "DATA" )
-    {
-	std::cout << "Expected record of type DATA: " << type << std::endl;
-	exit( 0 );
-    }
-    std::cout << "Found DATA Record"
-	      << ": " << size-8 << " bytes"
-	      << std::endl;
+	std::size_t total = readRecordHeader(file, type, size);
+	size += 8;
+	if (type != "DATA")
+	{
+		std::cout << "Expected record of type DATA: " << type << std::endl;
+		exit(0);
+	}
+	std::cout << "Found DATA Record"
+		<< ": " << size - 8 << " bytes"
+		<< std::endl;
 
-    total += base::read( file, num );
+	total += base::read(file, num);
 
-    if( size == total )
-    {
-	std::cout << "Finished reading DATA" << std::endl;
-    }
-    else
-    {
-	std::cout << "FAILED in reading DATA" << std::endl;
-	std::cout << "Read " << total << " out of " << size
-                  << std::endl;
-    }
-    
-    return total;
+	if (size == total)
+	{
+		std::cout << "Finished reading DATA" << std::endl;
+	}
+	else
+	{
+		std::cout << "FAILED in reading DATA" << std::endl;
+		std::cout << "Read " << total << " out of " << size
+			<< std::endl;
+	}
+
+	return total;
 }
 
-unsigned int cstb::readCRCT( std::istream &file )
+unsigned int cstb::readCRCT(std::istream& file)
 {
-    unsigned int size;
-    std::string type;
-    unsigned int total = readRecordHeader( file, type, size );
-    size += 8;
-    if( type != "CRCT" )
-    {
-	std::cout << "Expected record of type CRCT: " << type << std::endl;
-	exit( 0 );
-    }
-    std::cout << "Found CRCT record"
-	      << ": " << size-8 << " bytes"
-	      << std::endl;
+	std::size_t size;
+	std::string type;
+	std::size_t total = readRecordHeader(file, type, size);
+	size += 8;
+	if (type != "CRCT")
+	{
+		std::cout << "Expected record of type CRCT: " << type << std::endl;
+		exit(0);
+	}
+	std::cout << "Found CRCT record"
+		<< ": " << size - 8 << " bytes"
+		<< std::endl;
 
-    unsigned int temp;
-    for( unsigned int i = 0; i < num; ++i )
-    { 
-      total += base::read( file, temp );
-      crc.push_back( temp );
-    }
+	unsigned int temp;
+	for (unsigned int i = 0; i < num; ++i)
+	{
+		total += base::read(file, temp);
+		crc.push_back(temp);
+	}
 
-    if( size == total )
-    {
-	std::cout << "Finished reading CRCT" << std::endl;
-    }
-    else
-    {
-	std::cout << "FAILED in reading CRCT" << std::endl;
-	std::cout << "Read " << total << " out of " << size
-                  << std::endl;
-    }
-    
-    return total;
+	if (size == total)
+	{
+		std::cout << "Finished reading CRCT" << std::endl;
+	}
+	else
+	{
+		std::cout << "FAILED in reading CRCT" << std::endl;
+		std::cout << "Read " << total << " out of " << size
+			<< std::endl;
+	}
+
+	return total;
 }
 
-unsigned int cstb::readSTRT( std::istream &file )
+unsigned int cstb::readSTRT(std::istream& file)
 {
-   unsigned int size;
-   std::string type;
-   unsigned int total = readRecordHeader( file, type, size );
-    size += 8;
-    if( type != "STRT" )
-    {
-	std::cout << "Expected record of type STRT: " << type << std::endl;
-	exit( 0 );
-    }
-    std::cout << "Found STRT record"
-	      << ": " << size-8 << " bytes"
-	      << std::endl;
+	std::size_t size;
+	std::string type;
+	std::size_t total = readRecordHeader(file, type, size);
+	size += 8;
+	if (type != "STRT")
+	{
+		std::cout << "Expected record of type STRT: " << type << std::endl;
+		exit(0);
+	}
+	std::cout << "Found STRT record"
+		<< ": " << size - 8 << " bytes"
+		<< std::endl;
 
-    unsigned int temp;
-    for( unsigned int i = 0; i < num; ++i )
-    { 
-      total += base::read( file, temp );
-      offset.push_back( temp );
-    }
+	unsigned int temp;
+	for (unsigned int i = 0; i < num; ++i)
+	{
+		total += base::read(file, temp);
+		offset.push_back(temp);
+	}
 
-    if( size == total )
-    {
-	std::cout << "Finished reading STRT" << std::endl;
-    }
-    else
-    {
-	std::cout << "FAILED in reading STRT" << std::endl;
-	std::cout << "Read " << total << " out of " << size
-                  << std::endl;
-    }
+	if (size == total)
+	{
+		std::cout << "Finished reading STRT" << std::endl;
+	}
+	else
+	{
+		std::cout << "FAILED in reading STRT" << std::endl;
+		std::cout << "Read " << total << " out of " << size
+			<< std::endl;
+	}
 
-    return total;
+	return total;
 }
 
-unsigned int cstb::readSTNG( std::istream &file )
+unsigned int cstb::readSTNG(std::istream& file)
 {
-   unsigned int size;
-   std::string type;
-  
-   unsigned int total = readRecordHeader( file, type, size );
-   size += 8;
-   if( type != "STNG" )
-   {
-       std::cout << "Expected record of type STNG: " << type << std::endl;
-       exit( 0 );
-   }
-   std::cout << "Found STNG record"
-	     << ": " << size-8 << " bytes"
-	     << std::endl;
+	std::size_t size;
+	std::string type;
 
-   int pos = file.tellg();
-   
-   for( unsigned int i = 0; i < num; ++i )
-   { 
-       file.seekg( pos+offset[i], std::ios_base::beg );
-       std::string newName;
-       total += base::read( file, newName );
-       name.push_back( newName );
-   }
-   
-    if( size == total )
-    {
-	std::cout << "Finished reading STNG" << std::endl;
-    }
-    else
-    {
-	std::cout << "FAILED in reading STNG" << std::endl;
-	std::cout << "Read " << total << " out of " << size
-                  << std::endl;
-    }
+	std::size_t total = readRecordHeader(file, type, size);
+	size += 8;
+	if (type != "STNG")
+	{
+		std::cout << "Expected record of type STNG: " << type << std::endl;
+		exit(0);
+	}
+	std::cout << "Found STNG record"
+		<< ": " << size - 8 << " bytes"
+		<< std::endl;
 
-    return total;
+	int pos = file.tellg();
+
+	for (unsigned int i = 0; i < num; ++i)
+	{
+		file.seekg(pos + offset[i], std::ios_base::beg);
+		std::string newName;
+		total += base::read(file, newName);
+		name.push_back(newName);
+	}
+
+	if (size == total)
+	{
+		std::cout << "Finished reading STNG" << std::endl;
+	}
+	else
+	{
+		std::cout << "FAILED in reading STNG" << std::endl;
+		std::cout << "Read " << total << " out of " << size
+			<< std::endl;
+	}
+
+	return total;
 }
 
 void cstb::print() const
 {
-    std::cout << "Index\tCRC\t\tName" << std::endl;
-    std::cout << "-----\t---\t\t----" << std::endl;
-    for( unsigned int i = 0; i < num; ++i )
-    {
-	std::cout << i << "\t"
-		  << crc[i] << "\t"
-		  << name[i]
-		  << std::endl;
-    }
+	std::cout << "Index\tCRC\t\tName" << std::endl;
+	std::cout << "-----\t---\t\t----" << std::endl;
+	for (unsigned int i = 0; i < num; ++i)
+	{
+		std::cout << i << "\t"
+			<< crc[i] << "\t"
+			<< name[i]
+			<< std::endl;
+	}
 }

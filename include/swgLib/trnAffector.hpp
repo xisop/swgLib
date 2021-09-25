@@ -1,10 +1,10 @@
 /** -*-c++-*-
  *  \class  trnAffector
  *  \file   trnAffector.hpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
  swgLib is used for the parsing and exporting .trn models.
- Copyright (C) 2009 Kenneth R. Sewell III
+ Copyright (C) 2009 Ken Sewell
 
  This file is part of swgLib.
 

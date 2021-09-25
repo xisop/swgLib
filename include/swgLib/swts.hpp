@@ -1,10 +1,10 @@
 /** -*-c++-*-
  *  \class  swts
  *  \file   swts.hpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- swgLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006-2009 Kenneth R. Sewell III
+ swgLib is used for the parsing and exporting SWG models.
+ Copyright (C) 2006-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -34,56 +34,56 @@
 namespace ml
 {
 
-  class swts : public base
-  {
-  public:
-    swts();
-    ~swts();
-    bool isRightType( std::istream &file )
-    {
-      return isOfType( file, "SWTS" );
-    }
-    unsigned int readSWTS( std::istream &file, std::string path="" );
+	class swts : public base
+	{
+	public:
+		swts();
+		~swts();
+		bool isRightType(std::istream& file)
+		{
+			return isOfType(file, "SWTS");
+		}
+		unsigned int readSWTS(std::istream& file, std::string path = "");
 
-    std::string getShaderFilename() const
-    {
-      return shaderFilename;
-    }
-  
-    unsigned int getNumTextures() const
-    {
-      return textureList.size();
-    }
+		std::string getShaderFilename() const
+		{
+			return shaderFilename;
+		}
 
-    bool getTextureInfo( const unsigned int &index,
-			 std::string &textureFilename,
-			 std::string &textureTag ) const;
+		uint32_t getNumTextures() const
+		{
+			return uint32_t(textureList.size());
+		}
 
-    float getSequenceTime() const
-    {
-      return sequenceTime;
-    }
+		bool getTextureInfo(const unsigned int& index,
+			std::string& textureFilename,
+			std::string& textureTag) const;
 
-    float getDeltaTime() const
-    {
-      return deltaTime;
-    }
+		float getSequenceTime() const
+		{
+			return sequenceTime;
+		}
 
-    void print() const;
+		float getDeltaTime() const
+		{
+			return deltaTime;
+		}
 
-  protected:
-    unsigned int readNAME( std::istream &file );
-    unsigned int readDTST( std::istream &file );
-    unsigned int readDRTS( std::istream &file );
-    unsigned int readTEXT( std::istream &file );
+		void print() const;
 
-  private:
-    unsigned int numTextures;
-    float sequenceTime;
-    float deltaTime;
-    std::string shaderFilename;
-    std::vector<std::string> textureList;
-    std::vector<std::string> textureTagList;
-  };
+	protected:
+		unsigned int readNAME(std::istream& file);
+		unsigned int readDTST(std::istream& file);
+		unsigned int readDRTS(std::istream& file);
+		unsigned int readTEXT(std::istream& file);
+
+	private:
+		unsigned int numTextures;
+		float sequenceTime;
+		float deltaTime;
+		std::string shaderFilename;
+		std::vector<std::string> textureList;
+		std::vector<std::string> textureTagList;
+	};
 }
 #endif

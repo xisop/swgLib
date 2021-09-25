@@ -1,19 +1,72 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+  <meta charset="utf-8">
   <title>SWG .iff file format.</title>
-  <style type="text/css">
-  </style>
+  <link href="minimal-table.css" rel="stylesheet" type="text/css">
 </head>
+
 <body style="background-color:white" >
-<hl style="color:black; font-size:25px">Quick intro to IFF</hl></br>
-<hl style="color:black; font-size:15px">by Xunil</hl></br>
-<p style="color:back">
+
+<hl style="color:black; font-size:25px">Quick intro to IFF used by Star Wars Galaxies</hl></br>
+<hl style="color:black; font-size:15px">by Ken Sewell</hl></br>
+<p style="color:black">
 SWG uses
-the <a href="http://www.digitalpreservation.gov/formats/fdd/fdd000115.shtml">IFF</a>
+the <a href="https://en.wikipedia.org/wiki/Interchange_File_Format">IFF</a>
 file format for storage virtually all local data files loaded by the
 client.  The basic format is used to store a <a href="http://en.wikipedia.org/wiki/Tree_data_structure">tree</a> exported via a <a href="http://en.wikipedia.org/wiki/Depth-first_search">depth first</a> search.</br>
 The tree is composed of 2 types of nodes: Forms and Records.</br>
 <hl style="color:black; font-size:20px">FORM</hl></br>
+<table>
+<tbody>
+
+<caption style="color:black; font-size:20px"> FORM </caption>
+
+<tr>
+<th>Type</th>
+<th>Size(bytes)</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td>Four Character Code</td>
+<td>4</td>
+<td>Form Tag</td>
+<td>"FORM"</td>
+</tr>
+
+<tr>
+<td>UInt32 (Big-endian)</td>
+<td>4</td>
+<td>Form Size</td>
+<td>Length of chunk data in bytes.  Does not include the padding byte.  Will be the same as the file size minus eight bytes (this field and <tt>TypeID</tt> are not included in the count)</td>
+</tr>
+
+<tr>
+<td>Four Character Code</td>
+<td>4</td>
+<td>Form Type</td>
+<td>"MESH", "APPR"</td>
+</tr>
+
+<tr>
+<td>Byte</td>
+<td>Form Size - 12</td>
+<td>Form Data</td>
+<td>Actual data of the chunk, made up of the other sub-chunks</td>
+</tr>
+
+<tr>
+<td>Byte</td>
+<td>1</td>
+<td>padding</td>
+<td>Optional padding byte, only present if <tt>Form Size</tt> is not a multiple of 2.</td>
+</tr>
+</tbody>
+</table>
+
+<p>
 The 12-byte <b>form</b> header is composed of three variables: the form tag,
 the form size and the form type.</br>
 The <b>tag</b> consists of the ASCII string "FORM".</br>
@@ -24,9 +77,83 @@ child forms and records), but excluding the 8 bytes containing the
 FORM and size.</br>
 The <b>type</b> is a 4 byte ASCII string describing the type of form
 (i.e. "MESH", "APPR", "VTXA", ...).</br>
-After the header, the form can contain any combination of child forms,
+After the header, the form data can contain any combination of child forms,
 records and raw data.
 </br>
+
+<table>
+<tbody>
+<caption style="color:black; font-size:20px"> Known types supported inside FORM Data </caption>
+<tr>
+<th>ID</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td>MESH</td>
+<td><a href="https://en.wikipedia.org/wiki/Polygon_mesh">Polygon mesh</a> is a collection of vertices, edges and faces that defines the shape of a polyhedral object.</td>
+</tr>
+
+<tr>
+<td>0001</td>
+<td>Unknown</td>
+</tr>
+
+<tr>
+<td>0003</td>
+<td>Unknown</td>
+</tr>
+
+<tr>
+<td>EXBX</td>
+<td>Bounding Box - Box containing all objects in a set (.e.g. all vertices or polygons)</td>
+</tr>
+
+<tr>
+<td>EXSP</td>
+<td>Bounding Sphere - Sphere containing all objects in a set (.e.g. all vertices or polygons)</td>
+</tr>
+
+<tr>
+<td>HPNT</td>
+<td>Hardpoint (Attachment point)</td>
+</tr>
+
+<tr>
+<td>CPIT</td>
+<td>Cockpit</td>
+</tr>
+
+<tr>
+<td>FCHS</td>
+<td>Free Chase Camera</td>
+</tr>
+
+<tr>
+<td>TXMS</td>
+<td>Texture maps</td>
+</tr>
+
+<tr>
+<td>TXM </td>
+<td>Texture map</td>
+</tr>
+
+<tr>
+<td>CACH</td>
+<td>Cache</td>
+</tr>
+
+<tr>
+<td>SD2D</td>
+<td>2-D Sound</td>
+</tr>
+
+</tbody>
+</table>
+
+
+
 </br>
 
 <hl style="color:black; font-size:20px">RECORD</hl></br>
@@ -40,7 +167,55 @@ type and size.</br>
 The record node can contain raw data only, no forms or records may be
 contained in a record.
 </br>
+<table>
+<tbody>
 
+<caption style="color:black; font-size:20px"> Sphere Record (16-bytes)</caption>
+
+<tr>
+<th>Type</th>
+<th>Size(bytes)</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td>Four Character Code</td>
+<td>4</td>
+<td>Record Type</td>
+<td>"SPHR"</td>
+</tr>
+
+<tr>
+<td>Float32 (Little-endian)</td>
+<td>4</td>
+<td>X</td>
+<td>Center of sphere on X-axis</td>
+</tr>
+
+<tr>
+<td>Float32 (Little-endian)</td>
+<td>4</td>
+<td>Y</td>
+<td>Center of sphere on Y-axis</td>
+</tr>
+
+<tr>
+<td>Float32 (Little-endian)</td>
+<td>4</td>
+<td>Z</td>
+<td>Center of sphere on Z-axis</td>
+</tr>
+
+<tr>
+<td>Float32 (Little-endian)</td>
+<td>4</td>
+<td>Radius</td>
+<td>Radius of sphere</td>
+</tr>
+
+</tbody>
+</table>
 
 </p>
 

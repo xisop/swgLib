@@ -1,10 +1,10 @@
 /** -*-c++-*-
  *  \class  ilf
  *  \file   ilf.hpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- swgLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006-2009 Kenneth R. Sewell III
+ swgLib is used for the parsing and exporting SWG models.
+ Copyright (C) 2006-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -32,45 +32,45 @@
 #include <string>
 
 #ifndef ILF_HPP
-#define ILF_HPP
+#define ILF_HPP 1
 
 namespace ml
 {
-  class ilf : public model
-  {
-  public:
-    ilf();
-    ~ilf();
-    bool isRightType( std::istream &file )
-    {
-      return isOfType( file, "INLY" );
-    }
-    unsigned int createILF( std::istream &infile, std::ofstream &outfile );
-    unsigned int readILF( std::istream &file );
-    bool canWrite() const { return true; }
+	class ilf : public model
+	{
+	public:
+		ilf();
+		~ilf();
+		bool isRightType(std::istream& file)
+		{
+			return isOfType(file, "INLY");
+		}
+		unsigned int createILF(std::istream& infile, std::ofstream& outfile);
+		unsigned int readILF(std::istream& file);
+		bool canWrite() const { return true; }
 
-    unsigned int getNumNodes() const
-    {
-      return nodeFilename.size();
-    }
+		uint32_t getNumNodes() const
+		{
+			return uint32_t(nodeFilename.size());
+		}
 
-    bool getNode( const unsigned int &index,
-		  std::string &fileName,
-		  std::string &zoneName,
-		  matrix3 &transformMatrix,
-		  vector3 &translateVector
-		  ) const;
+		bool getNode(const unsigned int& index,
+			std::string& fileName,
+			std::string& zoneName,
+			matrix3x4& transformMatrix,
+			vector3& translateVector
+		) const;
 
-  protected:
-    unsigned int readNODE( std::istream &file );
-	
+	protected:
+		unsigned int readNODE(std::istream& file);
 
-    std::vector<std::string> nodeFilename;
-    std::vector<std::string> nodeZone;
-    std::vector<matrix3> nodeMatrix;
-    std::vector<vector3> nodeVector;
-  private:
-    
-  };
+
+		std::vector<std::string> nodeFilename;
+		std::vector<std::string> nodeZone;
+		std::vector<matrix3x4> nodeMatrix;
+		std::vector<vector3> nodeVector;
+	private:
+
+	};
 }
 #endif

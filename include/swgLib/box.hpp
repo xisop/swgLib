@@ -1,10 +1,10 @@
 /** -*-c++-*-
  *  \class  box
  *  \file   box.hpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- swgLib is used for the parsing and exporting .msh models.
- Copyright (C) 2009 Kenneth R. Sewell III
+ swgLib is used for the parsing and exporting SWG models.
+ Copyright (C) 2009-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -27,7 +27,7 @@
 #include <cstring>
 
 #ifndef BOX_HPP
-#define BOX_HPP
+#define BOX_HPP 1
 
 namespace ml
 {
@@ -39,8 +39,8 @@ namespace ml
         x2(0.0f), y2(0.0f), z2(0.0f)
     {};
     
-    unsigned int readBOX( std::istream &file );
-    unsigned int writeBOX( std::ostream &file ) const;
+    std::size_t readBOX( std::istream &file );
+    std::size_t writeBOX( std::ostream &file ) const;
 
     void getCorner1( float &x, float &y, float &z ) const
     {

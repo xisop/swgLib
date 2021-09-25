@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>SWG .iff file format.</title>
+  <link href="minimal-table.css" rel="stylesheet" type="text/css">
+</head>
+
+<body style="background-color:white" >
+
+<hl style="color:black; font-size:25px">Cell record IFF used by Star Wars Galaxies</hl></br>
+<hl style="color:black; font-size:15px">by Ken Sewell</hl></br>
+
+
+<table>
+<tbody>
+<caption style="color:black; font-size:20px"> CELL Form v0001 </caption>
+<tr>
+<th>Type</th>
+<th>Size(bytes)</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Form Tag</td>
+<td>"FORM"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Form size</td>
+<td>Length of CELL form (Excluding size of Form Tag and Form size fields.</td>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Form Type</td>
+<td>"CELL"</td>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Form Tag</td>
+<td>"FORM"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Form size</td>
+<td>Length of 0001 form (Excluding size of Form Tag and Form size fields.</td>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Form Type</td>
+<td>"0001"</td>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Record Tag</td>
+<td>"DATA"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Form size</td>
+<td>Length of DATA record (Excluding size of DATA Record Tag and Record size fields.</td>
+</tr>
+
+<tr>
+<td>int32</td>
+<td>4</td>
+<td>Number of portals</td>
+<td>N</td>
+</tr>
+
+<tr>
+<td>8-bit boolean</td>
+<td>1</td>
+<td>Can see parent cell</td>
+<td></td>
+</tr>
+
+<tr>
+<td>string</td>
+<td>variable</td>
+<td>Appearance name</td>
+<td>Null-terminated string</td>
+</tr>
+<tr>
+<td>PRTL form</td>
+<td>...</td>
+<td>Portal form 0</td>
+<td><a href="prtl_iff_format.html"Light record">See PRTL form</a></td>
+</tr>
+
+<tr>
+<td>PRTL form</td>
+<td>...</td>
+<td>Portal form ...</td>
+<td><a href="prtl_iff_format.html"Light record">See PRTL form</a></td>
+</tr>
+
+<tr>
+<td>PRTL form</td>
+<td>...</td>
+<td>Portal form N</td>
+<td><a href="prtl_iff_format.html"Light record">See PRTL form</a></td>
+</tr>
+</tbody>
+</table>
+
+</br>
+
+<table>
+<tbody>
+<caption style="color:black; font-size:20px"> CELL Form v0002 </caption>
+<tr>
+<th>Type</th>
+<th>Size(bytes)</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Form Tag</td>
+<td>"FORM"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Form size</td>
+<td>Length of CELL form (Excluding size of Form Tag and Form size fields.</td>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Form Type</td>
+<td>"CELL"</td>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Form Tag</td>
+<td>"FORM"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Form size</td>
+<td>Length of 0002 form (Excluding size of Form Tag and Form size fields.</td>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Form Type</td>
+<td>"0002"</td>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Record Tag</td>
+<td>"DATA"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Record size</td>
+<td>Length of DATA record (Excluding size of Record Tag and Record size fields.</td>
+</tr>
+
+<tr>
+<td>int32</td>
+<td>4</td>
+<td>Number of portals</td>
+<td>N</td>
+</tr>
+
+<tr>
+<td>8-bit boolean</td>
+<td>1</td>
+<td>Can see parent cell</td>
+<td></td>
+</tr>
+
+<tr>
+<td>string</td>
+<td>variable</td>
+<td>Appearance name</td>
+<td>Null-terminated string</td>
+</tr>
+
+<tr>
+<td>8-bit boolean</td>
+<td>1</td>
+<td>Has floor</td>
+<td></td>
+</tr>
+
+<tr>
+<td>string</td>
+<td>variable</td>
+<td>Floor name</td>
+<td>Only present if "Has floor" is true</td>
+</tr>
+
+<tr>
+<td>PRTL form</td>
+<td>...</td>
+<td>Portal form 1</td>
+<td><a href="prtl_iff_format.html"Light record">See PRTL form</a></td>
+</tr>
+
+<tr>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+
+<tr>
+<td>PRTL form</td>
+<td>...</td>
+<td>Portal form N</td>
+<td><a href="prtl_iff_format.html"Light record">See PRTL form</a></td>
+</tr>
+
+</tbody>
+</table>
+
+</br>
+
+<table>
+<tbody>
+<caption style="color:black; font-size:20px"> CELL Form v0003 </caption>
+<tr>
+<th>Type</th>
+<th>Size(bytes)</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Form Tag</td>
+<td>"FORM"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Form size</td>
+<td>Length of CELL form (Excluding size of Form Tag and Form size fields.</td>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Form Type</td>
+<td>"CELL"</td>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Form Tag</td>
+<td>"FORM"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Form size</td>
+<td>Length of 0003 form (Excluding size of Form Tag and Form size fields.</td>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Form Type</td>
+<td>"0003"</td>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Record Tag</td>
+<td>"DATA"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Record size</td>
+<td>Length of DATA record (Excluding size of Record Tag and Record size fields.</td>
+</tr>
+
+<tr>
+<td>int32</td>
+<td>4</td>
+<td>Number of portals</td>
+<td>N</td>
+</tr>
+
+<tr>
+<td>8-bit boolean</td>
+<td>1</td>
+<td>Can see parent cell</td>
+<td></td>
+</tr>
+
+<tr>
+<td>string</td>
+<td>variable</td>
+<td>Appearance name</td>
+<td>Null-terminated string</td>
+</tr>
+
+<tr>
+<td>8-bit boolean</td>
+<td>1</td>
+<td>Has floor</td>
+<td></td>
+</tr>
+
+<tr>
+<td>string</td>
+<td>variable</td>
+<td>Floor name</td>
+<td>Only present if "Has floor" is true</td>
+</tr>
+
+<tr>
+<td>PRTL form</td>
+<td>...</td>
+<td>Portal form 1</td>
+<td><a href="prtl_iff_format.html"Light record">See PRTL form</a></td>
+</tr>
+
+<tr>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+
+<tr>
+<td>PRTL form</td>
+<td>...</td>
+<td>Portal form N</td>
+<td><a href="prtl_iff_format.html"Light record">See PRTL form</a></td>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Record Tag</td>
+<td>"LGHT"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Record size</td>
+<td>Length of LGHT record (Excluding size of Record Tag and Record size fields.</td>
+</tr>
+
+<tr>
+<td>int32</td>
+<td>4</td>
+<td>Number of lights</td>
+<td>M</td>
+</tr>
+
+<tr>
+<td>LGHT record</td>
+<td>93</td>
+<td>Light record 1</td>
+<td><a href="lght_iff_format.html"Light record">See LGHT record</a></td>
+</tr>
+
+<tr>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+
+<tr>
+<td>LGHT record</td>
+<td>93</td>
+<td>Light record M</td>
+<td><a href="lght_iff_format.html"Light record">See LGHT record</a></td>
+</tr>
+
+</tbody>
+</table>
+
+</br>
+
+<table>
+<tbody>
+<caption style="color:black; font-size:20px"> CELL Form v0004 </caption>
+<tr>
+<th>Type</th>
+<th>Size(bytes)</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Form Tag</td>
+<td>"FORM"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Form size</td>
+<td>Length of CELL form (Excluding size of Form Tag and Form size fields.</td>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Form Type</td>
+<td>"CELL"</td>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Form Tag</td>
+<td>"FORM"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Form size</td>
+<td>Length of 0004 form (Excluding size of Form Tag and Form size fields.</td>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Form Type</td>
+<td>"0004"</td>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Record Tag</td>
+<td>"DATA"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Record size</td>
+<td>Length of DATA record (Excluding size of Record Tag and Record size fields.</td>
+</tr>
+
+<tr>
+<td>int32</td>
+<td>4</td>
+<td>Number of portals</td>
+<td>N</td>
+</tr>
+
+<tr>
+<td>8-bit boolean</td>
+<td>1</td>
+<td>Can see parent cell</td>
+<td></td>
+</tr>
+
+<tr>
+<td>string</td>
+<td>variable</td>
+<td>Name</td>
+<td>Null-terminated string</td>
+</tr>
+
+<tr>
+<td>string</td>
+<td>variable</td>
+<td>Appearance name</td>
+<td>Null-terminated string</td>
+</tr>
+
+<tr>
+<td>8-bit boolean</td>
+<td>1</td>
+<td>Has floor</td>
+<td></td>
+</tr>
+
+<tr>
+<td>string</td>
+<td>variable</td>
+<td>Floor name</td>
+<td>Only present if "Has floor" is true</td>
+</tr>
+
+<tr>
+<td>PRTL form</td>
+<td>...</td>
+<td>Portal form 1</td>
+<td><a href="prtl_iff_format.html"Light record">See PRTL form</a></td>
+</tr>
+
+<tr>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+
+<tr>
+<td>PRTL form</td>
+<td>...</td>
+<td>Portal form N</td>
+<td><a href="prtl_iff_format.html"Light record">See PRTL form</a></td>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Record Tag</td>
+<td>"LGHT"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Record size</td>
+<td>Length of LGHT record (Excluding size of Record Tag and Record size fields.</td>
+</tr>
+
+<tr>
+<td>int32</td>
+<td>4</td>
+<td>Number of lights</td>
+<td>M</td>
+</tr>
+
+<tr>
+<td>LGHT record</td>
+<td>93</td>
+<td>Light record 1</td>
+<td><a href="lght_iff_format.html"Light record">See LGHT record</a></td>
+</tr>
+
+<tr>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+
+<tr>
+<td>LGHT record</td>
+<td>93</td>
+<td>Light record M</td>
+<td><a href="lght_iff_format.html"Light record">See LGHT record</a></td>
+</tr>
+</tbody>
+</table>
+
+</br>
+
+<table>
+<tbody>
+<caption style="color:black; font-size:20px"> CELL Form v0005 </caption>
+<tr>
+<th>Type</th>
+<th>Size(bytes)</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Form Tag</td>
+<td>"FORM"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Form size</td>
+<td>Length of CELL form (Excluding size of Form Tag and Form size fields.</td>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Form Type</td>
+<td>"CELL"</td>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Form Tag</td>
+<td>"FORM"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Form size</td>
+<td>Length of 0005 form (Excluding size of Form Tag and Form size fields.</td>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Form Type</td>
+<td>"0005"</td>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Record Tag</td>
+<td>"DATA"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Record size</td>
+<td>Length of DATA form (Excluding size of Record Tag and Record size fields.</td>
+</tr>
+
+<tr>
+<td>int32</td>
+<td>4</td>
+<td>Number of portals</td>
+<td>N</td>
+</tr>
+
+<tr>
+<td>8-bit boolean</td>
+<td>1</td>
+<td>Can see parent cell</td>
+<td></td>
+</tr>
+
+<tr>
+<td>string</td>
+<td>variable</td>
+<td>Name</td>
+<td>Null-terminated string</td>
+</tr>
+
+<tr>
+<td>string</td>
+<td>variable</td>
+<td>Appearance name</td>
+<td>Null-terminated string</td>
+</tr>
+
+<tr>
+<td>8-bit boolean</td>
+<td>1</td>
+<td>Has floor</td>
+<td></td>
+</tr>
+
+<tr>
+<td>string</td>
+<td>variable</td>
+<td>Floor name</td>
+<td>Only present if "Has floor" is true</td>
+</tr>
+
+<tr>
+<td>PRTL form</td>
+<td>...</td>
+<td>Portal form 1</td>
+<td><a href="prtl_iff_format.html"Light record">See PRTL form</a></td>
+</tr>
+
+<tr>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+
+<tr>
+<td>PRTL form</td>
+<td>...</td>
+<td>Portal form N</td>
+<td><a href="prtl_iff_format.html"Light record">See PRTL form</a></td>
+</tr>
+
+<tr>
+<td>CMSH Record</td>
+<td>...</td>
+<td>...</td>
+<td><a href="cmsh_iff_format.html"Light record">See CMSH record</a></td>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Record Tag</td>
+<td>"LGHT"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Record size</td>
+<td>Length of LGHT record (Excluding size of Record Tag and Record size fields.</td>
+</tr>
+
+<tr>
+<td>int32</td>
+<td>4</td>
+<td>Number of lights</td>
+<td>M</td>
+</tr>
+
+
+<tr>
+<td>LGHT record</td>
+<td>93</td>
+<td>Light record 1</td>
+<td><a href="lght_iff_format.html"Light record">See LGHT record</a></td>
+</tr>
+
+<tr>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+
+<tr>
+<td>LGHT record</td>
+<td>93</td>
+<td>Light record M</td>
+<td><a href="lght_iff_format.html"Light record">See LGHT record</a></td>
+</tr>
+
+</tbody>
+</table>

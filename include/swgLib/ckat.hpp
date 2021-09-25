@@ -1,10 +1,10 @@
 /** -*-c++-*-
  *  \class  ckat
  *  \file   ckat.hpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- swgLib is used for the parsing and exporting .msh models.
- Copyright (C) 2009 Kenneth R. Sewell III
+ swgLib is used for the parsing and exporting SWG models.
+ Copyright (C) 2009 Ken Sewell
 
  This file is part of swgLib.
 

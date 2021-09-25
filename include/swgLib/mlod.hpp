@@ -1,10 +1,10 @@
 /** -*-c++-*-
  *  \class  mlod
  *  \file   mlod.hpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- swgLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006-2009 Kenneth R. Sewell III
+ swgLib is used for the parsing and exporting SWG models.
+ Copyright (C) 2006-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -27,39 +27,39 @@
 #include <vector>
 
 #ifndef MLOD_HPP
-#define MLOD_HPP
+#define MLOD_HPP 1
 
 namespace ml
 {
-  class mlod : public model
-  {
-  public:
-    mlod();
-    ~mlod();
-    bool isRightType( std::istream &file )
-    {
-      return isOfType( file, "MLOD" );
-    }
+	class mlod : public model
+	{
+	public:
+		mlod();
+		~mlod();
+		bool isRightType(std::istream& file)
+		{
+			return isOfType(file, "MLOD");
+		}
 
-    unsigned int readMLOD( std::istream &file, const std::string &path="" );
+		std::size_t readMLOD(std::istream& file, const std::string& path = "");
 
-    unsigned int getNumMesh() const
-    {
-      return meshFilename.size();
-    }
+		uint32_t getNumMesh() const
+		{
+			return uint32_t(meshFilename.size());
+		}
 
-    const std::string &getMeshFilename( unsigned int index ) const
-    {
-      return meshFilename[index];
-    }
+		const std::string& getMeshFilename(unsigned int index) const
+		{
+			return meshFilename[index];
+		}
 
-  protected:
-    unsigned int readINFO( std::istream &file, unsigned short &num );
-    unsigned int readNAME( std::istream &file, std::string &name );
+	protected:
+		std::size_t readINFO(std::istream& file, unsigned short& num);
+		std::size_t readNAME(std::istream& file, std::string& name);
 
-    std::vector< std::string > meshFilename;
+		std::vector< std::string > meshFilename;
 
-  private:
-  };
+	private:
+	};
 }
 #endif

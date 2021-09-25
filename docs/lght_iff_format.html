@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>SWG .iff file format.</title>
+  <link href="minimal-table.css" rel="stylesheet" type="text/css">
+</head>
+
+<body style="background-color:white" >
+
+<hl style="color:black; font-size:25px">Light record IFF used by Star Wars Galaxies</hl></br>
+<hl style="color:black; font-size:15px">by Ken Sewell</hl></br>
+<p style="color:black">
+
+<table>
+<tbody>
+<caption style="color:black; font-size:20px"> LGHT Record </caption>
+<tr>
+<th>Type</th>
+<th>Size(bytes)</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Record Tag</td>
+<td>"LGHT"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Form size</td>
+<td>Length of record (Excluding size of Record Tag and Record size fields.</td>
+</tr>
+
+<tr>
+<td>int8</td>
+<td>1</td>
+<td>Light type</td>
+<td>0-Ambient, 1-Parallel, 2-Point</td>
+</tr>
+
+<tr>
+<td>8-bit boolean</td>
+<td>1</td>
+<td>Can see parent cell</td>
+<td></td>
+</tr>
+
+<tr>
+<td>float (4)</td>
+<td>16</td>
+<td>Diffuse color</td>
+<td>4 floats in ARGB order</td>
+</tr>
+
+<tr>
+<td>float (4)</td>
+<td>16</td>
+<td>Specular color</td>
+<td>4 floats in ARGB order</td>
+</tr>
+
+<tr>
+<td>float(3x4)</td>
+<td>48</td>
+<td>Transform matrix</td>
+<td></td>
+</tr>
+
+<tr>
+<td>float</td>
+<td>4</td>
+<td>Constant attenuation</td>
+<td></td>
+</tr>
+
+<tr>
+<td>float</td>
+<td>4</td>
+<td>Linear attenuation</td>
+<td></td>
+</tr>
+
+<tr>
+<td>float</td>
+<td>4</td>
+<td>Quadratic attenuation</td>
+<td></td>
+</tr>
+
+</tbody>
+</table>

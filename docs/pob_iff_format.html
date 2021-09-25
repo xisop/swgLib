@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>SWG .iff file format.</title>
+  <link href="minimal-table.css" rel="stylesheet" type="text/css">
+</head>
+
+<body style="background-color:white" >
+
+<hl style="color:black; font-size:25px">Portal record IFF used by Star Wars Galaxies</hl></br>
+<hl style="color:black; font-size:15px">by Ken Sewell</hl></br>
+<p style="color:black">
+SWG uses
+the <a href="https://en.wikipedia.org/wiki/Interchange_File_Format">IFF</a>
+file format for storage virtually all local data files loaded by the
+client.  The basic format is used to store a <a href="http://en.wikipedia.org/wiki/Tree_data_structure">tree</a> exported via a <a href="http://en.wikipedia.org/wiki/Depth-first_search">depth first</a> search.</br>
+The tree is composed of 2 types of nodes: Forms and Records.</br>
+<hl style="color:black; font-size:20px">FORM</hl></br>
+
+PRTO</br>
+-Version 0000</br>
+--DATA</br>
+---Number of Portals (int32)</br>
+---Number of Cells (int32)</br>
+--PRTS</br>
+---PRTL record</br>
+--CELS</br>
+---CELL record</br>
+</br>
+
+PRTO</br>
+-Version 0001</br>
+--DATA</br>
+---Number of Portals (int32)</br>
+---Number of Cells (int32)</br>
+--PRTS</br>
+---PRTL record</br>
+--CELS</br>
+---CELL record</br>
+--CRC (int32)</br>
+</br>
+
+PRTO</br>
+-Version 0002 - Passable flag flipped?</br>
+--DATA</br>
+---Number of Portals (int32)</br>
+---Number of Cells (int32)</br>
+--PRTS</br>
+---PRTL record</br>
+--CELS</br>
+---CELL record</br>
+--PGRF (Path graph factory) record
+--CRC (int32)</br>
+</br>
+
+PRTO</br>
+-Version 0003</br>
+--DATA</br>
+---Number of Portals (int32)</br>
+---Number of Cells (int32)</br>
+--PRTS</br>
+---PRTL record</br>
+--CELS</br>
+---CELL record</br>
+--PGRF (Path graph factory) record
+--CRC (int32)</br>
+</br>
+
+PRTO</br>
+-Version 0004</br>
+--DATA</br>
+---Number of Portals (int32)</br>
+---Number of Cells (int32)</br>
+--PRTS</br>
+---PRTL record</br>
+--CELS</br>
+---CELL record</br>
+--PGRF (Path graph factory) record
+--CRC (int32)</br>
+</br>
+
+<table>
+<tbody>
+<caption style="color:black; font-size:20px"> PRTL Record v0001 </caption>
+<tr>
+<th>Type</th>
+<th>Size(bytes)</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td>FourCC</td>
+<td>4</td>
+<td>Form Tag</td>
+<td>"FORM"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Form size</td>
+<td>Length of record (Excluding size of Form Tag and Form size fields.</td>
+</tr>
+
+<tr>
+<td>FourCC</td>
+<td>4</td>
+<td>Form Type</td>
+<td>"PRTL"</td>
+</tr>
+
+<tr>
+<td>FourCC</td>
+<td>4</td>
+<td>Record Tag</td>
+<td>"0001"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Record size</td>
+<td>Length of record (Excluding size of Record Tag and Record size fields.</td>
+</tr>
+
+<tr>
+<td>int32</td>
+<td>4</td>
+<td>Geometry index</td>
+<td></td>
+</tr>
+
+<tr>
+<td>8-bit boolean</td>
+<td>1</td>
+<td>Geometry winding clockwise</td>
+<td></td>
+</tr>
+
+<tr>
+<td>int32</td>
+<td>4</td>
+<td>Ignored field</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<tbody>
+<caption style="color:black; font-size:20px"> PRTL Record v0002 </caption>
+<tr>
+<th>Type</th>
+<th>Size(bytes)</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td>FourCC</td>
+<td>4</td>
+<td>Form Tag</td>
+<td>"FORM"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Form size</td>
+<td>Length of record (Excluding size of Form Tag and Form size fields.</td>
+</tr>
+
+<tr>
+<td>FourCC</td>
+<td>4</td>
+<td>Form Type</td>
+<td>"PRTL"</td>
+</tr>
+
+<tr>
+<td>FourCC</td>
+<td>4</td>
+<td>Record Tag</td>
+<td>"0002"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Record size</td>
+<td>Length of record (Excluding size of Record Tag and Record size fields.</td>
+</tr>
+
+<tr>
+<td>8-bit boolean</td>
+<td>1</td>
+<td>Passable</td>
+<td></td>
+</tr>
+
+<tr>
+<td>int32</td>
+<td>4</td>
+<td>Geometry index</td>
+<td></td>
+</tr>
+
+<tr>
+<td>8-bit boolean</td>
+<td>1</td>
+<td>Geometry winding clockwise</td>
+<td></td>
+</tr>
+
+<tr>
+<td>int32</td>
+<td>4</td>
+<td>Ignored field</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<tbody>
+<caption style="color:black; font-size:20px"> PRTL Record v0003 </caption>
+<tr>
+<th>Type</th>
+<th>Size(bytes)</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td>FourCC</td>
+<td>4</td>
+<td>Form Tag</td>
+<td>"FORM"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Form size</td>
+<td>Length of record (Excluding size of Form Tag and Form size fields.</td>
+</tr>
+
+<tr>
+<td>FourCC</td>
+<td>4</td>
+<td>Form Type</td>
+<td>"PRTL"</td>
+</tr>
+
+<tr>
+<td>FourCC</td>
+<td>4</td>
+<td>Record Tag</td>
+<td>"0003"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Record size</td>
+<td>Length of record (Excluding size of Record Tag and Record size fields.</td>
+</tr>
+
+<tr>
+<td>8-bit boolean</td>
+<td>1</td>
+<td>Passable</td>
+<td></td>
+</tr>
+
+<tr>
+<td>int32</td>
+<td>4</td>
+<td>Geometry index</td>
+<td></td>
+</tr>
+
+<tr>
+<td>8-bit boolean</td>
+<td>1</td>
+<td>Geometry winding clockwise</td>
+<td></td>
+</tr>
+
+<tr>
+<td>int32</td>
+<td>4</td>
+<td>Ignored field</td>
+<td></td>
+</tr>
+
+<tr>
+<td>string</td>
+<td>variable</td>
+<td>Door style</td>
+<td>Null-terminated string</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<tbody>
+<caption style="color:black; font-size:20px"> PRTL Record v0004 </caption>
+<tr>
+<th>Type</th>
+<th>Size(bytes)</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td>FourCC</td>
+<td>4</td>
+<td>Form Tag</td>
+<td>"FORM"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Form size</td>
+<td>Length of record (Excluding size of Form Tag and Form size fields.</td>
+</tr>
+
+<tr>
+<td>FourCC</td>
+<td>4</td>
+<td>Form Type</td>
+<td>"PRTL"</td>
+</tr>
+
+<tr>
+<td>FourCC</td>
+<td>4</td>
+<td>Record Tag</td>
+<td>"0004"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Record size</td>
+<td>Length of record (Excluding size of Record Tag and Record size fields.</td>
+</tr>
+
+<tr>
+<td>8-bit boolean</td>
+<td>1</td>
+<td>Passable</td>
+<td></td>
+</tr>
+
+<tr>
+<td>int32</td>
+<td>4</td>
+<td>Geometry index</td>
+<td></td>
+</tr>
+
+<tr>
+<td>8-bit boolean</td>
+<td>1</td>
+<td>Geometry winding clockwise</td>
+<td></td>
+</tr>
+
+<tr>
+<td>int32</td>
+<td>4</td>
+<td>Ignored field</td>
+<td></td>
+</tr>
+
+<tr>
+<td>string</td>
+<td>variable</td>
+<td>Door style</td>
+<td>Null-terminated string</td>
+</tr>
+<tr>
+
+<td>8-bit boolean</td>
+<td>1</td>
+<td>Has door hardpoint</td>
+<td></td>
+
+</tr>
+<td>float</td>
+<td>48(3x4 array)</td>
+<td>Door hardpoint transform</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<tbody>
+<caption style="color:black; font-size:20px"> PRTL Record v0005 </caption>
+<tr>
+<th>Type</th>
+<th>Size(bytes)</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td>FourCC</td>
+<td>4</td>
+<td>Form Tag</td>
+<td>"FORM"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Form size</td>
+<td>Length of record (Excluding size of Form Tag and Form size fields.</td>
+</tr>
+
+<tr>
+<td>FourCC</td>
+<td>4</td>
+<td>Form Type</td>
+<td>"PRTL"</td>
+</tr>
+
+<tr>
+<td>FourCC</td>
+<td>4</td>
+<td>Record Tag</td>
+<td>"0004"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Record size</td>
+<td>Length of record (Excluding size of Record Tag and Record size fields.</td>
+</tr>
+
+<tr>
+<td>8-bit boolean</td>
+<td>1</td>
+<td>Disabled</td>
+<td></td>
+</tr>
+
+<tr>
+<td>8-bit boolean</td>
+<td>1</td>
+<td>Passable</td>
+<td></td>
+</tr>
+
+<tr>
+<td>int32</td>
+<td>4</td>
+<td>Geometry index</td>
+<td></td>
+</tr>
+
+<tr>
+<td>8-bit boolean</td>
+<td>1</td>
+<td>Geometry winding clockwise</td>
+<td></td>
+</tr>
+
+<tr>
+<td>int32</td>
+<td>4</td>
+<td>Ignored field</td>
+<td></td>
+</tr>
+
+<tr>
+<td>string</td>
+<td>variable</td>
+<td>Door style</td>
+<td>Null-terminated string</td>
+</tr>
+<tr>
+
+<td>8-bit boolean</td>
+<td>1</td>
+<td>Has door hardpoint</td>
+<td></td>
+</tr>
+
+<td>float</td>
+<td>48(3x4 array)</td>
+<td>Door hardpoint transform</td>
+<td></td>
+</tr>
+</tbody>
+</table>

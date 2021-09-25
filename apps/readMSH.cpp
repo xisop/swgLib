@@ -1,9 +1,9 @@
 /** -*-c++-*-
  *  \file   readMSH.cpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- swgLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006-2009 Kenneth R. Sewell III
+ swgLib is used for the parsing and exporting SWG models.
+ Copyright (C) 2006-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -27,38 +27,29 @@
 #include <string>
 #include <cstdlib>
 
-#include <swgLib/msh.hpp>
+#include <swgLib/mesh.hpp>
 
-#if 0
-#include <osg/Geometry>
-#include <osg/Geode>
-#include <osg/Group>
-#include <osgDB/WriteFile>
-#include <osg/Texture2D>
-#include <osgDB/ReadFile>
-#endif
-
-int main( int argc, char **argv )
+int main(int argc, char** argv)
 {
 
-    if( 2 != argc )
-    {
-	std::cout << "readMSH <file>" << std::endl;
+	if (2 != argc)
+	{
+		std::cout << "readMSH <file>" << std::endl;
+		return 0;
+	}
+
+	std::ifstream meshFile(argv[1], std::ios_base::binary);
+
+	if (!meshFile.is_open())
+	{
+		std::cout << "Unable to open file: " << argv[1] << std::endl;
+		exit(0);
+	}
+
+	ml::mesh mesh;
+	mesh.readMESH(meshFile);
+
+	meshFile.close();
+
 	return 0;
-    }
-
-    std::ifstream meshFile( argv[1], std::ios_base::binary );
-
-    if( !meshFile.is_open() )
-    {
-	std::cout << "Unable to open file: " << argv[1] << std::endl;
-	exit( 0 );
-    }
-
-    ml::msh mesh;
-    mesh.readMSH( meshFile );
-
-    meshFile.close();
-
-    return 0;
 }

@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>SWG .iff file format.</title>
+  <link href="minimal-table.css" rel="stylesheet" type="text/css">
+</head>
+
+<body style="background-color:white" >
+
+<hl style="color:black; font-size:25px">Portal record used by Star Wars Galaxies</hl></br>
+<hl style="color:black; font-size:15px">by Ken Sewell</hl></br>
+<p style="color:black">
+The portal record (found in .pob files) comes in 5 variations as listed below:</br>
+
+<table>
+<tbody>
+
+<caption style="color:black; font-size:20px"> PRTL Record v0001 </caption>
+<tr>
+<th>Type</th>
+<th>Size(bytes)</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Form Tag</td>
+<td>"FORM"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Form size</td>
+<td>Length of form (Excluding size of Form Tag and Form size fields.</td>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Form Type</td>
+<td>"PRTL"</td>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Record Tag</td>
+<td>"0001"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Record size</td>
+<td>Length of record (Excluding size of Record Tag and Record size fields.</td>
+</tr>
+
+<tr>
+<td>int32</td>
+<td>4</td>
+<td>Geometry index</td>
+<td></td>
+</tr>
+
+<tr>
+<td>8-bit boolean</td>
+<td>1</td>
+<td>Geometry winding clockwise</td>
+<td></td>
+</tr>
+
+<tr>
+<td>int32</td>
+<td>4</td>
+<td>Ignored field</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<tbody>
+<caption style="color:black; font-size:20px"> PRTL Record v0002 </caption>
+<tr>
+<th>Type</th>
+<th>Size(bytes)</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Form Tag</td>
+<td>"FORM"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Form size</td>
+<td>Length of form (Excluding size of Form Tag and Form size fields.</td>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Form Type</td>
+<td>"PRTL"</td>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Record Tag</td>
+<td>"0002"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Record size</td>
+<td>Length of record (Excluding size of Record Tag and Record size fields.</td>
+</tr>
+
+<tr>
+<td>8-bit boolean</td>
+<td>1</td>
+<td>Passable</td>
+<td></td>
+</tr>
+
+<tr>
+<td>int32</td>
+<td>4</td>
+<td>Geometry index</td>
+<td></td>
+</tr>
+
+<tr>
+<td>8-bit boolean</td>
+<td>1</td>
+<td>Geometry winding clockwise</td>
+<td></td>
+</tr>
+
+<tr>
+<td>int32</td>
+<td>4</td>
+<td>Ignored field</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<tbody>
+<caption style="color:black; font-size:20px"> PRTL Record v0003 </caption>
+<tr>
+<th>Type</th>
+<th>Size(bytes)</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Form Tag</td>
+<td>"FORM"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Form size</td>
+<td>Length of form (Excluding size of Form Tag and Form size fields.</td>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Form Type</td>
+<td>"PRTL"</td>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Record Tag</td>
+<td>"0003"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Record size</td>
+<td>Length of record (Excluding size of Record Tag and Record size fields.</td>
+</tr>
+
+<tr>
+<td>8-bit boolean</td>
+<td>1</td>
+<td>Passable</td>
+<td></td>
+</tr>
+
+<tr>
+<td>int32</td>
+<td>4</td>
+<td>Geometry index</td>
+<td></td>
+</tr>
+
+<tr>
+<td>8-bit boolean</td>
+<td>1</td>
+<td>Geometry winding clockwise</td>
+<td></td>
+</tr>
+
+<tr>
+<td>int32</td>
+<td>4</td>
+<td>Ignored field</td>
+<td></td>
+</tr>
+
+<tr>
+<td>string</td>
+<td>variable</td>
+<td>Door style</td>
+<td>Null-terminated string</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<tbody>
+<caption style="color:black; font-size:20px"> PRTL Record v0004 </caption>
+<tr>
+<th>Type</th>
+<th>Size(bytes)</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Form Tag</td>
+<td>"FORM"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Form size</td>
+<td>Length of form (Excluding size of Form Tag and Form size fields.</td>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Form Type</td>
+<td>"PRTL"</td>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Record Tag</td>
+<td>"0004"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Record size</td>
+<td>Length of record (Excluding size of Record Tag and Record size fields.</td>
+</tr>
+
+<tr>
+<td>8-bit boolean</td>
+<td>1</td>
+<td>Passable</td>
+<td></td>
+</tr>
+
+<tr>
+<td>int32</td>
+<td>4</td>
+<td>Geometry index</td>
+<td></td>
+</tr>
+
+<tr>
+<td>8-bit boolean</td>
+<td>1</td>
+<td>Geometry winding clockwise</td>
+<td></td>
+</tr>
+
+<tr>
+<td>int32</td>
+<td>4</td>
+<td>Ignored field</td>
+<td></td>
+</tr>
+
+<tr>
+<td>string</td>
+<td>variable</td>
+<td>Door style</td>
+<td>Null-terminated string</td>
+</tr>
+<tr>
+
+<td>8-bit boolean</td>
+<td>1</td>
+<td>Has door hardpoint</td>
+<td></td>
+</tr>
+
+<td>float</td>
+<td>48(3x4 array)</td>
+<td>Door hardpoint transform</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<tbody>
+<caption style="color:black; font-size:20px"> PRTL Record v0005 </caption>
+<tr>
+<th>Type</th>
+<th>Size(bytes)</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Form Tag</td>
+<td>"FORM"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Form size</td>
+<td>Length of form (Excluding size of Form Tag and Form size fields.</td>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Form Type</td>
+<td>"PRTL"</td>
+</tr>
+
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/FourCC">FourCC</a></td>
+<td>4</td>
+<td>Record Tag</td>
+<td>"0004"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Record size</td>
+<td>Length of record (Excluding size of Record Tag and Record size fields.</td>
+</tr>
+
+<tr>
+<td>8-bit boolean</td>
+<td>1</td>
+<td>Disabled</td>
+<td></td>
+</tr>
+
+<tr>
+<td>8-bit boolean</td>
+<td>1</td>
+<td>Passable</td>
+<td></td>
+</tr>
+
+<tr>
+<td>int32</td>
+<td>4</td>
+<td>Geometry index</td>
+<td></td>
+</tr>
+
+<tr>
+<td>8-bit boolean</td>
+<td>1</td>
+<td>Geometry winding clockwise</td>
+<td></td>
+</tr>
+
+<tr>
+<td>int32</td>
+<td>4</td>
+<td>Ignored field</td>
+<td></td>
+</tr>
+
+<tr>
+<td>string</td>
+<td>variable</td>
+<td>Door style</td>
+<td>Null-terminated string</td>
+</tr>
+<tr>
+
+<td>8-bit boolean</td>
+<td>1</td>
+<td>Has door hardpoint</td>
+<td></td>
+</tr>
+
+<td>float</td>
+<td>48(3x4 array)</td>
+<td>Door hardpoint transform</td>
+<td>3 row x 4 col rotation-translation matrix</td>
+</tr>
+
+</tbody>
+</table>

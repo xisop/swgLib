@@ -1,10 +1,10 @@
 /** -*-c++-*-
  *  \class  cmp
  *  \file   cmp.hpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- swgLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006-2009 Kenneth R. Sewell III
+ swgLib is used for the parsing and exporting SWG models.
+ Copyright (C) 2006-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -31,74 +31,74 @@
 #include <vector>
 
 #ifndef CMP_HPP
-#define CMP_HPP
+#define CMP_HPP 1
 
 namespace ml
 {
-  
-  class cmp : public model
-  {
-  public:
-    cmp();
-    ~cmp();
-    bool isRightType( std::istream &file )
-    {
-      return isOfType( file, "CMPA" );
-    }
-    unsigned int readCMP( std::istream &file, std::string path="" );
-    unsigned int getNumParts() const
-    {
-      return partFilenames.size();
-    }
-    
-    bool getPart( unsigned int index, std::string &filename,
-		  vector3 &partPosition,
-		  matrix3 &partScaleRotate
-		  ) const;
-    
-    void getBoundingSphere( float &centerX,
-			    float &centerY,
-			    float &centerZ,
-			    float &sphereRadius
-			    )
-    {
-      centerX = cx;
-      centerY = cy;
-      centerZ = cz;
-      sphereRadius = radius;
-    }
-    
-    void getBoundingBox( float &X1, float &Y1, float &Z1,
-			 float &X2, float &Y2, float &Z2
-			 )
-    {
-      X1 = x1;
-      Y1 = y1;
-      Z1 = z1;
-      X2 = x2;
-      Y2 = y2;
-      Z2 = z2;
-    }
 
-  protected:
-    unsigned int readRADR( std::istream &file );
-    unsigned int readPART( std::istream &file );
+	class cmp : public model
+	{
+	public:
+		cmp();
+		~cmp();
+		bool isRightType(std::istream& file)
+		{
+			return isOfType(file, "CMPA");
+		}
+		std::size_t readCMP(std::istream& file, std::string path = "");
+		uint32_t getNumParts() const
+		{
+			return uint32_t(partFilenames.size());
+		}
 
-  private:
-    std::vector<std::string> partFilenames;
-    std::vector<vector3> position;
-    std::vector<matrix3> scaleRotate;
+		bool getPart(unsigned int index, std::string& filename,
+			vector3& partPosition,
+			matrix3x4& partScaleRotate
+		) const;
 
-    std::vector<vector3> radrVert;
-    std::vector<unsigned int>radrIndex;
+		void getBoundingSphere(float& centerX,
+			float& centerY,
+			float& centerZ,
+			float& sphereRadius
+		)
+		{
+			centerX = cx;
+			centerY = cy;
+			centerZ = cz;
+			sphereRadius = radius;
+		}
 
-    // Bounding sphere center and radius
-    float cx, cy, cz, radius;
+		void getBoundingBox(float& X1, float& Y1, float& Z1,
+			float& X2, float& Y2, float& Z2
+		)
+		{
+			X1 = x1;
+			Y1 = y1;
+			Z1 = z1;
+			X2 = x2;
+			Y2 = y2;
+			Z2 = z2;
+		}
 
-    // 2 xyz points defining bounding box
-    float x1, y1, z1;
-    float x2, y2, z2;
+	protected:
+		std::size_t readRADR(std::istream& file);
+		std::size_t readPART(std::istream& file);
 
-  };
+	private:
+		std::vector<std::string> partFilenames;
+		//std::vector<vector3> position;
+		std::vector<matrix3x4> scaleRotate;
+
+		std::vector<vector3> radrVert;
+		std::vector<int32_t>radrIndex;
+
+		// Bounding sphere center and radius
+		float cx, cy, cz, radius;
+
+		// 2 xyz points defining bounding box
+		float x1, y1, z1;
+		float x2, y2, z2;
+
+	};
 }
 #endif

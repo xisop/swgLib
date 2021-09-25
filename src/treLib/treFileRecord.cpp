@@ -1,10 +1,10 @@
 /** -*-c++-*-
  *  \class  treFileRecord
  *  \file   treFileRecord.cpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
  treLib is used for the creation and deconstruction of .TRE files.
- Copyright (C) 2006-2009 Kenneth R. Sewell III
+ Copyright (C) 2006-2021 Ken Sewell
  
  This file is part of treLib.
  

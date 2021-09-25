@@ -1,10 +1,10 @@
 /** -*-c++-*-
  *  \class  skmg
  *  \file   skmg.hpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- swgLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006-2009 Kenneth R. Sewell III
+ swgLib is used for the parsing and exporting SWG models.
+ Copyright (C) 2006-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -95,9 +95,9 @@ namespace ml
       return shaderFilename;
     }
 
-    unsigned int getNumSkeletons() const
+    uint32_t getNumSkeletons() const
     {
-      return skeletonFilenameList.size();
+      return uint32_t(skeletonFilenameList.size());
     }
 
     const std::string &getSkeleton( unsigned int index ) const
@@ -105,14 +105,14 @@ namespace ml
       return skeletonFilenameList[index];
     }
 
-    unsigned int getNumGroups() const
+    uint32_t getNumGroups() const
     {
       return numBones;
     }
 
-    unsigned int getNumPsdt() const
+    uint32_t getNumPsdt() const
     {
-      return psdtList.size();
+      return uint32_t(psdtList.size());
     }
 
     const psdt &getPsdt( unsigned int index ) const
@@ -170,15 +170,15 @@ namespace ml
 
     std::vector< std::string > boneNames;
 
-    unsigned int numSkeletons;
-    unsigned int numBones;
-    unsigned int numPoints;
-    unsigned int numNorm;
-    unsigned int numPSDT;
-    unsigned int numDot3;
-    unsigned int numTwdt;
-    unsigned int numIndex;
-    unsigned int numBLT;
+    uint32_t numSkeletons;
+    uint32_t numBones;
+    uint32_t numPoints;
+    uint32_t numNorm;
+    uint32_t numPSDT;
+    uint32_t numDot3;
+    uint32_t numTwdt;
+    uint32_t numIndex;
+    uint32_t numBLT;
 
     std::vector<float> x;
     std::vector<float> y;

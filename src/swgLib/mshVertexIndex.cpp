@@ -1,9 +1,9 @@
 /** -*-c++-*-
  *  \class  mshVertexIndex
  *  \file   mshVertexIndex.cpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- Copyright (C) 2006-2009 Kenneth R. Sewell III
+ Copyright (C) 2006-2021 Ken Sewell
 
  This file is part of swgLib.
 

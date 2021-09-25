@@ -1,9 +1,9 @@
 /** -*-c++-*-
  *  \file   readTRN.cpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
  swgLib is used for the parsing and exporting .trn models.
- Copyright (C) 2006-2009 Kenneth R. Sewell III
+ Copyright (C) 2006-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -29,27 +29,27 @@
 #include <string>
 #include <cstdlib>
 
-int main( int argc, char **argv )
+int main(int argc, char** argv)
 {
 
-    if( 2 != argc )
-    {
-	std::cout << "readTRN <file>" << std::endl;
+	if (2 != argc)
+	{
+		std::cout << "readTRN <file>" << std::endl;
+		return 0;
+	}
+
+	std::ifstream terrainFile(argv[1], std::ios_base::binary);
+
+	if (!terrainFile.is_open())
+	{
+		std::cout << "Unable to open file: " << argv[1] << std::endl;
+		exit(0);
+	}
+
+	ml::trn terrain;
+	terrain.readTRN(terrainFile);
+
+	terrainFile.close();
+
 	return 0;
-    }
-
-    std::ifstream terrainFile( argv[1], std::ios_base::binary );
-
-    if( !terrainFile.is_open() )
-    {
-	std::cout << "Unable to open file: " << argv[1] << std::endl;
-	exit( 0 );
-    }
-
-    ml::trn terrain;
-    terrain.readTRN( terrainFile );
-
-    terrainFile.close();
-
-    return 0;
 }

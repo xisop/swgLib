@@ -1,10 +1,10 @@
 /** -*-c++-*-
  *  \class  lod
  *  \file   lod.cpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- swgLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006-2009 Kenneth R. Sewell III
+ swgLib is used for the parsing and exporting SWG models.
+ Copyright (C) 2006-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -24,9 +24,12 @@
 */
 
 #include <swgLib/lod.hpp>
-#include <swgLib/msh.hpp>
+#include <swgLib/mesh.hpp>
 #include <swgLib/cshd.hpp>
 #include <swgLib/sht.hpp>
+#include <swgLib/exbx.hpp>
+
+#include <swgLib/model.hpp>
 
 #include <iostream>
 #include <bitset>
@@ -34,13 +37,9 @@
 
 using namespace ml;
 
-lod::lod()
-  : x1( -1.0 ),
-    y1( -1.0 ),
-    z1( -1.0 ),
-    x2(  1.0 ),
-    y2(  1.0 ),
-    z2(  1.0 )
+lod::lod() :
+	_usePivotPoint(false),
+	_disableLODCrossFade(false)
 {
 }
 
@@ -48,379 +47,198 @@ lod::~lod()
 {
 }
 
-bool lod::getChild( unsigned int index, 
-		    std::string &filename,
-		    float &Near, float &Far ) const
+bool lod::getChild(int32_t id, struct lodChild& requestedChild) const
 {
-  if( index > getNumLODs()-1 )
-    {
-      return false;
-    }
-
-  Near = near[index];
-  Far = far[index];
-  filename = childFilename[index];
-
-  return true;
-}
-
-unsigned int lod::readLOD( std::istream &file, std::string path )
-{
-  basePath = path;
-  unsigned int dtlaSize;
-  unsigned int total = readFormHeader( file, "DTLA", dtlaSize );
-  dtlaSize += 8;
-  std::cout << "Found DTLA form" << std::endl;
-
-  unsigned int size;
-#if 1
-  std::string form, type;
-  total += readFormHeader( file, form, size, type );
-  if( form != "FORM" )
-    {
-      std::cout << "Expected Form " << std::endl;
-      exit( 0 );
-    }
-  if( type != "0007" && type != "0006" && type != "0005")
-    {
-      std::cout << "Expected type 0005, 0006 or 0007: " << type << std::endl;
-      exit( 0 );
-    }
-#else
-  total += readFormHeader( file, "0000", size );
-#endif
-  std::cout << "Found form of type: " << type << std::endl;
-
-  while( total < dtlaSize )
-    {
-      // Peek at next record, but keep file at same place.
-      base::peekHeader( file, form, size, type );
-	
-      if( form == "FORM" )
-	{
-	  if( type == "APPR" )
-	    {
-	      total += model::readAPPR( file );
-	    }
-	  else if( type == "DATA" )
-	    {
-	      total += readChildren( file );
-	    }
-	  else if( type == "RADR" )
-	    {
-	      total += readRADR( file );
-	    }
-	  else if( type == "TEST" )
-	    {
-	      total += readTEST( file );
-	    }
-	  else if( type == "WRIT" )
-	    {
-	      total += readWRIT( file );
-	    }
-	  else
-	    {
-	      std::cout << "Unexpected FORM: " << type << std::endl;
-	      exit( 0 );
-	    }
+	for (auto c : _child) {
+		if (id == c.id) {
+			requestedChild = c;
+		}
 	}
-      else if( form == "PIVT" )
+
+	return false;
+}
+
+std::size_t lod::readLOD(std::istream& file, std::string path)
+{
+	basePath = path;
+	std::size_t dtlaSize;
+	std::size_t total = readFormHeader(file, "DTLA", dtlaSize);
+	dtlaSize += 12;
+	std::cout << "Found DTLA form: " << dtlaSize << " bytes\n";
+
+	std::size_t size;
+	std::string form, type;
+	total += readFormHeader(file, form, size, type);
+	if (form != "FORM")
 	{
-	  total += readPIVT( file );
+		std::cout << "Expected Form " << std::endl;
+		exit(0);
 	}
-      else if( form == "INFO" )
+
+	_version = base::tagToVersion(type);
+	if ((_version < 1) || (_version > 8)) {
+		std::cout << "Expected type [0001..0008]: " << type << std::endl;
+		exit(0);
+	}
+	std::cout << "Found form of type: " << type << std::endl;
+
+	// Versions 4+...
+	if (_version >= 4) {
+		// Read appearance...
+		total += _appearance.read(file);
+	}
+
+	// Versions 6+...
+	if (_version >= 6) {
+		// Read PIVT...
+		total += base::readRecordHeader(file, "PIVT", size);
+		std::cout << "Found record PIVT: " << size << "\n";
+		total += base::read(file, _lodFlags);
+		std::cout << "LOD Flags: 0x" << std::hex << (int)_lodFlags << std::dec << "\n";
+		_usePivotPoint = (_lodFlags & 0x01) > 0;
+		std::cout << "Use pivot point: " << std::boolalpha << _usePivotPoint << "\n";
+		if (_version >= 8) {
+			_disableLODCrossFade = (_lodFlags & 0x02) > 0;
+			std::cout << "Disable LOD cross fade: " << std::boolalpha << _disableLODCrossFade << "\n";
+		}
+	}
+
+	// Load Entries...
 	{
-	  total += readINFO( file );
+		// Read INFO...
+		{
+			std::size_t infoSize;
+			total += base::readRecordHeader(file, "INFO", infoSize);
+			std::cout << "Found record INFO: " << infoSize << "\n";
+			uint32_t numEntries = uint32_t(infoSize / 12);
+			std::cout << "Number of entries: " << numEntries << "\n";
+			_child.resize(numEntries);
+			for (auto& c : _child) {
+				total += base::read(file, c.id);
+				total += base::read(file, c.near);
+				total += base::read(file, c.far);
+			}
+		}
+
+		// Read DATA...
+		{
+			std::size_t dataSize;
+			total += base::readFormHeader(file, "DATA", dataSize);
+			std::cout << "Found form DATA: " << dataSize << "\n";
+			std::size_t dataRead = 4; // Count 4 bytes from the form header...
+			while (dataRead < dataSize) {
+				dataRead += base::readRecordHeader(file, "CHLD", size);
+				std::cout << "Found record CHLD: " << size << "\n";
+				int32_t id;
+				dataRead += base::read(file, id);
+				std::string name;
+				dataRead += base::read(file, name);
+
+				// Find matching child id in vector...
+				for (auto& c : _child) {
+					if (id == c.id) {
+						// If found, set child name...
+						c.name = std::string("appearance/") + name;
+					}
+				}
+			}
+			total += dataRead;
+		}
+
+		for (auto c : _child) {
+			std::cout
+				<< "Child " << c.id << ":\n"
+				<< "  Near distance: " << c.near << "\n"
+				<< "   Far distance: " << c.far << "\n"
+				<< "  Name distance: " << c.name << "\n";
+		}
+	} // End entries...
+
+	// Versions 7+...
+	if (_version >= 7) {
+		// Load Radar...
+		std::size_t radrSize;
+		total += base::readFormHeader(file, "RADR", radrSize);
+		std::cout << "Found form RADR: " << radrSize << "\n";
+
+		total += base::readRecordHeader(file, "INFO", size);
+		std::cout << "Found record INFO: " << size << "\n";
+
+		int32_t hasRadar = 0;
+		total += base::read(file, hasRadar);
+
+		if (hasRadar > 0) {
+			_hasRadar = true;
+			std::cout << "Has radar:  true\n";
+			total += _radarShape.read(file);
+		}
+		else {
+			std::cout << "Has radar:  false\n";
+		}
 	}
-      else
+
+	// Versions 2+...
+	if (_version >= 2) {
+		// Load test shape...
+		std::size_t testSize;
+		total += base::readFormHeader(file, "TEST", testSize);
+		std::cout << "Found form TEST: " << testSize << "\n";
+
+		total += base::readRecordHeader(file, "INFO", size);
+		std::cout << "Found record INFO: " << size << "\n";
+
+		int32_t hasTest = 0;
+		total += base::read(file, hasTest);
+
+		if (hasTest > 0) {
+			_hasTest = true;
+			std::cout << "Has test:  true\n";
+			total += _testShape.read(file);
+		}
+		else {
+			std::cout << "Has test:  false\n";
+		}
+
+		// Load write shape...
+		std::size_t writSize;
+		total += base::readFormHeader(file, "WRIT", writSize);
+		std::cout << "Found form WRIT: " << writSize << "\n";
+
+		total += base::readRecordHeader(file, "INFO", size);
+		std::cout << "Found record INFO: " << size << "\n";
+
+		int32_t hasWrite = 0;
+		total += base::read(file, hasWrite);
+
+		if (hasWrite > 0) {
+			_hasWrite = true;
+			std::cout << "Has write:  true\n";
+			total += _writeShape.read(file);
+		}
+		else {
+			std::cout << "Has write:  false\n";
+		}
+
+	}
+
+	// Versions 3 or 4
+	if ((3 == _version) || (5 == _version)) {
+		// Load floors...
+		std::cout << "Needs handled...\n";
+		exit(0);
+	}
+
+	if (dtlaSize == total)
 	{
-	  std::cout << "Unexpected record: " << form << std::endl;
-	  exit( 0 );
+		std::cout << "Finished reading DTLA\n";
 	}
-    }
-
-  if( dtlaSize == total )
-    {
-      std::cout << "Finished reading DTLA" << std::endl;
-    }
-  else
-    {
-      std::cout << "Failed in reading DTLA" << std::endl;
-      std::cout << "Read " << total << " out of " << dtlaSize
-		<< std::endl;
-    }
-
-  return total;
-}
-
-unsigned int lod::readPIVT( std::istream &file )
-{
-    unsigned int size;
-    std::string type;
-
-    unsigned int total = readRecordHeader( file, type, size );
-    if( type != "PIVT" )
-    {
-	std::cout << "Expected record of type PIVT: " << type << std::endl;
-	exit( 0 );
-    }
-    std::cout << "Found PIVT record" << std::endl;
-
-    total += readUnknown( file, size );
-    
-    return total;
-}
-
-unsigned int lod::readINFO( std::istream &file )
-{
-    unsigned int size;
-    std::string type;
-
-    unsigned int total = readRecordHeader( file, type, size );
-    if( type != "INFO" )
-    {
-	std::cout << "Expected record of type INFO: " << type << std::endl;
-	exit( 0 );
-    }
-    std::cout << "Found INFO record" << std::endl;
-
-    unsigned int num = size/12;
-
-    for( unsigned int i=0; i < num; ++i )
-    {
-	unsigned int childNo;
-	total += base::read( file, childNo );
-
-	float n;
-	total += base::read( file, n );
-	near.push_back( n );
-
-	float f;
-	total += base::read( file, f );
-	far.push_back( f );
-
-	std::cout << childNo << ": "
-		  << near[far.size()-1] << "..."
-		  << far[far.size()-1]
-		  << std::endl;
-    }
-    
-    return total;
-}
-
-unsigned int lod::readCHLD( std::istream &file )
-{
-    unsigned int size;
-    std::string type;
-
-    unsigned int total = readRecordHeader( file, type, size );
-    size += 8;
-    if( type != "CHLD" )
-    {
-	std::cout << "Expected record of type CHLD: " << type << std::endl;
-	exit( 0 );
-    }
-    std::cout << "Found CHLD record" << std::endl;
-
-    unsigned int childNumber;
-    total += base::read( file, childNumber );
-
-    std::string tempFilename;
-    total += base::read( file, tempFilename );
-
-    // Some files already have appearance/ in them
-    if( tempFilename.substr( 0, 11 ) != "appearance/" )
-      {
-	std::string filename = "appearance/";
-	filename += tempFilename;
-	std::cout << childNumber << ": " << filename << std::endl;
-	childFilename.push_back( filename );
-      }
-    else
-      {
-	childFilename.push_back( tempFilename );
-      }
-
-    if( size == total )
-    {
-        std::cout << "Finished reading CHLD" << std::endl;
-    }
-    else
-    {
-        std::cout << "FAILED in reading CHLD" << std::endl;
-        std::cout << "Read " << total << " out of " << size
-                  << std::endl;
-     }
-
-    return total;
-}
-
-unsigned int lod::readChildren( std::istream &file )
-{
-    unsigned int size;
-    unsigned int total = readFormHeader( file, "DATA", size );
-    std::cout << "Found DATA form" << std::endl;
-
-#if 0
-    while( total < size-4 )
-#else
-      for( unsigned int i = 0; i < near.size(); ++i )
-#endif
-    {
-	total += readCHLD( file );
-    }
-
-    return total;
-}
-
-unsigned int lod::readRADR( std::istream &file )
-{
-    unsigned int radrSize;
-    unsigned int total = readFormHeader( file, "RADR", radrSize );
-    radrSize += 8;
-    std::cout << "Found RADR form" << std::endl;
-
-    std::string type;
-    unsigned int size;
-    total += readRecordHeader( file, type, size );
-    if( type != "INFO" )
-    {
-	std::cout << "Expected record of type INFO: " << type << std::endl;
-	exit( 0 );
-    }
-    std::cout << "Found INFO record" << std::endl;
-
-    unsigned int numNodes;
-    total += base::read( file, numNodes );
-    std::cout << "Num nodes: " << numNodes << std::endl;
-
-    // Need to loop here and read IDTL (and others?)
-    while( total < radrSize )
-      {
-	std::vector<vector3> vec;
-	std::vector<unsigned int> index;
-	total += model::readIDTL( file, vec, index );
-      }
-
-    if( radrSize == total )
-    {
-	std::cout << "Finished reading RADR" << std::endl;
-    }
-    else
-    {
-	std::cout << "Failed in reading RADR" << std::endl;
-        std::cout << "Read " << total << " out of " << radrSize
-                  << std::endl;
-    }
-
-    return total;
-}
-
-unsigned int lod::readTEST( std::istream &file )
-{
-    std::string form;
-    unsigned int testSize;
-    std::string type;
-
-    unsigned int total = readFormHeader( file, "TEST", testSize );
-    testSize += 8;
-    std::cout << "Found TEST form" << std::endl;
-
-    unsigned int size;
-    total += readRecordHeader( file, type, size );
-    if( type != "INFO" )
-    {
-	std::cout << "Expected record of type INFO: " << type << std::endl;
-	exit( 0 );
-    }
-    std::cout << "Found INFO record" << std::endl;
-    unsigned int numNodes;
-    total += base::read( file, numNodes );
-    std::cout << "Num nodes: " << numNodes << std::endl;
-
-    // Need to loop here and read IDTL (and others?)
-    while( total < testSize )
-      {
-	peekHeader( file, form, size, type );
-	if( "FORM" == form )
-	  {
-	    if( "IDTL" == type )
-	      {
-		std::vector<vector3> vec;
-		std::vector<unsigned int> index;
-		total += model::readIDTL( file, vec, index );
-	      }
-	    else
-	      {
-		std::cout << "Expected Form of type IDTL: "
-			  << type << std::endl;
-		exit( 0 );
-	      }
-	  }
 	else
-	  {
-	    std::cout << "Expected Form of type IDTL: "
-		      << type << std::endl;
-	    exit( 0 );
-	  }
-      }
+	{
+		std::cout << "Failed in reading DTLA\n";
+		std::cout << "Read " << total << " out of " << dtlaSize << "\n";
+		exit(0);
+	}
 
-    if( testSize == total )
-    {
-	std::cout << "Finished reading TEST" << std::endl;
-    }
-    else
-    {
-	std::cout << "Failed in reading TEST" << std::endl;
-        std::cout << "Read " << total << " out of " << testSize
-                  << std::endl;
-    }
-
-    return total;
-}
-
-unsigned int lod::readWRIT( std::istream &file )
-{
-    std::string form;
-    unsigned int writSize;
-    std::string type;
-
-    unsigned int total = readFormHeader( file, "WRIT", writSize );
-    writSize += 8;
-    std::cout << "Found WRIT form" << std::endl;
-
-    unsigned int size;
-    total += readRecordHeader( file, type, size );
-    if( type != "INFO" )
-    {
-	std::cout << "Expected record of type INFO: " << type << std::endl;
-	exit( 0 );
-    }
-    std::cout << "Found INFO record" << std::endl;
-
-    unsigned int numNodes;
-    total += base::read( file, numNodes );
-
-    std::cout << "Num nodes: " << numNodes << std::endl;
-
-    while( total < writSize )
-      {
-	std::vector<vector3> vec;
-	std::vector<unsigned int> index;
-	total += model::readIDTL( file, vec, index );
-      }
-
-    if( writSize == total )
-    {
-	std::cout << "Finished reading WRIT" << std::endl;
-    }
-    else
-    {
-	std::cout << "Failed in reading WRIT" << std::endl;
-        std::cout << "Read " << total << " out of " << writSize
-                  << std::endl;
-    }
-
-    return total;
+	return total;
 }
 

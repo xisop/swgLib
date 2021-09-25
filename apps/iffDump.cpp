@@ -1,9 +1,9 @@
 /** -*-c++-*-
  *  \file   iffDump.cpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- swgLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006-2009 Kenneth R. Sewell III
+ swgLib is used for the parsing and exporting SWG models.
+ Copyright (C) 2006-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -30,6 +30,10 @@
 #include <vector>
 #include <deque>
 #include <cstdlib>
+#include <cassert>
+
+#include <swgLib/base.hpp>
+#include <swgLib/model.hpp>
 
 unsigned int numCols = 0;
 unsigned int numRows = 0;
@@ -37,1756 +41,2225 @@ unsigned int numRows = 0;
 // Temp variable
 unsigned int geodeCount = 0;
 
-unsigned int readUnknown( std::ifstream &file,
-		  const unsigned int size )
+std::size_t readGeometryDATA(std::ifstream& file,
+	std::size_t size,
+	unsigned int numVerts
+)
 {
-    for( unsigned int i = 0; i < size; ++i )
-    {
-        unsigned char data;
-        file.read( (char*)&data, 1 );
-        if(
-	   ( data >= '.' && data <= '9' ) ||
-	   ( data >= 'A' && data <= 'Z' ) ||
-	   ( data >= 'a' && data <= 'z' ) ||
-	   ( data == '\\' ) ||
-	   ( data == '_' )
-            )
-        {
-            std::cout << data;
-        }
-        else
-        {
-	  std::cout<< std::hex << "0x" << std::setw( 2 )
-		   << std::setfill('0')
-		   << (unsigned int)data
-		   <<" " << std::dec;
-        }
-    }
-    std::cout << std::endl;
-    return size;
-}
+	uint32_t bytesPerVertex = uint32_t(size / numVerts);
 
-unsigned char readBigEndian( std::ifstream &file,
-			     const unsigned int &size,
-			     char *buffer
-    )
-{
-#if BYTE_ORDER == LITTLE_ENDIAN
-    for( unsigned int i=0; i<size; ++i )
-    {
-        file.read( &(buffer[size -1 - i]), 1 );
-    }
-#else
-    file.read( buffer, size );
-#endif
-    
-    return size;
-}
-
-
-int readGeometryDATA( std::ifstream &file,
-		      unsigned int size,
-		      unsigned int numVerts
-    )
-{
-    unsigned int bytesPerVertex = size/numVerts;
-
-    std::cout << std::fixed;
-    std::cout << "Bytes per vertex: " << bytesPerVertex << std::endl;
-    if( 32 == bytesPerVertex )
-    {
-	unsigned int numData = size/32;
-	std::cout << "Num vertices: " << numData << std::endl;
-
-
-	float x, y, z;
-	float nx, ny, nz;
-	float s, t;
-	for( unsigned int i = 0; i < numData; ++i )
+	std::cout << std::fixed;
+	std::cout << "Bytes per vertex: " << bytesPerVertex << std::endl;
+	if (32 == bytesPerVertex)
 	{
-	    file.read( (char *)&x, sizeof( x ) );
-	    file.read( (char *)&y, sizeof( y ) );
-	    file.read( (char *)&z, sizeof( z ) );
-	    std::cout << x << " " << y << " " << z << " ";
+		uint32_t numData = uint32_t(size / 32);
+		std::cout << "Num vertices: " << numData << std::endl;
 
-	    file.read( (char *)&nx, sizeof( nx ) );
-	    file.read( (char *)&ny, sizeof( ny ) );
-	    file.read( (char *)&nz, sizeof( nz ) );
-	    std::cout << nx << " " << ny << " " << nz << " ";
+		float x, y, z;
+		float nx, ny, nz;
+		float s, t;
+		for (unsigned int i = 0; i < numData; ++i)
+		{
+			file.read((char*)&x, sizeof(x));
+			file.read((char*)&y, sizeof(y));
+			file.read((char*)&z, sizeof(z));
+			std::cout << x << " " << y << " " << z << " ";
 
-	    // Tex coords 0
-	    // Tex coords 0
-	    file.read( (char *)&s, sizeof( s ) );
-	    std::cout << s << " ";
-	    file.read( (char *)&t, sizeof( t ) );
-	    std::cout << t << std::endl;
+			file.read((char*)&nx, sizeof(nx));
+			file.read((char*)&ny, sizeof(ny));
+			file.read((char*)&nz, sizeof(nz));
+			std::cout << nx << " " << ny << " " << nz << " ";
+
+			// Tex coords 0
+			// Tex coords 0
+			file.read((char*)&s, sizeof(s));
+			std::cout << s << " ";
+			file.read((char*)&t, sizeof(t));
+			std::cout << t << std::endl;
+		}
 	}
-    }
-    else if( 36 == bytesPerVertex )
-    {
-	float x, y, z;
-	float nx, ny, nz;
-	float s, t;
-	for( unsigned int i = 0; i < numVerts; ++i )
+	if (36 == bytesPerVertex)
 	{
-	    file.read( (char *)&x, sizeof( x ) );
-	    file.read( (char *)&y, sizeof( y ) );
-	    file.read( (char *)&z, sizeof( z ) );
-	    std::cout << x << " " << y << " " << z << " ";
+		float x, y, z;
+		float nx, ny, nz;
+		float s, t;
+		for (unsigned int i = 0; i < numVerts; ++i)
+		{
+			file.read((char*)&x, sizeof(x));
+			file.read((char*)&y, sizeof(y));
+			file.read((char*)&z, sizeof(z));
+			std::cout << x << " " << y << " " << z << " ";
 
-	    file.read( (char *)&nx, sizeof( nx ) );
-	    file.read( (char *)&ny, sizeof( ny ) );
-	    file.read( (char *)&nz, sizeof( nz ) );
-	    std::cout << nx << " " << ny << " " << nz << " ";
+			file.read((char*)&nx, sizeof(nx));
+			file.read((char*)&ny, sizeof(ny));
+			file.read((char*)&nz, sizeof(nz));
+			std::cout << nx << " " << ny << " " << nz << " ";
 
-	    unsigned char color[4];
-	    file.read( (char *)color, 4 );
-	    std::cout << (unsigned int)color[0] << " "
-		      << (unsigned int)color[1] << " "
-		      << (unsigned int)color[2] << " "
-		      << (unsigned int)color[3] << " ";
+			unsigned char color[4];
+			file.read((char*)color, 4);
+			std::cout << (unsigned int)color[0] << " "
+				<< (unsigned int)color[1] << " "
+				<< (unsigned int)color[2] << " "
+				<< (unsigned int)color[3] << " ";
 
 
-	    // Tex coords 0
-	    file.read( (char *)&s, sizeof( s ) );
-	    std::cout << s << " ";
-	    file.read( (char *)&t, sizeof( t ) );
-	    std::cout << t << std::endl;
+			// Tex coords 0
+			file.read((char*)&s, sizeof(s));
+			std::cout << s << " ";
+			file.read((char*)&t, sizeof(t));
+			std::cout << t << std::endl;
+		}
 	}
-    }
-    else if( 40 == bytesPerVertex )
-    {
-	float x, y, z;
-	float nx, ny, nz;
-	float s, t;
-	for( unsigned int i = 0; i < numVerts; ++i )
+	if (40 == bytesPerVertex)
 	{
-	    file.read( (char *)&x, sizeof( x ) );
-	    file.read( (char *)&y, sizeof( y ) );
-	    file.read( (char *)&z, sizeof( z ) );
-	    std::cout << x << " " << y << " " << z << " ";
+		float x, y, z;
+		float nx, ny, nz;
+		float s, t;
+		for (unsigned int i = 0; i < numVerts; ++i)
+		{
+			file.read((char*)&x, sizeof(x));
+			file.read((char*)&y, sizeof(y));
+			file.read((char*)&z, sizeof(z));
+			std::cout << x << " " << y << " " << z << " ";
 
-	    file.read( (char *)&nx, sizeof( nx ) );
-	    file.read( (char *)&ny, sizeof( ny ) );
-	    file.read( (char *)&nz, sizeof( nz ) );
-	    std::cout << nx << " " << ny << " " << nz << " ";
+			file.read((char*)&nx, sizeof(nx));
+			file.read((char*)&ny, sizeof(ny));
+			file.read((char*)&nz, sizeof(nz));
+			std::cout << nx << " " << ny << " " << nz << " ";
 
-	    // Tex coords 0
-	    file.read( (char *)&s, sizeof( s ) );
-	    std::cout << s << " ";
-	    file.read( (char *)&t, sizeof( t ) );
-	    std::cout << t << " ";
+			// Tex coords 0
+			file.read((char*)&s, sizeof(s));
+			std::cout << s << " ";
+			file.read((char*)&t, sizeof(t));
+			std::cout << t << " ";
 
-	    // Tex coords 1
-	    file.read( (char *)&s, sizeof( s ) );
-	    std::cout << s << " ";
-	    file.read( (char *)&t, sizeof( t ) );
-	    std::cout << t << std::endl;
+			// Tex coords 1
+			file.read((char*)&s, sizeof(s));
+			std::cout << s << " ";
+			file.read((char*)&t, sizeof(t));
+			std::cout << t << std::endl;
+		}
 	}
-    }
-    else if( bytesPerVertex == 44 )
-    {
-	float x, y, z;
-	float nx, ny, nz;
-	float s, t;
-	for( unsigned int i = 0; i < numVerts; ++i )
+	if (bytesPerVertex == 44)
 	{
-	    file.read( (char *)&x, sizeof( x ) );
-	    file.read( (char *)&y, sizeof( y ) );
-	    file.read( (char *)&z, sizeof( z ) );
-	    std::cout << x << " " << y << " " << z << " ";
+		float x, y, z;
+		float nx, ny, nz;
+		float s, t;
+		for (unsigned int i = 0; i < numVerts; ++i)
+		{
+			file.read((char*)&x, sizeof(x));
+			file.read((char*)&y, sizeof(y));
+			file.read((char*)&z, sizeof(z));
+			std::cout << x << " " << y << " " << z << " ";
 
-	    file.read( (char *)&nx, sizeof( nx ) );
-	    file.read( (char *)&ny, sizeof( ny ) );
-	    file.read( (char *)&nz, sizeof( nz ) );
-	    std::cout << nx << " " << ny << " " << nz << " ";
+			file.read((char*)&nx, sizeof(nx));
+			file.read((char*)&ny, sizeof(ny));
+			file.read((char*)&nz, sizeof(nz));
+			std::cout << nx << " " << ny << " " << nz << " ";
 
-	    unsigned char color[4];
-	    file.read( (char *)color, 4 );
-	    std::cout << (unsigned int)color[0] << " "
-		      << (unsigned int)color[1] << " "
-		      << (unsigned int)color[2] << " "
-		      << (unsigned int)color[3] << " ";
+			unsigned char color[4];
+			file.read((char*)color, 4);
+			std::cout << (unsigned int)color[0] << " "
+				<< (unsigned int)color[1] << " "
+				<< (unsigned int)color[2] << " "
+				<< (unsigned int)color[3] << " ";
 
-	    // Tex coords 0
-	    file.read( (char *)&s, sizeof( s ) );
-	    std::cout << s << " ";
-	    file.read( (char *)&t, sizeof( t ) );
-	    std::cout << t << " ";
+			// Tex coords 0
+			file.read((char*)&s, sizeof(s));
+			std::cout << s << " ";
+			file.read((char*)&t, sizeof(t));
+			std::cout << t << " ";
 
-	    // Tex coords 1
-	    file.read( (char *)&s, sizeof( s ) );
-	    std::cout << s << " ";
-	    file.read( (char *)&t, sizeof( t ) );
-	    std::cout << t << std::endl;
+			// Tex coords 1
+			file.read((char*)&s, sizeof(s));
+			std::cout << s << " ";
+			file.read((char*)&t, sizeof(t));
+			std::cout << t << std::endl;
+		}
 	}
-    }
-    else if( 48 == bytesPerVertex )
-    {
-	float x, y, z;
-	float nx, ny, nz;
-	float s, t;
-	for( unsigned int i = 0; i < numVerts; ++i )
+	if (48 == bytesPerVertex)
 	{
-	    file.read( (char *)&x, sizeof( x ) );
-	    file.read( (char *)&y, sizeof( y ) );
-	    file.read( (char *)&z, sizeof( z ) );
-	    std::cout << x << " " << y << " " << z << " ";
+		float x, y, z;
+		float nx, ny, nz;
+		float s, t;
+		for (unsigned int i = 0; i < numVerts; ++i)
+		{
+			file.read((char*)&x, sizeof(x));
+			file.read((char*)&y, sizeof(y));
+			file.read((char*)&z, sizeof(z));
+			std::cout << x << " " << y << " " << z << " ";
 
-	    file.read( (char *)&nx, sizeof( nx ) );
-	    file.read( (char *)&ny, sizeof( ny ) );
-	    file.read( (char *)&nz, sizeof( nz ) );
-	    std::cout << nx << " " << ny << " " << nz << " ";
+			file.read((char*)&nx, sizeof(nx));
+			file.read((char*)&ny, sizeof(ny));
+			file.read((char*)&nz, sizeof(nz));
+			std::cout << nx << " " << ny << " " << nz << " ";
 
-	    // Tex coords 0
-	    file.read( (char *)&s, sizeof( s ) );
-	    std::cout << s << " ";
-	    file.read( (char *)&t, sizeof( t ) );
-	    std::cout << t << " ";
+			// Tex coords 0
+			file.read((char*)&s, sizeof(s));
+			std::cout << s << " ";
+			file.read((char*)&t, sizeof(t));
+			std::cout << t << " ";
 
-	    // Tex coords 1
-	    file.read( (char *)&s, sizeof( s ) );
-	    std::cout << s << " ";
-	    file.read( (char *)&t, sizeof( t ) );
-	    std::cout << t << " ";
+			// Tex coords 1
+			file.read((char*)&s, sizeof(s));
+			std::cout << s << " ";
+			file.read((char*)&t, sizeof(t));
+			std::cout << t << " ";
 
-	    // Tex coords 2
-	    file.read( (char *)&s, sizeof( s ) );
-	    std::cout << s << " ";
-	    file.read( (char *)&t, sizeof( t ) );
-	    std::cout << t << std::endl;
+			// Tex coords 2
+			file.read((char*)&s, sizeof(s));
+			std::cout << s << " ";
+			file.read((char*)&t, sizeof(t));
+			std::cout << t << std::endl;
+		}
 	}
-    }
-    else if( 52 == bytesPerVertex )
-    {
-	float x, y, z;
-	float nx, ny, nz;
-	float s, t;
-	for( unsigned int i = 0; i < numVerts; ++i )
+	if (52 == bytesPerVertex)
 	{
-	    file.read( (char *)&x, sizeof( x ) );
-	    file.read( (char *)&y, sizeof( y ) );
-	    file.read( (char *)&z, sizeof( z ) );
-	    std::cout << x << " " << y << " " << z << " ";
+		float x, y, z;
+		float nx, ny, nz;
+		float s, t;
+		for (unsigned int i = 0; i < numVerts; ++i)
+		{
+			file.read((char*)&x, sizeof(x));
+			file.read((char*)&y, sizeof(y));
+			file.read((char*)&z, sizeof(z));
+			std::cout << x << " " << y << " " << z << " ";
 
-	    file.read( (char *)&nx, sizeof( nx ) );
-	    file.read( (char *)&ny, sizeof( ny ) );
-	    file.read( (char *)&nz, sizeof( nz ) );
-	    std::cout << nx << " " << ny << " " << nz << " ";
+			file.read((char*)&nx, sizeof(nx));
+			file.read((char*)&ny, sizeof(ny));
+			file.read((char*)&nz, sizeof(nz));
+			std::cout << nx << " " << ny << " " << nz << " ";
 
-	    unsigned char color[4];
-	    file.read( (char *)color, 4 );
-	    std::cout << (unsigned int)color[0] << " "
-		      << (unsigned int)color[1] << " "
-		      << (unsigned int)color[2] << " "
-		      << (unsigned int)color[3] << " ";
+			unsigned char color[4];
+			file.read((char*)color, 4);
+			std::cout << (unsigned int)color[0] << " "
+				<< (unsigned int)color[1] << " "
+				<< (unsigned int)color[2] << " "
+				<< (unsigned int)color[3] << " ";
 
-	    // Tex coords 0
-	    file.read( (char *)&s, sizeof( s ) );
-	    std::cout << s << " ";
-	    file.read( (char *)&t, sizeof( t ) );
-	    std::cout << t << " ";
+			// Tex coords 0
+			file.read((char*)&s, sizeof(s));
+			std::cout << s << " ";
+			file.read((char*)&t, sizeof(t));
+			std::cout << t << " ";
 
-	    // Tex coords 1
-	    file.read( (char *)&s, sizeof( s ) );
-	    std::cout << s << " ";
-	    file.read( (char *)&t, sizeof( t ) );
-	    std::cout << t << " ";
+			// Tex coords 1
+			file.read((char*)&s, sizeof(s));
+			std::cout << s << " ";
+			file.read((char*)&t, sizeof(t));
+			std::cout << t << " ";
 
-	    // Tex coords 2
-	    file.read( (char *)&s, sizeof( s ) );
-	    std::cout << s << " ";
-	    file.read( (char *)&t, sizeof( t ) );
-	    std::cout << t << std::endl;
+			// Tex coords 2
+			file.read((char*)&s, sizeof(s));
+			std::cout << s << " ";
+			file.read((char*)&t, sizeof(t));
+			std::cout << t << std::endl;
+		}
 	}
-    }
-    else if( 56 == bytesPerVertex )
-    {
-	float x, y, z;
-	float nx, ny, nz;
-	float s, t;
-	for( unsigned int i = 0; i < numVerts; ++i )
+	if (56 == bytesPerVertex)
 	{
-	    file.read( (char *)&x, sizeof( x ) );
-	    file.read( (char *)&y, sizeof( y ) );
-	    file.read( (char *)&z, sizeof( z ) );
-	    std::cout << x << " " << y << " " << z << " ";
+		float x, y, z;
+		float nx, ny, nz;
+		float s, t;
+		for (unsigned int i = 0; i < numVerts; ++i)
+		{
+			file.read((char*)&x, sizeof(x));
+			file.read((char*)&y, sizeof(y));
+			file.read((char*)&z, sizeof(z));
+			std::cout << x << " " << y << " " << z << " ";
 
-	    file.read( (char *)&nx, sizeof( nx ) );
-	    file.read( (char *)&ny, sizeof( ny ) );
-	    file.read( (char *)&nz, sizeof( nz ) );
-	    std::cout << nx << " " << ny << " " << nz << " ";
+			file.read((char*)&nx, sizeof(nx));
+			file.read((char*)&ny, sizeof(ny));
+			file.read((char*)&nz, sizeof(nz));
+			std::cout << nx << " " << ny << " " << nz << " ";
 
-	    // Tex coords 0
-	    file.read( (char *)&s, sizeof( s ) );
-	    std::cout << s << " ";
-	    file.read( (char *)&t, sizeof( t ) );
-	    std::cout << t << " ";
+			// Tex coords 0
+			file.read((char*)&s, sizeof(s));
+			std::cout << s << " ";
+			file.read((char*)&t, sizeof(t));
+			std::cout << t << " ";
 
-	    // Tex coords 1
-	    file.read( (char *)&s, sizeof( s ) );
-	    std::cout << s << " ";
-	    file.read( (char *)&t, sizeof( t ) );
-	    std::cout << t << " ";
+			// Tex coords 1
+			file.read((char*)&s, sizeof(s));
+			std::cout << s << " ";
+			file.read((char*)&t, sizeof(t));
+			std::cout << t << " ";
 
-	    // Tex coords 2
-	    file.read( (char *)&s, sizeof( s ) );
-	    std::cout << s << " ";
-	    file.read( (char *)&t, sizeof( t ) );
-	    std::cout << t << " ";
+			// Tex coords 2
+			file.read((char*)&s, sizeof(s));
+			std::cout << s << " ";
+			file.read((char*)&t, sizeof(t));
+			std::cout << t << " ";
 
-	    // Tex coords 3
-	    file.read( (char *)&s, sizeof( s ) );
-	    std::cout << s << " ";
-	    file.read( (char *)&t, sizeof( t ) );
-	    std::cout << t << std::endl;
+			// Tex coords 3
+			file.read((char*)&s, sizeof(s));
+			std::cout << s << " ";
+			file.read((char*)&t, sizeof(t));
+			std::cout << t << std::endl;
+		}
 	}
-    }
-    else if( 60 == bytesPerVertex )
-    {
-	float x, y, z;
-	float nx, ny, nz;
-	float s, t;
-	for( unsigned int i = 0; i < numVerts; ++i )
+	if (60 == bytesPerVertex)
 	{
-	    file.read( (char *)&x, sizeof( x ) );
-	    file.read( (char *)&y, sizeof( y ) );
-	    file.read( (char *)&z, sizeof( z ) );
-	    std::cout << x << " " << y << " " << z << " ";
+		float x, y, z;
+		float nx, ny, nz;
+		float s, t;
+		for (unsigned int i = 0; i < numVerts; ++i)
+		{
+			file.read((char*)&x, sizeof(x));
+			file.read((char*)&y, sizeof(y));
+			file.read((char*)&z, sizeof(z));
+			std::cout << x << " " << y << " " << z << " ";
 
-	    file.read( (char *)&nx, sizeof( nx ) );
-	    file.read( (char *)&ny, sizeof( ny ) );
-	    file.read( (char *)&nz, sizeof( nz ) );
-	    std::cout << nx << " " << ny << " " << nz << " ";
+			file.read((char*)&nx, sizeof(nx));
+			file.read((char*)&ny, sizeof(ny));
+			file.read((char*)&nz, sizeof(nz));
+			std::cout << nx << " " << ny << " " << nz << " ";
 
-	    unsigned char color[4];
-	    file.read( (char *)color, 4 );
-	    std::cout << (unsigned int)color[0] << " "
-		      << (unsigned int)color[1] << " "
-		      << (unsigned int)color[2] << " "
-		      << (unsigned int)color[3] << " ";
+			unsigned char color[4];
+			file.read((char*)color, 4);
+			std::cout << (unsigned int)color[0] << " "
+				<< (unsigned int)color[1] << " "
+				<< (unsigned int)color[2] << " "
+				<< (unsigned int)color[3] << " ";
 
-	    // Tex coords 0
-	    file.read( (char *)&s, sizeof( s ) );
-	    std::cout << s << " ";
-	    file.read( (char *)&t, sizeof( t ) );
-	    std::cout << t << " ";
+			// Tex coords 0
+			file.read((char*)&s, sizeof(s));
+			std::cout << s << " ";
+			file.read((char*)&t, sizeof(t));
+			std::cout << t << " ";
 
-	    // Tex coords 1
-	    file.read( (char *)&s, sizeof( s ) );
-	    std::cout << s << " ";
-	    file.read( (char *)&t, sizeof( t ) );
-	    std::cout << t << " ";
+			// Tex coords 1
+			file.read((char*)&s, sizeof(s));
+			std::cout << s << " ";
+			file.read((char*)&t, sizeof(t));
+			std::cout << t << " ";
 
-	    // Tex coords 2
-	    file.read( (char *)&s, sizeof( s ) );
-	    std::cout << s << " ";
-	    file.read( (char *)&t, sizeof( t ) );
-	    std::cout << t << " ";
+			// Tex coords 2
+			file.read((char*)&s, sizeof(s));
+			std::cout << s << " ";
+			file.read((char*)&t, sizeof(t));
+			std::cout << t << " ";
 
-	    // Tex coords 3
-	    file.read( (char *)&s, sizeof( s ) );
-	    std::cout << s << " ";
-	    file.read( (char *)&t, sizeof( t ) );
-	    std::cout << t << std::endl;
+			// Tex coords 3
+			file.read((char*)&s, sizeof(s));
+			std::cout << s << " ";
+			file.read((char*)&t, sizeof(t));
+			std::cout << t << std::endl;
+		}
 	}
-    }
-    else if( 64 == bytesPerVertex )
-    {
-	float x, y, z;
-	float nx, ny, nz;
-	float s, t;
-	for( unsigned int i = 0; i < numVerts; ++i )
+	if (64 == bytesPerVertex)
 	{
-	    file.read( (char *)&x, sizeof( x ) );
-	    file.read( (char *)&y, sizeof( y ) );
-	    file.read( (char *)&z, sizeof( z ) );
-	    std::cout << x << " " << y << " " << z << " ";
+		float x, y, z;
+		float nx, ny, nz;
+		float s, t;
+		for (unsigned int i = 0; i < numVerts; ++i)
+		{
+			file.read((char*)&x, sizeof(x));
+			file.read((char*)&y, sizeof(y));
+			file.read((char*)&z, sizeof(z));
+			std::cout << x << " " << y << " " << z << " ";
 
-	    file.read( (char *)&nx, sizeof( nx ) );
-	    file.read( (char *)&ny, sizeof( ny ) );
-	    file.read( (char *)&nz, sizeof( nz ) );
-	    std::cout << nx << " " << ny << " " << nz << " ";
+			file.read((char*)&nx, sizeof(nx));
+			file.read((char*)&ny, sizeof(ny));
+			file.read((char*)&nz, sizeof(nz));
+			std::cout << nx << " " << ny << " " << nz << " ";
 
-	    // Tex coords 0
-	    file.read( (char *)&s, sizeof( s ) );
-	    std::cout << s << " ";
-	    file.read( (char *)&t, sizeof( t ) );
-	    std::cout << t << " ";
+			// Tex coords 0
+			file.read((char*)&s, sizeof(s));
+			std::cout << s << " ";
+			file.read((char*)&t, sizeof(t));
+			std::cout << t << " ";
 
-	    // Tex coords 1
-	    file.read( (char *)&s, sizeof( s ) );
-	    std::cout << s << " ";
-	    file.read( (char *)&t, sizeof( t ) );
-	    std::cout << t << " ";
+			// Tex coords 1
+			file.read((char*)&s, sizeof(s));
+			std::cout << s << " ";
+			file.read((char*)&t, sizeof(t));
+			std::cout << t << " ";
 
-	    // Tex coords 2
-	    file.read( (char *)&s, sizeof( s ) );
-	    std::cout << s << " ";
-	    file.read( (char *)&t, sizeof( t ) );
-	    std::cout << t << " ";
+			// Tex coords 2
+			file.read((char*)&s, sizeof(s));
+			std::cout << s << " ";
+			file.read((char*)&t, sizeof(t));
+			std::cout << t << " ";
 
-	    // Tex coords 3
-	    file.read( (char *)&s, sizeof( s ) );
-	    std::cout << s << " ";
-	    file.read( (char *)&t, sizeof( t ) );
-	    std::cout << t << " ";
+			// Tex coords 3
+			file.read((char*)&s, sizeof(s));
+			std::cout << s << " ";
+			file.read((char*)&t, sizeof(t));
+			std::cout << t << " ";
 
-	    // Tex coords 4
-	    file.read( (char *)&s, sizeof( s ) );
-	    std::cout << s << " ";
-	    file.read( (char *)&t, sizeof( t ) );
-	    std::cout << t << std::endl;
+			// Tex coords 4
+			file.read((char*)&s, sizeof(s));
+			std::cout << s << " ";
+			file.read((char*)&t, sizeof(t));
+			std::cout << t << std::endl;
+		}
 	}
-    }
-    else if( 68 == bytesPerVertex )
-    {
-	float x, y, z;
-	float nx, ny, nz;
-	float s, t;
-	for( unsigned int i = 0; i < numVerts; ++i )
+	if (68 == bytesPerVertex)
 	{
-	    file.read( (char *)&x, sizeof( x ) );
-	    file.read( (char *)&y, sizeof( y ) );
-	    file.read( (char *)&z, sizeof( z ) );
-	    std::cout << x << " " << y << " " << z << " ";
+		float x, y, z;
+		float nx, ny, nz;
+		float s, t;
+		for (unsigned int i = 0; i < numVerts; ++i)
+		{
+			file.read((char*)&x, sizeof(x));
+			file.read((char*)&y, sizeof(y));
+			file.read((char*)&z, sizeof(z));
+			std::cout << x << " " << y << " " << z << " ";
 
-	    file.read( (char *)&nx, sizeof( nx ) );
-	    file.read( (char *)&ny, sizeof( ny ) );
-	    file.read( (char *)&nz, sizeof( nz ) );
-	    std::cout << nx << " " << ny << " " << nz << " ";
+			file.read((char*)&nx, sizeof(nx));
+			file.read((char*)&ny, sizeof(ny));
+			file.read((char*)&nz, sizeof(nz));
+			std::cout << nx << " " << ny << " " << nz << " ";
 
-	    unsigned char color[4];
-	    file.read( (char *)color, 4 );
-	    std::cout << (unsigned int)color[0] << " "
-		      << (unsigned int)color[1] << " "
-		      << (unsigned int)color[2] << " "
-		      << (unsigned int)color[3] << " ";
+			unsigned char color[4];
+			file.read((char*)color, 4);
+			std::cout << (unsigned int)color[0] << " "
+				<< (unsigned int)color[1] << " "
+				<< (unsigned int)color[2] << " "
+				<< (unsigned int)color[3] << " ";
 
-	    // Tex coords 0
-	    file.read( (char *)&s, sizeof( s ) );
-	    std::cout << s << " ";
-	    file.read( (char *)&t, sizeof( t ) );
-	    std::cout << t << " ";
+			// Tex coords 0
+			file.read((char*)&s, sizeof(s));
+			std::cout << s << " ";
+			file.read((char*)&t, sizeof(t));
+			std::cout << t << " ";
 
-	    // Tex coords 1
-	    file.read( (char *)&s, sizeof( s ) );
-	    std::cout << s << " ";
-	    file.read( (char *)&t, sizeof( t ) );
-	    std::cout << t << " ";
+			// Tex coords 1
+			file.read((char*)&s, sizeof(s));
+			std::cout << s << " ";
+			file.read((char*)&t, sizeof(t));
+			std::cout << t << " ";
 
-	    // Tex coords 2
-	    file.read( (char *)&s, sizeof( s ) );
-	    std::cout << s << " ";
-	    file.read( (char *)&t, sizeof( t ) );
-	    std::cout << t << " ";
+			// Tex coords 2
+			file.read((char*)&s, sizeof(s));
+			std::cout << s << " ";
+			file.read((char*)&t, sizeof(t));
+			std::cout << t << " ";
 
-	    // Tex coords 3
-	    file.read( (char *)&s, sizeof( s ) );
-	    std::cout << s << " ";
-	    file.read( (char *)&t, sizeof( t ) );
-	    std::cout << t << " ";
+			// Tex coords 3
+			file.read((char*)&s, sizeof(s));
+			std::cout << s << " ";
+			file.read((char*)&t, sizeof(t));
+			std::cout << t << " ";
 
-	    // Tex coords 4
-	    file.read( (char *)&s, sizeof( s ) );
-	    std::cout << s << " ";
-	    file.read( (char *)&t, sizeof( t ) );
-	    std::cout << t << std::endl;
+			// Tex coords 4
+			file.read((char*)&s, sizeof(s));
+			std::cout << s << " ";
+			file.read((char*)&t, sizeof(t));
+			std::cout << t << std::endl;
+		}
 	}
-    }
-    else if( 72 == bytesPerVertex )
-    {
-	float x, y, z;
-	float nx, ny, nz;
-	float s, t;
-	for( unsigned int i = 0; i < numVerts; ++i )
+	if (72 == bytesPerVertex)
 	{
-	    file.read( (char *)&x, sizeof( x ) );
-	    file.read( (char *)&y, sizeof( y ) );
-	    file.read( (char *)&z, sizeof( z ) );
-	    std::cout << x << " " << y << " " << z << " ";
+		float x, y, z;
+		float nx, ny, nz;
+		float s, t;
+		for (unsigned int i = 0; i < numVerts; ++i)
+		{
+			file.read((char*)&x, sizeof(x));
+			file.read((char*)&y, sizeof(y));
+			file.read((char*)&z, sizeof(z));
+			std::cout << x << " " << y << " " << z << " ";
 
-	    file.read( (char *)&nx, sizeof( nx ) );
-	    file.read( (char *)&ny, sizeof( ny ) );
-	    file.read( (char *)&nz, sizeof( nz ) );
-	    std::cout << nx << " " << ny << " " << nz << " ";
+			file.read((char*)&nx, sizeof(nx));
+			file.read((char*)&ny, sizeof(ny));
+			file.read((char*)&nz, sizeof(nz));
+			std::cout << nx << " " << ny << " " << nz << " ";
 
-	    // Tex coords 0
-	    file.read( (char *)&s, sizeof( s ) );
-	    std::cout << s << " ";
-	    file.read( (char *)&t, sizeof( t ) );
-	    std::cout << t << " ";
+			// Tex coords 0
+			file.read((char*)&s, sizeof(s));
+			std::cout << s << " ";
+			file.read((char*)&t, sizeof(t));
+			std::cout << t << " ";
 
-	    // Tex coords 1
-	    file.read( (char *)&s, sizeof( s ) );
-	    std::cout << s << " ";
-	    file.read( (char *)&t, sizeof( t ) );
-	    std::cout << t << " ";
+			// Tex coords 1
+			file.read((char*)&s, sizeof(s));
+			std::cout << s << " ";
+			file.read((char*)&t, sizeof(t));
+			std::cout << t << " ";
 
-	    // Tex coords 2
-	    file.read( (char *)&s, sizeof( s ) );
-	    std::cout << s << " ";
-	    file.read( (char *)&t, sizeof( t ) );
-	    std::cout << t << " ";
+			// Tex coords 2
+			file.read((char*)&s, sizeof(s));
+			std::cout << s << " ";
+			file.read((char*)&t, sizeof(t));
+			std::cout << t << " ";
 
-	    // Tex coords 3
-	    file.read( (char *)&s, sizeof( s ) );
-	    std::cout << s << " ";
-	    file.read( (char *)&t, sizeof( t ) );
-	    std::cout << t << " ";
+			// Tex coords 3
+			file.read((char*)&s, sizeof(s));
+			std::cout << s << " ";
+			file.read((char*)&t, sizeof(t));
+			std::cout << t << " ";
 
-	    // Tex coords 4
-	    file.read( (char *)&s, sizeof( s ) );
-	    std::cout << s << " ";
-	    file.read( (char *)&t, sizeof( t ) );
-	    std::cout << t << std::endl;
+			// Tex coords 4
+			file.read((char*)&s, sizeof(s));
+			std::cout << s << " ";
+			file.read((char*)&t, sizeof(t));
+			std::cout << t << std::endl;
 
-	    // Tex coords 4
-	    file.read( (char *)&s, sizeof( s ) );
-	    std::cout << s << " ";
-	    file.read( (char *)&t, sizeof( t ) );
-	    std::cout << t << std::endl;
-	}
-    }
-    else
-    {
-	file.seekg( size, std::ios_base::cur );
-    }
-
-    return size;
-}
-
-int readGeometryINDX( std::ifstream &file, unsigned int size )
-{
-    unsigned int numIndex;
-    file.read( (char *)&numIndex, sizeof( numIndex ) );
-    std::cout << "Num index: " << numIndex << std::endl;
-    std::cout << "Num triangles: " << numIndex/3 << std::endl;
-
-    unsigned int bytesPerIndex = (size-4)/numIndex;
-
-    if( bytesPerIndex == 2 )
-    {
-	unsigned short index;
-	for( unsigned int i = 0; i < numIndex; ++i )
-	{
-	    file.read( (char *)&index, sizeof( index ) );
-	}
-    }
-    else
-    {
-	unsigned int index;
-	for( unsigned int i = 0; i < numIndex; ++i )
-	{
-	    file.read( (char *)&index, sizeof( index ) );
-	}
-    }
-
-    return size;
-}
-
-
-int readRecord(
-    std::ifstream &file,
-    unsigned int level,
-    std::deque<std::string> parentForms
-    )
-{
-    static unsigned int numVerts = 0;
-
-    //bool isMainTexture = false;
-
-    std::cout << std::endl;
-    char buffer[10000];
-    char temp[5];
-    std::string group;
-
-    file.read( temp, 4 );
-    if( file.eof() )
-    {
-	return 0;
-    }
-    temp[4] = 0;
-    group = temp;
-    std::cout << "***** LEVEL " << level << " *****" << std::endl;
-
-    std::cout << "Group: '" << group << "'" << std::endl;
-    
-    unsigned int size = 0;
-    readBigEndian(
-	file,
-	sizeof( size ),
-	(char *)&size
-	);
-    std::cout << "Size: " << size << std::endl;
-
-    if( "FORM" == group )
-    {
-	std::string type;
-	file.read( temp, 4 );
-	temp[4] = 0;
-	type = temp;
-	if( type == "0001" )
-	{
-	    std::cout << "Type: 0001" << std::endl;
-	}
-	else if( type == "0003" )
-	{
-	    std::cout << "Type: 0003" << std::endl;
-	}
-	else if( type == "EXBX" )
-	{
-	    std::cout << "Type: " << type << " (Bounding Box)" << std::endl;
-	}
-	else if( type == "EXSP" )
-	{
-	    std::cout << "Type: " << type << " (Bounding Sphere)" << std::endl;
-	}
-	else if( type == "HPNT" )
-	{
-	    std::cout << "Type: " << type << " (Hardpoint)" << std::endl;
-	}
-	else if( type == "CPIT" )
-	{
-	    std::cout << "Type: " << type << " (Cockpit)" << std::endl;
-	}
-	else if( type == "FCHS" )
-	{
-	    std::cout << "Type: " << type << " (Free chase camera)"
-		      << std::endl;
-	}
-	else if( type == "TXMS" )
-	{
-	    std::cout << "Type: " << type << " (Texture maps)" << std::endl;
-	}
-	else if( type == "TXM " )
-	{
-	    std::cout << "Type: " << type << " (Texture map)" << std::endl;
-	}
-	else if( type == "CACH" )
-	{
-	    std::cout << "Type: " << type << " (Cache)" << std::endl;
-	}
-	else if( type == "SD2D" )
-	{
-	    std::cout << "Type: " << type << " (2-D Sound)" << std::endl;
+			// Tex coords 4
+			file.read((char*)&s, sizeof(s));
+			std::cout << s << " ";
+			file.read((char*)&t, sizeof(t));
+			std::cout << t << std::endl;
+		}
 	}
 	else
 	{
-	    std::cout << "Type: '" << type << "'" << std::endl;
+		file.seekg(size, std::ios_base::cur);
 	}
-	size -= 4;
 
-	unsigned int sizeLeft = size;
-	unsigned int sizeRead;
-	parentForms.push_back( type );
-	while( 0 != sizeLeft )
+	return size;
+}
+
+int readGeometryINDX(std::ifstream& file, unsigned int size)
+{
+	unsigned int numIndex;
+	file.read((char*)&numIndex, sizeof(numIndex));
+	std::cout << "Num index: " << numIndex << std::endl;
+	std::cout << "Num triangles: " << numIndex / 3 << std::endl;
+
+	unsigned int bytesPerIndex = (size - 4) / numIndex;
+
+	if (bytesPerIndex == 2)
 	{
-	    sizeRead = readRecord( file, level+1, parentForms );
-	    if( sizeRead > sizeLeft )
-	    {
-		std::cout << "Error size mismatch!" << std::endl;
-		exit( 0 );
-	    }
-	    sizeLeft -= sizeRead;
-	    std::cout << type << " sizeLeft: " << sizeLeft << std::endl;
-	}
-	// Size of data plus 12 bytes of FORM header
-	return size+12;
-    }
-    else if( "SPHR" == group )
-    {
-	float X, Y, Z, R;
-	
-	file.read( (char *)&X, sizeof( X ) );
-	file.read( (char *)&Y, sizeof( Y ) );
-	file.read( (char *)&Z, sizeof( Z ) );
-	file.read( (char *)&R, sizeof( R ) );
-	
-	std::cout << "X: " << X << std::endl;
-	std::cout << "Y: " << Y << std::endl;
-	std::cout << "Z: " << Z << std::endl;
-	std::cout << "R: " << R << std::endl;
-    }
-    else if( "BOX " == group )
-    {
-	float x1, x2, y1, y2, z1, z2;
-
-	file.read( (char *)&x1, sizeof( x1 ) );
-	file.read( (char *)&y1, sizeof( y1 ) );
-	file.read( (char *)&z1, sizeof( z1 ) );
-	file.read( (char *)&x2, sizeof( x2 ) );
-	file.read( (char *)&y2, sizeof( y2 ) );
-	file.read( (char *)&z2, sizeof( z2 ) );
-
-	std::cout << "X1: " << x1 << std::endl;
-	std::cout << "Y1: " << y1 << std::endl;
-	std::cout << "Z1: " << z1 << std::endl;
-	std::cout << "X2: " << x2 << std::endl;
-	std::cout << "Y2: " << y2 << std::endl;
-	std::cout << "Z2: " << z2 << std::endl;
-    }
-    else if( "DATA" == group )
-    {
-	for( unsigned int i = 0; i < parentForms.size(); ++i )
-	{
-	    std::cout << parentForms[i] << "-";
-	}
-	std::cout << std::endl;
-
-	if( "TXM " == parentForms[parentForms.size()-2] )
-	{
-	    char tempType[5];
-	    tempType[4] = 0;
-	    file.read( tempType, 4 );
-	    std::string textureType( tempType );
-
-	    //isMainTexture = false;
-	    if( "PUKL" == textureType  )
-	    {
-		std::cout << "Specular lookup texture ";
-	    }
-	    else if( "EBUC" == textureType  )
-	    {
-		std::cout << "Cube map texture ";
-	    }
-	    else if( "NIAM" == textureType  )
-	    {
-		std::cout << "Main texture ";
-		//isMainTexture = true;
-	    }
-	    else if( "LMRN" == textureType  )
-	    {
-		std::cout << "Normal map texture ";
-	    }
-	    else
-	    {
-		std::cout << textureType << " ";
-	    }
-
-
-	    // Data is a filename
-	    unsigned char data;
-	    for( unsigned int i = 0; i < size-4; ++i )
-	    {
-		file.read( (char*)&data, sizeof( data ) );
-		std::cout << (unsigned int)data << " ";
-	    }
-	    std::cout << std::endl;
-	}
-	else if( "0001" == parentForms.back() )
-	{
-	    readUnknown( file, size );
-	}
-	else if( "0004" == parentForms.back() )
-	{
-	    readUnknown( file, size );
-	}
-	else if( "0008" == parentForms.back() )
-	{
-	    unsigned short data2;
-	    file.read( (char*)&data2, sizeof( data2 ) );
-	    std::cout << data2 << std::endl;
-	    file.read( (char*)&data2, sizeof( data2 ) );
-	    std::cout << data2 << std::endl;
-	    file.read( (char*)&data2, sizeof( data2 ) );
-	    std::cout << data2 << std::endl;
-	    file.read( (char*)&data2, sizeof( data2 ) );
-	    std::cout << data2 << std::endl;
-	    file.read( (char*)&data2, sizeof( data2 ) );
-	    std::cout << data2 << std::endl;
-	    file.read( (char*)&data2, sizeof( data2 ) );
-	    std::cout << data2 << std::endl;
-
-	    // Data is a filename
-	    unsigned char data;
-	    for( unsigned int i = 0; i < size-12; ++i )
-	    {
-		file.read( (char*)&data, sizeof( data ) );
-		if( i < 4 )
+		unsigned short index;
+		for (unsigned int i = 0; i < numIndex; ++i)
 		{
-		    std::cout << data << " ";
+			file.read((char*)&index, sizeof(index));
+		}
+	}
+	else
+	{
+		unsigned int index;
+		for (unsigned int i = 0; i < numIndex; ++i)
+		{
+			file.read((char*)&index, sizeof(index));
+		}
+	}
+
+	return size;
+}
+
+
+std::size_t readRecord(
+	std::ifstream& file,
+	unsigned int level,
+	std::deque<std::string> parentForms
+)
+{
+	static unsigned int numVerts = 0;
+
+	//bool isMainTexture = false;
+
+	std::cout << std::endl;
+	char buffer[10000];
+
+	std::string group, type;
+	std::size_t size = 0;
+	ml::base::peekHeader(file, group, size, type);
+	if (file.eof()) {
+		exit(0);
+	}
+
+	std::cout << "***** LEVEL " << level << " *****\n";
+
+	// ********** FORMS **********
+	if ("FORM" == group)
+	{
+		std::cout << "Group: '" << group << "'\tsize: " << size << std::endl;
+
+		if (type == "0000")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << "\n";
+		}
+		else if (type == "0001")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << "\n";
+		}
+		else if (type == "0002")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << "\n";
+		}
+		else if (type == "0003")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << "\n";
+		}
+		else if (type == "0004")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << "\n";
+		}
+		else if (type == "0005")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << "\n";
+		}
+		else if (type == "0006")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << "\n";
+		}
+		else if (type == "0007")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << "\n";
+		}
+		else if (type == "0008")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << "\n";
+		}
+		else if (type == "0009")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << "\n";
+		}
+		else if (type == "0010")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << "\n";
+		}
+		else if (type == "EXBX")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Bounding Box)" << std::endl;
+		}
+		else if (type == "EXSP")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Bounding Sphere)" << std::endl;
+		}
+		else if (type == "HPNT")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Hardpoint)" << std::endl;
+		}
+		else if (type == "CPIT")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Cockpit)" << std::endl;
+		}
+		else if (type == "FCHS")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Free chase camera)"
+				<< std::endl;
+		}
+		else if (type == "TXMS")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Texture maps)" << std::endl;
+		}
+		else if (type == "TXM ")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Texture map)" << std::endl;
+		}
+		else if (type == "CACH")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Cache)" << std::endl;
+		}
+		else if (type == "SD2D")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (2-D Sound)" << std::endl;
+		}
+		else if (type == "CMSH")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Collision mesh?)" << std::endl;
+		}
+		else if (type == "CELS")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Container of CELLs)" << std::endl;
+		}
+		else if (type == "CELL")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Cell?)" << std::endl;
+		}
+		else if (type == "PRTO")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Top level .pob)" << std::endl;
+		}
+		else if (type == "PRTS")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Portal list)" << std::endl;
+		}
+		/*
+		else if (type == "PRTL")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (List)" << std::endl;
+		}
+		*/
+		else if (type == "HPTS")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (List of hardpoints)" << std::endl;
+		}
+		else if (type == "PGRF")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Portal something???)" << std::endl;
+		}
+		else if (type == "DTLA")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Top level for .lod files)" << std::endl;
+		}
+		else if (type == "MESH")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Top level for .msh files)" << std::endl;
+		}
+		else if (type == "VTXA")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Vertex array for mesh primitives)" << std::endl;
+		}
+		else if (type == "APPR")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Appearance, used in .lod files)" << std::endl;
+		}
+		else if (type == "SPS ")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Shader Primitives Set)" << std::endl;
+		}
+		else if (type == "FLOR")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Floor, used in .lod files)" << std::endl;
+		}
+		else if (type == "RADR")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Shape on RADAR, used in .lod files)" << std::endl;
+		}
+		else if (type == "DATA")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (???)" << std::endl;
+		}
+		else if (type == "TEST")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (???)" << std::endl;
+		}
+		else if (type == "WRIT")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (???)" << std::endl;
+		}
+		else if (type == "NULL")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (NULL)" << std::endl;
+		}
+		else if (type == "SSHT")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Static Shader)" << std::endl;
+		}
+		else if (type == "MATS")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (List of materials)" << std::endl;
+		}
+		else if (type == "TCSS")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Texture Coordinate Sets)" << std::endl;
+		}
+		else if (type == "TFNS")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Texture Factors)" << std::endl;
+		}
+		else if (type == "ARVS")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Alpha reference values)" << std::endl;
+		}
+		else if (type == "SRVS")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Stencil reference values)" << std::endl;
+		}
+		else if (type == "EFCT")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Shader effect)" << std::endl;
+		}
+		else if (type == "IMPL")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Effect implementation)" << std::endl;
+		}
+		else if (type == "PASS")
+		{
+		ml::base::readFormHeader(file, group, size, type);
+		std::cout << "Type: " << type << " (Shader pass)" << std::endl;
+		}
+		else if (type == "PVSH")
+		{
+		ml::base::readFormHeader(file, group, size, type);
+		std::cout << "Type: " << type << " (Vertex shader)" << std::endl;
+		}
+		else if (type == "PPSH")
+		{
+		ml::base::readFormHeader(file, group, size, type);
+		std::cout << "Type: " << type << " (Pixel shader)" << std::endl;
+		}
+		else if (type == "PTXM")
+		{
+		ml::base::readFormHeader(file, group, size, type);
+		std::cout << "Type: " << type << " (Texture sampler)" << std::endl;
+		}
+		else if (type == "PFFP")
+		{
+		ml::base::readFormHeader(file, group, size, type);
+		std::cout << "Type: " << type << " (Fixed function pipeline)" << std::endl;
+		}
+		else if (type == "STAG")
+		{
+		ml::base::readFormHeader(file, group, size, type);
+		std::cout << "Type: " << type << " (Shader stage)" << std::endl;
+		}
+		else if (type == "IDTL")
+		{
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Index Table?)" << std::endl;
+			/*
+			std::vector<ml::vector3> vertices;
+			std::vector<unsigned int> indices;
+			ml::model::readIDTL(file, vertices, indices);
+			return size + 12;
+			*/
 		}
 		else
 		{
-		    std::cout << (unsigned int)data << " ";
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Unknown Type: '" << type << "'" << std::endl;
+			exit(0);
 		}
-	    }
-	    std::cout << std::endl;
-	}
-	else
-	{
-	    if( numVerts != 0 )
-	    {
-		readGeometryDATA( file, size, numVerts );
-		numVerts = 0;
-	    }
-	    else
-	    {
-		readUnknown( file, size );
-	    }
-	}
-    }
-    else if( "CNT " == group )
-    {
-	unsigned int data;
-	file.read( (char *)&data, sizeof( data ) );
-	std::cout << "data: " << data << std::endl;
-    }
-    else if( "NAME" == group )
-    {
-	file.read( buffer, size );
-	buffer[size] = 0;
-	std::string name( buffer );
-	std::cout << name << std::endl;
-    }
-    else if( "INFO" == group )
-    {
-	if( 8 == size )
-	{
-	    unsigned int data;
-	    file.read( (char *)&data, sizeof( data ) );
-	    std::cout << "Unknown: " << data << std::endl;
-	    file.read( (char *)&numVerts, sizeof( numVerts ) );
-	    std::cout << "numVerts: " << numVerts << std::endl;
-	}
-	else
-	{
-	    readUnknown( file, size );
-	}
-    }
-    else if( "INDX" == group )
-    {
-#if 0
-      readUnknown( file, size );
-#else
-      readGeometryINDX( file, size );
-#endif
-    }
-    else if( "MATL" == group )
-    {
-	if( 68 != size )
-	{
-	    std::cout << "Expected MATL to be 68bytes!!!!!!!!!" << std::endl;
-	    exit( 0 );
-	}
+		size -= 4;
 
-	// Data in abgr?
-	float data;
-	std::cout << "Ambient: ";
-	for( unsigned int i = 0; i < 4; ++i )
-	{
-	    file.read( (char *)&data, sizeof( data ) );
-	    std::cout << (unsigned int)data << " ";
-	}
-	std::cout << std::endl;
-
-	std::cout << "Diffuse: ";
-	for( int i = 0; i < 4; ++i )
-	{
-	    file.read( (char *)&data, sizeof( data ) );
-	    std::cout << (unsigned int)data << " ";
-	}
-	std::cout << std::endl;
-
-	std::cout << "Specular: ";
-	for( int i = 0; i < 4; ++i )
-	{
-	    file.read( (char *)&data, sizeof( data ) );
-	    std::cout << (unsigned int)data << " ";
-	}
-	std::cout << std::endl;
-	
-	std::cout << "Emissive: ";
-	for( int i = 0; i < 4; ++i )
-	{
-	    file.read( (char *)&data, sizeof( data ) );
-	    std::cout << (unsigned int)data << " ";
-	}
-	std::cout << std::endl;
-
-	std::cout << "Shininess: ";
-	file.read( (char *)&data, sizeof( data ) );
-	std::cout << (unsigned int)data << std::endl;
-	
-    }
-    else if( "NIAM" == group )
-    {
-	file.seekg( size, std::ios_base::cur );
-    }
-    else if( "0000" == group )
-    {
-
-	if( "TCSS" == parentForms.back() ||
-	    "ARVS" == parentForms.back() )
-	{
-	    unsigned int numEntry = size/5;
-	    
-	    for( unsigned int j = 0; j < numEntry; ++j )
-	    {
-		unsigned char data;
-		for( int i = 0; i < 4; ++i )
+		std::size_t sizeLeft = size;
+		std::size_t sizeRead;
+		parentForms.push_back(type);
+		while (0 != sizeLeft)
 		{
-		    file.read( (char *)&data, sizeof( data ) );
-		    std::cout << data;
+			sizeRead = readRecord(file, level + 1, parentForms);
+			if (sizeRead > sizeLeft)
+			{
+				std::cout << "Error size mismatch!" << std::endl;
+				exit(0);
+			}
+			sizeLeft -= sizeRead;
+			std::cout << "Group: '" << group << "' Type: '" << type << "' sizeLeft: " << sizeLeft << std::endl;
 		}
-		
-		file.read( (char *)&data, sizeof( data ) );
-		std::cout << (unsigned int)data << std::endl;
-	    }
+		std::cout << "Exit FORM " << type << "\n";
+		// Size of data plus 12 bytes of FORM header
+		return size + 12;
 	}
-	else if( "TFNS" == parentForms.back() )
-	{
-	    unsigned int numColors = size/8;
-	    for( unsigned int j = 0; j < numColors; ++j )
-	    {
-		char tempColor[5];
-		file.read( tempColor, 4 );
-		tempColor[4] = 0;
-		std::string color( tempColor );
-		std::cout << "color: " << color << " "; 
-		
-		unsigned char data;
-		for( int i = 0; i < 4; ++i )
+	else {
+		// ********** Records **********
+		ml::base::readRecordHeader(file, group, size);
+		std::cout << "Record: '" << group << "'\tsize: " << size << std::endl;
+
+		if ("SPHR" == group)
 		{
-		    file.read( (char *)&data, sizeof( data ) );
-		    std::cout << (unsigned int)data << " ";
+			assert(size == 16);
+			float X, Y, Z, R;
+
+			file.read((char*)&X, sizeof(X));
+			file.read((char*)&Y, sizeof(Y));
+			file.read((char*)&Z, sizeof(Z));
+			file.read((char*)&R, sizeof(R));
+
+			std::cout << "X: " << X << std::endl;
+			std::cout << "Y: " << Y << std::endl;
+			std::cout << "Z: " << Z << std::endl;
+			std::cout << "R: " << R << std::endl;
+			return size + 8; // Size of data plus 8 bytes of header
 		}
-		std::cout << std::endl;
-	    }
-	}
-	else if( "STAG" == parentForms.back() )
-	{
-	    unsigned short data1;
-	    for( unsigned int i = 0; i < 9; ++i )
-	    {
-		file.read( (char *)&data1, sizeof( data1 ) );
-		std::cout << (unsigned int)data1 << " ";
-	    }
+		if ("BOX " == group)
+		{
+			assert(size == 24);
+			float x1, x2, y1, y2, z1, z2;
 
-	    unsigned char data;
-	    for( unsigned int i = 0; i < 8; ++i )
-	    {
-		file.read( (char *)&data, sizeof( data ) );
-		std::cout << data << " ";
-	    }
+			file.read((char*)&x1, sizeof(x1));
+			file.read((char*)&y1, sizeof(y1));
+			file.read((char*)&z1, sizeof(z1));
+			file.read((char*)&x2, sizeof(x2));
+			file.read((char*)&y2, sizeof(y2));
+			file.read((char*)&z2, sizeof(z2));
 
-	    for( unsigned int i = 0; i < 7; ++i )
-	    {
-		file.read( (char *)&data, sizeof( data ) );
-		std::cout << (unsigned int)data << " ";
-	    }
-	    std::cout << std::endl;
-	}
-	else
-	{
-	    readUnknown( file, size );
-	}
-    }
-    else if( "0001" == group )
-    {
- 	readUnknown( file, size );
-    }
-    else if( "0002" == group )
-    {
- 	readUnknown( file, size );
-    }
-    else if( "0003" == group )
-    {
- 	readUnknown( file, size );
-    }
-    else if( "0005" == group )
-    {
- 	readUnknown( file, size );
-    }
-    else if( "TAG " == group )
-    {
-	file.read( buffer, size );
-	buffer[size] = 0;
-	std::string tag( buffer );
-	std::cout << tag << std::endl;
-    }
-    else if( "SCAP" == group )
-    {
- 	readUnknown( file, size );
-    }
-    else if( "OPTN" == group )
-    {
- 	readUnknown( file, size );
-    }
-    else if( "XFIN" == group )
-    {
- 	readUnknown( file, size );
-    }
-    else if( "LINK" == group )
-    {
- 	readUnknown( file, size );
-    }
-    else if( "QCHN" == group )
-    {
- 	readUnknown( file, size );
-    }
-    else if( "SROT" == group )
-    {
- 	readUnknown( file, size );
-    }
-    else if( "CHNL" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "STRN" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "SFAM" == group )
-    {
+			std::cout << "X1: " << x1 << std::endl;
+			std::cout << "Y1: " << y1 << std::endl;
+			std::cout << "Z1: " << z1 << std::endl;
+			std::cout << "X2: " << x2 << std::endl;
+			std::cout << "Y2: " << y2 << std::endl;
+			std::cout << "Z2: " << z2 << std::endl;
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+
+		if ("PRTL" == group)
+		{
+			std::size_t total = 0;
+			unsigned int numVerts;
+			total += ml::base::read(file, numVerts);
+			std::cout << "NumVerts: " << numVerts << std::endl;
+
+			float x, y, z;
+			for (unsigned int i = 0; i < numVerts; ++i)
+			{
+				total += ml::base::read(file, x);
+				total += ml::base::read(file, y);
+				total += ml::base::read(file, z);
+				std::cout << "Vertex: " << x << ", "
+					<< y << ", " << z
+					<< std::endl;
+			}
+
+			ml::base::readUnknown(file, size - total);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+
+		if ("DATA" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+/*
+			for (unsigned int i = 0; i < parentForms.size(); ++i)
+			{
+				std::cout << parentForms[i] << "-";
+			}
+			std::cout << std::endl;
+
+			if ("TXM " == parentForms[parentForms.size() - 2])
+			{
+				char tempType[5];
+				tempType[4] = 0;
+				file.read(tempType, 4);
+				std::string textureType(tempType);
+
+				//isMainTexture = false;
+				if ("PUKL" == textureType)
+				{
+					std::cout << "Specular lookup texture ";
+				}
+				if ("EBUC" == textureType)
+				{
+					std::cout << "Cube map texture ";
+				}
+				if ("NIAM" == textureType)
+				{
+					std::cout << "Main texture ";
+					//isMainTexture = true;
+				}
+				if ("LMRN" == textureType)
+				{
+					std::cout << "Normal map texture ";
+				}
+				else
+				{
+					std::cout << textureType << " ";
+				}
+
+
+				// Data is a filename
+				unsigned char data;
+				for (unsigned int i = 0; i < size - 4; ++i)
+				{
+					file.read((char*)&data, sizeof(data));
+					std::cout << (unsigned int)data << " ";
+				}
+				std::cout << std::endl;
+			}
+			if ("0001" == parentForms.back())
+			{
+				ml::base::readUnknown(file, size);
+				return size + 8; // Size of data plus 8 bytes of header
+			}
+			if ("0003" == parentForms.back())
+			{
+				std::size_t totalRead = 8;
+				unsigned int x;
+				totalRead += ml::base::read(file, x); std::cout << x << "\n";
+				totalRead += ml::base::read(file, x); std::cout << x << "\n";
+				//ml::base::readUnknown(file, size);
+				return size + 8; // Size of data plus 8 bytes of header
+			}
+			if ("0004" == parentForms.back())
+			{
+				ml::base::readUnknown(file, size);
+				return size + 8; // Size of data plus 8 bytes of header
+			}
+			if ("0005" == parentForms.back())
+			{
+				unsigned int x;
+				ml::base::read(file, x); std::cout << x << "\n";
+
+				unsigned char u1;
+				ml::base::read(file, u1);
+				std::cout << "???: " << (unsigned int)u1 << std::endl;
+
+				std::string cellName;
+				ml::base::read(file, cellName);
+				std::cout << "Cell name: " << cellName << std::endl;
+
+				std::string cellModel;
+				ml::base::read(file, cellModel);
+				std::cout << "Cell model: " << cellModel << std::endl;
+
+				unsigned char hasFloor;
+				ml::base::read(file, hasFloor);
+				std::cout << "Has floor: " << (unsigned int)hasFloor << std::endl;
+
+				if (hasFloor > 0)
+				{
+					std::string cellFloor;
+					ml::base::read(file, cellFloor);
+					std::cout << "Cell floor: " << cellFloor << std::endl;
+				}
+
+				return size + 8; // Size of data plus 8 bytes of header
+			}
+			if ("0008" == parentForms.back())
+			{
+				unsigned short data2;
+				file.read((char*)&data2, sizeof(data2));
+				std::cout << data2 << std::endl;
+				file.read((char*)&data2, sizeof(data2));
+				std::cout << data2 << std::endl;
+				file.read((char*)&data2, sizeof(data2));
+				std::cout << data2 << std::endl;
+				file.read((char*)&data2, sizeof(data2));
+				std::cout << data2 << std::endl;
+				file.read((char*)&data2, sizeof(data2));
+				std::cout << data2 << std::endl;
+				file.read((char*)&data2, sizeof(data2));
+				std::cout << data2 << std::endl;
+
+				// Data is a filename
+				unsigned char data;
+				for (unsigned int i = 0; i < size - 12; ++i)
+				{
+					file.read((char*)&data, sizeof(data));
+					if (i < 4)
+					{
+						std::cout << data << " ";
+					}
+					else
+					{
+						std::cout << (unsigned int)data << " ";
+					}
+				}
+				std::cout << std::endl;
+			}
+			else
+			{
+				if (numVerts != 0)
+				{
+					readGeometryDATA(file, size, numVerts);
+					numVerts = 0;
+				}
+				else
+				{
+					ml::base::readUnknown(file, size);
+				}
+			}
+			return size + 8; // Size of data plus 8 bytes of header
+			*/
+		}
+
+		if ("NAME" == group)
+		{
+			file.read(buffer, size);
+			buffer[size] = 0;
+			std::string name(buffer);
+			std::cout << name << std::endl;
+			return size + 8;
+		}
+
+		if ("INFO" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+
+		if ("INDX" == group)
+		{
+			int32_t numIndices;
+			ml::base::read(file, numIndices);
+
+			bool index16(((size - 4) / 2) == numIndices);
+
+			const uint32_t numTriangles(numIndices / 3);
+			if (index16) {
+				// 16-bits per index...
+				uint16_t t1, t2, t3;
+				for (unsigned int i = 0; i < numTriangles; ++i) {
+					ml::base::read(file, t1);
+					ml::base::read(file, t2);
+					ml::base::read(file, t3);
+					std::cout << "Triangle " << i << ": "
+						<< t1 << ", "
+						<< t2 << ", "
+						<< t3 << "\n";
+				}
+			}
+			else {
+				// 32-bits per index...
+				int32_t t1, t2, t3;
+				for (unsigned int i = 0; i < numTriangles; ++i) {
+					ml::base::read(file, t1);
+					ml::base::read(file, t2);
+					ml::base::read(file, t3);
+					std::cout << "Triangle " << i << ": "
+						<< t1 << ", "
+						<< t2 << ", "
+						<< t3 << "\n";
+				}
+			}
+
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("MATL" == group)
+		{
+			if (68 != size)
+			{
+				std::cout << "Expected MATL to be 68bytes!!!!!!!!!" << std::endl;
+				exit(0);
+			}
+
+			// Data in abgr?
+			float data;
+			std::cout << "Ambient: ";
+			for (unsigned int i = 0; i < 4; ++i)
+			{
+				file.read((char*)&data, sizeof(data));
+				std::cout << (unsigned int)data << " ";
+			}
+			std::cout << std::endl;
+
+			std::cout << "Diffuse: ";
+			for (int i = 0; i < 4; ++i)
+			{
+				file.read((char*)&data, sizeof(data));
+				std::cout << (unsigned int)data << " ";
+			}
+			std::cout << std::endl;
+
+			std::cout << "Emissive: ";
+			for (int i = 0; i < 4; ++i)
+			{
+				file.read((char*)&data, sizeof(data));
+				std::cout << (unsigned int)data << " ";
+			}
+			std::cout << std::endl;
+
+			std::cout << "Specular: ";
+			for (int i = 0; i < 4; ++i)
+			{
+				file.read((char*)&data, sizeof(data));
+				std::cout << (unsigned int)data << " ";
+			}
+			std::cout << std::endl;
+
+			std::cout << "Power: ";
+			file.read((char*)&data, sizeof(data));
+			std::cout << (unsigned int)data << std::endl;
+
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("0000" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("0001" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("0002" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("0003" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("0005" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("SCAP" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("OPTN" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("XFIN" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("LINK" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("QCHN" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("SROT" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("CHNL" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("STRN" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("SFAM" == group)
+		{
 #if 0
-	char temp[255];
-	unsigned int num;
-	file.read( (char *)&num, sizeof( num ) );
-	std::cout << "Num: " << num << std::endl;
+			char temp[255];
+			unsigned int num;
+			file.read((char*)&num, sizeof(num));
+			std::cout << "Num: " << num << std::endl;
 
-	std::string name;
-	file.getline( temp, 255, 0 );
-	name = temp;
-	std::cout << "Name: " << name << std::endl;
+			std::string name;
+			file.getline(temp, 255, 0);
+			name = temp;
+			std::cout << "Name: " << name << std::endl;
 
-	std::string name2;
-	file.getline( temp, 255, 0 );
-	name2 = temp;
-	std::cout << "Name2: " << name2 << std::endl;
+			std::string name2;
+			file.getline(temp, 255, 0);
+			name2 = temp;
+			std::cout << "Name2: " << name2 << std::endl;
 
-	float f;
-	unsigned int i;
-	unsigned char c;
+			float f;
+			unsigned int i;
+			unsigned char c;
 
-	file.read( (char *)&c, sizeof( c ) );
-	std::cout << (unsigned int)c << " ";
+			file.read((char*)&c, sizeof(c));
+			std::cout << (unsigned int)c << " ";
 
-	file.read( (char *)&c, sizeof( c ) );
-	std::cout << (unsigned int)c << " ";
+			file.read((char*)&c, sizeof(c));
+			std::cout << (unsigned int)c << " ";
 
-	file.read( (char *)&c, sizeof( c ) );
-	std::cout << (unsigned int)c << " ";
+			file.read((char*)&c, sizeof(c));
+			std::cout << (unsigned int)c << " ";
 
-	file.read( (char *)&f, sizeof( f ) );
-	std::cout << f << " ";
+			file.read((char*)&f, sizeof(f));
+			std::cout << f << " ";
 
-	file.read( (char *)&f, sizeof( f ) );
-	std::cout << f << " ";
+			file.read((char*)&f, sizeof(f));
+			std::cout << f << " ";
 
-	file.read( (char *)&i, sizeof( i ) );
-	std::cout << i << " ";
-	std::cout << std::endl;
-	
-	std::string name3;
-	file.getline( temp, 255, 0 );
-	name3 = temp;
-	std::cout << "Name3: " << name3 << std::endl;
+			file.read((char*)&i, sizeof(i));
+			std::cout << i << " ";
+			std::cout << std::endl;
 
-	file.read( (char *)&f, sizeof( f ) );
-	std::cout << f << std::endl;
+			std::string name3;
+			file.getline(temp, 255, 0);
+			name3 = temp;
+			std::cout << "Name3: " << name3 << std::endl;
+
+			file.read((char*)&f, sizeof(f));
+			std::cout << f << std::endl;
 #else
-	readUnknown( file, size );
+			ml::base::readUnknown(file, size);
 #endif
-    }
-    else if( "FFAM" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "RFAM" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "ADTA" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "PARM" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "SGMT" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "WMAP" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "SMAP" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "XXXX" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "PCNT" == group )
-    {
-	if( 4 == size )
-	{
-	    int data;
-	    file.read( (char*)&data, sizeof( data ) );
-	    std::cout << "Sibling Nodes: " << data << std::endl;
-	}
-	else
-	{
-	    readUnknown( file, size );
-	}
-    }
-    else if( "NODE" == group )
-    {
-	std::string name;
-	file.width( size - 52 );
-	file >> name;
-	std::cout << name << std::endl;
+		}
+		if ("FFAM" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("RFAM" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("ADTA" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("PARM" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("SGMT" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("WMAP" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("SMAP" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("XXXX" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("PCNT" == group)
+		{
+			if (4 == size)
+			{
+				int data;
+				file.read((char*)&data, sizeof(data));
+				std::cout << "Sibling Nodes: " << data << std::endl;
+			}
+			else
+			{
+				ml::base::readUnknown(file, size);
+			}
+		}
+		if ("NODE" == group)
+		{
+			std::string name;
+			file.width(size - 52);
+			file >> name;
+			std::cout << name << std::endl;
 
-	std::string r;
-	file.width( 4 );
-	file >> r;
-	std::cout << r << std::endl;
+			std::string r;
+			file.width(4);
+			file >> r;
+			std::cout << r << std::endl;
 
-	float data;
-	std::cout << std::fixed;
-	for( unsigned int i = 0; i < 12; ++i )
-	{
-	    file.read( (char*)&data, sizeof( data ) );
-	    std::cout << data << " ";
-	    if( ((i+1) % 4) == 0 )
-	    {
-		std::cout << std::endl;
-	    }
-	}
-	std::cout << std::endl;
-    }
-    else if( "CSND" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "CEFT" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "MESH" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "PALV" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "VERT" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "TRIS" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "NODS" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "BEDG" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "PEDG" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "META" == group )
-    {
- 	readUnknown( file, size );
-   }
-    else if( "PNOD" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "ECNT" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "ESTR" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "HPNT" == group ) // Lightsource?
-    {
-	float data1;
-	file.read( (char *)&data1, sizeof( data1 ) );
-	std::cout << data1 << " ";
-	file.read( (char *)&data1, sizeof( data1 ) );
-	std::cout << data1 << " ";
-	file.read( (char *)&data1, sizeof( data1 ) );
-	std::cout << data1 << " ";
-	file.read( (char *)&data1, sizeof( data1 ) );
-	std::cout << data1 << std::endl;
-	file.read( (char *)&data1, sizeof( data1 ) );
-	std::cout << data1 << " ";
-	file.read( (char *)&data1, sizeof( data1 ) );
-	std::cout << data1 << " ";
-	file.read( (char *)&data1, sizeof( data1 ) );
-	std::cout << data1 << " ";
-	file.read( (char *)&data1, sizeof( data1 ) );
-	std::cout << data1 << std::endl;
-	file.read( (char *)&data1, sizeof( data1 ) );
-	std::cout << data1 << " ";
-	file.read( (char *)&data1, sizeof( data1 ) );
-	std::cout << data1 << " ";
-	file.read( (char *)&data1, sizeof( data1 ) );
-	std::cout << data1 << " ";
-	file.read( (char *)&data1, sizeof( data1 ) );
-	std::cout << data1 << std::endl;
+			float data;
+			std::cout << std::fixed;
+			for (unsigned int i = 0; i < 12; ++i)
+			{
+				file.read((char*)&data, sizeof(data));
+				std::cout << data << " ";
+				if (((i + 1) % 4) == 0)
+				{
+					std::cout << std::endl;
+				}
+			}
+			std::cout << std::endl;
+		}
+		if ("CSND" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("CEFT" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("MESH" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("PALV" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("VERT" == group)
+		{
+			uint32_t numVerts = uint32_t(size / 12); // Number of x,y,z floats
+			float x, y, z;
+			for (unsigned int i = 0; i < numVerts; ++i) {
+				ml::base::read(file, x);
+				ml::base::read(file, y);
+				ml::base::read(file, z);
+				std::cout << "Vertex " << i << ": "
+					<< x << ", "
+					<< y << ", "
+					<< z << "\n";
+			}
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("TRIS" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("NODS" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("BEDG" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("PEDG" == group)
+		{
+			unsigned int count;
+			ml::base::read(file, count);
+			std::cout << "Entries: " << count << "\n";
 
-	readUnknown( file, size-48 );
-    }
-    else if( "SIDX" == group )
-    {
-	unsigned int num;
-	file.read( (char *)&num, sizeof( num ) );
-	std::cout << "Num: " << num << std::endl;
+			unsigned int x, y, z, w;
+			for (unsigned int i = 0; i < count; ++i) {
+				ml::base::read(file, x);
+				ml::base::read(file, y);
+				ml::base::read(file, z);
+				ml::base::read(file, w);
+				std::cout << i << ": "
+					<< x << ", "
+					<< y << ", "
+					<< z << ", "
+					<< w << "\n";
+			}
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("META" == group)
+		{
+			unsigned int x;
+			ml::base::read(file, x);
+			std::cout << x << "\n";
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("PNOD" == group)
+		{
+			unsigned int count;
+			ml::base::read(file, count);
+			std::cout << "Entries: " << count << "\n";
 
-	for( unsigned int j = 0; j < num; ++j )
-	{
-	    float x1;
-	    file.read( (char *)&x1, sizeof( x1 ) );
-	    std::cout << "Unknown: " << x1 << std::endl;
-	    file.read( (char *)&x1, sizeof( x1 ) );
-	    std::cout << "Unknown: " << x1 << std::endl;
-	    file.read( (char *)&x1, sizeof( x1 ) );
-	    std::cout << "Unknown: " << x1 << std::endl;
-	    unsigned int numIndex;
-	    file.read( (char *)&numIndex, sizeof( numIndex ) );
-	    std::cout << "Num index: " << numIndex << std::endl;
-	    
-	    unsigned short data;
-	    for( unsigned int i = 0; i < numIndex; ++i )
-	    {
-		file.read( (char *)&data, sizeof( data ) );
-		std::cout << data << " ";
-	    }
-	    std::cout << std::endl;
-	}
-    }
-    else if( "MSGN" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "SKTI" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "PIVT" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "CHLD" == group )
-    {
+			int x, y, z, w;
+			float a, b, c, d;
+			for (unsigned int i = 0; i < count; ++i) {
+				ml::base::read(file, x);
+				ml::base::read(file, y);
+				ml::base::read(file, z);
+				ml::base::read(file, w);
+				ml::base::read(file, a);
+				ml::base::read(file, b);
+				ml::base::read(file, c);
+				ml::base::read(file, d);
+				std::cout << i << ": "
+					<< x << ", "
+					<< y << ", "
+					<< z << ", "
+					<< w << ", "
+					<< a << ", "
+					<< b << ", "
+					<< c << ", "
+					<< d << "\n";
+			}
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("ECNT" == group)
+		{
+			unsigned int count;
+			ml::base::read(file, count);
+			std::cout << "Entries: " << count << "\n";
+
+			unsigned int x;
+			for (unsigned int i = 0; i < count; ++i) {
+				ml::base::read(file, x);
+				std::cout << i << ": " << x << "\n";
+			}
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("ESTR" == group)
+		{
+			unsigned int count;
+			ml::base::read(file, count);
+			std::cout << "Entries: " << count << "\n";
+
+			unsigned int x;
+			for (unsigned int i = 0; i < count; ++i) {
+				ml::base::read(file, x);
+				std::cout << i << ": " << x << "\n";
+			}
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("HPNT" == group) // Lightsource?
+		{
+			float data1;
+			file.read((char*)&data1, sizeof(data1));
+			std::cout << data1 << " ";
+			file.read((char*)&data1, sizeof(data1));
+			std::cout << data1 << " ";
+			file.read((char*)&data1, sizeof(data1));
+			std::cout << data1 << " ";
+			file.read((char*)&data1, sizeof(data1));
+			std::cout << data1 << std::endl;
+			file.read((char*)&data1, sizeof(data1));
+			std::cout << data1 << " ";
+			file.read((char*)&data1, sizeof(data1));
+			std::cout << data1 << " ";
+			file.read((char*)&data1, sizeof(data1));
+			std::cout << data1 << " ";
+			file.read((char*)&data1, sizeof(data1));
+			std::cout << data1 << std::endl;
+			file.read((char*)&data1, sizeof(data1));
+			std::cout << data1 << " ";
+			file.read((char*)&data1, sizeof(data1));
+			std::cout << data1 << " ";
+			file.read((char*)&data1, sizeof(data1));
+			std::cout << data1 << " ";
+			file.read((char*)&data1, sizeof(data1));
+			std::cout << data1 << std::endl;
+
+			ml::base::readUnknown(file, size - 48);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("SIDX" == group)
+		{
+			unsigned int num;
+			file.read((char*)&num, sizeof(num));
+			std::cout << "Num: " << num << std::endl;
+
+			for (unsigned int j = 0; j < num; ++j)
+			{
+				float x1;
+				file.read((char*)&x1, sizeof(x1));
+				std::cout << "Unknown: " << x1 << std::endl;
+				file.read((char*)&x1, sizeof(x1));
+				std::cout << "Unknown: " << x1 << std::endl;
+				file.read((char*)&x1, sizeof(x1));
+				std::cout << "Unknown: " << x1 << std::endl;
+				unsigned int numIndex;
+				file.read((char*)&numIndex, sizeof(numIndex));
+				std::cout << "Num index: " << numIndex << std::endl;
+
+				unsigned short data;
+				for (unsigned int i = 0; i < numIndex; ++i)
+				{
+					file.read((char*)&data, sizeof(data));
+					std::cout << data << " ";
+				}
+				std::cout << std::endl;
+			}
+		}
+		if ("MSGN" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("SKTI" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("PIVT" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		/*
+		if ("CHLD" == group)
+		{
 #if 0
-	unsigned int lodNum;
-	file.read( (char *)&lodNum, sizeof( lodNum ) );
-	std::cout << "LOD" << lodNum << ": ";
-	unsigned char data;
-	for( int i = 0; i < size-4; ++i )
-	{
-	    file.read( (char *)&data, sizeof( data ) );
-	    std::cout << data;
-	}
-	std::cout << std::endl;
+			unsigned int lodNum;
+			file.read((char*)&lodNum, sizeof(lodNum));
+			std::cout << "LOD" << lodNum << ": ";
+			unsigned char data;
+			for (int i = 0; i < size - 4; ++i)
+			{
+				file.read((char*)&data, sizeof(data));
+				std::cout << data;
+			}
+			std::cout << std::endl;
 #else
-	readUnknown( file, size );
+			ml::base::readUnknown(file, size);
 #endif
-    }
-    else if( "PAL " == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "ASND" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "HOBJ" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "TEXT" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "TYPS" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "VOLT" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "PRVT" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "SKCT" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "PSND" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "FRAM" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "ZOOM" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "FRST" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "3OFF" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "1OFF" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "DEFH" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "PUNF" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "ACTN" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "PRNT" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "RPRE" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "RPST" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "BPTR" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "BPRO" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "JROR" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "KEY " == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "DISP" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "POST" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "INT " == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "FLOT" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "PROB" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "SKIL" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "ITEM" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "CODE" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "COLS" == group )
-    {
-	file.read( (char*)&numCols, sizeof( numCols ) );
+		}
+		*/
+		if ("PAL " == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("ASND" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("HOBJ" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("TEXT" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("TYPS" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("VOLT" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("PRVT" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("SKCT" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("PSND" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("FRAM" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("ZOOM" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("FRST" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("3OFF" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("1OFF" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("DEFH" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("PUNF" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("ACTN" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("PRNT" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("RPRE" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("RPST" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("BPTR" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("BPRO" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("JROR" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("KEY " == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("DISP" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("POST" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("INT " == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("FLOT" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("PROB" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("SKIL" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("ITEM" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("CODE" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("COLS" == group)
+		{
+			file.read((char*)&numCols, sizeof(numCols));
 
-	std::cout << "Num columns: " << numCols << std::endl;
+			std::cout << "Num columns: " << numCols << std::endl;
 
-	char temp[255];
-	for( unsigned int i = 0; i < numCols; ++i )
-	{
-	    file.getline( temp, 255, 0 );
-	    std::string name( temp );
-	    std::cout << i << ": " << name << std::endl;
-	}
-    }
-    else if( "TYPE" == group )
-    {
-	char temp[255];
-	for( unsigned int i = 0; i < numCols; ++i )
-	{
-	    file.getline( temp, 255, 0 );
-	    std::string name( temp );
-	    std::cout << i << ": " << name << std::endl;
-	}
-    }
-    else if( "ROWS" == group )
-    {
+			char temp[255];
+			for (unsigned int i = 0; i < numCols; ++i)
+			{
+				file.getline(temp, 255, 0);
+				std::string name(temp);
+				std::cout << i << ": " << name << std::endl;
+			}
+		}
+		if ("TYPE" == group)
+		{
+			char temp[255];
+			for (unsigned int i = 0; i < numCols; ++i)
+			{
+				file.getline(temp, 255, 0);
+				std::string name(temp);
+				std::cout << i << ": " << name << std::endl;
+			}
+		}
+		if ("ROWS" == group)
+		{
 #if 0
-	file.read( (char*)&numRows, sizeof( numRows ) );
+			file.read((char*)&numRows, sizeof(numRows));
 
-	std::cout << "Num rows: " << numRows << std::endl;
+			std::cout << "Num rows: " << numRows << std::endl;
 
-	char temp[255];
-	for( unsigned int i = 0; i < numRows; ++i )
-	{
-	    file.getline( temp, 255, 0 );
-	    std::string name = temp;
-	    std::cout << i << ": " << name << std::endl;
-	}
+			char temp[255];
+			for (unsigned int i = 0; i < numRows; ++i)
+			{
+				file.getline(temp, 255, 0);
+				std::string name = temp;
+				std::cout << i << ": " << name << std::endl;
+			}
 #else
-	readUnknown( file, size );
+			ml::base::readUnknown(file, size);
 #endif
-    }
-    else if( "PSTR" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "OTNL" == group )
-    {
-	unsigned int num;
-	file.read( (char*)&num, sizeof( num ) );
-	std::cout << num << std::endl;
-	char temp[512];
+			}
+		if ("PSTR" == group)
+		{
+			ml::base::readUnknown(file, size);
+		}
+		if ("OTNL" == group)
+		{
+			unsigned int num;
+			file.read((char*)&num, sizeof(num));
+			std::cout << num << std::endl;
+			char temp[512];
 
-	for( unsigned int i = 0; i < num; ++i )
-	{
-	    file.getline( temp, 512, 0 );
-	    std::cout << temp << std::endl;
-	}
-	//readUnknown( file, size-4 );
-    }
-    else if( "NSKY" == group ) // Night sky?
-    {
-	readUnknown( file, size );
-    }
-    else if( "STAR" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "SUN " == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "SSUN" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "MOON" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "SMOO" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "CELS" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "DEST" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "PCAM" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "RTFC" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "SSTC" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "STFP" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "SST1" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "SKTM" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "XFNM" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "POSN" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "TWHD" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "TWDT" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "NORM" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "DOT3" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "OZN " == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "OZC " == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "FOZC" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "ZTO " == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "PIDX" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "NIDX" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "TXCI" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "TCSD" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "OITL" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "LATX" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "CRCT" == group )
-    {
-	unsigned int numData = size/4;
-	for( unsigned int i = 0; i < numData; ++i )
-	{
-	    unsigned int data;
-	    file.read( (char*)&data, sizeof( data ) );
-	    std::cout << i << ": " << data << std::endl;
-	}
-    }
-    else if( "STRT" == group )
-    {
-	unsigned int numData = size/4;
-	for( unsigned int i = 0; i < numData; ++i )
-	{
-	    unsigned int data;
-	    file.read( (char*)&data, sizeof( data ) );
-	    std::cout << i << ": " << data << std::endl;
-	}
-    }
-    else if( "STNG" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "TX1D" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "LOCT" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "PRTL" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "0004" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "LGHT" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "CRC " == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "CYLN" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "ITL " == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "INGR" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "VAL " == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "PPTR" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "SKMG" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "DFLT" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "PSRC" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "PEXE" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "PART" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "SHDR" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "ENTR" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "EXIT" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "DETH" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "INCP" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "WATR" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "PSHM" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "PSTM" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "CNCF" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "MESG" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "DYN " == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "TRTS" == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "TRT " == group )
-    {
-	readUnknown( file, size );
-    }
-    else if( "HPTS" == group )
-    {
-	readUnknown( file, size );
-    }
-    else
-    {
+			for (unsigned int i = 0; i < num; ++i)
+			{
+				file.getline(temp, 512, 0);
+				std::cout << temp << std::endl;
+			}
+			//ml::base::readUnknown( file, size-4 );
+		}
+		if ("NSKY" == group) // Night sky?
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("STAR" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("SUN " == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("SSUN" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("MOON" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("SMOO" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("DEST" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("PCAM" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("RTFC" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("SSTC" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("STFP" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("SST1" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("SKTM" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("XFNM" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("POSN" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("TWHD" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("TWDT" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("NORM" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("DOT3" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("OZN " == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("OZC " == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("FOZC" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("ZTO " == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("PIDX" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("NIDX" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("TXCI" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("TCSD" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("OITL" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("LATX" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("CRCT" == group)
+		{
+			uint32_t numData = (uint32_t)(size / 4);
+			for (unsigned int i = 0; i < numData; ++i)
+			{
+				unsigned int data;
+				file.read((char*)&data, sizeof(data));
+				std::cout << i << ": " << data << std::endl;
+			}
+		}
+		if ("STRT" == group)
+		{
+			uint32_t numData = (uint32_t)(size / 4);
+			for (unsigned int i = 0; i < numData; ++i)
+			{
+				unsigned int data;
+				file.read((char*)&data, sizeof(data));
+				std::cout << i << ": " << data << std::endl;
+			}
+		}
+		if ("STNG" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("TX1D" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("LOCT" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("0004" == group)
+		{
+			std::size_t totalRead = 0;
+
+			unsigned int x;
+			unsigned short y;
+			totalRead += ml::base::read(file, x); std::cout << x << "\n";
+			totalRead += ml::base::read(file, y); std::cout << y << "\n";
+			totalRead += ml::base::read(file, x); std::cout << x << "\n";
+
+			std::string name;
+			totalRead += ml::base::read(file, name);
+			std::cout << "???: " << name << std::endl;
+
+			std::cout << "Bytes left: " << size - totalRead << "\n";
+			ml::base::readUnknown(file, size - totalRead);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("LGHT" == group)
+		{
+			std::size_t total = 0;
+			unsigned int numLights;
+			total = ml::base::read(file, numLights); std::cout << "Num Lights: " << numLights << "\n";
+
+			unsigned char x;
+			float z;
+			for (unsigned i = 0; i < numLights; ++i) {
+				std::cout << "Light " << i << "\n";
+
+				total += ml::base::read(file, x);
+				std::cout << (unsigned int)x << "\n";
+
+				//
+				total += ml::base::read(file, z);
+				std::cout << z << " ";
+
+				total += ml::base::read(file, z);
+				std::cout << z << " ";
+
+				total += ml::base::read(file, z);
+				std::cout << z << " ";
+
+				total += ml::base::read(file, z);
+				std::cout << z << std::endl;
+
+				//
+				total += ml::base::read(file, z);
+				std::cout << z << " ";
+
+				total += ml::base::read(file, z);
+				std::cout << z << " ";
+
+				total += ml::base::read(file, z);
+				std::cout << z << " ";
+
+				total += ml::base::read(file, z);
+				std::cout << z << std::endl;
+
+				ml::matrix3x4 mat;
+				total += ml::model::readTransformMatrix(file, mat);
+				std::cout << "Matrix: \n" << mat << "\n";
+
+				total += ml::base::read(file, z);
+				std::cout << z << " ";
+
+				total += ml::base::read(file, z);
+				std::cout << z << " ";
+
+				total += ml::base::read(file, z);
+				std::cout << z << std::endl;
+				std::cout << "---\n";
+			}
+			ml::base::readUnknown(file, size - total);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("CRC " == group)
+		{
+			unsigned int crc;
+			ml::base::read(file, crc);
+			std::cout << "Cyclic redundancy check: " << crc << "\n";
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("CYLN" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("ITL " == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("INGR" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("VAL " == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("PPTR" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("SKMG" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("DFLT" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("PSRC" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("PEXE" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("PART" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("SHDR" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("ENTR" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("EXIT" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("DETH" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("INCP" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("WATR" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("PSHM" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("PSTM" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("CNCF" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("MESG" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("DYN " == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("TRTS" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("TRT " == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("HPTS" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("CHLD" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("CNT " == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("NIAM" == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("TAG " == group)
+		{
+			ml::tag tagName;
+			ml::base::read(file, tagName);
+			std::cout << tagName << "\n";
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		}
+
 	std::cout << "Unknown KEYWORD: " << group << std::endl;
 	exit(0);
-    }
-
-    // Size of data plus 8 bytes of header
-    return size+8;
-}
+	}
 
 
-
-
-int main( int argc, char **argv )
+int main(int argc, char** argv)
 {
 
-    if( 2 > argc )
-    {
-	std::cout << "iffDump <file>" << std::endl;
-	return 0;
-    }
-
-    for( int i = 1; i < argc; ++i )
-    {
-	std::ifstream meshFile( argv[i] );
-	
-	if( !meshFile.is_open() )
+	if (2 > argc)
 	{
-	    std::cout << "Unable to open file: " << argv[1] << std::endl;
-	    exit( 0 );
+		std::cout << "iffDump <file>" << std::endl;
+		return 0;
 	}
-	
-	std::deque<std::string> parentForms;
-	readRecord( meshFile, 0, parentForms );
-	meshFile.close();
-    }
 
-    return 0;
+	for (int i = 1; i < argc; ++i)
+	{
+		std::ifstream swgFile(argv[i], std::ios_base::binary);
+
+		if (!swgFile.is_open())
+		{
+			std::cout << "Unable to open file: " << argv[1] << std::endl;
+			exit(0);
+		}
+
+		std::deque<std::string> parentForms;
+		readRecord(swgFile, 0, parentForms);
+		swgFile.close();
+	}
+
+	return 0;
 }

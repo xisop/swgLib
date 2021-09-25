@@ -1,9 +1,9 @@
 /** -*-c++-*-
  *  \class  mshVertexData
  *  \file   mshVertexData.hpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- Copyright (C) 2006-2009 Kenneth R. Sewell III
+ Copyright (C) 2006-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -22,58 +22,47 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include <swgLib/mshVertex.hpp>
-
-#include <fstream>
-#include <string>
-#include <vector>
-
+/*
 #ifndef MSHVERTEXDATA_HPP
-#define MSHVERTEXDATA_HPP
+#define MSHVERTEXDATA_HPP 1
+
+#include <swgLib/vertex.hpp>
+
+#include <istream>
+#include <ostream>
+#include <vector>
 
 namespace ml
 {
-  class mshVertexData
-  {
-  public:
-    mshVertexData();
-    virtual ~mshVertexData();
+	class mshVertexData
+	{
+	public:
+		mshVertexData();
+		virtual ~mshVertexData();
 
-    unsigned char getBytesPerVertex() const
-    {
-      return bytesPerVertex;
-    }
+		bool read(std::istream& file, unsigned int numVerts);
 
-    void setBytesPerVertex( const unsigned char bpv )
-    {
-      bytesPerVertex = bpv;
-    }
+		void clear();
 
-    bool read( std::istream &file, unsigned int numVerts );
+		unsigned char getBytesPerVertex() const;
+		void setBytesPerVertex(const unsigned char bpv);
 
-    void clear();
-  
-    static bool isSupportedSize( const unsigned int bpv )
-    {
-      return mshVertex::isSupportedSize( bpv );
-    }
+		static bool isSupportedSize(const unsigned int bpv);
 
-    unsigned int getNumVertices() const
-    {
-      return v.size();
-    }
+		uint32_t getNumVertices() const;
 
-    const mshVertex *getVertex( unsigned int vertexNum ) const;
+		const vertex* getVertex(unsigned int vertexNum) const;
 
-    void print() const;
+		void print(std::ostream &os) const;
 
-  protected:
-    unsigned int bytesPerVertex;
+	protected:
+		unsigned int bytesPerVertex;
 
-    std::vector<mshVertex *> v;
+		std::vector<vertex*> v;
 
-  private:
+	private:
 
-  };
+	};
 }
 #endif
+*/

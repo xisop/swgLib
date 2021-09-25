@@ -1,10 +1,10 @@
 /** -*-c++-*-
  *  \class  cach
  *  \file   cach.cpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- swgLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006-2009 Kenneth R. Sewell III
+ swgLib is used for the parsing and exporting SWG models.
+ Copyright (C) 2006-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -39,46 +39,46 @@ cach::~cach()
 {
 }
 
-unsigned int cach::readCACH( std::istream &file, std::string path )
+std::size_t cach::readCACH(std::istream& file, std::string path)
 {
-  basePath = path;
-  unsigned int total = 0;
-  std::string form;
-  unsigned int cachSize;
-  std::string type;
+	basePath = path;
+	std::size_t total = 0;
+	std::string form;
+	std::size_t cachSize;
+	std::string type;
 
-  total += readFormHeader( file, "CACH", cachSize );
-  cachSize += 8;
-  std::cout << "Found CACH form" << std::endl;
+	total += readFormHeader(file, "CACH", cachSize);
+	cachSize += 8;
+	std::cout << "Found CACH form" << std::endl;
 
-  unsigned int size;
-  total += readRecordHeader( file, type, size );
-  if( type != "0000" )
-    {
-      std::cout << "Expected type " << std::endl;
-      exit( 0 );
-    }
-  std::cout << "Found type: " << type << std::endl;
-  
-  std::string name;
-  while( total < cachSize )
-    {
-      total += base::read( file, name );
-      cacheList.push_back( name );
-      std::cout << name << std::endl;
-    }
+	std::size_t size;
+	total += readRecordHeader(file, type, size);
+	if (type != "0000")
+	{
+		std::cout << "Expected type " << std::endl;
+		exit(0);
+	}
+	std::cout << "Found type: " << type << std::endl;
 
-  if( cachSize == total )
-    {
-      std::cout << "Finished reading CACH" << std::endl;
-    }
-  else
-    {
-      std::cout << "Failed in reading CACH" << std::endl;
-      std::cout << "Read " << total << " out of " << cachSize
-		<< std::endl;
-    }
+	std::string name;
+	while (total < cachSize)
+	{
+		total += base::read(file, name);
+		cacheList.push_back(name);
+		std::cout << name << std::endl;
+	}
 
-  return total;
+	if (cachSize == total)
+	{
+		std::cout << "Finished reading CACH" << std::endl;
+	}
+	else
+	{
+		std::cout << "Failed in reading CACH" << std::endl;
+		std::cout << "Read " << total << " out of " << cachSize
+			<< std::endl;
+	}
+
+	return total;
 }
 

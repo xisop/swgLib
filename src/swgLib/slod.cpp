@@ -1,10 +1,10 @@
 /** -*-c++-*-
  *  \class  slod
  *  \file   slod.cpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- swgLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006-2009 Kenneth R. Sewell III
+ swgLib is used for the parsing and exporting SWG models.
+ Copyright (C) 2006-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -43,74 +43,74 @@ slod::~slod()
 {
 }
 
-unsigned int slod::readSLOD( std::istream &file )
+unsigned int slod::readSLOD(std::istream& file)
 {
-    unsigned int slodSize;
-    std::string type;
+	std::size_t slodSize;
+	std::string type;
 
-    unsigned int total = readFormHeader( file, "SLOD", slodSize );
-    slodSize += 8;
-    std::cout << "Found SLOD form" << std::endl;
+	std::size_t total = readFormHeader(file, "SLOD", slodSize);
+	slodSize += 8;
+	std::cout << "Found SLOD form" << std::endl;
 
-    unsigned int size;
-    std::string form;
-    total += readFormHeader( file, form, size, type );
-    if( form != "FORM" )
-    {
-	std::cout << "Expected Form" << std::endl;
-	exit( 0 );
-    }
-    std::cout << "Found form of type: " << type<< std::endl;
+	std::size_t size;
+	std::string form;
+	total += readFormHeader(file, form, size, type);
+	if (form != "FORM")
+	{
+		std::cout << "Expected Form" << std::endl;
+		exit(0);
+	}
+	std::cout << "Found form of type: " << type << std::endl;
 
-    unsigned short numSktm;
-    total += readINFO( file, numSktm );
+	unsigned short numSktm;
+	total += readINFO(file, numSktm);
 
-    for( unsigned int i = 0; i < numSktm; ++i )
-      {
-	ml::sktm newSKTM;
-	skeletonList.push_back( newSKTM );
-	total += skeletonList.back().readSKTM( file );
-      }
-    
-    if( slodSize == total )
-    {
-	std::cout << "Finished reading SLOD" << std::endl;
-    }
-    else
-    {
-	std::cout << "FAILED in reading SLOD" << std::endl;
-	std::cout << "Read " << total << " out of " << slodSize
-                  << std::endl;
-     }
+	for (unsigned int i = 0; i < numSktm; ++i)
+	{
+		ml::sktm newSKTM;
+		skeletonList.push_back(newSKTM);
+		total += skeletonList.back().readSKTM(file);
+	}
 
-    return total;
+	if (slodSize == total)
+	{
+		std::cout << "Finished reading SLOD" << std::endl;
+	}
+	else
+	{
+		std::cout << "FAILED in reading SLOD" << std::endl;
+		std::cout << "Read " << total << " out of " << slodSize
+			<< std::endl;
+	}
+
+	return total;
 }
 
-unsigned int slod::readINFO( std::istream &file, unsigned short &value )
+unsigned int slod::readINFO(std::istream& file, unsigned short& value)
 {
-    std::string type;
-    unsigned int infoSize;
-    unsigned int total = readRecordHeader( file, type, infoSize );
-    infoSize += 8;
-    if( type != "INFO" )
-    {
-        std::cout << "Expected record of type INFO: " << type << std::endl;
-        exit( 0 );
-    }
-    std::cout << "Found " << type << std::endl;
-    
-    total += base::read( file, value );
+	std::string type;
+	std::size_t infoSize;
+	std::size_t total = readRecordHeader(file, type, infoSize);
+	infoSize += 8;
+	if (type != "INFO")
+	{
+		std::cout << "Expected record of type INFO: " << type << std::endl;
+		exit(0);
+	}
+	std::cout << "Found " << type << std::endl;
 
-    if( infoSize == total )
-    {
-        std::cout << "Finished reading INFO" << std::endl;
-    }
-    else
-    {
-        std::cout << "FAILED in reading INFO" << std::endl;
-        std::cout << "Read " << total << " out of " << infoSize
-                  << std::endl;
-     }
+	total += base::read(file, value);
 
-    return total;
+	if (infoSize == total)
+	{
+		std::cout << "Finished reading INFO" << std::endl;
+	}
+	else
+	{
+		std::cout << "FAILED in reading INFO" << std::endl;
+		std::cout << "Read " << total << " out of " << infoSize
+			<< std::endl;
+	}
+
+	return total;
 }

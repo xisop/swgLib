@@ -1,10 +1,10 @@
 /** -*-c++-*-
  *  \class  cclt
  *  \file   cclt.hpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- swgLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006-2009 Kenneth R. Sewell III
+ swgLib is used for the parsing and exporting SWG models.
+ Copyright (C) 2006-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -42,7 +42,7 @@ namespace ml
     {
       return isOfType( file, "CCLT" );
     }
-    unsigned int readCCLT( std::istream &file );
+    std::size_t readCCLT( std::istream &file );
     void print() const;
     
   protected:

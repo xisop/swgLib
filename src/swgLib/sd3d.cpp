@@ -1,10 +1,10 @@
 /** -*-c++-*-
  *  \class  sd3d
  *  \file   sd3d.cpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- swgLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006-2009 Kenneth R. Sewell III
+ swgLib is used for the parsing and exporting SWG models.
+ Copyright (C) 2006-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -43,55 +43,55 @@ sd3d::~sd3d()
 {
 }
 
-unsigned int sd3d::readSD3D( std::istream &file )
+unsigned int sd3d::readSD3D(std::istream& file)
 {
-    unsigned int sd3dSize;
-    unsigned int total = readFormHeader( file, "SD3D", sd3dSize );
-    sd3dSize += 8;
-    std::cout << "Found SD3D form" << std::endl;
+	std::size_t sd3dSize;
+	std::size_t total = readFormHeader(file, "SD3D", sd3dSize);
+	sd3dSize += 8;
+	std::cout << "Found SD3D form" << std::endl;
 
-    total += readSD2D( file );
-    total += read0001( file );
-    
-    if( sd3dSize == total )
-    {
-	std::cout << "Finished reading SD3D" << std::endl;
-    }
-    else
-    {
-	std::cout << "FAILED in reading SD3D" << std::endl;
-	std::cout << "Read " << total << " out of " << sd3dSize
-                  << std::endl;
-     }
+	total += readSD2D(file);
+	total += read0001(file);
 
-    return total;
+	if (sd3dSize == total)
+	{
+		std::cout << "Finished reading SD3D" << std::endl;
+	}
+	else
+	{
+		std::cout << "FAILED in reading SD3D" << std::endl;
+		std::cout << "Read " << total << " out of " << sd3dSize
+			<< std::endl;
+	}
+
+	return total;
 }
 
-unsigned int sd3d::read0001( std::istream &file )
+unsigned int sd3d::read0001(std::istream& file)
 {
-    std::string type;
-    unsigned int size;
-    unsigned int total = readRecordHeader( file, type, size );
-    size += 8;
-    if( type != "0001" )
-    {
-        std::cout << "Expected record of type 0001: " << type << std::endl;
-        exit( 0 );
-    }
-    std::cout << "Found " << type << std::endl;
+	std::string type;
+	std::size_t size;
+	std::size_t total = readRecordHeader(file, type, size);
+	size += 8;
+	if (type != "0001")
+	{
+		std::cout << "Expected record of type 0001: " << type << std::endl;
+		exit(0);
+	}
+	std::cout << "Found " << type << std::endl;
 
-    if( size == total )
-    {
-        std::cout << "Finished reading 0001" << std::endl;
-    }
-    else
-    {
-        std::cout << "FAILED in reading 0001" << std::endl;
-        std::cout << "Read " << total << " out of " << size
-                  << std::endl;
-     }
+	if (size == total)
+	{
+		std::cout << "Finished reading 0001" << std::endl;
+	}
+	else
+	{
+		std::cout << "FAILED in reading 0001" << std::endl;
+		std::cout << "Read " << total << " out of " << size
+			<< std::endl;
+	}
 
-    return total;
+	return total;
 }
 
 void sd3d::print() const

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>SWG .iff file format.</title>
+  <link href="minimal-table.css" rel="stylesheet" type="text/css">
+</head>
+
+<body style="background-color:white" >
+
+<hl style="color:black; font-size:25px">Indexed Triangle list record used by Star Wars Galaxies</hl></br>
+<hl style="color:black; font-size:15px">by Ken Sewell</hl></br>
+<p style="color:black">
+The indexed triangle list (IDTL) record stores vertices and triangle indices.
+
+<table>
+<tbody>
+
+<caption style="color:black; font-size:20px"> IDTL Record </caption>
+<tr>
+<th>Type</th>
+<th>Size(bytes)</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td>FourCC</td>
+<td>4</td>
+<td>Form Tag</td>
+<td>"FORM"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Form size</td>
+<td>Length of form (Excluding size of Form Tag and Form size fields.</td>
+</tr>
+
+<tr>
+<td>FourCC</td>
+<td>4</td>
+<td>Form Type</td>
+<td>"IDTL"</td>
+</tr>
+
+<tr>
+<td>FourCC</td>
+<td>4</td>
+<td>Form Tag</td>
+<td>"FORM"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Form size</td>
+<td>Length of form (Excluding size of Form Tag and Form size fields.</td>
+</tr>
+
+<tr>
+<td>FourCC</td>
+<td>4</td>
+<td>Form Type</td>
+<td>"0000"</td>
+</tr>
+
+<tr>
+<td>FourCC</td>
+<td>4</td>
+<td>Record Tag</td>
+<td>"VERT"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Record size</td>
+<td>Length of record (Excluding size of Record Tag and Record size fields.</td>
+</tr>
+
+<tr>
+<td>float</td>
+<td>12 (xyz)</td>
+<td>Vertex 1 xyz</td>
+<td>Total number of vertex records is equal to (VERT record size / 12)</td>
+</tr>
+
+<tr>
+<td>float</td>
+<td>12 (xyz)</td>
+<td>Vertex 2 xyz</td>
+<td></td>
+</tr>
+
+<tr>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+
+<tr>
+<td>float</td>
+<td>12 (xyz)</td>
+<td>Vertex n xyz</td>
+<td></td>
+</tr>
+
+<tr>
+<td>FourCC</td>
+<td>4</td>
+<td>Record Tag</td>
+<td>"INDX"</td>
+</tr>
+
+<tr>
+<td>uint32</td>
+<td>4</td>
+<td>Record size</td>
+<td>Length of record (Excluding size of Record Tag and Record size fields.</td>
+</tr>
+
+
+<tr>
+<td>int32</td>
+<td>4</td>
+<td>Vertex index 1</td>
+<td>Total number if vertex indices is equal to (INDX record size / 4)</td>
+</tr>
+
+<tr>
+<td>int32</td>
+<td>4</td>
+<td>Vertex index 2</td>
+<td>Every 3 consecutive indices describe one triangle.</td>
+</tr>
+
+<tr>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+
+<tr>
+<td>int32</td>
+<td>4</td>
+<td>Vertex index n</td>
+<td>Total number if vertex indices is equal to (INDX record size / 4)</td>
+</tr>
+
+</tbody>
+</table>

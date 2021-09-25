@@ -1,10 +1,10 @@
 /** -*-c++-*-
  *  \class  lod
  *  \file   lod.hpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- swgLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006-2009 Kenneth R. Sewell III
+ swgLib is used for the parsing and exporting SWG models.
+ Copyright (C) 2006-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -22,82 +22,82 @@
  along with swgLib; if not, write to the Free Software
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include <swgLib/model.hpp>
+#include <swgLib/base.hpp>
+#include <swgLib/appr.hpp>
 
-#include <fstream>
+#include <istream>
 #include <string>
 #include <vector>
 
 #ifndef LOD_HPP
-#define LOD_HPP
+#define LOD_HPP 1
 
 namespace ml
 {
-  class lod : public model
-  {
-  public:
-    lod();
-    ~lod();
-    bool isRightType( std::istream &file )
-    {
-      return isOfType( file, "DTLA" );
-    }
-    unsigned int readLOD( std::istream &file, std::string path="" );
-    unsigned int getNumLODs() const
-    {
-      return near.size();
-    }
+	class lod : public base
+	{
+	public:
+		struct lodChild {
+			int id;
+			float near;
+			float far;
+			std::string name;
+		};
 
-    // Can be .msh or .cmp
-    bool getChild( unsigned int index, 
-		   std::string &filename,
-		   float &Near, float &Far ) const;
-  
-    void getBoundingSphere( float &centerX,
-			    float &centerY,
-			    float &centerZ,
-			    float &sphereRadius
-			    )
-    {
-      centerX = cx;
-      centerY = cy;
-      centerZ = cz;
-      sphereRadius = radius;
-    }
+		lod();
+		~lod();
 
-    void getBoundingBox( float &X1, float &Y1, float &Z1,
-			 float &X2, float &Y2, float &Z2
-			 )
-    {
-      X1 = x1;
-      Y1 = y1;
-      Z1 = z1;
-      X2 = x2;
-      Y2 = y2;
-      Z2 = z2;
-    }
+		bool isRightType(std::istream& file)
+		{
+			return isOfType(file, "DTLA");
+		}
 
-  protected:
-    unsigned int readPIVT( std::istream &file );
-    unsigned int readINFO( std::istream &file );
-    unsigned int readRADR( std::istream &file );
-    unsigned int readCHLD( std::istream &file );
-    unsigned int readTEST( std::istream &file );
-    unsigned int readWRIT( std::istream &file );
-    unsigned int readChildren( std::istream &file );
-  
-  private:
-    std::vector<std::string> childFilename;
-    std::vector<float> near;
-    std::vector<float> far;
+		std::size_t readLOD(std::istream& file, std::string path = "");
 
-    // Bounding sphere center and radius
-    float cx, cy, cz, radius;
+		uint32_t getNumLODs() const
+		{
+			return uint32_t(_child.size());
+		}
 
-    // 2 xyz points defining bounding box
-    float x1, y1, z1;
-    float x2, y2, z2;
+		// Can be .msh or .cmp
+		bool getChild(int32_t id, struct lodChild& requestedChild) const;
 
-  };
+		void getBoundingSphere( vector3& center, float& radius ) const
+		{
+			_appearance.getBoundingSphere(center, radius);
+		}
+
+		void getBoundingBox( vector3& corner1, vector3& corner2 )
+		{
+			_appearance.getBoundingBox(corner1, corner2);
+		}
+
+	protected:
+
+	private:
+		uint8_t _version;
+
+		appr _appearance;
+
+		// DTLA Version 6+
+		uint8_t _lodFlags;
+		bool _usePivotPoint;
+
+		bool _disableLODCrossFade;
+
+		std::vector<lodChild> _child;
+
+		// Radar shape...
+		bool _hasRadar;
+		idtl _radarShape;
+
+		// Test shape...
+		bool _hasTest;
+		idtl _testShape;
+
+		// Write shape...
+		bool _hasWrite;
+		idtl _writeShape;
+	};
 }
 #endif

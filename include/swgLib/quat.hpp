@@ -1,10 +1,10 @@
 /** -*-c++-*-
  *  \class  quat
  *  \file   quat.hpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- swgLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006-2009 Kenneth R. Sewell III
+ swgLib is used for the parsing and exporting SWG models.
+ Copyright (C) 2006-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -27,89 +27,91 @@
 #include <cstring>
 
 #ifndef QUAT_HPP
-#define QUAT_HPP
+#define QUAT_HPP 1
 
 namespace ml
 {
-  class quat
-  {
-  public:
-    quat()
-    {v[0] = v[1] = v[2] = v[3] = 0.0;}
+	class quat
+	{
+	public:
+		quat()
+		{
+			v[0] = v[1] = v[2] = v[3] = 0.0;
+		}
 
-    quat( const float *V )
-    {
-      memcpy( v, V, sizeof( float ) * 4 );
-    }
+		quat(const float* V)
+		{
+			memcpy(v, V, sizeof(float) * 4);
+		}
 
-    quat( const float &X, const float &Y, const float &Z, const float &W )
-    {
-      v[0] = X;
-      v[1] = Y;
-      v[2] = Z;
-      v[3] = W;
-    }
+		quat(const float& X, const float& Y, const float& Z, const float& W)
+		{
+			v[0] = X;
+			v[1] = Y;
+			v[2] = Z;
+			v[3] = W;
+		}
 
-    ~quat(){}
+		~quat() {}
 
-    void get( float &X, float &Y, float &Z, float &W ) const
-    {
-      X = v[0];
-      Y = v[1];
-      Z = v[2];
-      W = v[3];
-    }
+		void get(float& X, float& Y, float& Z, float& W) const
+		{
+			X = v[0];
+			Y = v[1];
+			Z = v[2];
+			W = v[3];
+		}
 
-    const float &getX() const
-    {
-      return v[0];
-    }
+		const float& getX() const
+		{
+			return v[0];
+		}
 
-    const float &getY() const
-    {
-      return v[1];
-    }
+		const float& getY() const
+		{
+			return v[1];
+		}
 
-    const float &getZ() const
-    {
-      return v[2];
-    }
+		const float& getZ() const
+		{
+			return v[2];
+		}
 
-    const float &getW() const
-    {
-      return v[3];
-    }
+		const float& getW() const
+		{
+			return v[3];
+		}
 
-    void set( const float &X, const float &Y, const float &Z, const float &W )
-    {
-      v[0] = X;
-      v[1] = Y;
-      v[2] = Z;
-      v[3] = W;
-    }
+		void set(const float& X, const float& Y, const float& Z, const float& W)
+		{
+			v[0] = X;
+			v[1] = Y;
+			v[2] = Z;
+			v[3] = W;
+		}
 
-    void set( const float *V )
-    {
-      memcpy( v, V, sizeof( float ) * 4 );
-    }
+		void set(const float* V)
+		{
+			memcpy(v, V, sizeof(float) * 4);
+		}
 
-    void set( const quat &vec )
-    {
-      memcpy( v, vec.v, sizeof( float ) * 4 );
-    }
+		void set(const quat& vec)
+		{
+			memcpy(v, vec.v, sizeof(float) * 4);
+		}
 
-    void print() const
-    {
-      std::cout << std::fixed << v[0] << ", "
-		<< v[1] << ", "
-		<< v[2] << ", "
-		<< v[3] << std::endl;
-    }
-  
-  protected:
+		void print() const
+		{
+			std::cout << std::fixed << v[0] << ", "
+				<< v[1] << ", "
+				<< v[2] << ", "
+				<< v[3] << std::endl;
+		}
 
-  private:
-    float v[4];
-  };
+	protected:
+
+	private:
+		float v[4];
+	};
 }
 #endif

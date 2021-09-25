@@ -1,10 +1,10 @@
 /** -*-c++-*-
  *  \class  stat
  *  \file   stat.cpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- swgLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006-2009 Kenneth R. Sewell III
+ swgLib is used for the parsing and exporting SWG models.
+ Copyright (C) 2006-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -43,53 +43,53 @@ ml::stat::~stat()
 {
 }
 
-unsigned int ml::stat::readSTAT( std::istream &file )
+unsigned int ml::stat::readSTAT(std::istream& file)
 {
-    unsigned int statSize;
-    unsigned int total = readFormHeader( file, "STAT", statSize );
-    statSize += 8;
-    std::cout << "Found STAT form" << std::endl;
+	std::size_t statSize;
+	std::size_t total = readFormHeader(file, "STAT", statSize);
+	statSize += 8;
+	std::cout << "Found STAT form" << std::endl;
 
-    // Peek at next record, but keep file at same place.
-    unsigned int size;
-    std::string form, type;
-    peekHeader( file, form, size, type );
-    
-    if( "DERV" == type )
-      {
-	total += readDERV( file, statBaseObjectFilename );
-      }
+	// Peek at next record, but keep file at same place.
+	std::size_t size;
+	std::string form, type;
+	peekHeader(file, form, size, type);
 
-    unsigned int size0000;
-    total += readFormHeader( file, form, size0000, type );
-    size0000 += 8;
-    if( form != "FORM" || type != "0000" )
-    {
-	std::cout << "Expected Form of type 0000: " << type << std::endl;
-	exit( 0 );
-    }
-    std::cout << "Found 0000 form" << std::endl;
+	if ("DERV" == type)
+	{
+		total += readDERV(file, statBaseObjectFilename);
+	}
 
-    total += readPCNT( file, numNodes );
-    for( unsigned int i = 0; i < numNodes; ++i )
-      {
-	total += readXXXX( file );
-      }
+	std::size_t size0000;
+	total += readFormHeader(file, form, size0000, type);
+	size0000 += 8;
+	if (form != "FORM" || type != "0000")
+	{
+		std::cout << "Expected Form of type 0000: " << type << std::endl;
+		exit(0);
+	}
+	std::cout << "Found 0000 form" << std::endl;
 
-    total += readSHOT( file );
+	total += readPCNT(file, numNodes);
+	for (unsigned int i = 0; i < numNodes; ++i)
+	{
+		total += readXXXX(file);
+	}
 
-    if( statSize == total )
-    {
-	std::cout << "Finished reading STAT" << std::endl;
-    }
-    else
-    {
-	std::cout << "FAILED in reading STAT" << std::endl;
-	std::cout << "Read " << total << " out of " << statSize
-                  << std::endl;
-     }
+	total += readSHOT(file);
 
-    return total;
+	if (statSize == total)
+	{
+		std::cout << "Finished reading STAT" << std::endl;
+	}
+	else
+	{
+		std::cout << "FAILED in reading STAT" << std::endl;
+		std::cout << "Read " << total << " out of " << statSize
+			<< std::endl;
+	}
+
+	return total;
 }
 
 void ml::stat::print() const

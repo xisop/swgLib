@@ -1,10 +1,10 @@
 /** -*-c++-*-
  *  \class  sht
  *  \file   sht.cpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- swgLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006-2014 Kenneth R. Sewell III
+ swgLib is used for the parsing and exporting SWG models.
+ Copyright (C) 2006-2014 Ken Sewell
 
  This file is part of swgLib.
 
@@ -24,15 +24,10 @@
 */
 
 #include <swgLib/sht.hpp>
-#include <swgLib/eft.hpp>
-#include <iostream>
-#include <cstdlib>
-#include <climits>
 
 using namespace ml;
 
-sht::sht():
-  mainTextureUnit( 0 )
+sht::sht()
 {
 }
 
@@ -40,836 +35,556 @@ sht::~sht()
 {
 }
 
-unsigned int sht::readSHT( std::istream &file, std::string path,
-			   const unsigned short &depth )
+std::size_t sht::readSHT(std::istream& file, std::string path)
 {
-  basePath = path;
-  unsigned int sshtSize;
-  // Reset class
-  normalMapUnit = UINT_MAX;
-  texTag.clear();
-  coordMapping.clear();
-  texTag.resize( 10 );
-  coordMapping.resize( 10 );
-  for( unsigned int i = 0; i < 10; ++i )
-    {
-      coordMapping[i] = UINT_MAX;
-    }
+	std::size_t sshtSize;
+	std::size_t total = base::readFormHeader(file, "SSHT", sshtSize);
+	sshtSize += 8; // Include FORM/Size fields from header...
+	std::cout << "Found SSHT form: " << sshtSize << " bytes\n";
 
-  unsigned int total = readFormHeader( file, "SSHT", sshtSize );
-  sshtSize += 8;
-  std::cout << std::string( depth, ' ' )
-	    << "Found SSHT form"
-	    << ": " << sshtSize-12 << " bytes"
-	    << std::endl;
+	std::size_t size;
+	std::string type;
+	total += base::readFormHeader(file, type, size);
 
-  unsigned int size;
-  std::string form, type;
-  total += readFormHeader( file, form, size, type );
-  if( form != "FORM" )
-    {
-      std::cout << "Expected FORM: " << form << std::endl;
-      exit( 0 );
-    }
-  std::cout << std::string( depth+1, ' ' )
-	    << "Found " << form << " " << type
-	    << ": " << size-4 << " bytes"
-	    << std::endl;
-
-  while( total < sshtSize )
-    {
-      // Peek at next record, but keep file at same place.
-      peekHeader( file, form, size, type );
-
-      if( form == "FORM" )
-	{
-	  if( type == "MATS" )
-	    { total += readMATS( file, depth+2 ); }
-	  else if( type == "TXMS" )
-	    { total += readTXMS( file, depth+2 ); }
-	  else if( type == "TCSS" )
-	    { total += readTCSS( file, depth+2 ); }
-	  else if( type == "TFNS" )
-	    { total += readTFNS( file, depth+2 ); }
-	  else if( type == "TSNS" )
-	    { total += readTSNS( file, depth+2 ); }
-	  else if( type == "ARVS" )
-	    { total += readARVS( file, depth+2 ); }
-	  else if( type == "EFCT" )
-	    {
-	      eft effect;
-	      total += effect.readEFT( file, basePath, depth+2 );
-	    }
-	  else
-	    {
-	      std::cout << "Unexpected form: " << type << std::endl;
-	      exit( 0 );
-	    }
+	_version = base::tagToVersion(type);
+	if ((0 != _version) && (1 != _version)) {
+		std::cout << "Expected version 0000 or 0001. Found " << type << "\n";
+		exit(0);
 	}
-      else if ( form == "NAME" )
-	{
-	  total += readNAME( file, depth+2 );
-	}
-      else
-	{
-	  std::cout << "Unexpected record: " << form << std::endl;
-	  exit( 0 );
-	}
-    }
+	std::cout << "Found form " << type << "\n";
+	std::cout << "SSHT version: " << (int)_version << "\n";
+	
+	std::string form;
 
-  if( sshtSize == total )
-    {
-      std::cout << std::string( depth, ' ' )
-		<< "Finished reading SSHT" << std::endl;
-    }
-  else
-    {
-      std::cout << "FAILED in reading SSHT" << std::endl;
-      std::cout << "Read " << total << " out of " << sshtSize
-		<< std::endl;
-    }
+	if (1 == _version) {
+		// Load effect...
+		std::cout << "Not handled yet: " << __FILE__ << ": " << __LINE__ << "\n";
+		exit(0);
+	}
 
-  return total;
+	// Load materials...
+	base::peekHeader(file, form, size, type);
+	if (("FORM" == form) && ("MATS" == type)) {
+		total += readMATS(file);
+	}
+
+	// Load textures...
+	base::peekHeader(file, form, size, type);
+	if (("FORM" == form) && ("TXMS" == type)) {
+		total += readTXMS(file);
+	}
+
+	// Load texture coordinate set...
+	base::peekHeader(file, form, size, type);
+	if (("FORM" == form) && ("TCSS" == type)) {
+		total += readTCSS(file);
+	}
+
+	// Load texture factor...
+	base::peekHeader(file, form, size, type);
+	if (("FORM" == form) && ("TFNS" == type)) {
+		total += readTFNS(file);
+	}
+
+	if (1 == _version) {
+		// Load texture scroll...
+		std::cout << "Not handled yet: " << __FILE__ << ": " << __LINE__ << "\n";
+		exit(0);
+	}
+
+	// Load alpha reverence value...
+	base::peekHeader(file, form, size, type);
+	if (("FORM" == form) && ("ARVS" == type)) {
+		total += readARVS(file);
+	}
+
+	// Load stencil reference value...
+	base::peekHeader(file, form, size, type);
+	if (("FORM" == form) && ("SRVS" == type)) {
+		total += readSRVS(file);
+	}
+
+	if (0 == _version) {
+		// Load effect...
+		total += base::readRecordHeader(file, "NAME", size);
+		std::cout << "Found record NAME: " << size << "\n";
+		total += base::read(file, _effectName);
+		base::fixSlash(_effectName);
+		std::cout << "Effect: " << _effectName << "\n";
+	}
+
+	if (sshtSize == total)
+	{
+		std::cout << "Finished reading SSHT\n";
+	}
+	else
+	{
+		std::cout << "FAILED in reading SSHT\n";
+		std::cout << "Read " << total << " out of " << sshtSize << "\n";
+	}
+
+	return total;
 }
 
-unsigned int sht::readMATS( std::istream &file, const unsigned short &depth )
+std::size_t sht::readMATS(std::istream& file)
 {
-  unsigned int matsSize;
-  unsigned int total = readFormHeader( file, "MATS", matsSize );
-  matsSize += 8;
-  std::cout << std::string( depth, ' ' )
-	    << "Found FORM MATS: " << matsSize-12 << " bytes"
-	    << std::endl;
-
-  unsigned int size;
-  total += readFormHeader( file, "0000", size );
-  std::cout << std::string( depth+1, ' ' )
-	    << "Found FORM 0000: " << size-4 << " bytes"
-	    << std::endl;
-
-  std::string type;
-  unsigned int matsFound = 0;
-  while( total < matsSize )
-    {
-      ++matsFound;
-      // Read TAG record
-      total += readRecordHeader( file, type, size );
-      if( type != "TAG " )
-	{
-	  std::cout << "Expected record of type TAG: " << type << std::endl;
-	  exit( 0 );
-	}
-      std::cout << std::string( depth+2, ' ' )
-		<< "Found " << type
-		<< ": " << size << " bytes"
+	std::size_t matsSize;
+	std::size_t total = base::readFormHeader(file, "MATS", matsSize);
+	matsSize += 8;
+	std::cout << "Found FORM MATS: " << matsSize - 12 << " bytes"
 		<< std::endl;
-	
-      file.width( size );
-      file >> diffuseTextureTag;
-      total += size;
-      std::cout << std::string( depth+2, ' ' )
-		<< "Material texture tag: " << diffuseTextureTag
-		<< std::endl;
-	
-      // Read MATL record
-      total += readRecordHeader( file, type, size );
-      if( type != "MATL" )
-	{
-	  std::cout << "Expected record of type MATL: " << type << std::endl;
-	  exit( 0 );
+
+	std::size_t size;
+	total += base::readFormHeader(file, "0000", size);
+	size -= 4; // Subtract off form tag "0000"
+	std::cout << "Found FORM 0000: " << size << " bytes\n";
+
+	while (size > 0) {
+		std::cout << "Reading material " << _material.size() << ":\n";
+		_material.resize(_material.size() + 1);
+
+		// Read TAG record...
+		std::size_t tagSize;
+		std::size_t matSize = base::readRecordHeader(file, "TAG ", tagSize);
+		std::cout << "Found record TAG : " << tagSize << " bytes\n";
+
+		// Read material name...
+		tag nameTag;
+		matSize += base::read(file, nameTag);
+		std::cout << "Material name: " << nameTag << "\n";
+
+		// Set material name...
+		_material.back().setNameTag(nameTag);
+
+		// Read material...
+		matSize += _material.back().read(file);
+
+		size -= matSize;
+		total += matSize;
 	}
-      std::cout << std::string( depth+2, ' ' )
+
+	if (matsSize == total)
+	{
+		std::cout << "Finished reading MATS\n";
+	}
+	else
+	{
+		std::cout << "FAILED in reading MATS\n";
+		std::cout << "Read " << total << " out of " << matsSize << "\n";
+		exit(0);
+	}
+
+	return total;
+}
+
+std::size_t sht::readTXMS(std::istream& file)
+{
+	std::size_t txmsSize;
+	std::size_t total = base::readFormHeader(file, "TXMS", txmsSize);
+	txmsSize += 8;
+	std::size_t dataSize = txmsSize - 12;
+	std::cout << "Found FORM TXMS: " << dataSize << " bytes\n";
+
+	while (dataSize > 0) {
+		std::cout << "Reading texture " << _texture.size() << ":\n";
+		_texture.resize(_texture.size() + 1);
+
+		// Read texture...
+		const std::size_t txmSize = _texture.back().read(file);
+
+		dataSize -= txmSize;
+		total += txmSize;
+	}
+
+	if (txmsSize == total)
+	{
+		std::cout << "Finished reading TXMS\n";
+	}
+	else
+	{
+		std::cout << "FAILED in reading TXMS\n";
+		std::cout << "Read " << total << " out of " << txmsSize << "\n";
+		exit(0);
+	}
+
+	return total;
+}
+
+std::size_t sht::readTCSS(std::istream& file)
+{
+	std::size_t tcssSize;
+	std::size_t total = base::readFormHeader(file, "TCSS", tcssSize);
+	tcssSize += 8;
+	std::cout << "Found FORM TCSS: " << tcssSize - 12 << " bytes\n";
+
+	std::size_t size;
+	total += base::readRecordHeader(file, "0000", size);
+	std::cout << "Found record 0000: " << size << " bytes\n";
+
+	const uint32_t num = uint32_t(size / 5);
+	tag texTag;
+	uint8_t index;
+	for (auto i = 0; i < num; ++i) {
+		total += base::read(file, texTag);
+		total += base::read(file, index);
+		_texCoordSet[texTag] = index;
+		std::cout << "Tex Coord Set: " << texTag << ": " << (int)index << "\n";
+	}
+
+	/*
+			if (texName == "NIAM")
+			{
+				mainTextureUnit = texUnit;
+			}
+			else if (texName == "LMRN")
+			{
+				normalTextureUnit = texUnit;
+			}
+			else if (texName == "3TOD")
+			{
+				dot3TextureUnit = texUnit;
+			}
+			else if (texName == "PUKL")
+			{
+				lookupTextureUnit = texUnit;
+			}
+			else if (texName == "MVNE")
+			{
+				environmentTextureUnit = texUnit;
+			}
+			else if (texName == "KSAM")
+			{
+				maskTextureUnit = texUnit;
+			}
+			else if (texName == "BEUH")
+			{
+				hueTextureUnit = texUnit;
+			}
+			else if (texName == "CEPS")
+			{
+				specularTextureUnit = texUnit;
+			}
+			else if (texName == "MRNC")
+			{
+				//specularTextureUnit = texUnit;
+			}
+			else if (texName == "SIME")
+			{
+				//specularTextureUnit = texUnit;
+			}
+			else if (texName == "1PLA")
+			{
+				//specularTextureUnit = texUnit;
+			}
+			else if (texName == "2PLA")
+			{
+				//specularTextureUnit = texUnit;
+			}
+			else if (texName == "3PLA")
+			{
+				//specularTextureUnit = texUnit;
+			}
+			else if (texName == "ATED")
+			{
+				//specularTextureUnit = texUnit;
+			}
+			else if (texName == "ALTD")
+			{
+				//specularTextureUnit = texUnit;
+			}
+			else if (texName == "BLTD")
+			{
+				//specularTextureUnit = texUnit;
+			}
+			else if (texName == "TRID")
+			{
+				//specularTextureUnit = texUnit;
+			}
+			else if (texName == "DIRI")
+			{
+				//specularTextureUnit = texUnit;
+			}
+			else if (texName == "NRCS")
+			{
+				//specularTextureUnit = texUnit;
+			}
+			else if (texName == "0PER")
+			{
+				//specularTextureUnit = texUnit;
+			}
+			else if (texName == "LACD")
+			{
+				//specularTextureUnit = texUnit;
+			}
+			else if (texName == "YKS_")
+			{
+				//specularTextureUnit = texUnit;
+			}
+			else if (texName == "EBUC")
+			{
+				//specularTextureUnit = texUnit;
+			}
+			else if (texName == "PFFM")
+			{
+				//specularTextureUnit = texUnit;
+			}
+			else if (texName == "NEPO")
+			{
+				//specularTextureUnit = texUnit;
+			}
+			else
+			{
+				std::cout << "Unknown texture tag: " << texName << std::endl;
+				exit(0);
+			}
+		}
+		*/
+
+	if (tcssSize == total)
+	{
+		std::cout << "Finished reading TCSS\n";
+	}
+	else
+	{
+		std::cout << "FAILED in reading TCSS\n";
+		std::cout << "Read " << total << " out of " << tcssSize << "\n";
+		exit(0);
+	}
+
+	return total;
+}
+
+std::size_t sht::readTFNS(std::istream& file)
+{
+	std::size_t tfnsSize;
+	std::size_t total = base::readFormHeader(file, "TFNS", tfnsSize);
+	tfnsSize += 8;
+	std::cout << "Found FORM TFNS: " << tfnsSize - 12 << " bytes\n";
+
+	std::size_t size;
+	total += base::readRecordHeader(file, "0000", size);
+	std::cout << "Found record 0000: " << size << " bytes\n";
+
+	const uint32_t num = uint32_t(size / 8);
+	for(auto i=0; i < num; ++i ) {
+		tag texTag;
+		total += base::read(file, texTag);
+
+		// Texture Factor node read...
+		color4 c;
+		total += c.read8(file);
+		_texFactor[texTag] = c;
+		std::cout << "Texture factor " << i << ": " << texTag << ": " << c << "\n";
+	}
+
+	if (tfnsSize == total)
+	{
+		std::cout << "Finished reading TFNS\n";
+	}
+	else
+	{
+		std::cout << "FAILED in reading TFNS\n";
+		std::cout << "Read " << total << " out of " << tfnsSize << "\n";
+		exit(0);
+	}
+
+	return total;
+}
+
+std::size_t sht::readARVS(std::istream& file)
+{
+	std::size_t arvsSize;
+	std::size_t total = base::readFormHeader(file, "ARVS", arvsSize);
+	arvsSize += 8;
+	std::cout << "Found FORM ARVS: " << arvsSize - 12 << " bytes\n";
+
+	std::size_t size;
+	total += base::readRecordHeader(file, "0000", size);
+	std::cout << "Found record 0000: " << size << " bytes\n";
+
+	const uint32_t num = uint32_t(size / 5);
+
+	for (auto i = 0; i < num; ++i) {
+		tag alphaTag;
+		uint8_t alphaReferenceValue;
+		total += base::read(file, alphaTag);
+		total += base::read(file, alphaReferenceValue);
+		_alphaReferenceValue[alphaTag] = alphaReferenceValue;
+		std::cout << "Alpha reference " << i << ": " << alphaTag << ": " << (int)alphaReferenceValue << "\n";
+	}
+
+	if (arvsSize == total)
+	{
+		std::cout << "Finished reading ARVS\n";
+	}
+	else
+	{
+		std::cout << "FAILED in reading ARVS\n";
+		std::cout << "Read " << total << " out of " << arvsSize << "\n";
+		exit(0);
+	}
+
+	return total;
+}
+
+std::size_t sht::readSRVS(std::istream& file)
+{
+	std::size_t srvsSize;
+	std::size_t total = base::readFormHeader(file, "SRVS", srvsSize);
+	srvsSize += 8;
+	std::cout << "Found FORM SRVS: " << srvsSize - 12 << " bytes\n";
+
+	std::size_t size;
+	total += base::readRecordHeader(file, "0000", size);
+	std::cout << "Found record 0000: " << size << " bytes\n";
+
+	const uint32_t num = uint32_t(size / 5);
+
+	for (auto i = 0; i < num; ++i) {
+		tag stencilTag;
+		uint32_t stencilReferenceValue;
+		total += base::read(file, stencilTag);
+		total += base::read(file, stencilReferenceValue);
+		_stencilReferenceValue[stencilTag] = stencilReferenceValue;
+		std::cout << "Stencil reference " << i << ": " << stencilTag << ": " << (int)stencilReferenceValue << "\n";
+	}
+
+	if (srvsSize == total)
+	{
+		std::cout << "Finished reading SRVS\n";
+	}
+	else
+	{
+		std::cout << "FAILED in reading SRVS\n";
+		std::cout << "Read " << total << " out of " << srvsSize << "\n";
+		exit(0);
+	}
+
+	return total;
+}
+
+/*
+unsigned int sht::readTSNS(std::istream& file, const unsigned short& depth)
+{
+	std::size_t tsnsSize;
+	std::size_t total = readFormHeader(file, "TSNS", tsnsSize);
+	tsnsSize += 8;
+	std::cout << std::string(depth, ' ')
+		<< "Found FORM TSNS: " << tsnsSize - 12 << " bytes"
+		<< std::endl;
+
+	std::size_t size;
+	std::string type;
+	total += readRecordHeader(file, type, size);
+	if (type != "0000")
+	{
+		std::cout << "Expected record of type 0000: " << type << std::endl;
+		exit(0);
+	}
+	std::cout << std::string(depth, ' ')
 		<< "Found record " << type
 		<< ": " << size << " bytes"
 		<< std::endl;
-	
-      if( 68 != size )
+
+	total += readUnknown(file, size);
+
+	if (tsnsSize == total)
 	{
-	  std::cout << "Expected MATL size 68: " << size << std::endl;
-	  exit( 0 );
+		std::cout << std::string(depth, ' ')
+			<< "Finished reading TSNS" << std::endl;
+	}
+	else
+	{
+		std::cout << "FAILED in reading TSNS" << std::endl;
+		std::cout << "Read " << total << " out of " << tsnsSize
+			<< std::endl;
 	}
 
-      file.read( (char *)ambient, sizeof( float ) * 4 );
-      file.read( (char *)diffuse, sizeof( float ) * 4 );
-      file.read( (char *)specular, sizeof( float ) * 4 );
-      file.read( (char *)emissive, sizeof( float ) * 4 );
-      file.read( (char *)&shininess, sizeof( float ) );
-      total += 17 * sizeof( float );
-	
-      std::cout << std::string( depth+3, ' ' )
-		<< "Ambient: "
-		<< ambient[0] << " "
-		<< ambient[1] << " "
-		<< ambient[2] << " "
-		<< ambient[3] << std::endl;
-	
-      std::cout << std::string( depth+3, ' ' )
-		<< "Diffuse: "
-		<< diffuse[0] << " "
-		<< diffuse[1] << " "
-		<< diffuse[2] << " "
-		<< diffuse[3] << std::endl;
-	
-      std::cout << std::string( depth+3, ' ' )
-		<< "Specular: "
-		<< specular[0] << " "
-		<< specular[1] << " "
-		<< specular[2] << " "
-		<< specular[3] << std::endl;
-	
-      std::cout << std::string( depth+3, ' ' )
-		<< "Emissive: "
-		<< emissive[0] << " "
-		<< emissive[1] << " "
-		<< emissive[2] << " "
-		<< emissive[3] << std::endl;
-	
-      std::cout << std::string( depth+3, ' ' )
-		<< "Shininess: " << shininess <<std::endl;
-    }
+	return total;
+}
 
-  if( matsFound > 1 ){ std::cout << "*************************"<<std::endl;}
-  if( matsSize == total )
-    {
-      std::cout << std::string( depth, ' ' )
-		<< "Finished reading MATS" << std::endl;
-    }
-  else
-    {
-      std::cout << "FAILED in reading MATS" << std::endl;
-      std::cout << "Read " << total << " out of " << matsSize
+
+unsigned int sht::readEFCT(std::istream& file, const unsigned short& depth)
+{
+	std::size_t efctSize;
+	std::string type;
+
+	std::size_t total = readFormHeader(file, "EFCT", efctSize);
+	efctSize += 8;
+	std::cout << std::string(depth, ' ')
+		<< "Found FORM EFCT: " << efctSize - 12 << " bytes"
 		<< std::endl;
-    }
 
-  return total;
-}
-
-unsigned int sht::readTXMS( std::istream &file, const unsigned short &depth )
-{
-  unsigned int txmsSize;
-  unsigned int total = readFormHeader( file, "TXMS", txmsSize );
-  txmsSize += 8; // Add size of FORM and size fields.
-  std::cout << std::string( depth, ' ' )
-	    << "Found FORM TXMS: " << txmsSize-12 << " bytes"
-	    << std::endl;
-
-  while( total < txmsSize )
-    {
-      total += readTXM( file, depth+1 );
-    }
-
-  if( txmsSize == total )
-    {
-      std::cout << std::string( depth, ' ' )
-		<< "Finished reading TXMS" << std::endl;
-    }
-  else
-    {
-      std::cout << "FAILED in reading TXMS" << std::endl;
-      std::cout << "Read " << total << " out of " << txmsSize
+	std::size_t size;
+	total += readFormHeader(file, "0001", size);
+	std::cout << std::string(depth, ' ')
+		<< "Found FORM 0001: " << size - 4 << " bytes"
 		<< std::endl;
-    }
 
-  return total;
-}
-
-unsigned int sht::readTXM( std::istream &file, const unsigned short &depth )
-{
-  unsigned int txmSize;
-  // Read FORM TXM record
-  unsigned int total = readFormHeader( file, "TXM ", txmSize );
-  txmSize += 8;
-  std::cout << std::string( depth, ' ' )
-	    << "Found FORM TXM : " << txmSize-12 << " bytes"
-	    << std::endl;
-
-  // Read FORM 0001 record
-  unsigned int size;
-  std::string form, type;
-  total += readFormHeader( file, form, size, type );
-  //if( form != "FORM" || type != "0001" )
-  if( form != "FORM" )
-    {
-      std::cout << "Expected Form of type 0001: " << type << std::endl;
-      exit( 0 );
-    }
-  std::cout << std::string( depth+1, ' ' )
-	    << "Found " << form << " " << type
-	    << ": " << size-4 << " bytes"
-	    << std::endl;
-
-  total += readRecordHeader( file, type, size );
-  if( type != "DATA" )
-    {
-      std::cout << "Expected record of type DATA: " << type << std::endl;
-      exit( 0 );
-    }
-  std::cout << std::string( depth+2, ' ' )
-	    << "Found " << form << " " << type
-	    << ": " << size-4 << " bytes"
-	    << std::endl;
-
-  std::string textureTag;
-  file.width( 4 );
-  file >> textureTag;
-  total += 4;
-
-  std::cout << std::string( depth+3, ' ' )
-	    << "Texture tag: " << textureTag << std::endl;
-  total += readUnknown( file, size-4 );
-
-  if( total < txmSize )
-    {
-      total += readRecordHeader( file, type, size );
-      if( type != "NAME" )
+	total += readRecordHeader(file, type, size);
+	if (type != "DATA")
 	{
-	  std::cout << "Expected record of type NAME: " << type << std::endl;
-	  exit( 0 );
+		std::cout << "Expected record of type DATA: " << type << std::endl;
+		exit(0);
 	}
-
-      std::string textureName;
-      total += base::read( file, textureName );
-      base::fixSlash( textureName );
-
-      std::string fullTextureName = basePath + textureName;
-      std::cout << std::string( depth+3, ' ' )
-		<< "Texture name: " << fullTextureName << std::endl;
-
-      if( textureTag == diffuseTextureTag )
-	{
-	  diffuseTextureName = fullTextureName;
-	}
-
-      if( textureTag == "NIAM" )
-	{
-	  mainTextureName = fullTextureName;
-	}
-      else if( textureTag == "LMRN" )
-	{
-	  normalTextureName = fullTextureName;
-	}
-      else if( textureTag == "3TOD" )
-	{
-	  dot3TextureName = fullTextureName;
-	}
-      else if( textureTag == "PUKL" )
-	{
-	  lookupTextureName = fullTextureName;
-	}
-      else if( textureTag == "MVNE" )
-	{
-	  environmentTextureName = fullTextureName;
-	}
-      else if( textureTag == "KSAM" )
-	{
-	  maskTextureName = fullTextureName;
-	}
-      else if( textureTag == "BEUH" )
-	{
-	  hueTextureName = fullTextureName;
-	}
-      else if( textureTag == "CEPS" )
-	{
-	  specularTextureName = fullTextureName;
-	}
-      else if( textureTag == "MRNC" )
-	{
-	  //specularTextureName = fullTextureName;
-	}
-      else if( textureTag == "SIME" )
-	{
-	  //specularTextureName = fullTextureName;
-	}
-      else if( textureTag == "1PLA" )
-	{
-	  //specularTextureName = fullTextureName;
-	}
-      else if( textureTag == "2PLA" )
-	{
-	  //specularTextureName = fullTextureName;
-	}
-      else if( textureTag == "3PLA" )
-	{
-	  //specularTextureName = fullTextureName;
-	}
-      else if( textureTag == "ATED" )
-	{
-	  //specularTextureName = fullTextureName;
-	}
-      else if( textureTag == "ALTD" )
-	{
-	  //specularTextureName = fullTextureName;
-	}
-      else if( textureTag == "BLTD" )
-	{
-	  //specularTextureName = fullTextureName;
-	}
-      else if( textureTag == "TRID" )
-	{
-	  //specularTextureName = fullTextureName;
-	}
-      else if( textureTag == "DIRI" )
-	{
-	  //specularTextureName = fullTextureName;
-	}
-      else if( textureTag == "NRCS" )
-	{
-	  //specularTextureName = fullTextureName;
-	}
-      else if( textureTag == "0PER" )
-	{
-	  //specularTextureName = fullTextureName;
-	}
-      else if( textureTag == "LACD" )
-	{
-	  //specularTextureName = fullTextureName;
-	}
-      else if( textureTag == "YKS_" )
-	{
-	  //specularTextureName = fullTextureName;
-	}
-      else if( textureTag == "EBUC" )
-	{
-	  //specularTextureName = fullTextureName;
-	}
-      else if( textureTag == "PFFM" )
-	{
-	  //specularTextureName = fullTextureName;
-	}
-      else if( textureTag == "NEPO" )
-	{
-	  //specularTextureName = fullTextureName;
-	}
-      else
-	{
-	  std::cout << "Unknown texture tag: " << textureTag << std::endl;
-	  exit( 0 );
-	}
-
-      texTag.push_back( textureTag );
-    }
-
-  if( txmSize == total )
-    {
-      std::cout << std::string( depth, ' ' )
-		<< "Finished reading TXM" << std::endl;
-    }
-  else
-    {
-      std::cout << "FAILED in reading TXM" << std::endl;
-      std::cout << "Read " << total << " out of " << txmSize
+	std::cout << std::string(depth, ' ')
+		<< "Found record " << type
+		<< ": " << size << " bytes"
 		<< std::endl;
-    }
 
-  return total;
+	total += readUnknown(file, size);
+
+	if (efctSize == total)
+	{
+		std::cout << std::string(depth, ' ')
+			<< "Finished reading EFCT" << std::endl;
+	}
+	else
+	{
+		std::cout << "FAILED in reading EFCT" << std::endl;
+		std::cout << "Read " << total << " out of " << efctSize
+			<< std::endl;
+	}
+
+	return total;
 }
 
-unsigned int sht::readTCSS( std::istream &file, const unsigned short &depth )
+unsigned int sht::readNAME(std::istream& file, const unsigned short& depth)
 {
-  unsigned int tcssSize;
-
-  unsigned int total = readFormHeader( file, "TCSS", tcssSize );
-  tcssSize += 8;
-  std::cout << std::string( depth, ' ' )
-	    << "Found FORM TCSS: " << tcssSize-12 << " bytes"
-	    << std::endl;
-
-  std::string type;
-  unsigned int size;
-  total += readRecordHeader( file, type, size );
-  if( type != "0000" )
-    {
-      std::cout << "Expected record of type 0000: " << type << std::endl;
-      exit( 0 );
-    }
-  std::cout << std::string( depth+1, ' ' )
-	    << "Found record " << type
-	    << ": " << size << " bytes"
-	    << std::endl;
-
-  unsigned int num = size/5;
-
-  for( unsigned int i = 0; i < num; ++i )
-    {
-      std::string texName;
-      unsigned char texUnit;
-      file.width( 4 );
-      file >> texName;
-      total += 4;
-      file.read( (char*)&texUnit, 1 );
-      total += 1;
-
-      std::cout << std::string( depth+2, ' ' )
-		<< "Texture type: " << texName << " "
-		<< "Texture unit: " << (unsigned int)texUnit << std::endl;
-      
-      if( texName == "NIAM" )
+	std::size_t nameSize;
+	std::string type;
+	// Read Effect file record
+	std::size_t total = readRecordHeader(file, type, nameSize);
+	nameSize += 8;
+	if (type != "NAME")
 	{
-	  mainTextureUnit = texUnit;
+		std::cout << "Expected record of type NAME: " << type << std::endl;
+		return 0;
 	}
-      else if( texName == "LMRN" )
-	{
-	  normalTextureUnit = texUnit;
-	}
-      else if( texName == "3TOD" )
-	{
-	  dot3TextureUnit = texUnit;
-	}
-      else if( texName == "PUKL" )
-	{
-	  lookupTextureUnit = texUnit;
-	}
-      else if( texName == "MVNE" )
-	{
-	  environmentTextureUnit = texUnit;
-	}
-      else if( texName == "KSAM" )
-	{
-	  maskTextureUnit = texUnit;
-	}
-      else if( texName == "BEUH" )
-	{
-	  hueTextureUnit = texUnit;
-	}
-      else if( texName == "CEPS" )
-	{
-	  specularTextureUnit = texUnit;
-	}
-      else if( texName == "MRNC" )
-	{
-	  //specularTextureUnit = texUnit;
-	}
-      else if( texName == "SIME" )
-	{
-	  //specularTextureUnit = texUnit;
-	}
-      else if( texName == "1PLA" )
-	{
-	  //specularTextureUnit = texUnit;
-	}
-      else if( texName == "2PLA" )
-	{
-	  //specularTextureUnit = texUnit;
-	}
-      else if( texName == "3PLA" )
-	{
-	  //specularTextureUnit = texUnit;
-	}
-      else if( texName == "ATED" )
-	{
-	  //specularTextureUnit = texUnit;
-	}
-      else if( texName == "ALTD" )
-	{
-	  //specularTextureUnit = texUnit;
-	}
-      else if( texName == "BLTD" )
-	{
-	  //specularTextureUnit = texUnit;
-	}
-      else if( texName == "TRID" )
-	{
-	  //specularTextureUnit = texUnit;
-	}
-      else if( texName == "DIRI" )
-	{
-	  //specularTextureUnit = texUnit;
-	}
-      else if( texName == "NRCS" )
-	{
-	  //specularTextureUnit = texUnit;
-	}
-      else if( texName == "0PER" )
-	{
-	  //specularTextureUnit = texUnit;
-	}
-      else if( texName == "LACD" )
-	{
-	  //specularTextureUnit = texUnit;
-	}
-      else if( texName == "YKS_" )
-	{
-	  //specularTextureUnit = texUnit;
-	}
-      else if( texName == "EBUC" )
-	{
-	  //specularTextureUnit = texUnit;
-	}
-      else if( texName == "PFFM" )
-	{
-	  //specularTextureUnit = texUnit;
-	}
-      else if( texName == "NEPO" )
-	{
-	  //specularTextureUnit = texUnit;
-	}
-      else
-	{
-	  std::cout << "Unknown texture tag: " << texName << std::endl;
-	  exit( 0 );
-	}
-    }
-    
-  if( tcssSize == total )
-    {
-      std::cout << std::string( depth, ' ' )
-		<< "Finished reading TCSS" << std::endl;
-    }
-  else
-    {
-      std::cout << "FAILED in reading TCSS" << std::endl;
-      std::cout << "Read " << total << " out of " << tcssSize
+	std::cout << std::string(depth, ' ')
+		<< "Found record " << type
+		<< ": " << nameSize << " bytes"
 		<< std::endl;
-    }
 
-  return total;
+	total += base::read(file, effectName);
+	base::fixSlash(effectName);
+
+	std::string fullEffectName = basePath + effectName;
+	std::cout << std::string(depth + 1, ' ')
+		<< "Effect file: " << fullEffectName << std::endl;
+
+	if (nameSize == total)
+	{
+		std::cout << std::string(depth, ' ')
+			<< "Finished reading NAME" << std::endl;
+	}
+	else
+	{
+		std::cout << "FAILED in reading NAME" << std::endl;
+		std::cout << "Read " << total << " out of " << nameSize
+			<< std::endl;
+	}
+
+	return total;
 }
-
-unsigned int sht::readTFNS( std::istream &file, const unsigned short &depth )
-{
-  unsigned int tfnsSize;
-  unsigned int total = readFormHeader( file, "TFNS", tfnsSize );
-  tfnsSize += 8;
-  std::cout << std::string( depth, ' ' )
-	    << "Found FORM TFNS: " << tfnsSize-12 << " bytes"
-	    << std::endl;
-
-  unsigned int size;
-  std::string type;
-  total += readRecordHeader( file, type, size );
-  if( type != "0000" )
-    {
-      std::cout << "Expected record of type 0000: " << type << std::endl;
-      exit( 0 );
-    }
-  std::cout << std::string( depth, ' ' )
-	    << "Found record " << type
-	    << ": " << size << " bytes"
-	    << std::endl;
-
-  total += readUnknown( file, size );
-
-  if( tfnsSize == total )
-    {
-      std::cout << std::string( depth, ' ' )
-		<< "Finished reading TFNS" << std::endl;
-    }
-  else
-    {
-      std::cout << "FAILED in reading TFNS" << std::endl;
-      std::cout << "Read " << total << " out of " << tfnsSize
-		<< std::endl;
-    }
-
-  return total;
-}
-
-unsigned int sht::readTSNS( std::istream &file, const unsigned short &depth )
-{
-  unsigned int tsnsSize;
-  unsigned int total = readFormHeader( file, "TSNS", tsnsSize );
-  tsnsSize += 8;
-  std::cout << std::string( depth, ' ' )
-	    << "Found FORM TSNS: " << tsnsSize-12 << " bytes"
-	    << std::endl;
-
-  unsigned int size;
-  std::string type;
-  total += readRecordHeader( file, type, size );
-  if( type != "0000" )
-    {
-      std::cout << "Expected record of type 0000: " << type << std::endl;
-      exit( 0 );
-    }
-  std::cout << std::string( depth, ' ' )
-	    << "Found record " << type
-	    << ": " << size << " bytes"
-	    << std::endl;
-
-  total += readUnknown( file, size );
-
-  if( tsnsSize == total )
-    {
-      std::cout << std::string( depth, ' ' )
-		<< "Finished reading TSNS" << std::endl;
-    }
-  else
-    {
-      std::cout << "FAILED in reading TSNS" << std::endl;
-      std::cout << "Read " << total << " out of " << tsnsSize
-		<< std::endl;
-    }
-
-  return total;
-}
-
-unsigned int sht::readARVS( std::istream &file, const unsigned short &depth )
-{
-  unsigned int arvsSize;
-  unsigned int total = readFormHeader( file, "ARVS", arvsSize );
-  arvsSize += 8;
-  std::cout << std::string( depth, ' ' )
-	    << "Found FORM ARVS: " << arvsSize-12 << " bytes"
-	    << std::endl;
-
-  unsigned int size;
-  std::string type;
-  total += readRecordHeader( file, type, size );
-  if( type != "0000" )
-    {
-      std::cout << "Expected record of type 0000: " << type << std::endl;
-      exit( 0 );
-    }
-  std::cout << std::string( depth, ' ' )
-	    << "Found record " << type
-	    << ": " << size << " bytes"
-	    << std::endl;
-
-  total += readUnknown( file, size );
-    
-  if( arvsSize == total )
-    {
-      std::cout << std::string( depth, ' ' )
-		<< "Finished reading ARVS" << std::endl;
-    }
-  else
-    {
-      std::cout << "FAILED in reading ARVS" << std::endl;
-      std::cout << "Read " << total << " out of " << arvsSize
-		<< std::endl;
-    }
-
-  return total;
-}
-
-unsigned int sht::readEFCT( std::istream &file, const unsigned short &depth )
-{
-  unsigned int efctSize;
-  std::string type;
-
-  unsigned int total = readFormHeader( file, "EFCT", efctSize );
-  efctSize += 8;
-  std::cout << std::string( depth, ' ' )
-	    << "Found FORM EFCT: " << efctSize-12 << " bytes"
-	    << std::endl;
-
-  unsigned int size;
-  total += readFormHeader( file, "0001", size );
-  std::cout << std::string( depth, ' ' )
-	    << "Found FORM 0001: " << size-4 << " bytes"
-	    << std::endl;
-
-  total += readRecordHeader( file, type, size );
-  if( type != "DATA" )
-    {
-      std::cout << "Expected record of type DATA: " << type << std::endl;
-      exit( 0 );
-    }
-  std::cout << std::string( depth, ' ' )
-	    << "Found record " << type 
-	    << ": " << size << " bytes" 
-	    << std::endl;
-
-  total += readUnknown( file, size );
-    
-  if( efctSize == total )
-    {
-      std::cout << std::string( depth, ' ' )
-		<< "Finished reading EFCT" << std::endl;
-    }
-  else
-    {
-      std::cout << "FAILED in reading EFCT" << std::endl;
-      std::cout << "Read " << total << " out of " << efctSize
-		<< std::endl;
-    }
-
-  return total;
-}
-
-unsigned int sht::readNAME( std::istream &file, const unsigned short &depth )
-{
-  unsigned int nameSize;
-  std::string type;
-  // Read Effect file record
-  unsigned int total = readRecordHeader( file, type, nameSize );
-  nameSize += 8;
-  if( type != "NAME" )
-    {
-      std::cout << "Expected record of type NAME: " << type << std::endl;
-      return 0;
-    }
-  std::cout << std::string( depth, ' ' )
-	    << "Found record " << type 
-	    << ": " << nameSize << " bytes" 
-	    << std::endl;
-
-  total += base::read( file, effectName );
-  base::fixSlash( effectName );
-
-  std::string fullEffectName = basePath + effectName;
-  std::cout << std::string( depth+1, ' ' )
-	    << "Effect file: " << fullEffectName << std::endl;
-
-  if( nameSize == total )
-    {
-      std::cout << std::string( depth, ' ' )
-		<< "Finished reading NAME" << std::endl;
-    }
-  else
-    {
-      std::cout << "FAILED in reading NAME" << std::endl;
-      std::cout << "Read " << total << " out of " << nameSize
-		<< std::endl;
-    }
-
-  return total;
-}
-
-void sht::getAmbient( float &r, float &g, float &b, float &a ) const
-{
-  r = ambient[0];
-  g = ambient[1];
-  b = ambient[2];
-  a = ambient[3];
-}
-
-void sht::getDiffuse( float &r, float &g, float &b, float &a ) const
-{
-  r = diffuse[0];
-  g = diffuse[1];
-  b = diffuse[2];
-  a = diffuse[3];
-}
-
-void sht::getSpecular( float &r, float &g, float &b, float &a ) const
-{
-  r = specular[0];
-  g = specular[1];
-  b = specular[2];
-  a = specular[3];
-}
-
-void sht::getEmissive( float &r, float &g, float &b, float &a ) const
-{
-  r = emissive[0];
-  g = emissive[1];
-  b = emissive[2];
-  a = emissive[3];
-}
-
-void sht::getShininess( float &shiny ) const
-{
-  shiny = shininess;
-}
-
-std::string sht::getMaterialName() const
-{
-  return materialName;
-}
-
-void sht::setMaterialName( const std::string newName )
-{
-  materialName = newName;
-}
-
+*/

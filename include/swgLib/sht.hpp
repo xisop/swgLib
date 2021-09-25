@@ -1,10 +1,10 @@
 /** -*-c++-*-
  *  \class  sht
  *  \file   sht.hpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- swgLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006-2014 Kenneth R. Sewell III
+ swgLib is used for the parsing and exporting SWG models.
+ Copyright (C) 2006-2014 Ken Sewell
 
  This file is part of swgLib.
 
@@ -23,121 +23,101 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include <swgLib/base.hpp>
+#include <swgLib/matl.hpp>
+#include <swgLib/txm.hpp>
+#include <swgLib/color4.hpp>
 
-#include <fstream>
+#include <istream>
 #include <string>
 #include <vector>
+#include <map>
 
 #ifndef SHT_HPP
-#define SHT_HPP
+#define SHT_HPP 1
 
 namespace ml
 {
-  class sht : public base
-  {
-  public:
-    sht();
-    ~sht();
-    bool isRightType( std::istream &file )
-    {
-      return isOfType( file, "SSHT" );
-    }
-    unsigned int readSHT( std::istream &file, std::string path="",
-			  const unsigned short &depth=0 );
-  
-#if 0
-    bool hasNormalMap() const { return normalMap; }
-    unsigned int getNormalMapTextureUnit() const { return normalMapUnit; }
-    unsigned int getMainTextureUnit() const { return mainMapUnit; }
-#endif
-    void getAmbient( float &r, float &g, float &b, float &a ) const;
-    void getDiffuse( float &r, float &g, float &b, float &a ) const;
-    void getSpecular( float &r, float &g, float &b, float &a ) const;
-    void getEmissive( float &r, float &g, float &b, float &a ) const;
-    void getShininess( float &shiny ) const;
-    std::string getMaterialName() const;
-    void setMaterialName( const std::string newName );
+	class sht
+	{
+	public:
+		sht();
+		~sht();
 
-#if 0
-    std::string getDiffuseTextureName() const
-    {
-      return diffuseTextureName;
-    }
-#endif
+		std::size_t readSHT(std::istream& file, std::string path = "");
 
-    std::string getMainTextureName() const
-    {
-      return mainTextureName;
-    }
+	protected:
+		std::size_t readMATS(std::istream& file);
+		std::size_t readTXMS(std::istream& file);
+		std::size_t readTCSS(std::istream& file);
+		std::size_t readTFNS(std::istream& file);
+		std::size_t readARVS(std::istream& file);
+		std::size_t readSRVS(std::istream& file);
 
-    unsigned int getMainTextureUnit() const
-    {
-      return mainTextureUnit;
-    }
+		uint8_t _version;
 
-    std::string getNormalTextureName() const
-    {
-      return normalTextureName;
-    }
+		std::vector<matl> _material;
+		std::vector<txm>  _texture;
 
-    std::vector<unsigned int> coordMapping;
-  
-  protected:
-    unsigned int readMATS( std::istream &file, const unsigned short &depth=0 );
-    unsigned int readTXMS( std::istream &file, const unsigned short &depth=0 );
-    unsigned int readTXM( std::istream &file, const unsigned short &depth=0 );
-    unsigned int readTCSS( std::istream &file, const unsigned short &depth=0 );
-    unsigned int readTFNS( std::istream &file, const unsigned short &depth=0 );
-    unsigned int readTSNS( std::istream &file, const unsigned short &depth=0 );
-    unsigned int readARVS( std::istream &file, const unsigned short &depth=0 );
-    unsigned int readNAME( std::istream &file, const unsigned short &depth=0 );
-    unsigned int readEFCT( std::istream &file, const unsigned short &depth=0 );
-  
-    std::vector<std::string> texTag;
+		std::map<tag, uint8_t> _texCoordSet;
+		std::map<tag, color4>  _texFactor;
+		std::map<tag, uint8_t> _alphaReferenceValue;
+		std::map<tag, uint32_t> _stencilReferenceValue;
 
-    std::string materialName;
-  
-    std::string diffuseTextureTag;
-    std::string diffuseTextureName;
+		std::string _effectName;
 
-    std::string mainTextureName;
-    unsigned int mainTextureUnit;
 
-    std::string normalTextureName;
-    unsigned int normalTextureUnit;
 
-    std::string specularTextureName;
-    unsigned int specularTextureUnit;
 
-    std::string hueTextureName;
-    unsigned int hueTextureUnit;
+		/*
+				unsigned int readTSNS(std::istream& file, const unsigned short& depth = 0);
+				unsigned int readNAME(std::istream& file, const unsigned short& depth = 0);
+				unsigned int readEFCT(std::istream& file, const unsigned short& depth = 0);
 
-    std::string environmentTextureName;
-    unsigned int environmentTextureUnit;
+				std::vector<std::string> texTag;
 
-    std::string dot3TextureName;
-    unsigned int dot3TextureUnit;
+				std::string materialName;
 
-    std::string lookupTextureName;
-    unsigned int lookupTextureUnit;
+				std::string diffuseTextureTag;
+				std::string diffuseTextureName;
 
-    std::string maskTextureName;
-    unsigned int maskTextureUnit;
+				std::string mainTextureName;
+				unsigned int mainTextureUnit;
 
-    float ambient[4];
-    float diffuse[4];
-    float specular[4];
-    float emissive[4];
-    float shininess;
+				std::string normalTextureName;
+				unsigned int normalTextureUnit;
 
-    bool normalMap;
-    std::string effectName;
-  
-    unsigned int normalMapUnit;
-    unsigned int mainMapUnit;
+				std::string specularTextureName;
+				unsigned int specularTextureUnit;
 
-  private:
+				std::string hueTextureName;
+				unsigned int hueTextureUnit;
 
-  };
+				std::string environmentTextureName;
+				unsigned int environmentTextureUnit;
+
+				std::string dot3TextureName;
+				unsigned int dot3TextureUnit;
+
+				std::string lookupTextureName;
+				unsigned int lookupTextureUnit;
+
+				std::string maskTextureName;
+				unsigned int maskTextureUnit;
+
+				float ambient[4];
+				float diffuse[4];
+				float specular[4];
+				float emissive[4];
+				float shininess;
+
+				bool normalMap;
+				std::string effectName;
+
+				unsigned int normalMapUnit;
+				unsigned int mainMapUnit;
+				*/
+	private:
+
+	};
 }
 #endif

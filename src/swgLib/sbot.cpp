@@ -1,10 +1,10 @@
 /** -*-c++-*-
  *  \class  sbot
  *  \file   sbot.cpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- swgLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006-2009 Kenneth R. Sewell III
+ swgLib is used for the parsing and exporting SWG models.
+ Copyright (C) 2006-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -43,115 +43,115 @@ sbot::~sbot()
 {
 }
 
-unsigned int sbot::readSBOT( std::istream &file )
+unsigned int sbot::readSBOT(std::istream& file)
 {
-    unsigned int sbotSize;
-    unsigned int total = readFormHeader( file, "SBOT", sbotSize );
-    sbotSize += 8;
-    std::cout << "Found SBOT form" << std::endl;
+	std::size_t sbotSize;
+	std::size_t total = readFormHeader(file, "SBOT", sbotSize);
+	sbotSize += 8;
+	std::cout << "Found SBOT form" << std::endl;
 
-    total += readDERV( file, sbotBaseObjectFilename );
+	total += readDERV(file, sbotBaseObjectFilename);
 
-    unsigned int size0001;
-    total += readFormHeader( file, "0001", size0001 );
-    size0001 += 8;
-    std::cout << "Found 0001 form" << std::endl;
+	std::size_t size0001;
+	total += readFormHeader(file, "0001", size0001);
+	size0001 += 8;
+	std::cout << "Found 0001 form" << std::endl;
 
-    total += readPCNT( file, numNodes );
-    for( unsigned int i = 0; i < numNodes; ++i )
-      {
-	total += readSBOTXXXX( file );
-      }
+	total += readPCNT(file, numNodes);
+	for (unsigned int i = 0; i < numNodes; ++i)
+	{
+		total += readSBOTXXXX(file);
+	}
 
-    total += readSTOT( file );
+	total += readSTOT(file);
 
-    if( sbotSize == total )
-    {
-	std::cout << "Finished reading SBOT" << std::endl;
-    }
-    else
-    {
-	std::cout << "FAILED in reading SBOT" << std::endl;
-	std::cout << "Read " << total << " out of " << sbotSize
-                  << std::endl;
-     }
+	if (sbotSize == total)
+	{
+		std::cout << "Finished reading SBOT" << std::endl;
+	}
+	else
+	{
+		std::cout << "FAILED in reading SBOT" << std::endl;
+		std::cout << "Read " << total << " out of " << sbotSize
+			<< std::endl;
+	}
 
-    return total;
+	return total;
 }
 
 void sbot::print() const
 {
 }
 
-unsigned int sbot::readSBOTXXXX( std::istream &file )
+unsigned int sbot::readSBOTXXXX(std::istream& file)
 {
-    unsigned int xxxxSize;
-    std::string type;
-    unsigned int total = readRecordHeader( file, type, xxxxSize );
-    if( type != "XXXX" )
-    {
-        std::cout << "Expected record of type XXXX: " << type << std::endl;
-        exit( 0 );
-    }
-    std::cout << "Found " << type << std::endl;
+	std::size_t xxxxSize;
+	std::string type;
+	std::size_t total = readRecordHeader(file, type, xxxxSize);
+	if (type != "XXXX")
+	{
+		std::cout << "Expected record of type XXXX: " << type << std::endl;
+		exit(0);
+	}
+	std::cout << "Found " << type << std::endl;
 
-    std::string property;
-    total += base::read( file, property );
-    std::cout << "Property: " << property << std::endl;
+	std::string property;
+	total += base::read(file, property);
+	std::cout << "Property: " << property << std::endl;
 
-    unsigned char enabled;
-    if( property == "terrainModificationFileName" )
-      {
-	total += base::read( file, enabled );
-	if( enabled > 0 )
-	  {
-	    total += base::read( file, terrainModificationFilename );
-	    
-	    std::cout << property << ": "
-		      << terrainModificationFilename
-		      << std::endl;
-	  }
-      }
-    else if( property == "interiorLayoutFileName" )
-      {
-	total += base::read( file, enabled );
-	if( enabled > 0 )
-	  {
-	    total += base::read( file, interiorLayoutFilename );
-	    
-	    std::cout << property << ": "
-		      << interiorLayoutFilename
-		      << std::endl;
-	  }
-      }
-    else if( property == "portalLayoutFilename" )
-      {
-	total += base::read( file, enabled );
-	if( enabled > 0 )
-	  {
-	    total += base::read( file, portalLayoutFilename );
+	unsigned char enabled;
+	if (property == "terrainModificationFileName")
+	{
+		total += base::read(file, enabled);
+		if (enabled > 0)
+		{
+			total += base::read(file, terrainModificationFilename);
 
-	    std::cout << property << ": "
-		      << portalLayoutFilename
-		      << std::endl;
-	  }
-      }
-    else
-      {
-	std::cout << "Unknown: " << property << std::endl;
-	exit( 0 );
-      }
+			std::cout << property << ": "
+				<< terrainModificationFilename
+				<< std::endl;
+		}
+	}
+	else if (property == "interiorLayoutFileName")
+	{
+		total += base::read(file, enabled);
+		if (enabled > 0)
+		{
+			total += base::read(file, interiorLayoutFilename);
 
-    if( xxxxSize == (total-8) )
-    {
-        std::cout << "Finished reading XXXX" << std::endl;
-    }
-    else
-    {
-        std::cout << "FAILED in reading XXXX" << std::endl;
-        std::cout << "Read " << total << " out of " << xxxxSize
-                  << std::endl;
-    }
+			std::cout << property << ": "
+				<< interiorLayoutFilename
+				<< std::endl;
+		}
+	}
+	else if (property == "portalLayoutFilename")
+	{
+		total += base::read(file, enabled);
+		if (enabled > 0)
+		{
+			total += base::read(file, portalLayoutFilename);
 
-    return total;
+			std::cout << property << ": "
+				<< portalLayoutFilename
+				<< std::endl;
+		}
+	}
+	else
+	{
+		std::cout << "Unknown: " << property << std::endl;
+		exit(0);
+	}
+
+	if (xxxxSize == (total - 8))
+	{
+		std::cout << "Finished reading XXXX" << std::endl;
+	}
+	else
+	{
+		std::cout << "FAILED in reading XXXX" << std::endl;
+		std::cout << "Read " << total << " out of " << xxxxSize
+			<< std::endl;
+	}
+
+	return total;
 }

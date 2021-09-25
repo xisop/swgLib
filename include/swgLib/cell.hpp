@@ -1,10 +1,10 @@
 /** -*-c++-*-
  *  \class  cell
  *  \file   cell.hpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- swgLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006-2009 Kenneth R. Sewell III
+ swgLib is used for the parsing and exporting SWG models.
+ Copyright (C) 2006-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -22,82 +22,58 @@
  along with swgLib; if not, write to the Free Software
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+
+#include <swgLib/cmsh.hpp>
 #include <swgLib/portal.hpp>
+#include <swgLib/lght.hpp>
 #include <vector>
+#include <string>
 
 #ifndef CELL_HPP
-#define CELL_HPP
+#define CELL_HPP 1
 
 namespace ml
 {
-  class cell
-  {
-  public:
-    cell(){}
-    ~cell(){}
-    
-    void setUnknown1( unsigned char u1 )
-    {
-      m_Unknown1 = u1;
-    }
+	class cell
+	{
+	public:
+		cell();
+		~cell();
 
-    unsigned char getUnknown1() const
-    {
-      return m_Unknown1;
-    }
+		std::size_t read(std::istream& file);
+		/*
+		void setUnknown1(unsigned char u1);
+		unsigned char getUnknown1() const;
 
-    void setName( const std::string &name )
-    {
-      m_Name = name;
-    }
-    
-    const std::string &getName() const
-    {
-      return m_Name;
-    }
+		void setName(const std::string& name);
+		const std::string& getName() const;
 
-    void setModelFilename( const std::string &filename )
-    {
-      m_ModelFilename = filename;
-    }
-    
-    const std::string &getModelFilename() const
-    {
-      return m_ModelFilename;
-    }
+		void setModelFilename(const std::string& filename);
+		const std::string& getModelFilename() const;
 
-    void setHasFloor( bool floor )
-    {
-      m_HasFloor = floor;
-    }
+		void setHasFloor(bool floor);
+		bool hasFloor() const;
 
-    bool hasFloor() const
-    {
-      return m_HasFloor;
-    }
+		void setFloorFilename(const std::string& filename);
+		const std::string& getFloorFilename() const;
+		*/
+	protected:
+		uint8_t _version; // 0001, 0002, 0003, 0004, 0005
+		int32_t _numPortals;
+		bool _canSeeParentCell;
+		std::string _name;
+		std::string _appearanceName;
+		bool _hasFloor;
+		std::string _floorName;
 
-    void setFloorFilename( const std::string &filename )
-    {
-      m_FloorFilename = filename;
-    }
-    
-    const std::string &getFloorFilename() const
-    {
-      return m_FloorFilename;
-    }
+		cmsh _collisionMesh;
+		std::vector<portal> _portals;
 
-  protected:
-    unsigned int numPortals;
-    std::vector<portal> portals;
+		int32_t _numLights;
+		std::vector<lght> _lights;
 
-    unsigned char m_Unknown1;
-    std::string m_Name;
-    std::string m_ModelFilename;
-    bool m_HasFloor;
-    std::string m_FloorFilename;
-
-  private:
-  };
+	private:
+	};
 }
 
 #endif

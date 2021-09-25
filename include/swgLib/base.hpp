@@ -1,10 +1,10 @@
 /** -*-c++-*-
  *  \class  base
  *  \file   base.hpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- swgLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006-2009 Kenneth R. Sewell III
+ swgLib is used for the parsing and exporting SWG models.
+ Copyright (C) 2006-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -29,87 +29,129 @@
 #include <string>
 #include <vector>
 
-#include <swgLib/box.hpp>
 #include <swgLib/vector3.hpp>
 #include <swgLib/matrix3.hpp>
 
 #ifndef BASE_HPP
-#define BASE_HPP
+#define BASE_HPP 1
 
 namespace ml
 {
-  class base
-  {
-  public:
-    base() {};
-    virtual ~base() {};
-    virtual bool isRightType( std::istream& file ){ return false; }
-    static std::string getType( std::istream &file );
-    unsigned int readBASE(){ return 0; }
-    virtual bool canWrite() const { return false; }
+	class tag {
+	public:
+		tag();
+		~tag();
 
-    static unsigned int readUnknown( std::istream &file,
-				     const unsigned int size );
+		bool operator<(const tag& t) const;
+		bool operator==(const tag& t) const;
 
-    static unsigned int read(  std::istream &file, char &data );
-    static unsigned int write( std::ostream &file, const char &data );
-    static unsigned int read(  std::istream &file, unsigned char &data );
-    static unsigned int write( std::ostream &file, const unsigned char &data );
-    static unsigned int read(  std::istream &file, short &data );
-    static unsigned int write( std::ostream &file, const short &data );
-    static unsigned int read(  std::istream &file, unsigned short &data );
-    static unsigned int write( std::ostream &file, const unsigned short &data );
-    static unsigned int read(  std::istream &file, int &data );
-    static unsigned int write( std::ostream &file, const int &data );
-    static unsigned int read(  std::istream &file, unsigned int &data );
-    static unsigned int write( std::ostream &file, const unsigned int &data );
-    static unsigned int read(  std::istream &file, float &data );
-    static unsigned int write( std::ostream &file, const float &data );
-    static unsigned int read(  std::istream &file, std::string &data );
-    static unsigned int write( std::ostream &file, const std::string &data );
+		std::size_t read(std::istream& file);
+		std::size_t write(std::ostream& file) const;
 
-    static void peekHeader( std::istream &file,
-			    std::string &form,
-			    unsigned int &size,
-			    std::string &type );
-      
-    static unsigned int readFormHeader( std::istream &file,
-					std::string &form,
-					unsigned int &size,
-					std::string &type );
+		const uint32_t& raw() const;
+		const std::string& str() const;
 
-    static unsigned int readFormHeader( std::istream &file,
-					const std::string &expectedType,
-					unsigned int &size );
+	protected:
+		uint32_t _raw;
+		std::string _str;
+	};
 
-    static unsigned int writeFormHeader( std::ostream &file,
-					 const unsigned int &size,
-					 const std::string &type );
-    
-    static unsigned int readRecordHeader( std::istream &file,
-					  std::string &type,
-					  unsigned int &size);
-    
-    static unsigned int writeRecordHeader( std::ostream &file,
-					   const std::string &type,
-					   const unsigned int &size);
-    
-    static unsigned char readBigEndian( std::istream &file,
-					const unsigned int &size,
-					char *buffer);
-    
-    static unsigned char writeBigEndian( std::ostream &file,
-					 const unsigned int &size,
-					 char *buffer);
-    
-    static bool fixSlash( std::string &filename );
+	class base
+	{
+	public:
+		base() {};
+		virtual ~base() {};
+		virtual bool isRightType(std::istream& file) { return false; }
+		bool isOfType(std::istream& file, const std::string& Type);
+		static std::string getType(std::istream& file);
+		std::size_t readBASE() { return 0; }
+		virtual bool canWrite() const { return false; }
 
-  protected:
-    bool isOfType( std::istream &file, const std::string &Type );
+		static std::size_t readUnknown(std::istream& file,
+			const std::size_t size);
 
-    std::string basePath;
-					  
-  private:
-  };
+		static std::size_t read(std::istream& file, bool& data);
+		static std::size_t write(std::ostream& file, const bool& data);
+		static std::size_t read(std::istream& file, int8_t& data);
+		static std::size_t write(std::ostream& file, const int8_t& data);
+		static std::size_t read(std::istream& file, char& data);
+		static std::size_t write(std::ostream& file, const char& data);
+		static std::size_t read(std::istream& file, unsigned char& data);
+		static std::size_t write(std::ostream& file, const unsigned char& data);
+		static std::size_t read(std::istream& file, short& data);
+		static std::size_t write(std::ostream& file, const short& data);
+		static std::size_t read(std::istream& file, unsigned short& data);
+		static std::size_t write(std::ostream& file, const unsigned short& data);
+		static std::size_t read(std::istream& file, int& data);
+		static std::size_t write(std::ostream& file, const int& data);
+		static std::size_t read(std::istream& file, unsigned int& data);
+		static std::size_t write(std::ostream& file, const unsigned int& data);
+		static std::size_t read(std::istream& file, float& data);
+		static std::size_t write(std::ostream& file, const float& data);
+		static std::size_t read(std::istream& file, std::string& data);
+		static std::size_t write(std::ostream& file, const std::string& data);
+		static std::size_t read(std::istream& file, vector3& mat);
+		static std::size_t write(std::ostream& file, const vector3& mat);
+		static std::size_t read(std::istream& file, matrix3x3& mat);
+		static std::size_t write(std::ostream& file, const matrix3x3& mat);
+		static std::size_t read(std::istream& file, matrix3x4& mat);
+		static std::size_t write(std::ostream& file, const matrix3x4& mat);
+		static std::size_t read(std::istream& file, tag& t);
+		static std::size_t write(std::ostream& file, const tag& t);
+
+		static void peekHeader(std::istream& file,
+			std::string& form,
+			std::size_t& size,
+			std::string& type);
+
+		static std::size_t readFormHeader(std::istream& file,
+			std::string& form,
+			std::size_t& size,
+			std::string& type);
+
+		static std::size_t readFormHeader(std::istream& file,
+			std::string& expectedType,
+			std::size_t& size);
+
+		static std::size_t readFormHeader(std::istream& file,
+			const std::string& expectedType,
+			std::size_t& size);
+
+		static std::size_t writeFormHeader(std::ostream& file,
+			const std::size_t& size,
+			const std::string& type);
+
+		static std::size_t readRecordHeader(std::istream& file,
+			std::string& type,
+			std::size_t& size);
+		static std::size_t readRecordHeader(std::istream& file,
+			const std::string& expectedType,
+			std::size_t& size);
+
+		static std::size_t writeRecordHeader(std::ostream& file,
+			const std::string& type,
+			const std::size_t& size);
+
+		static std::size_t readBigEndian(std::istream& file,
+			const std::size_t& size,
+			char* buffer);
+
+		static std::size_t writeBigEndian(std::ostream& file,
+			const std::size_t& size,
+			char* buffer);
+
+		static bool fixSlash(std::string& filename);
+
+		static uint8_t tagToVersion(const std::string& tag);
+		static uint32_t typeToNumber(const std::string& type);
+
+	protected:
+		std::string basePath;
+
+	private:
+	};
 }
+
+std::ostream& operator<<(std::ostream& os, const ml::tag& t);
+
 #endif

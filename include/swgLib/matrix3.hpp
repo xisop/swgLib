@@ -1,10 +1,10 @@
 /** -*-c++-*-
  *  \class  matrix3
  *  \file   matrix3.hpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- swgLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006-2009 Kenneth R. Sewell III
+ swgLib is used for the parsing and exporting SWG models.
+ Copyright (C) 2006-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -24,69 +24,64 @@
 */
 
 #ifndef MATRIX3_HPP
-#define MATRIX3_HPP
+#define MATRIX3_HPP 1
+
+#include <iostream>
 
 namespace ml
 {
-  class matrix3
-  {
-  public:
-    matrix3()
-    {
-      for( unsigned int i = 0; i < 9; ++i )
+	class matrix3x3
 	{
-	  v[i] = 0.0;
-	}
-    }
+	public:
+		matrix3x3();
+		matrix3x3(const matrix3x3& m);
+		matrix3x3(const float* V);
+		~matrix3x3();
 
-    matrix3( const float *V )
-    {
-      memcpy( v, V, sizeof( float ) * 9 );
-    }
+		std::size_t read(std::istream& file);
+		std::size_t write(std::ostream& file) const;
 
-    ~matrix3(){}
+		float get(int index) const;
 
-    float get( int index ) const
-    {
-      if( index < 9 )
+		void get(float* V) const;
+
+		void set(const float* V);
+
+		void set(const matrix3x3& m);
+
+		void print(std::ostream& os) const;
+
+	private:
+		float v[9];
+	};
+
+	class matrix3x4
 	{
-	  return v[index];
-	}
-      else
-	{
-	  return 0.0;
-	}
-    }
+	public:
+		matrix3x4();
+		matrix3x4(const matrix3x4& m);
+		matrix3x4(const float* V);
+		~matrix3x4();
 
-    void get( float *V ) const
-    {
-      memcpy( V, v, sizeof( float ) * 9 );
-    }
+		std::size_t read(std::istream& file);
+		std::size_t write(std::ostream& file) const;
 
-    void set( const float *V )
-    {
-      memcpy( v, V, sizeof( float ) * 9 );
-    }
+		float get(int index) const;
 
-    void set( const matrix3 &m )
-    {
-      memcpy( v, m.v, sizeof( float ) * 9 );
-    }
+		std::size_t get(float* V) const;
 
-    void print() const
-    {
-      for( unsigned int i = 0; i < 9; i += 3 )
-	{
-	  std::cout << std::fixed
-		    << v[i] << " " << v[i+1] << " " << v[i+2] << std::endl;
-	}
-    }
+		std::size_t  set(const float* V);
 
+		void set(const matrix3x4& m);
 
-  protected:
+		void print(std::ostream& os) const;
 
-  private:
-    float v[9];
-  };
+	private:
+		float v[12];
+	};
 }
+
+std::ostream& operator<<(std::ostream& os, const ml::matrix3x3& m);
+std::ostream& operator<<(std::ostream& os, const ml::matrix3x4& m);
+
 #endif

@@ -1,10 +1,10 @@
 /** -*-c++-*-
  *  \class  slod
  *  \file   slod.hpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- swgLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006-2009 Kenneth R. Sewell III
+ swgLib is used for the parsing and exporting SWG models.
+ Copyright (C) 2006-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -30,36 +30,37 @@
 #include <vector>
 
 #ifndef SLOD_HPP
-#define SLOD_HPP
+#define SLOD_HPP 1
+
 namespace ml
 {
-  class slod : public base
-  {
-  public:
-    slod();
-    ~slod();
-    bool isRightType( std::istream &file )
-    {
-      return isOfType( file, "SLOD" );
-    }
-    unsigned int readSLOD( std::istream &file );
-    void print() const;
+	class slod : public base
+	{
+	public:
+		slod();
+		~slod();
+		bool isRightType(std::istream& file)
+		{
+			return isOfType(file, "SLOD");
+		}
+		unsigned int readSLOD(std::istream& file);
+		void print() const;
 
-    unsigned short getNumSkeletons() const
-    {
-      return skeletonList.size();
-    }
+		uint16_t getNumSkeletons() const
+		{
+			return uint16_t(skeletonList.size());
+		}
 
-    const ml::sktm &getSkeleton( unsigned short index ) const
-    {
-      return skeletonList[index];
-    }
+		const ml::sktm& getSkeleton(unsigned short index) const
+		{
+			return skeletonList[index];
+		}
 
-  protected:
-    unsigned int readINFO( std::istream &file, unsigned short &value );
+	protected:
+		unsigned int readINFO(std::istream& file, unsigned short& value);
 
-  private:
-    std::vector<ml::sktm> skeletonList;
-  };
+	private:
+		std::vector<ml::sktm> skeletonList;
+	};
 }
 #endif

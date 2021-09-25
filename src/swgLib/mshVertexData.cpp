@@ -1,9 +1,9 @@
 /** -*-c++-*-
  *  \class  mshVertexData
  *  \file   mshVertexData.cpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- Copyright (C) 2006-2009 Kenneth R. Sewell III
+ Copyright (C) 2006-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -22,10 +22,12 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+/*
 #include <swgLib/mshVertexData.hpp>
 #include <iostream>
 
 using namespace ml;
+
 
 mshVertexData::mshVertexData()
   :bytesPerVertex( 0 )
@@ -37,51 +39,69 @@ mshVertexData::~mshVertexData()
   this->clear();
 }
 
+bool mshVertexData::read(std::istream& file, unsigned int numVerts)
+{
+	if (0 == bytesPerVertex)
+	{
+		std::cerr << "Bytes per vertex needs set first." << std::endl;
+		return false;
+	}
+
+	for (unsigned int i = 0; i < numVerts; ++i)
+	{
+		vertex* newVertex = new vertex(bytesPerVertex);
+		if (!newVertex->read(file))
+		{
+			delete newVertex;
+			return false;
+		}
+		v.push_back(newVertex);
+	}
+
+	//this->print();
+
+	return true;
+}
+
 void mshVertexData::clear()
 {
   while( !v.empty() )
-    {
-      delete v.back();
-      v.pop_back();
-    }
-}
-
-void mshVertexData::print() const
-{
-  for( std::vector<mshVertex *>::const_iterator i = v.begin();
-       i != v.end();
-       ++i
-       )
-    {
-      (*i)->print();
-    }
-}
-
-bool mshVertexData::read( std::istream &file, unsigned int numVerts )
-{
-  if( 0 == bytesPerVertex )
-    {
-      std::cerr << "Bytes per vertex needs set first." << std::endl;
-      return false;
-    }
-
-  for( unsigned int i = 0; i < numVerts; ++i )
-    {
-      mshVertex *vertex = new mshVertex( bytesPerVertex );
-      if( !vertex->read( file ) )
 	{
-	  delete vertex;
-	  return false;
+	  delete v.back();
+	  v.pop_back();
 	}
-      v.push_back( vertex );
-    }
-
-  //this->print();
-
-  return true;
 }
 
-const mshVertex *mshVertexData::getVertex( unsigned int vertexNum ) const
+unsigned char mshVertexData::getBytesPerVertex() const
 {
-  return v[vertexNum];
+	return bytesPerVertex;
 }
+
+void mshVertexData::setBytesPerVertex(const unsigned char bpv)
+{
+	bytesPerVertex = bpv;
+}
+
+bool mshVertexData::isSupportedSize(const unsigned int bpv)
+{
+	return vertex::isSupportedSize(bpv);
+}
+
+uint32_t mshVertexData::getNumVertices() const
+{
+	return uint32_t(v.size());
+}
+
+const vertex* mshVertexData::getVertex(unsigned int vertexNum) const
+{
+	return v[vertexNum];
+}
+
+void mshVertexData::print(std::ostream& os) const
+{
+	for (auto i : v) {
+		i->print(os);
+		os << "\n";
+	}
+  }
+  */

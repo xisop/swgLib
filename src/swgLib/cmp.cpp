@@ -1,10 +1,10 @@
 /** -*-c++-*-
  *  \class  cmp
  *  \file   cmp.cpp
- *  \author Kenneth R. Sewell III
+ *  \author Ken Sewell
 
- swgLib is used for the parsing and exporting .msh models.
- Copyright (C) 2006-2009 Kenneth R. Sewell III
+ swgLib is used for the parsing and exporting SWG models.
+ Copyright (C) 2006-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -24,7 +24,7 @@
 */
 
 #include <swgLib/cmp.hpp>
-#include <swgLib/msh.hpp>
+#include <swgLib/mesh.hpp>
 #include <swgLib/cshd.hpp>
 #include <swgLib/sht.hpp>
 
@@ -51,7 +51,7 @@ cmp::~cmp()
 bool cmp::getPart( unsigned int index,
 		   std::string &filename,
 		   vector3 &partPosition,
-		   matrix3 &partScaleRotate
+		   matrix3x4 &partScaleRotate
 		   ) const
 {
   if( index >= getNumParts() )
@@ -61,19 +61,19 @@ bool cmp::getPart( unsigned int index,
 
   filename = partFilenames[index];
 
-  partPosition = position[index];
+  //partPosition = position[index];
 
   partScaleRotate = scaleRotate[index];
 
   return true;
 }
 
-unsigned int cmp::readCMP( std::istream &file, std::string path )
+std::size_t cmp::readCMP( std::istream &file, std::string path )
 {
   basePath = path;
-  unsigned int total = 0;
+  std::size_t total = 0;
   std::string form;
-  unsigned int cmpaSize;
+  std::size_t cmpaSize;
   std::string type;
 
   total += readFormHeader( file, form, cmpaSize, type );
@@ -85,7 +85,7 @@ unsigned int cmp::readCMP( std::istream &file, std::string path )
     }
   std::cout << "Found CMPA form" << std::endl;
 
-  unsigned int size;
+  std::size_t size;
   total += readFormHeader( file, form, size, type );
   if( form != "FORM" )
     {
@@ -140,11 +140,11 @@ unsigned int cmp::readCMP( std::istream &file, std::string path )
   return total;
 }
 
-unsigned int cmp::readPART( std::istream &file )
+std::size_t cmp::readPART( std::istream &file )
 {
-    unsigned int total = 0;
+    std::size_t total = 0;
 
-    unsigned int size;
+    std::size_t size;
     std::string type;
     total += readRecordHeader( file, type, size );
     size += 8;
@@ -165,18 +165,17 @@ unsigned int cmp::readPART( std::istream &file )
     partFilenames.push_back( filename );
 
     // Read scale/rotate matrix and position vector
-    vector3 vec;
-    matrix3 matrix;
-    total += model::readMatrixAndPosition( file, matrix, vec );
+    //vector3 vec;
+    matrix3x4 matrix;
+    total += model::readTransformMatrix( file, matrix );
 
-    position.push_back( vec );
+    //position.push_back( vec );
     scaleRotate.push_back( matrix );
 
-    std::cout << "Position: ";
-    vec.print();
+    //std::cout << "Position: ";
+    //vec.print();
 
-    std::cout << "Matrix: " << std::endl;
-    matrix.print();
+    std::cout << "Matrix: \n" << matrix << std::endl;
 
     if( size == total )
     {
@@ -192,12 +191,12 @@ unsigned int cmp::readPART( std::istream &file )
     return total;
 }
 
-unsigned int cmp::readRADR( std::istream &file )
+std::size_t cmp::readRADR( std::istream &file )
 {
-    unsigned int total = 0;
+    std::size_t total = 0;
 
     std::string form;
-    unsigned int radrSize;
+    std::size_t radrSize;
     std::string type;
 
     total += readFormHeader( file, form, radrSize, type );
@@ -209,7 +208,7 @@ unsigned int cmp::readRADR( std::istream &file )
     }
     std::cout << "Found RADR form" << std::endl;
 
-    unsigned int size;
+    std::size_t size;
     total += readRecordHeader( file, type, size );
     if( type != "INFO" )
     {
