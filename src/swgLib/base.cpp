@@ -28,11 +28,15 @@
 #include <sstream>
 #include <iomanip>
 #include <cstdlib>
-
-#ifdef PLATFORM_LITTLE_ENDIAN
-#define 
+#include <endian.h>
 
 using namespace ml;
+
+#ifndef PLATFORM_LITTLE_ENDIAN
+#if BYTE_ORDER == LITTLE_ENDIAN
+#define PLATFORM_LITTLE_ENDIAN 1
+#endif
+#endif
 
 tag::tag() {
 }
@@ -138,7 +142,7 @@ std::size_t base::readBigEndian(std::istream& file,
 	char* buffer
 )
 {
-#if BYTE_ORDER == LITTLE_ENDIAN
+#ifdef PLATFORM_LITTLE_ENDIAN
 	for (unsigned int i = 0; i < size; ++i)
 	{
 		file.read(&(buffer[size - 1 - i]), 1);
@@ -155,7 +159,7 @@ std::size_t base::writeBigEndian(std::ostream& file,
 	char* buffer
 )
 {
-#if BYTE_ORDER == LITTLE_ENDIAN
+#ifdef PLATFORM_LITTLE_ENDIAN
 	for (unsigned int i = 0; i < size; ++i)
 	{
 		file.write(&(buffer[size - 1 - i]), 1);
