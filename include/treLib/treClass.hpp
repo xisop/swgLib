@@ -55,7 +55,7 @@ public:
 
 	void printHeader(std::ostream& os) const;
 	void printFileBlock(std::ostream& os) const;
-	void printNameBlock(std::ostream& os) const;
+	void printNameBlock(std::ostream& os, bool verbose=false) const;
 
 	bool saveRecordAsFile(const uint32_t& recordNum);
 	std::stringstream* saveRecordAsStream(const uint32_t& recordNum,

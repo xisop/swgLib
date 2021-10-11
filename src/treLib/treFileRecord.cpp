@@ -198,7 +198,7 @@ void treFileRecord::print(std::ostream& os) const
 		<< "Size: " << size << "\n"
 		<< "Name Offset: " << nameOffset << "\n"
 		<< "MD5 sum: ";
-	for (const auto &i : md5sum)
+	for (const auto& i : md5sum)
 	{
 		os << std::hex << (uint32_t)(i);
 	}
@@ -293,4 +293,14 @@ uint32_t treFileRecord::generateChecksum() const
 	//std::cout << "Calculated cksum: " << cksum << std::endl;
 
 	return cksum;
+}
+
+std::string treFileRecord::getFormatStr(const uint32_t format) {
+	switch (format) {
+	case 0: return std::string("No compression"); break;
+	case 1: return std::string("<Deprecated>"); break;
+	case 2: return std::string("ZLib compression"); break;
+	case 3: return std::string("Max compression"); break;
+	}
+	return std::string("Unknown compression");
 }

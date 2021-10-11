@@ -266,13 +266,18 @@ bool treClass::readNameBlock(std::istream& file)
 	return true;
 }
 
-void treClass::printNameBlock(std::ostream& os) const
+void treClass::printNameBlock(std::ostream& os, bool verbose) const
 {
 	uint32_t count = 0;
 	for (const auto &i : fileRecordList)
 	{
-		os << count << ": " << i.getFileName()
-			<< " " << i.getFormat() << "\n";
+		if (verbose) {
+			os << count << ": " << i.getFileName()
+				<< " (" << treFileRecord::getFormatStr(i.getFormat()) << ")\n";
+		}
+		else {
+			os << count << ": " << i.getFileName() << "\n";
+		}
 		++count;
 	}
 }
@@ -357,6 +362,7 @@ treClass::saveRecordAsStream(const uint32_t& recordNum, bool verbose)
 	// Calculate MD5 sum 
 	if (2 == fileRecordList[recordNum].getFormat())
 	{
+		// 2 - ZLib compression
 		md5_update(
 			&md5,
 			(unsigned char*)dataBlock.getCompressedDataPtr(),
@@ -365,6 +371,7 @@ treClass::saveRecordAsStream(const uint32_t& recordNum, bool verbose)
 	}
 	else if (0 == fileRecordList[recordNum].getFormat())
 	{
+		// 0 - No compression
 		md5_update(
 			&md5,
 			(unsigned char*)dataBlock.getUncompressedDataPtr(),
@@ -639,7 +646,7 @@ bool treClass::writeFileBlock(std::ostream& file)
 		i->setUncompressedSize((uint32_t)dataFileSize);
 
 		// Size is 0 for uncompressed records..
-		if (i->getFormat() == 0)
+		if (i->getFormat() == 0) // No Compression
 		{
 			i->setSize(0);
 			totalDataSize += (uint32_t)dataFileSize;

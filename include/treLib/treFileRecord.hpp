@@ -42,7 +42,7 @@ public:
 	};
 
 	treFileRecord();
-	treFileRecord( const treFileRecord &rec);
+	treFileRecord(const treFileRecord& rec);
 	~treFileRecord() {};
 
 	bool read(std::istream& file);
@@ -83,6 +83,8 @@ public:
 	uint32_t generateChecksum() const;
 
 	treDataBlock& getDataBlock() { return dataBlock; }
+
+	static std::string getFormatStr(const uint32_t format);
 
 protected:
 	uint32_t checksum;
