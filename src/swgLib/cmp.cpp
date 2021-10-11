@@ -24,9 +24,6 @@
 */
 
 #include <swgLib/cmp.hpp>
-#include <swgLib/mesh.hpp>
-#include <swgLib/cshd.hpp>
-#include <swgLib/sht.hpp>
 
 #include <iostream>
 #include <bitset>

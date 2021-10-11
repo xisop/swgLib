@@ -24,10 +24,6 @@
 */
 
 #include <swgLib/lod.hpp>
-#include <swgLib/mesh.hpp>
-#include <swgLib/cshd.hpp>
-#include <swgLib/sht.hpp>
-#include <swgLib/exbx.hpp>
 
 #include <swgLib/model.hpp>
 
