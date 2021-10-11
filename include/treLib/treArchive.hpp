@@ -23,40 +23,42 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
 #include <list>
+#include <vector>
 #include <treLib/treClass.hpp>
 
 #ifndef TREARCHIVE_HPP
-#define TREARCHIVE_HPP
+#define TREARCHIVE_HPP 1
 
 class treArchive
 {
 public:
-  treArchive();
-  ~treArchive();
+	treArchive();
+	~treArchive();
 
-  /// Change windows style slashes to c++ style.
-  static void fixSlash( std::string &filename );
+	/// Change windows style slashes to c++ style.
+	static void fixSlash(std::string& filename);
 
-  /// Add TRE file to archive
-  bool addFile( const std::string &filename );
+	/// Add TRE file to archive
+	bool addFile(const std::string& filename);
 
-  /// Remove TRE file from archive
-  bool removeFile( const std::string &filename );
+	/// Remove TRE file from archive
+	bool removeFile(const std::string& filename);
 
-  /// Remove all TRE files from archive
-  bool removeAllFiles();
+	/// Remove all TRE files from archive
+	bool removeAllFiles();
 
-  void printArchiveContents() const;
+	void printArchiveContents(std::ostream& os) const;
 
-  std::stringstream *getFileStream( const std::string &filename );
+	void getArchiveContents(std::vector<std::string>& contents) const;
+
+	std::stringstream* getFileStream(const std::string& filename);
 
 protected:
-  std::list< treClass *> treList;
+	std::list< treClass*> treList;
 
 private:
 

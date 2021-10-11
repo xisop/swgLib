@@ -87,7 +87,7 @@ int main( int argc, char **argv )
   archive.addFile( treDir+"/patch_12_00.tre" );
   archive.addFile( treDir+"/patch_13_00.tre" );
 
-  archive.printArchiveContents();
+  archive.printArchiveContents( std::cout );
 
   std::stringstream *sstr =
     archive.getFileStream("appearance/mesh/ply_corl_house_lg_s01_fp1_r0_mesh_r0_l2.msh" );

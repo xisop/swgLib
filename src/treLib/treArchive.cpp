@@ -33,128 +33,134 @@ treArchive::~treArchive()
 {
 }
 
-void treArchive::fixSlash( std::string &filename )
+void treArchive::fixSlash(std::string& filename)
 {
-  for( unsigned int i = 0; i < filename.size(); ++i )
-    {
-      if( filename[i] == '\\' )
-        {
-          filename[i] = '/';
-        }
-    }
+	for (unsigned int i = 0; i < filename.size(); ++i)
+	{
+		if (filename[i] == '\\')
+		{
+			filename[i] = '/';
+		}
+	}
 }
 
 bool treArchive::removeAllFiles()
 {
-  // Delete and pop all tre files
-  while( !treList.empty() )
-    {
-      delete treList.front();
-      treList.pop_front();
-    }
-  return true;
+	// Delete and pop all tre files
+	while (!treList.empty())
+	{
+		delete treList.front();
+		treList.pop_front();
+	}
+	return true;
 }
 
 /// Add file to archive
-bool treArchive::addFile( const std::string &filename )
+bool treArchive::addFile(const std::string& filename)
 {
-  std::string correctedFilename( filename );
-  fixSlash( correctedFilename  );
+	std::string correctedFilename(filename);
+	fixSlash(correctedFilename);
 
-  // Else open was successful
-  treClass *newTRE = new treClass();
-  if( newTRE->readFile( correctedFilename ) )
-    {
-      treList.push_front( newTRE );
+	// Else open was successful
+	treClass* newTRE = new treClass();
+	if (newTRE->readFile(correctedFilename))
+	{
+		treList.push_front(newTRE);
 
-      return true;
-    }
-  else
-    {
-      // Delete failed tre
-      delete newTRE;
-    }
-  
-  return false;
+		return true;
+	}
+	else
+	{
+		// Delete failed tre
+		delete newTRE;
+	}
+
+	return false;
 }
 
 /// Remove file from archive
-bool treArchive::removeFile( const std::string &filename )
+bool treArchive::removeFile(const std::string& filename)
 {
-  std::string correctedFilename( filename );
-  fixSlash( correctedFilename  );
+	std::string correctedFilename(filename);
+	fixSlash(correctedFilename);
 
-  // Don't bother looking if list is empty
-  if( !treList.empty() )
-    {
-      for( std::list<treClass *>::iterator i = treList.begin();
-	   i != treList.end();
-	   ++i 
-	   )
+	// Don't bother looking if list is empty
+	if (!treList.empty())
 	{
-	  if( correctedFilename == (*i)->getFilename() )
-	    {
-	      delete (*i);
-	      treList.erase(i);
-	      // Found and erased file
-	      return true;
-	    }
+		for (std::list<treClass*>::iterator i = treList.begin();
+			i != treList.end();
+			++i
+			)
+		{
+			if (correctedFilename == (*i)->getFilename())
+			{
+				delete (*i);
+				treList.erase(i);
+				// Found and erased file
+				return true;
+			}
+		}
 	}
-    }
-  
-  // Failed to find/erase file from list
-  return false;
+
+	// Failed to find/erase file from list
+	return false;
 }
 
-void treArchive::printArchiveContents() const
+void treArchive::printArchiveContents(std::ostream& os) const
 {
-  // Don't bother if list is empty
-  if( !treList.empty() )
-    {
-      // Loop through all tre files
-      for( std::list<treClass *>::const_iterator i = treList.begin();
-	   i != treList.end();
-	   ++i 
-	   )
-	{
-	  // For each tre file list loop through its contents
-	  for( std::vector<treFileRecord>::const_iterator j = 
-		 (*i)->getFileRecordList().begin();
-	       j != (*i)->getFileRecordList().end();
-	       ++j
-	       )
-	    {
-	      std::cout << j->getFileName() << std::endl;
-	    }
+	// Do nothing if list is empty...
+	if (treList.empty()) { return; }
+
+	// Loop through all tre files
+	for (auto treFile : treList) {
+		// For each tre file list loop through its contents
+		for (auto record : treFile->getFileRecordList()) {
+			os << record.getFileName() << "\n";
+		}
 	}
-    }
 }
 
-std::stringstream *treArchive::getFileStream( const std::string &filename )
-{
-  // Don't bother if list is empty
-  if( treList.empty() )
-    {
-      return NULL;
-    }
+void treArchive::getArchiveContents(std::vector<std::string>& content) const {
+	// Erase content list...	
+	content.clear();
 
-  std::string correctedFilename( filename );
-  fixSlash( correctedFilename  );
+	// Do nothing if list is empty...
+	if (treList.empty()) { return; }
 
-  unsigned int index = 0;
-  // Loop through all tre files
-  for( std::list<treClass *>::const_iterator i = treList.begin();
-       i != treList.end();
-       ++i 
-       )
-    {
-      // Ask each treClass to find the file
-      if( (*i)->getFileRecordIndex( correctedFilename, index ) == true )
-	{
-	  // First instance of file was found, return stream
-	  return ( (*i)->saveRecordAsStream( index ) );
+	// Loop through all tre files
+	for (auto treFile : treList) {
+		// For each tre file list loop through its contents
+		for (auto record : treFile->getFileRecordList()) {
+			content.push_back(record.getFileName());
+		}
 	}
-    }
+}
 
-  return NULL;
+std::stringstream* treArchive::getFileStream(const std::string& filename)
+{
+	// Don't bother if list is empty
+	if (treList.empty())
+	{
+		return NULL;
+	}
+
+	std::string correctedFilename(filename);
+	fixSlash(correctedFilename);
+
+	unsigned int index = 0;
+	// Loop through all tre files
+	for (std::list<treClass*>::const_iterator i = treList.begin();
+		i != treList.end();
+		++i
+		)
+	{
+		// Ask each treClass to find the file
+		if ((*i)->getFileRecordIndex(correctedFilename, index) == true)
+		{
+			// First instance of file was found, return stream
+			return ((*i)->saveRecordAsStream(index));
+		}
+	}
+
+	return NULL;
 }
