@@ -31,24 +31,22 @@
 
 int main(int argc, char** argv)
 {
-
-	if ((argc < 2) || (argc > 4))
-	{
-		std::cout << "Usage: treDump <file.tre>" << std::endl;
-		std::cout << "or" << std::endl;
-		std::cout << "       treDump <file.tre> <record #>" << std::endl;
-		std::cout << "or" << std::endl;
-		std::cout << "       treDump <file.tre> all" << std::endl;
-		std::cout << "or" << std::endl;
-		std::cout << "       treDump <file.tre> <start record #> <end record>"
-			<< std::endl;
+	if ((argc < 2) || (argc > 4)) {
+		std::cout
+			<< "Usage: treDump <file.tre>\n"
+			<< "or\n"
+			<< "       treDump <file.tre> <record #>\n"
+			<< "or\n"
+			<< "       treDump <file.tre> all\n"
+			<< "or\n"
+			<< "       treDump <file.tre> <start record #> <end record>\n";
 		return 0;
 	}
 
 	treClass tre;
 	if (!tre.readFile(std::string(argv[1])))
 	{
-		std::cout << "Failed to read file: " << argv[1] << std::endl;
+		std::cout << "Failed to read file: " << argv[1] << "\n";
 		return 0;
 	}
 
@@ -56,27 +54,25 @@ int main(int argc, char** argv)
 	{
 		if (strncmp(argv[2], "all", 3) == 0)
 		{
-			int startRecord = 0;
-			int endRecord = tre.getNumRecords();
-			for (int i = startRecord; i < endRecord; ++i)
-			{
+			const int startRecord = 0;
+			const int endRecord = tre.getNumRecords();
+			for (int i = startRecord; i < endRecord; ++i) {
 				// Save
 				tre.saveRecordAsFile(i);
 			}
 		}
 		else
 		{
-			int recordNum = atoi(argv[2]);
+			const int recordNum = atoi(argv[2]);
 			// Save
 			tre.saveRecordAsFile(recordNum);
 		}
 	}
 	else if (4 == argc)
 	{
-		int startRecord = atoi(argv[2]);
-		int endRecord = atoi(argv[3]);
-		for (int i = startRecord; i <= endRecord; ++i)
-		{
+		const int startRecord = atoi(argv[2]);
+		const int endRecord = atoi(argv[3]);
+		for (int i = startRecord; i <= endRecord; ++i) {
 			// Save
 			tre.saveRecordAsFile(i);
 		}
