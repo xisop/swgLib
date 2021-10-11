@@ -29,6 +29,9 @@
 #include <iomanip>
 #include <cstdlib>
 
+#ifdef PLATFORM_LITTLE_ENDIAN
+#define 
+
 using namespace ml;
 
 tag::tag() {
