@@ -61,8 +61,7 @@ std::size_t exbx::read(std::istream& file,
 		exspSize += 8;
 		std::cout << "Found EXSP form: " << exspSize - 12 << " bytes\n";
 
-		std::string form, exspType;
-		std::size_t size;
+		std::string exspType;
 		total += base::readFormHeader(file, form, size, exspType);
 
 		uint8_t exspVersion = base::tagToVersion(exspType);

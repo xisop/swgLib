@@ -133,8 +133,6 @@ std::size_t prto::readPRTO(std::istream& file, std::string path)
 
 	// Only for versions 2+
 	if (1 < _version) {
-		std::string form, type;
-		std::size_t size;
 		peekHeader(file, form, size, type);
 		std::cout << "Peek: " << form << "\n";
 		if (("FORM" == form) && ("PGRF" == type)) {
