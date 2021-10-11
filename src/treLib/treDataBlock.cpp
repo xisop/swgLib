@@ -67,15 +67,12 @@ bool treDataBlock::isChecksumCorrect(const uint32_t&/*csum*/)
 	return true;
 }
 
-void treDataBlock::calculateMD5sum(
-	const char* mem,
-	const uint32_t& memSize
-)
+void treDataBlock::calculateMD5sum( const char* mem, const uint32_t& memSize )
 {
 	// Clear old sum...
 	md5sum.clear();
 
-	if (NULL != mem)
+	if (nullptr != mem)
 	{
 		md5_context md5;
 		md5_starts(&md5);
@@ -129,8 +126,7 @@ bool treDataBlock::readAndUncompress(
 	std::istream& file,
 	const int& format,
 	const uint32_t& compSize,
-	const uint32_t& uncompSize
-)
+	const uint32_t& uncompSize )
 {
 	freeCompressedData();
 	freeUncompressedData();

@@ -212,22 +212,19 @@ bool treClass::readFileBlock(std::istream& file)
 
 void treClass::printFileBlock(std::ostream& os) const
 {
-	std::vector<treFileRecord>::const_iterator i;
-	for (i = fileRecordList.begin(); i != fileRecordList.end(); ++i)
-	{
-		i->print(os);
-		std::cout << std::endl;
+	for (const auto &record : fileRecordList) {
+		record.print(os);
+		os << "\n";
 	}
 }
 
 bool treClass::readNameBlock(std::istream& file)
 {
 	// Seek to the offset in header+fileblock offset...
-	file.seekg(fileOffset + fileSize, std::ios_base::beg);
+	file.seekg((std::streampos(fileOffset) + std::streampos(fileSize)), std::ios_base::beg);
 
 	// Make sure there are file records to use...
-	if (fileRecordList.empty())
-	{
+	if (fileRecordList.empty()) {
 		return false;
 	}
 
@@ -272,7 +269,7 @@ bool treClass::readNameBlock(std::istream& file)
 void treClass::printNameBlock(std::ostream& os) const
 {
 	uint32_t count = 0;
-	for (auto i : fileRecordList)
+	for (const auto &i : fileRecordList)
 	{
 		os << count << ": " << i.getFileName()
 			<< " " << i.getFormat() << "\n";
@@ -615,7 +612,7 @@ bool treClass::writeFileBlock(std::ostream& file)
 		dataFile.seekg(0, std::ios::end);
 		std::streamoff dataFileSize = dataFile.tellg();
 
-		if (!(i->getDataBlock().allocateUncompressedData(dataFileSize)))
+		if (!(i->getDataBlock().allocateUncompressedData((uint32_t)dataFileSize)))
 		{
 			std::cout << __FILE__ << ": " << __LINE__
 				<< ": Failed to allocate " << dataFileSize
@@ -629,7 +626,7 @@ bool treClass::writeFileBlock(std::ostream& file)
 			dataFileSize);
 
 		// Get offset (from beginning of file) to where data will be written.
-		i->setOffset(file.tellp());
+		i->setOffset((uint32_t)file.tellp());
 
 		// Write datablock...
 		if (!(i->getDataBlock().compressAndWrite(file, i->getFormat())))
@@ -639,13 +636,13 @@ bool treClass::writeFileBlock(std::ostream& file)
 		}
 
 		// Set uncompressed size...
-		i->setUncompressedSize(dataFileSize);
+		i->setUncompressedSize((uint32_t)dataFileSize);
 
 		// Size is 0 for uncompressed records..
 		if (i->getFormat() == 0)
 		{
 			i->setSize(0);
-			totalDataSize += dataFileSize;
+			totalDataSize += (uint32_t)dataFileSize;
 		}
 		else
 		{
@@ -667,7 +664,7 @@ bool treClass::writeFileBlock(std::ostream& file)
 
 
 	// Get postion in file where compressed file records start...
-	fileOffset = file.tellp();
+	fileOffset = (uint32_t)file.tellp();
 
 	// Allocate file record block...
 	fileFinalSize =

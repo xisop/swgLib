@@ -112,9 +112,9 @@ void treArchive::printArchiveContents(std::ostream& os) const
 	if (treList.empty()) { return; }
 
 	// Loop through all tre files
-	for (auto treFile : treList) {
+	for (const auto &treFile : treList) {
 		// For each tre file list loop through its contents
-		for (auto record : treFile->getFileRecordList()) {
+		for (const auto &record : treFile->getFileRecordList()) {
 			os << record.getFileName() << "\n";
 		}
 	}
@@ -128,9 +128,9 @@ void treArchive::getArchiveContents(std::vector<std::string>& content) const {
 	if (treList.empty()) { return; }
 
 	// Loop through all tre files
-	for (auto treFile : treList) {
+	for (const auto &treFile : treList) {
 		// For each tre file list loop through its contents
-		for (auto record : treFile->getFileRecordList()) {
+		for (const auto &record : treFile->getFileRecordList()) {
 			content.push_back(record.getFileName());
 		}
 	}

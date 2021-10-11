@@ -198,7 +198,7 @@ void treFileRecord::print(std::ostream& os) const
 		<< "Size: " << size << "\n"
 		<< "Name Offset: " << nameOffset << "\n"
 		<< "MD5 sum: ";
-	for (auto i : md5sum)
+	for (const auto &i : md5sum)
 	{
 		os << std::hex << (uint32_t)(i);
 	}
