@@ -28,7 +28,6 @@
 #include <sstream>
 #include <iomanip>
 #include <cstdlib>
-#include <endian.h>
 
 using namespace ml;
 
