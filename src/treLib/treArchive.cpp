@@ -112,9 +112,9 @@ void treArchive::printArchiveContents(std::ostream& os) const
 	if (treList.empty()) { return; }
 
 	// Loop through all tre files
-	for (const auto &treFile : treList) {
+	for (const auto& treFile : treList) {
 		// For each tre file list loop through its contents
-		for (const auto &record : treFile->getFileRecordList()) {
+		for (const auto& record : treFile->getFileRecordList()) {
 			os << record.getFileName() << "\n";
 		}
 	}
@@ -128,12 +128,28 @@ void treArchive::getArchiveContents(std::vector<std::string>& content) const {
 	if (treList.empty()) { return; }
 
 	// Loop through all tre files
-	for (const auto &treFile : treList) {
+	for (const auto& treFile : treList) {
 		// For each tre file list loop through its contents
-		for (const auto &record : treFile->getFileRecordList()) {
+		for (const auto& record : treFile->getFileRecordList()) {
 			content.push_back(record.getFileName());
 		}
 	}
+}
+
+void treArchive::getArchiveContents(const std::string& substr, std::vector<std::string>& content) const {
+	// Do nothing if list is empty...
+	if (treList.empty()) { return; }
+
+	// Loop through all tre files
+	for (const auto& treFile : treList) {
+		// For each tre file list loop through its contents
+		for (const auto& record : treFile->getFileRecordList()) {
+			if (record.getFileName().find(substr) != std::string::npos) {
+				content.push_back(record.getFileName());
+			}
+		}
+	}
+
 }
 
 std::stringstream* treArchive::getFileStream(const std::string& filename)

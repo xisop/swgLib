@@ -55,6 +55,8 @@ public:
 
 	void getArchiveContents(std::vector<std::string>& contents) const;
 
+	void getArchiveContents( const std::string &substr, std::vector<std::string>& content ) const;
+
 	std::stringstream* getFileStream(const std::string& filename);
 
 protected:
