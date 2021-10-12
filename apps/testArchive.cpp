@@ -27,79 +27,84 @@
 #include <iostream>
 #include <cstdlib>
 
-int main( int argc, char **argv )
+int main(int argc, char** argv)
 {
-  if( argc != 2 )
-    {
-      std::cout << "Usage: " << argv[0] << " <path to tre directory>"
-		<< std::endl;
-      exit( 0 );
-    }
+	if (argc != 2)
+	{
+		std::cout << "Usage: " << argv[0] << " <path to tre directory>"
+			<< std::endl;
+		exit(0);
+	}
 
-  std::string treDir( argv[1] );
+	std::string treDir(argv[1]);
 
-  treArchive archive;
+	treArchive archive;
 
-  archive.addFile( treDir+"/bottom.tre" );
-  archive.addFile( treDir+"/data_animation_00.tre" );
-  archive.addFile( treDir+"/data_music_00.tre" );
-  archive.addFile( treDir+"/data_other_00.tre" );
-  archive.addFile( treDir+"/data_sample_00.tre" );
-  archive.addFile( treDir+"/data_sample_01.tre" );
-  archive.addFile( treDir+"/data_sample_02.tre" );
-  archive.addFile( treDir+"/data_sample_03.tre" );
-  archive.addFile( treDir+"/data_sample_04.tre" );
-  archive.addFile( treDir+"/data_skeletal_mesh_00.tre" );
-  archive.addFile( treDir+"/data_skeletal_mesh_01.tre" );
-  archive.addFile( treDir+"/data_sku1_00.tre" );
-  archive.addFile( treDir+"/data_sku1_01.tre" );
-  archive.addFile( treDir+"/data_sku1_02.tre" );
-  archive.addFile( treDir+"/data_sku1_03.tre" );
-  archive.addFile( treDir+"/data_sku1_04.tre" );
-  archive.addFile( treDir+"/data_sku1_05.tre" );
-  archive.addFile( treDir+"/data_sku1_06.tre" );
-  archive.addFile( treDir+"/data_sku1_07.tre" );
-  archive.addFile( treDir+"/data_static_mesh_00.tre" );
-  archive.addFile( treDir+"/data_static_mesh_01.tre" );
-  archive.addFile( treDir+"/data_texture_00.tre" );
-  archive.addFile( treDir+"/data_texture_01.tre" );
-  archive.addFile( treDir+"/data_texture_02.tre" );
-  archive.addFile( treDir+"/data_texture_03.tre" );
-  archive.addFile( treDir+"/data_texture_04.tre" );
-  archive.addFile( treDir+"/data_texture_05.tre" );
-  archive.addFile( treDir+"/data_texture_06.tre" );
-  archive.addFile( treDir+"/data_texture_07.tre" );
-  archive.addFile( treDir+"/default_patch.tre" );
-  archive.addFile( treDir+"/patch_01.tre" );
-  archive.addFile( treDir+"/patch_02.tre" );
-  archive.addFile( treDir+"/patch_03.tre" );
-  archive.addFile( treDir+"/patch_04.tre" );
-  archive.addFile( treDir+"/patch_05.tre" );
-  archive.addFile( treDir+"/patch_06.tre" );
-  archive.addFile( treDir+"/patch_07.tre" );
-  archive.addFile( treDir+"/patch_08.tre" );
-  archive.addFile( treDir+"/patch_09.tre" );
-  archive.addFile( treDir+"/patch_10.tre" );
-  archive.addFile( treDir+"/patch_11_00.tre" );
-  archive.addFile( treDir+"/patch_11_01.tre" );
-  archive.addFile( treDir+"/patch_11_02.tre" );
-  archive.addFile( treDir+"/patch_11_03.tre" );
-  archive.addFile( treDir+"/patch_12_00.tre" );
-  archive.addFile( treDir+"/patch_13_00.tre" );
+	archive.addFile(treDir + "/bottom.tre");
+	archive.addFile(treDir + "/data_animation_00.tre");
+	archive.addFile(treDir + "/data_music_00.tre");
+	archive.addFile(treDir + "/data_other_00.tre");
+	archive.addFile(treDir + "/data_sample_00.tre");
+	archive.addFile(treDir + "/data_sample_01.tre");
+	archive.addFile(treDir + "/data_sample_02.tre");
+	archive.addFile(treDir + "/data_sample_03.tre");
+	archive.addFile(treDir + "/data_sample_04.tre");
+	archive.addFile(treDir + "/data_skeletal_mesh_00.tre");
+	archive.addFile(treDir + "/data_skeletal_mesh_01.tre");
+	archive.addFile(treDir + "/data_sku1_00.tre");
+	archive.addFile(treDir + "/data_sku1_01.tre");
+	archive.addFile(treDir + "/data_sku1_02.tre");
+	archive.addFile(treDir + "/data_sku1_03.tre");
+	archive.addFile(treDir + "/data_sku1_04.tre");
+	archive.addFile(treDir + "/data_sku1_05.tre");
+	archive.addFile(treDir + "/data_sku1_06.tre");
+	archive.addFile(treDir + "/data_sku1_07.tre");
+	archive.addFile(treDir + "/data_static_mesh_00.tre");
+	archive.addFile(treDir + "/data_static_mesh_01.tre");
+	archive.addFile(treDir + "/data_texture_00.tre");
+	archive.addFile(treDir + "/data_texture_01.tre");
+	archive.addFile(treDir + "/data_texture_02.tre");
+	archive.addFile(treDir + "/data_texture_03.tre");
+	archive.addFile(treDir + "/data_texture_04.tre");
+	archive.addFile(treDir + "/data_texture_05.tre");
+	archive.addFile(treDir + "/data_texture_06.tre");
+	archive.addFile(treDir + "/data_texture_07.tre");
+	archive.addFile(treDir + "/default_patch.tre");
+	archive.addFile(treDir + "/patch_00.tre");
+	archive.addFile(treDir + "/patch_01.tre");
+	archive.addFile(treDir + "/patch_02.tre");
+	archive.addFile(treDir + "/patch_03.tre");
+	archive.addFile(treDir + "/patch_04.tre");
+	archive.addFile(treDir + "/patch_05.tre");
+	archive.addFile(treDir + "/patch_06.tre");
+	archive.addFile(treDir + "/patch_07.tre");
+	archive.addFile(treDir + "/patch_08.tre");
+	archive.addFile(treDir + "/patch_09.tre");
+	archive.addFile(treDir + "/patch_10.tre");
+	archive.addFile(treDir + "/patch_11_00.tre");
+	archive.addFile(treDir + "/patch_11_01.tre");
+	archive.addFile(treDir + "/patch_11_02.tre");
+	archive.addFile(treDir + "/patch_11_03.tre");
+	archive.addFile(treDir + "/patch_12_00.tre");
+	archive.addFile(treDir + "/patch_13_00.tre");
+	archive.addFile(treDir + "/patch_14_00.tre");
+	archive.addFile(treDir + "/patch_sku1_12_00.tre");
+	archive.addFile(treDir + "/patch_sku1_13_00.tre");
+	archive.addFile(treDir + "/patch_sku1_14_00.tre");
 
-  archive.printArchiveContents( std::cout );
+	archive.printArchiveContents(std::cout);
 
-  std::stringstream *sstr =
-    archive.getFileStream("appearance/mesh/ply_corl_house_lg_s01_fp1_r0_mesh_r0_l2.msh" );
+	std::stringstream* sstr =
+		archive.getFileStream("appearance/mesh/ply_corl_house_lg_s01_fp1_r0_mesh_r0_l2.msh");
 
-  if( NULL != sstr )
-    {
-      sstr->seekg( 0, std::ios_base::end );
-      std::cout << "Size: " << sstr->tellg() << std::endl;
-      delete sstr;
-    }
+	if (NULL != sstr)
+	{
+		sstr->seekg(0, std::ios_base::end);
+		std::cout << "Size: " << sstr->tellg() << std::endl;
+		delete sstr;
+	}
 
-  archive.removeAllFiles();
+	archive.removeAllFiles();
 
-  return 0;
+	return 0;
 }
