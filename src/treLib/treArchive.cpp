@@ -138,7 +138,8 @@ void treArchive::getArchiveContents(std::vector<std::string>& content) const {
 	std::sort(tempContent.begin(), tempContent.end());
 
 	// Remove duplicates...
-	std::unique(tempContent.begin(), tempContent.end());
+	auto it = std::unique(tempContent.begin(), tempContent.end());
+	tempContent.resize(std::distance(tempContent.begin(), it));
 
 	content.insert(content.end(), tempContent.begin(), tempContent.end());
 }
@@ -162,7 +163,8 @@ void treArchive::getArchiveContents(const std::string& substr, std::vector<std::
 	std::sort(tempContent.begin(), tempContent.end());
 
 	// Remove duplicates...
-	std::unique(tempContent.begin(), tempContent.end());
+	auto it = std::unique(tempContent.begin(), tempContent.end());
+	tempContent.resize(std::distance(tempContent.begin(), it));
 
 	content.insert(content.end(), tempContent.begin(), tempContent.end());
 }
