@@ -24,6 +24,7 @@
 */
 
 #include <treLib/treArchive.hpp>
+#include <algorithm>
 
 treArchive::treArchive()
 {
@@ -121,19 +122,25 @@ void treArchive::printArchiveContents(std::ostream& os) const
 }
 
 void treArchive::getArchiveContents(std::vector<std::string>& content) const {
-	// Erase content list...	
-	content.clear();
-
 	// Do nothing if list is empty...
 	if (treList.empty()) { return; }
-
+	
 	// Loop through all tre files
+	std::vector<std::string> tempContent;
 	for (const auto& treFile : treList) {
 		// For each tre file list loop through its contents
 		for (const auto& record : treFile->getFileRecordList()) {
-			content.push_back(record.getFileName());
+			tempContent.push_back(record.getFileName());
 		}
 	}
+
+	// Sort vector...
+	std::sort(tempContent.begin(), tempContent.end());
+
+	// Remove duplicates...
+	std::unique(tempContent.begin(), tempContent.end());
+
+	content.insert(content.end(), tempContent.begin(), tempContent.end());
 }
 
 void treArchive::getArchiveContents(const std::string& substr, std::vector<std::string>& content) const {
@@ -141,15 +148,23 @@ void treArchive::getArchiveContents(const std::string& substr, std::vector<std::
 	if (treList.empty()) { return; }
 
 	// Loop through all tre files
+	std::vector<std::string> tempContent;
 	for (const auto& treFile : treList) {
 		// For each tre file list loop through its contents
 		for (const auto& record : treFile->getFileRecordList()) {
 			if (record.getFileName().find(substr) != std::string::npos) {
-				content.push_back(record.getFileName());
+				tempContent.push_back(record.getFileName());
 			}
 		}
 	}
 
+	// Sort vector...
+	std::sort(tempContent.begin(), tempContent.end());
+
+	// Remove duplicates...
+	std::unique(tempContent.begin(), tempContent.end());
+
+	content.insert(content.end(), tempContent.begin(), tempContent.end());
 }
 
 std::stringstream* treArchive::getFileStream(const std::string& filename)
