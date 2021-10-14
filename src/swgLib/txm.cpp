@@ -106,6 +106,7 @@ std::size_t txm::read(std::istream& file) {
 		std::cout << "Found record NAME: " << size << " bytes\n";
 
 		total += base::read(file, _textureName);
+		base::fixSlash(_textureName);
 		std::cout << "Texture name: " << _textureName << "\n";
 	}
 
