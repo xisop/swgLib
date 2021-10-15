@@ -45,9 +45,10 @@ namespace ml
 
 		std::size_t readSHT(std::istream& file, std::string path = "");
 
-	  const std::vector<matl> &getMaterials() const { return _material;}
-	  const std::vector<txm> &getTextures() const { return _texture;}
-	  
+	  const std::vector<matl> &getMaterials() const;
+	  const std::vector<txm> &getTextures() const;
+	  const std::string &getEffectName() const;
+	  const uint8_t &getTexCoordSet( const txm& tex ) const;
 	protected:
 		std::size_t readMATS(std::istream& file);
 		std::size_t readTXMS(std::istream& file);

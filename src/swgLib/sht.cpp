@@ -35,6 +35,16 @@ sht::~sht()
 {
 }
 
+const std::vector<matl> &sht::getMaterials() const { return _material;}
+
+const std::vector<txm> &sht::getTextures() const { return _texture;}
+
+const std::string &sht::getEffectName() const { return _effectName; }
+
+const uint8_t &sht::getTexCoordSet( const txm& tex ) const {
+  return _texCoordSet.at(tex.getNameTag());
+}
+
 std::size_t sht::readSHT(std::istream& file, std::string path)
 {
 	std::size_t sshtSize;
