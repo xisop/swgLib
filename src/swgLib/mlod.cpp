@@ -79,6 +79,10 @@ std::size_t mlod::readMLOD(std::istream& file, const std::string& path)
 	return total;
 }
 
+const std::vector<std::string> mlod::getMeshFilenames() const {
+	return meshFilename;
+}
+
 std::size_t mlod::readINFO(std::istream& file, unsigned short& num)
 {
 	std::size_t size;

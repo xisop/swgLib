@@ -53,6 +53,8 @@ namespace ml
 			return meshFilename[index];
 		}
 
+		const std::vector<std::string> getMeshFilenames() const;
+
 	protected:
 		std::size_t readINFO(std::istream& file, unsigned short& num);
 		std::size_t readNAME(std::istream& file, std::string& name);
