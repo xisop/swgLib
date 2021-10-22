@@ -48,7 +48,7 @@ namespace ml
 	  const std::vector<matl> &getMaterials() const;
 	  const std::vector<txm> &getTextures() const;
 	  const std::string &getEffectName() const;
-	  const uint8_t &getTexCoordSet( const txm& tex ) const;
+	  uint8_t getTexCoordSet( const txm& tex ) const;
 	protected:
 		std::size_t readMATS(std::istream& file);
 		std::size_t readTXMS(std::istream& file);

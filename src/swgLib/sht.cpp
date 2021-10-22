@@ -41,8 +41,14 @@ const std::vector<txm> &sht::getTextures() const { return _texture;}
 
 const std::string &sht::getEffectName() const { return _effectName; }
 
-const uint8_t &sht::getTexCoordSet( const txm& tex ) const {
-  return _texCoordSet.at(tex.getNameTag());
+uint8_t sht::getTexCoordSet( const txm& tex ) const {
+	const auto& set = _texCoordSet.find(tex.getNameTag());
+	if (_texCoordSet.end() == set) {
+		return 0;
+	}
+	else {
+		return set->second;
+	}
 }
 
 std::size_t sht::readSHT(std::istream& file, std::string path)
