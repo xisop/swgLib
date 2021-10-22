@@ -39,13 +39,15 @@ namespace ml
 
 		std::size_t read(std::istream& file, bool index16=false);
 
-		const int32_t getNumIndices() const;
+		const uint32_t getNumIndices() const;
 
-		std::vector<int32_t>& getIndex();
-		const std::vector<int32_t>& getIndex() const;
+		std::vector<int32_t>& getIndices();
+		const std::vector<int32_t>& getIndices() const;
+
+		const int32_t getIndex( const uint32_t &i) const;
 
 	protected:
-		int32_t _numIndices;
+		uint32_t _numIndices;
 		std::vector<int32_t> _index;
 	private:
 	};

@@ -47,7 +47,7 @@ std::size_t indx::read(std::istream& file, bool index16) {
 		file.read((char*)(tempIndex.data()), indexDataSize);
 
 		_index.resize(_numIndices);
-		for (auto i = 0; i < _numIndices; ++i) {
+		for (uint32_t i = 0; i < _numIndices; ++i) {
 			_index[i] = tempIndex[i];
 		}
 		total += indexDataSize;
@@ -64,15 +64,19 @@ std::size_t indx::read(std::istream& file, bool index16) {
 	return total;
 }
 
-const int32_t indx::getNumIndices() const {
+const uint32_t indx::getNumIndices() const {
 	return _numIndices;
 }
 
-std::vector<int32_t>& indx::getIndex() {
+std::vector<int32_t>& indx::getIndices() {
 	return _index;
 }
 
-const std::vector<int32_t>& indx::getIndex() const {
+const std::vector<int32_t>& indx::getIndices() const {
 	return _index;
 
+}
+
+const int32_t indx::getIndex(const uint32_t& i) const {
+	return _index.at(i);
 }
