@@ -36,7 +36,7 @@ sidx::~sidx() {
 
 std::size_t sidx::read(std::istream& file, bool sidx16) {
 	std::size_t total = base::read(file, _numArrays);
-	std::cout << "Sorted Index arrays: " << _numArrays << "\n";
+	std::cout << "Directional Sorted Index buffers: " << _numArrays << "\n";
 
 	_first.resize(_numArrays);
 	_second.resize(_numArrays);
