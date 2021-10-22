@@ -89,6 +89,10 @@ std::size_t vtxa::read(std::istream& file) {
 	return total;
 }
 
+bool vtxa::hasNormal() const { return _hasNormal; }
+bool vtxa::hasColor0() const { return _hasColor0; }
+bool vtxa::hasColor1() const { return _hasColor1; }
+
 bool vtxa::hasPosition(uint32_t flags) {
 	return (std::bitset<32>(flags).test(31));
 }
@@ -233,9 +237,13 @@ void vtxa::processD3DFVF(uint32_t& codes, uint32_t& numTex)
 	return;
 }
 
+const uint32_t& vtxa::getNumVertices() const { return _numVertices; }
+
+const uint32_t& vtxa::getNumUVSets() const { return _numUVs; }
+
 bool vtxa::getPosition(const uint32_t& vertexNumber, float& x, float& y, float& z) const {
 	const std::size_t offset( vertexNumber * _bytesPerVertex );
-	vertex v(_bytesPerVertex, _vertexData.data() + offset);
+	const vertex v(_bytesPerVertex, _vertexData.data() + offset);
 	v.getPosition(x, y, z);
 
 	return true;
@@ -243,20 +251,48 @@ bool vtxa::getPosition(const uint32_t& vertexNumber, float& x, float& y, float& 
 
 bool vtxa::getNormal(const uint32_t& vertexNumber, float& nx, float& ny, float& nz) const {
 	const std::size_t offset(vertexNumber * _bytesPerVertex);
-	vertex v(_bytesPerVertex, _vertexData.data() + offset);
+	const vertex v(_bytesPerVertex, _vertexData.data() + offset);
 	v.getNormal(nx, ny, nz);
 
 	return true;
 }
 
-bool vtxa::getColor0(const uint32_t& vertexNumber, color4& color) const {
+bool vtxa::getUVSets(const uint32_t& vertexNumber, uint32_t &numSets, float *uv) const {
 	const std::size_t offset(vertexNumber * _bytesPerVertex);
-	vertex v(_bytesPerVertex, _vertexData.data() + offset);
-	/*
-	v.getColor0(nx, ny, nz);
-	*/
-	// TODO...
-	return false;
+	const vertex v(_bytesPerVertex, _vertexData.data() + offset);
+	v.getTexCoords( numSets, uv);
+
+	return true;
+}
+
+bool vtxa::getColor0(const uint32_t& vertexNumber, float& r, float& g, float& b, float& a) const {
+	const std::size_t offset(vertexNumber * _bytesPerVertex);
+	const vertex v(_bytesPerVertex, _vertexData.data() + offset);
+
+	uint8_t argb[4];
+	v.getColor(argb);
+
+	a = (argb[0] / 255.0f);
+	r = (argb[1] / 255.0f);
+	g = (argb[2] / 255.0f);
+	b = (argb[3] / 255.0f);
+
+	return true;
+}
+
+bool vtxa::getColor0(const uint32_t& vertexNumber, uint8_t& r, uint8_t& g, uint8_t& b, uint8_t& a) const {
+	const std::size_t offset(vertexNumber * _bytesPerVertex);
+	const vertex v(_bytesPerVertex, _vertexData.data() + offset);
+
+	uint8_t argb[4];
+	v.getColor(argb);
+
+	a = argb[0];
+	r = argb[1];
+	g = argb[2];
+	b = argb[3];
+
+	return true;
 }
 
 bool vtxa::getColor1(const uint32_t& vertexNumber, color4& color) const {

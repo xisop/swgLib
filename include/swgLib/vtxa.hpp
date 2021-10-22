@@ -43,6 +43,10 @@ namespace ml
 
 		std::size_t read(std::istream& file);
 
+		bool hasNormal() const;
+		bool hasColor0() const;
+		bool hasColor1() const;
+
 		static bool hasPosition(uint32_t flags);
 		static bool isTransformed(uint32_t flags);
 		static bool hasNormal(uint32_t flags);
@@ -51,14 +55,19 @@ namespace ml
 		static bool hasPointSize(uint32_t flags);
 		void processD3DFVF(uint32_t& codes, uint32_t& numTex);
 
+		const uint32_t& getNumVertices() const;
+		const uint32_t& getNumUVSets() const;
+
 		bool getPosition(const uint32_t& vertexNumber, float& x, float& y, float& z) const;
 		bool getNormal(const uint32_t& vertexNumber, float& nx, float& ny, float& nz) const;
-		bool getColor0(const uint32_t& vertexNumber, color4& color) const;
+		bool getUVSets(const uint32_t& vertexNumber, uint32_t& numSets, float* uv) const;
+		bool getColor0(const uint32_t& vertexNumber, float& r, float& g, float& b, float& a) const;
+		bool getColor0(const uint32_t& vertexNumber, uint8_t& r, uint8_t& g, uint8_t& b, uint8_t& a) const;
 		bool getColor1(const uint32_t& vertexNumber, color4& color) const;
 
 	protected:
-		int32_t _numVertices;
-		int32_t _numUVs;
+		uint32_t _numVertices;
+		uint32_t _numUVs;
 		uint32_t _flags;
 
 		// Bytes per vertex
