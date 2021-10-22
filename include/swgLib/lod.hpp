@@ -72,6 +72,10 @@ namespace ml
 			_appearance.getBoundingBox(corner1, corner2);
 		}
 
+		const std::vector<lodChild>& getChildren() const {
+			return _child;
+		}
+
 	protected:
 
 	private:
