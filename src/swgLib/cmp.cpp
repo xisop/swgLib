@@ -39,7 +39,7 @@ cmp::~cmp()
 {
 }
 
-uint32_t cmp::getNumParts() const { return _parts.size(); }
+uint32_t cmp::getNumParts() const { return (uint32_t)_parts.size(); }
 
 const cmp::part& cmp::getPart(const uint32_t& index) const {
 	return _parts.at(index);
@@ -187,7 +187,7 @@ std::size_t cmp::readRADR(std::istream& file)
 	_hasRadar = (hasRadar > 0);
 	std::cout << "Has Radar: " << std::boolalpha << _hasRadar << "\n";
 
-	if (_hasRadar > 0) {
+	if (_hasRadar) {
 		total += _radar.read(file);
 	}
 
