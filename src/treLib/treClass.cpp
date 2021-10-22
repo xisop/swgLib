@@ -212,7 +212,7 @@ bool treClass::readFileBlock(std::istream& file)
 
 void treClass::printFileBlock(std::ostream& os) const
 {
-	for (const auto &record : fileRecordList) {
+	for (const auto& record : fileRecordList) {
 		record.print(os);
 		os << "\n";
 	}
@@ -269,7 +269,7 @@ bool treClass::readNameBlock(std::istream& file)
 void treClass::printNameBlock(std::ostream& os, bool verbose) const
 {
 	uint32_t count = 0;
-	for (const auto &i : fileRecordList)
+	for (const auto& i : fileRecordList)
 	{
 		if (verbose) {
 			os << count << ": " << i.getFileName()
@@ -784,21 +784,18 @@ bool treClass::getFileRecordIndex(const std::string& recordName,
 	uint32_t& index) const
 {
 	// Not found if list is empty
-	if (fileRecordList.empty())
-	{
+	if (fileRecordList.empty()) {
 		return false;
 	}
 
 	// Loop through list, incrementing index along the way
-	std::vector<treFileRecord>::const_iterator i;
 	index = 0;
-	for (i = fileRecordList.begin(); i != fileRecordList.end(); ++i, ++index)
-	{
+	for (const auto& record : fileRecordList) {
 		// Return true if filenames match
-		if (recordName == i->getFileName())
-		{
+		if ((record.getUncompressedSize() > 0) && (recordName == record.getFileName())) {
 			return true;
 		}
+		++index;
 	}
 
 	// Otherwise record not found
