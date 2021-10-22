@@ -111,6 +111,7 @@ bool mesh::getIndex(unsigned int indexNum,
 	return true;
 }
 */
+#if 0
 // Some of this works...  Needs more investigating
 unsigned int mesh::readD3DFVF(
 	std::istream& file,
@@ -272,7 +273,7 @@ unsigned int mesh::readD3DFVF(
 
 	return (sizeof(codes));
 }
-
+#endif
 std::size_t mesh::readMESH(std::istream& file)
 {
 	std::size_t meshSize;
