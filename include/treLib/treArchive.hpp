@@ -57,6 +57,8 @@ public:
 
 	void getArchiveContents( const std::string &substr, std::vector<std::string>& content ) const;
 
+	bool fileExists(const std::string& filename) const;
+
 	std::stringstream* getFileStream(const std::string& filename);
 
 protected:

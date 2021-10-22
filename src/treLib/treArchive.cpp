@@ -130,7 +130,10 @@ void treArchive::getArchiveContents(std::vector<std::string>& content) const {
 	for (const auto& treFile : treList) {
 		// For each tre file list loop through its contents
 		for (const auto& record : treFile->getFileRecordList()) {
-			tempContent.push_back(record.getFileName());
+			// Only add non-zero sized files...
+			if (record.getUncompressedSize() > 0) {
+				tempContent.push_back(record.getFileName());
+			}
 		}
 	}
 
@@ -153,8 +156,12 @@ void treArchive::getArchiveContents(const std::string& substr, std::vector<std::
 	for (const auto& treFile : treList) {
 		// For each tre file list loop through its contents
 		for (const auto& record : treFile->getFileRecordList()) {
-			if (record.getFileName().find(substr) != std::string::npos) {
-				tempContent.push_back(record.getFileName());
+			// Only add non-zero sized files...
+			if (record.getUncompressedSize() > 0) {
+				// Match substring...
+				if (record.getFileName().find(substr) != std::string::npos) {
+					tempContent.push_back(record.getFileName());
+				}
 			}
 		}
 	}
@@ -167,6 +174,33 @@ void treArchive::getArchiveContents(const std::string& substr, std::vector<std::
 	tempContent.resize(std::distance(tempContent.begin(), it));
 
 	content.insert(content.end(), tempContent.begin(), tempContent.end());
+}
+
+bool treArchive::fileExists(const std::string& filename) const {
+	// Don't bother if list is empty
+	if (treList.empty())
+	{
+		return false;
+	}
+
+	std::string correctedFilename(filename);
+	fixSlash(correctedFilename);
+
+	unsigned int index = 0;
+	// Loop through all tre files
+	for (std::list<treClass*>::const_iterator i = treList.begin();
+		i != treList.end();
+		++i
+		)
+	{
+		// Ask each treClass to find the file
+		if ((*i)->getFileRecordIndex(correctedFilename, index) == true)
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 std::stringstream* treArchive::getFileStream(const std::string& filename)
