@@ -52,7 +52,7 @@ namespace ml
 		mesh();
 		~mesh();
 
-		std::size_t readMESH(std::istream& file);
+		std::size_t readMESH(std::istream& file, bool skipSIDX=false);
 
 		const sps& getSPS() const;
 

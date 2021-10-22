@@ -34,7 +34,7 @@ shaderPrimitive::shaderPrimitive() {
 shaderPrimitive::~shaderPrimitive() {
 }
 
-std::size_t shaderPrimitive::read(std::istream& file) {
+std::size_t shaderPrimitive::read(std::istream& file, bool skipSIDX) {
 	std::size_t spSize;
 	std::string type;
 	std::size_t total = base::readFormHeader(file, type, spSize);
@@ -58,7 +58,7 @@ std::size_t shaderPrimitive::read(std::istream& file) {
 	_primitives.resize(numberOfPrimitives);
 
 	for (auto& p : _primitives) {
-		total += p.read(file);
+		total += p.read(file, skipSIDX);
 	}
 
 	if (spSize == total)

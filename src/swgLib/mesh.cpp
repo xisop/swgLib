@@ -274,7 +274,7 @@ unsigned int mesh::readD3DFVF(
 	return (sizeof(codes));
 }
 #endif
-std::size_t mesh::readMESH(std::istream& file)
+std::size_t mesh::readMESH(std::istream& file, bool skipSIDX)
 {
 	std::size_t meshSize;
 	std::size_t total = base::readFormHeader(file, "MESH", meshSize);
@@ -298,7 +298,7 @@ std::size_t mesh::readMESH(std::istream& file)
 	}
 
 	// Load shader primitive set...
-	total += _sps.read(file);
+	total += _sps.read(file, skipSIDX);
 
 	if (_version <= 3) {
 		// Load extents...

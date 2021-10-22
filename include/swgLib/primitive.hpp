@@ -40,7 +40,7 @@ namespace ml
 		primitive();
 		~primitive();
 
-		std::size_t read(std::istream& file);
+		std::size_t read(std::istream& file, bool skipSIDX=false);
 
 		const int32_t& getPrimitiveType() const;
 		bool hasIndices() const;

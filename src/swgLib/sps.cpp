@@ -34,7 +34,7 @@ sps::sps() {
 sps::~sps() {
 }
 
-std::size_t sps::read(std::istream& file) {
+std::size_t sps::read(std::istream& file, bool skipSIDX) {
 	std::size_t spsSize;
 	std::size_t total = base::readFormHeader(file, "SPS ", spsSize);
 	spsSize += 8;// Add omitted fields from form header...
@@ -60,7 +60,7 @@ std::size_t sps::read(std::istream& file) {
 
 	for (auto &sp : _shaderPrimitives ) {
 
-		total += sp.read(file);
+		total += sp.read(file, skipSIDX);
 	}
 
 	if (total == spsSize)

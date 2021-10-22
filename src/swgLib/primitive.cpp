@@ -36,7 +36,7 @@ primitive::primitive() :
 primitive::~primitive() {
 }
 
-std::size_t primitive::read(std::istream& file) {
+std::size_t primitive::read(std::istream& file, bool skipSIDX ) {
 
 	std::string type;
 	std::size_t primitiveSize;
@@ -84,26 +84,33 @@ std::size_t primitive::read(std::istream& file) {
 	}
 
 	if (_hasSortedIndices) {
-		std::size_t sidxSize, sidxRead;
+		std::size_t sidxSize;
 		base::readRecordHeader(file, "SIDX", sidxSize);
-		std::cout << "Found record SIDX: " << size << "\n";
-
-		// Load sorted indices
-		if (0 == version) {
-			// Indices are 32-bit
-			sidxRead = _sortedIndex.read(file, false);
+		if (skipSIDX) {
+			_hasSortedIndices = false;
+			file.seekg(sidxSize, std::ios_base::cur);
 		}
 		else {
-			// Indices are 16-bit.
-			sidxRead = _sortedIndex.read(file, true);
-		}
+			std::cout << "Found record SIDX: " << size << "\n";
 
-		if (sidxSize != sidxRead) {
-			std::cout << "SIDX data mismatch. Expected: " << sidxSize << ", found: " << sidxRead << "\n";
-			exit(0);
-		}
+			std::size_t sidxRead=0;
+			// Load sorted indices
+			if (0 == version) {
+				// Indices are 32-bit
+				sidxRead = _sortedIndex.read(file, false);
+			}
+			else {
+				// Indices are 16-bit.
+				sidxRead = _sortedIndex.read(file, true);
+			}
 
-		total += sidxRead+8;
+			if (sidxSize != sidxRead) {
+				std::cout << "SIDX data mismatch. Expected: " << sidxSize << ", found: " << sidxRead << "\n";
+				exit(0);
+			}
+
+			total += sidxRead + 8;
+		}
 	}
 	
 	if (primitiveSize == total)

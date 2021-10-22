@@ -40,7 +40,7 @@ namespace ml
 		sps();
 		~sps();
 
-		std::size_t read(std::istream& file);
+		std::size_t read(std::istream& file, bool skipSIDX=false);
 		const std::vector<std::string>& getShaderFiles() const;
 		const std::vector<shaderPrimitive>& getShaderPrimitives() const;
 		const shaderPrimitive& getShaderPrimitive(const std::size_t& sp) const;
