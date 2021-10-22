@@ -45,8 +45,8 @@ std::size_t appr::read(std::istream& file) {
 	std::string type;
 	total += base::readFormHeader(file, type, size);
 
-	uint8_t apprVersion = base::tagToVersion(type);
-	if ((apprVersion < 1) || (3 < apprVersion)) {
+	_apprVersion = base::tagToVersion(type);
+	if ((_apprVersion < 1) || (3 < _apprVersion)) {
 		std::cout << "Expected type [0001..0003]: " << type << std::endl;
 		exit(0);
 	}
@@ -55,7 +55,7 @@ std::size_t appr::read(std::istream& file) {
 	// Load extents (box/sphere/mesh)...
 	total += readEXBX(file);
 
-	if (3 == apprVersion) {
+	if (3 == _apprVersion) {
 		std::string form;
 		base::peekHeader(file, form, size, type);
 		std::cout << "Peek: " << form << ", " << type << "\n";
@@ -71,7 +71,7 @@ std::size_t appr::read(std::istream& file) {
 	// Load hard points
 	total += readHPTS(file);
 
-	if (apprVersion > 1) {
+	if (_apprVersion > 1) {
 		// Load floors...
 		total += readFLOR(file);
 	}

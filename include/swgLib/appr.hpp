@@ -49,6 +49,8 @@ namespace ml
 		void getBoundingBox(vector3& corner1, vector3& corner2);
 
 	protected:
+		uint8_t _apprVersion;
+
 		std::size_t readFLOR(std::istream& file);
 
 		vector3 _exspCenter;
