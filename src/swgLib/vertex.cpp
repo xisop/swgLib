@@ -196,7 +196,7 @@ void vertex::getNormal(float& nx, float& ny, float& nz) const
 	nz = v[5];
 }
 
-void vertex::getTexCoords(unsigned int& numPairs, float* coords) const
+void vertex::getTexCoords(uint32_t& numPairs, float* coords) const
 {
 	const float* v = reinterpret_cast<const float*>(_dataPtr);
 

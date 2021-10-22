@@ -64,7 +64,7 @@ namespace ml
 
 		void getPosition(float& x, float& y, float& z) const;
 		void getNormal(float& nx, float& ny, float& nz) const;
-		void getTexCoords(unsigned int& numPairs, float* coords) const;
+		void getTexCoords(uint32_t& numPairs, float* coords) const;
 
 		void getColor(unsigned char* argb) const;
 
