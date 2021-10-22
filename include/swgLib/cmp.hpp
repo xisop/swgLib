@@ -22,7 +22,8 @@
  along with swgLib; if not, write to the Free Software
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include <swgLib/model.hpp>
+#include <swgLib/appr.hpp>
+#include <swgLib/idtl.hpp>
 #include <swgLib/vector3.hpp>
 #include <swgLib/matrix3.hpp>
 
@@ -36,69 +37,39 @@
 namespace ml
 {
 
-	class cmp : public model
+	class cmp : public appr
 	{
 	public:
+		struct part {
+			std::string filename;
+			matrix3x4 transform;
+			float yaw;
+			float pitch;
+			float roll;
+		};
+
 		cmp();
 		~cmp();
-		bool isRightType(std::istream& file)
-		{
-			return isOfType(file, "CMPA");
-		}
-		std::size_t readCMP(std::istream& file, std::string path = "");
-		uint32_t getNumParts() const
-		{
-			return uint32_t(partFilenames.size());
-		}
 
-		bool getPart(unsigned int index, std::string& filename,
-			vector3& partPosition,
-			matrix3x4& partScaleRotate
-		) const;
+		std::size_t readCMP(std::istream& file);
 
-		void getBoundingSphere(float& centerX,
-			float& centerY,
-			float& centerZ,
-			float& sphereRadius
-		)
-		{
-			centerX = cx;
-			centerY = cy;
-			centerZ = cz;
-			sphereRadius = radius;
-		}
+		uint32_t getNumParts() const;
 
-		void getBoundingBox(float& X1, float& Y1, float& Z1,
-			float& X2, float& Y2, float& Z2
-		)
-		{
-			X1 = x1;
-			Y1 = y1;
-			Z1 = z1;
-			X2 = x2;
-			Y2 = y2;
-			Z2 = z2;
-		}
+		const part &getPart(const uint32_t &index) const;
+		const std::vector<part>& getParts() const;
 
 	protected:
-		std::size_t readRADR(std::istream& file);
+		std::size_t readPART0001(std::istream& file);
 		std::size_t readPART(std::istream& file);
+		std::size_t readRADR(std::istream& file);
 
 	private:
-		std::vector<std::string> partFilenames;
-		//std::vector<vector3> position;
-		std::vector<matrix3x4> scaleRotate;
+		uint8_t _cmpVersion; // Valid values: [0001-0005]
 
-		std::vector<vector3> radrVert;
-		std::vector<int32_t>radrIndex;
+		std::vector<part> _parts;
 
-		// Bounding sphere center and radius
-		float cx, cy, cz, radius;
-
-		// 2 xyz points defining bounding box
-		float x1, y1, z1;
-		float x2, y2, z2;
-
+		bool _hasRadar;
+		idtl _radar;
 	};
 }
 #endif

@@ -31,13 +31,7 @@
 
 using namespace ml;
 
-cmp::cmp()
-  : x1( -1.0 ),
-    y1( -1.0 ),
-    z1( -1.0 ),
-    x2(  1.0 ),
-    y2(  1.0 ),
-    z2(  1.0 )
+cmp::cmp() : appr::appr(), _hasRadar(false)
 {
 }
 
@@ -45,195 +39,167 @@ cmp::~cmp()
 {
 }
 
-bool cmp::getPart( unsigned int index,
-		   std::string &filename,
-		   vector3 &partPosition,
-		   matrix3x4 &partScaleRotate
-		   ) const
-{
-  if( index >= getNumParts() )
-    {
-      return false;
-    }
+uint32_t cmp::getNumParts() const { return _parts.size(); }
 
-  filename = partFilenames[index];
-
-  //partPosition = position[index];
-
-  partScaleRotate = scaleRotate[index];
-
-  return true;
+const cmp::part& cmp::getPart(const uint32_t& index) const {
+	return _parts.at(index);
 }
 
-std::size_t cmp::readCMP( std::istream &file, std::string path )
-{
-  basePath = path;
-  std::size_t total = 0;
-  std::string form;
-  std::size_t cmpaSize;
-  std::string type;
-
-  total += readFormHeader( file, form, cmpaSize, type );
-  cmpaSize += 8;
-  if( form != "FORM" || type != "CMPA" )
-    {
-      std::cout << "Expected Form of type CMPA: " << type << std::endl;
-      exit( 0 );
-    }
-  std::cout << "Found CMPA form" << std::endl;
-
-  std::size_t size;
-  total += readFormHeader( file, form, size, type );
-  if( form != "FORM" )
-    {
-      std::cout << "Expected Form " << std::endl;
-      exit( 0 );
-    }
-  std::cout << "Found form of type: " << type << std::endl;
-
-  while( total < cmpaSize )
-    {
-      // Peek at next record, but keep file at same place.
-      base::peekHeader( file, form, size, type );
-	
-      if( form == "FORM" )
-	{
-	  if( type == "APPR" )
-	    {
-	      total += model::readAPPR( file );
-	    }
-	  else if( type == "RADR" )
-	    {
-	      total += readRADR( file );
-	    }
-	  else
-	    {
-	      std::cout << "Unexpected FORM: " << type << std::endl;
-	      exit( 0 );
-	    }
-	}
-      else if( form == "PART" )
-	{
-	  total += readPART( file );
-	}
-      else
-	{
-	  std::cout << "Unexpected record: " << form << std::endl;
-	  exit( 0 );
-	}
-    }
-
-  if( cmpaSize == total )
-    {
-      std::cout << "Finished reading CMPA" << std::endl;
-    }
-  else
-    {
-      std::cout << "Failed in reading CMPA" << std::endl;
-      std::cout << "Read " << total << " out of " << cmpaSize
-		<< std::endl;
-    }
-
-  return total;
+const std::vector<cmp::part>& cmp::getParts() const {
+	return _parts;
 }
 
-std::size_t cmp::readPART( std::istream &file )
+std::size_t cmp::readCMP(std::istream& file)
 {
-    std::size_t total = 0;
+	std::size_t cmpSize;
+	std::size_t total = base::readFormHeader(file, "CMPA", cmpSize);
+	std::cout << "Found form CMPA: " << cmpSize << "\n";
+	cmpSize -= 8;
 
-    std::size_t size;
-    std::string type;
-    total += readRecordHeader( file, type, size );
-    size += 8;
-    if( type != "PART" )
-    {
-	std::cout << "Expected record of type PART: " << type << std::endl;
-	exit( 0 );
-    }
-    std::cout << "Found PART record" << std::endl;
+	std::string type;
+	std::size_t size;
+	total += base::readFormHeader(file, type, size);
+	std::cout << "Found FORM " << type << ": " << size << " bytes\n";
 
-    std::string partFilename;
-    total += base::read( file, partFilename );
+	_cmpVersion = base::tagToVersion(type);
+	if ((_cmpVersion < 1) || (_cmpVersion > 5)) {
+		std::cout << "Expected FORM of type 0001, 0002, 0003, 0004, or 0005. Found: " << type << "\n";
+		exit(0);
+	}
 
-    std::string filename("appearance/");
-    filename += partFilename;
-    std::cout << "Part: " << filename << std::endl;
-    
-    partFilenames.push_back( filename );
+	if (_cmpVersion > 2) {
+		total += appr::read(file);
+	}
 
-    // Read scale/rotate matrix and position vector
-    //vector3 vec;
-    matrix3x4 matrix;
-    total += model::readTransformMatrix( file, matrix );
+	if (_cmpVersion > 4) {
+		// Radar
+		total += readRADR(file);
+	}
 
-    //position.push_back( vec );
-    scaleRotate.push_back( matrix );
+	while (total < cmpSize)
+	{
+		if (1 == _cmpVersion) {
+			total += readPART0001(file);
+		}
+		else {
+			total += readPART(file);
+		}
+	}
 
-    //std::cout << "Position: ";
-    //vec.print();
+	if (_cmpVersion > 3) {
+		// Create test shape...
+		// TODO...
+	}
 
-    std::cout << "Matrix: \n" << matrix << std::endl;
+	if (cmpSize == total) {
+		std::cout << "Finished reading CMPA\n";
+	}
+	else
+	{
+		std::cout << "Failed in reading CMPA\n"
+			<< "Read " << total << " out of " << cmpSize
+			<< "\n";
+	}
 
-    if( size == total )
-    {
-        std::cout << "Finished reading PART" << std::endl;
-    }
-    else
-    {
-        std::cout << "FAILED in reading PART" << std::endl;
-        std::cout << "Read " << total << " out of " << size
-                  << std::endl;
-     }
-
-    return total;
+	return total;
 }
 
-std::size_t cmp::readRADR( std::istream &file )
+std::size_t cmp::readPART0001(std::istream& file)
 {
-    std::size_t total = 0;
+	std::size_t partSize;
+	base::readRecordHeader(file, "PART", partSize);
 
-    std::string form;
-    std::size_t radrSize;
-    std::string type;
+	std::size_t total = 0;
 
-    total += readFormHeader( file, form, radrSize, type );
-    radrSize += 8;
-    if( form != "FORM" || type != "RADR" )
-    {
-	std::cout << "Expected Form of type RADR: " << type << std::endl;
-	exit( 0 );
-    }
-    std::cout << "Found RADR form" << std::endl;
+	std::cout << "********** Not supported yet. Transform matrix is invalid! **********\n";
 
-    std::size_t size;
-    total += readRecordHeader( file, type, size );
-    if( type != "INFO" )
-    {
-	std::cout << "Expected record of type INFO: " << type << std::endl;
-	exit( 0 );
-    }
-    std::cout << "Found INFO record" << std::endl;
+	part newPart;
 
-    unsigned int numNodes;
-    total += base::read( file, numNodes );
-    std::cout << "Num nodes: " << numNodes << std::endl;
+	total += base::read(file, newPart.filename);
+	newPart.filename = std::string("appearance/") + newPart.filename;
+	std::cout << "Part: " << newPart.filename << std::endl;
 
-    if( numNodes > 0 )
-      {
-	total += model::readIDTL( file, radrVert, radrIndex );
-      }
+	vector3 position;
+	total += position.read(file);
 
-    if( radrSize == total )
-    {
-	std::cout << "Finished reading RADR" << std::endl;
-    }
-    else
-    {
-	std::cout << "Failed in reading RADR" << std::endl;
-        std::cout << "Read " << total << " out of " << radrSize
-                  << std::endl;
-    }
+	vector3 yawPitchRoll; // In degrees
+	total += yawPitchRoll.read(file);
 
-    return total;
+	_parts.push_back(newPart);
+
+	if (partSize == total)
+	{
+		std::cout << "Finished reading PART" << std::endl;
+	}
+	else
+	{
+		std::cout << "FAILED in reading PART\n"
+			<< "Read " << total << " out of " << partSize
+			<< "\n";
+	}
+
+	return total;
+}
+
+std::size_t cmp::readPART(std::istream& file)
+{
+	std::size_t partSize;
+	base::readRecordHeader(file, "PART", partSize);
+
+	std::size_t total = 0;
+
+	part newPart;
+
+	total += base::read(file, newPart.filename);
+	newPart.filename = std::string("appearance/") + newPart.filename;
+	std::cout << "Part: " << newPart.filename << std::endl;
+
+	// Read 3x4 transform matrix
+	total += newPart.transform.read(file);
+	std::cout << "Matrix: \n" << newPart.transform << std::endl;
+
+	_parts.push_back(newPart);
+
+	if (partSize == total)
+	{
+		std::cout << "Finished reading PART" << std::endl;
+	}
+	else
+	{
+		std::cout << "FAILED in reading PART\n"
+			<< "Read " << total << " out of " << partSize
+			<< "\n";
+	}
+
+	return total;
+}
+
+std::size_t cmp::readRADR(std::istream& file)
+{
+	std::size_t radrSize;
+	std::size_t total = base::readFormHeader(file, "RADR", radrSize);
+
+	std::size_t size;
+	total += base::readRecordHeader(file, "INFO", size);
+
+	uint32_t hasRadar;
+	total += base::read(file, hasRadar);
+	_hasRadar = (hasRadar > 0);
+	std::cout << "Has Radar: " << std::boolalpha << _hasRadar << "\n";
+
+	if (_hasRadar > 0) {
+		total += _radar.read(file);
+	}
+
+	if (radrSize == total) {
+		std::cout << "Finished reading RADR\n";
+	}
+	else {
+		std::cout << "Failed in reading RADR\n"
+			<< "Read " << total << " out of " << radrSize
+			<< "\n";
+	}
+
+	return total;
 }
 
