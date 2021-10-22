@@ -58,13 +58,15 @@ std::size_t appr::read(std::istream& file) {
 	if (3 == _apprVersion) {
 		std::string form;
 		base::peekHeader(file, form, size, type);
-		std::cout << "Peek: " << form << ", " << type << "\n";
-		if ("NULL" == type) {
-			total += base::readFormHeader(file, "NULL", size);
-		}
-		else {
+		std::cout << "Peek: " << form << ", " << type << ", " << size << "\n";
+		if ("CMSH" == type) {
 			// Load collision extents...
 			total += _collisionMesh.read(file);
+		}
+		else {
+			// Skip NULL
+			file.seekg(8 + size, std::ios_base::cur);
+			total += 8 + size;
 		}
 	}
 
@@ -76,12 +78,10 @@ std::size_t appr::read(std::istream& file) {
 		total += readFLOR(file);
 	}
 
-	if (apprSize == total)
-	{
+	if (apprSize == total) {
 		std::cout << "Finished reading APPR\n";
 	}
-	else
-	{
+	else {
 		std::cout << "Failed in reading APPR\n";
 		std::cout << "Read " << total << " out of " << apprSize << "\n";
 		exit(0);
@@ -117,12 +117,12 @@ std::size_t appr::readHPTS(std::istream& file) {
 
 	if (hptsSize == total)
 	{
-		std::cout << "Finished reading HPTS" << std::endl;
+		std::cout << "Finished reading HPTS\n";
 	}
 	else
 	{
-		std::cout << "Failed in reading hpts" << std::endl;
-		std::cout << "Read " << total << " out of " << hptsSize << "\n";
+		std::cout << "Failed in reading hpts\n"
+			<< "Read " << total << " out of " << hptsSize << "\n";
 		exit(0);
 	}
 
