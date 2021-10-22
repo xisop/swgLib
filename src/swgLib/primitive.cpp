@@ -29,6 +29,7 @@
 using namespace ml;
 
 primitive::primitive() :
+	_primitiveType(0),
 	_hasIndices(false),
 	_hasSortedIndices(false) {
 }
@@ -36,14 +37,19 @@ primitive::primitive() :
 primitive::~primitive() {
 }
 
-std::size_t primitive::read(std::istream& file, bool skipSIDX ) {
+std::size_t primitive::read(std::istream& file, bool skipSIDX) {
 
 	std::string type;
 	std::size_t primitiveSize;
 	std::size_t total = base::readFormHeader(file, type, primitiveSize);
 	primitiveSize += 8;
 	uint8_t version = base::tagToVersion(type);
-	std::cout << "Primitive version: " << (int)version << "\n";
+	if (0 == version) {
+		std::cout << "Primitive version: 0 (Indices are 32-bit)\n";
+	}
+	else if (1 == version) {
+		std::cout << "Primitive version: 1 (Indices are 16-bit)\n";
+	}
 
 	std::size_t size;
 	total += base::readRecordHeader(file, "INFO", size);
@@ -80,7 +86,7 @@ std::size_t primitive::read(std::istream& file, bool skipSIDX ) {
 			exit(0);
 		}
 
-		total += indxRead+8;
+		total += indxRead + 8;
 	}
 
 	if (_hasSortedIndices) {
@@ -93,7 +99,7 @@ std::size_t primitive::read(std::istream& file, bool skipSIDX ) {
 		else {
 			std::cout << "Found record SIDX: " << size << "\n";
 
-			std::size_t sidxRead=0;
+			std::size_t sidxRead = 0;
 			// Load sorted indices
 			if (0 == version) {
 				// Indices are 32-bit
@@ -112,7 +118,7 @@ std::size_t primitive::read(std::istream& file, bool skipSIDX ) {
 			total += sidxRead + 8;
 		}
 	}
-	
+
 	if (primitiveSize == total)
 	{
 		std::cout << "Finished reading primitive\n";
