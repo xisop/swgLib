@@ -56,6 +56,7 @@ std::size_t indx::read(std::istream& file, bool index16) {
 		// 32-bits per index...
 		const std::size_t indexDataSize(_numIndices * 4);
 		// Read data...
+		_index.resize(_numIndices);
 		file.read((char*)(_index.data()), indexDataSize);
 
 		total += indexDataSize;
