@@ -29,8 +29,8 @@
 #include <vector>
 #include <treLib/treDataBlock.hpp>
 
-#ifndef TREINDEX_HPP
-#define TREINDEX_HPP 1
+#ifndef TREFILERECORD_HPP
+#define TREFILERECORD_HPP 1
 
 class treFileRecord
 {
