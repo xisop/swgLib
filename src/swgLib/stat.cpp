@@ -43,17 +43,17 @@ ml::stat::~stat()
 {
 }
 
-unsigned int ml::stat::readSTAT(std::istream& file)
+std::size_t ml::stat::readSTAT(std::istream& file)
 {
 	std::size_t statSize;
-	std::size_t total = readFormHeader(file, "STAT", statSize);
+	std::size_t total = base::readFormHeader(file, "STAT", statSize);
 	statSize += 8;
 	std::cout << "Found STAT form" << std::endl;
 
 	// Peek at next record, but keep file at same place.
 	std::size_t size;
 	std::string form, type;
-	peekHeader(file, form, size, type);
+	base::peekHeader(file, form, size, type);
 
 	if ("DERV" == type)
 	{
@@ -61,7 +61,7 @@ unsigned int ml::stat::readSTAT(std::istream& file)
 	}
 
 	std::size_t size0000;
-	total += readFormHeader(file, form, size0000, type);
+	total += base::readFormHeader(file, form, size0000, type);
 	size0000 += 8;
 	if (form != "FORM" || type != "0000")
 	{
@@ -70,10 +70,11 @@ unsigned int ml::stat::readSTAT(std::istream& file)
 	}
 	std::cout << "Found 0000 form" << std::endl;
 
-	total += readPCNT(file, numNodes);
-	for (unsigned int i = 0; i < numNodes; ++i)
+	int32_t numParameters;
+	total += readPCNT(file, numParameters);
+	for (int32_t i = 0; i < numParameters; ++i)
 	{
-		total += readXXXX(file);
+		total += readSTATParameter(file);
 	}
 
 	total += readSHOT(file);
@@ -87,6 +88,7 @@ unsigned int ml::stat::readSTAT(std::istream& file)
 		std::cout << "FAILED in reading STAT" << std::endl;
 		std::cout << "Read " << total << " out of " << statSize
 			<< std::endl;
+		exit(0);
 	}
 
 	return total;
@@ -96,3 +98,8 @@ void ml::stat::print() const
 {
 }
 
+std::size_t ml::stat::readSTATParameter(std::istream& file) {
+	std::cout << "readSTATParameter not implemented\n";
+	exit(0);
+	return 0;
+}

@@ -24,12 +24,11 @@
 */
 #include <swgLib/shot.hpp>
 
-#include <fstream>
+#include <istream>
 #include <string>
-#include <vector>
 
 #ifndef STAT_HPP
-#define STAT_HPP
+#define STAT_HPP 1
 
 namespace ml
 {
@@ -38,18 +37,16 @@ namespace ml
   public:
     stat();
     ~stat();
-    bool isRightType( std::istream &file )
-    {
-      return isOfType( file, "STAT" );
-    }
-    unsigned int readSTAT( std::istream &file );
+
+    std::size_t readSTAT( std::istream &file );
     void print() const;
 
   protected:
     
   private:
+      std::size_t readSTATParameter(std::istream& file);
+
     std::string statBaseObjectFilename;
-    unsigned int numNodes;
   };
 }
 #endif

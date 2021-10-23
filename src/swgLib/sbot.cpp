@@ -43,22 +43,23 @@ sbot::~sbot()
 {
 }
 
-unsigned int sbot::readSBOT(std::istream& file)
+std::size_t sbot::readSBOT(std::istream& file)
 {
 	std::size_t sbotSize;
-	std::size_t total = readFormHeader(file, "SBOT", sbotSize);
+	std::size_t total = base::readFormHeader(file, "SBOT", sbotSize);
 	sbotSize += 8;
 	std::cout << "Found SBOT form" << std::endl;
 
 	total += readDERV(file, sbotBaseObjectFilename);
 
 	std::size_t size0001;
-	total += readFormHeader(file, "0001", size0001);
+	total += base::readFormHeader(file, "0001", size0001);
 	size0001 += 8;
 	std::cout << "Found 0001 form" << std::endl;
 
-	total += readPCNT(file, numNodes);
-	for (unsigned int i = 0; i < numNodes; ++i)
+	int32_t numParameters;
+	total += readPCNT(file, numParameters);
+	for (int32_t i = 0; i < numParameters; ++i)
 	{
 		total += readSBOTXXXX(file);
 	}
@@ -74,6 +75,7 @@ unsigned int sbot::readSBOT(std::istream& file)
 		std::cout << "FAILED in reading SBOT" << std::endl;
 		std::cout << "Read " << total << " out of " << sbotSize
 			<< std::endl;
+		exit(0);
 	}
 
 	return total;
@@ -83,11 +85,11 @@ void sbot::print() const
 {
 }
 
-unsigned int sbot::readSBOTXXXX(std::istream& file)
+std::size_t sbot::readSBOTXXXX(std::istream& file)
 {
 	std::size_t xxxxSize;
 	std::string type;
-	std::size_t total = readRecordHeader(file, type, xxxxSize);
+	std::size_t total = base::readRecordHeader(file, type, xxxxSize);
 	if (type != "XXXX")
 	{
 		std::cout << "Expected record of type XXXX: " << type << std::endl;
@@ -129,10 +131,10 @@ unsigned int sbot::readSBOTXXXX(std::istream& file)
 		total += base::read(file, enabled);
 		if (enabled > 0)
 		{
-			total += base::read(file, portalLayoutFilename);
+			total += base::read(file, _portalLayoutFilename);
 
 			std::cout << property << ": "
-				<< portalLayoutFilename
+				<< _portalLayoutFilename
 				<< std::endl;
 		}
 	}
@@ -151,6 +153,7 @@ unsigned int sbot::readSBOTXXXX(std::istream& file)
 		std::cout << "FAILED in reading XXXX" << std::endl;
 		std::cout << "Read " << total << " out of " << xxxxSize
 			<< std::endl;
+		exit(0);
 	}
 
 	return total;

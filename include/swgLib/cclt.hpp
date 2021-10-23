@@ -24,32 +24,27 @@
 */
 #include <swgLib/shot.hpp>
 
-#include <fstream>
+#include <istream>
 #include <string>
-#include <vector>
 
 #ifndef CCLT_HPP
-#define CCLT_HPP
+#define CCLT_HPP 1
 
 namespace ml
 {
-  class cclt : public shot
-  {
-  public:
-    cclt();
-    ~cclt();
-    bool isRightType( std::istream &file )
-    {
-      return isOfType( file, "CCLT" );
-    }
-    std::size_t readCCLT( std::istream &file );
-    void print() const;
-    
-  protected:
-    std::string ccltBaseObjectFilename;
-    unsigned int numNodes;
-    
-  };
+	class cclt : public shot
+	{
+	public:
+		cclt();
+		~cclt();
+
+		std::size_t readCCLT(std::istream& file);
+		void print() const;
+
+	protected:
+		std::size_t readCCLTParameter(std::istream& file);
+		std::string ccltBaseObjectFilename;
+	};
 }
 
 #endif

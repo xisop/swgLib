@@ -24,12 +24,11 @@
 */
 #include <swgLib/stot.hpp>
 
-#include <fstream>
+#include <istream>
 #include <string>
-#include <vector>
 
 #ifndef SBOT_HPP
-#define SBOT_HPP
+#define SBOT_HPP 1
 
 namespace ml
 {
@@ -38,11 +37,8 @@ namespace ml
   public:
     sbot();
     ~sbot();
-    bool isRightType( std::istream &file )
-    {
-      return isOfType( file, "SBOT" );
-    }
-    unsigned int readSBOT( std::istream &file );
+
+    std::size_t readSBOT( std::istream &file );
 
     std::string getInteriorLayoutFilename() const
     {
@@ -52,7 +48,7 @@ namespace ml
     void print() const;
 
   protected:
-    unsigned int readSBOTXXXX( std::istream &file );
+    std::size_t readSBOTXXXX( std::istream &file );
 
     std::string sbotBaseObjectFilename;
     std::string terrainModificationFilename;

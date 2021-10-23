@@ -50,7 +50,7 @@ std::size_t cclt::readCCLT(std::istream& file)
 	std::size_t ccltSize;
 	std::string type;
 
-	total += readFormHeader(file, form, ccltSize, type);
+	total += base::readFormHeader(file, form, ccltSize, type);
 	ccltSize += 8;
 	if (form != "FORM" || type != "CCLT")
 	{
@@ -62,7 +62,7 @@ std::size_t cclt::readCCLT(std::istream& file)
 	total += readDERV(file, ccltBaseObjectFilename);
 
 	std::size_t size0000;
-	total += readFormHeader(file, form, size0000, type);
+	total += base::readFormHeader(file, form, size0000, type);
 	size0000 += 8;
 	if (form != "FORM" || type != "0000")
 	{
@@ -71,10 +71,11 @@ std::size_t cclt::readCCLT(std::istream& file)
 	}
 	std::cout << "Found 0000 form" << std::endl;
 
-	total += readPCNT(file, numNodes);
-	for (unsigned int i = 0; i < numNodes; ++i)
+	int32_t numParameters;
+	total += readPCNT(file, numParameters);
+	for (int32_t i = 0; i < numParameters; ++i)
 	{
-		total += readXXXX(file);
+		total += readCCLTParameter(file);
 	}
 
 	total += readSHOT(file);
@@ -89,6 +90,7 @@ std::size_t cclt::readCCLT(std::istream& file)
 		std::cout << "FAILED in reading CCLT" << std::endl;
 		std::cout << "Read " << total << " out of " << ccltSize
 			<< std::endl;
+		exit(0);
 	}
 
 	return total;
@@ -96,4 +98,10 @@ std::size_t cclt::readCCLT(std::istream& file)
 
 void cclt::print() const
 {
+}
+
+std::size_t cclt::readCCLTParameter(std::istream& file) {
+	std::cout << "readCCLTParameter not implemented\n";
+	exit(0);
+	return 0;
 }

@@ -24,33 +24,28 @@
 */
 #include <swgLib/shot.hpp>
 
-#include <fstream>
+#include <istream>
 #include <string>
-#include <vector>
 
 #ifndef STOT_HPP
-#define STOT_HPP
+#define STOT_HPP 1
 
 namespace ml
 {
-  class stot : public shot
-  {
-  public:
-    stot();
-    ~stot();
-    bool isRightType( std::istream &file )
-    {
-      return isOfType( file, "STOT" );
-    }
-    unsigned int readSTOT( std::istream &file );
-    void print() const;
+	class stot : public shot
+	{
+	public:
+		stot();
+		~stot();
 
-  protected:
-    unsigned int readSTOTXXXX( std::istream &file );
+		std::size_t readSTOT(std::istream& file);
+		void print() const;
 
-    unsigned int numNodes;
-    std::string stotBaseObjectFilename;
+	protected:
+		std::size_t readSTOTParameter(std::istream& file);
 
-  };
+		std::string _stotBaseObjectFilename;
+		int8_t _stotVersion;
+	};
 }
 #endif
