@@ -183,7 +183,7 @@ int main(int argc, char** argv)
 		{
 			ml::sbot misc;
 			misc.readSBOT(infile);
-			misc.print();
+			misc.print(std::cout);
 		}
 		else if ("SD2D" == fileType)
 		{
@@ -248,7 +248,7 @@ int main(int argc, char** argv)
 		{
 			ml::stot misc;
 			misc.readSTOT(infile);
-			misc.print();
+			misc.print(std::cout);
 		}
 		else if ("SWTS" == fileType)
 		{
