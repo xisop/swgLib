@@ -128,8 +128,10 @@ std::size_t sbot::readSBOTParameter(std::istream& file) {
 	std::cout << "\n";
 #endif
 
+#if 0
 	const std::size_t valueSize(xxxxSize - total);
-	//std::cout << "Value size: " << valueSize << "\n";
+	std::cout << "Value size: " << valueSize << "\n";
+#endif
 	if (parameter == "terrainModificationFileName")
 	{
 		if (1 == dataType) {
