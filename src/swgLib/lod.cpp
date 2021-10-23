@@ -34,6 +34,8 @@
 using namespace ml;
 
 lod::lod() :
+	appr(),
+	_dtlaVersion(0),
 	_usePivotPoint(false),
 	_disableLODCrossFade(false)
 {
@@ -43,7 +45,12 @@ lod::~lod()
 {
 }
 
-bool lod::getChild(int32_t id, struct lodChild& requestedChild) const
+uint32_t lod::getNumChildren() const
+{
+	return uint32_t(_child.size());
+}
+
+bool lod::getChild(int32_t id, struct lod::child& requestedChild) const
 {
 	for (auto c : _child) {
 		if (id == c.id) {
@@ -54,38 +61,41 @@ bool lod::getChild(int32_t id, struct lodChild& requestedChild) const
 	return false;
 }
 
-std::size_t lod::readLOD(std::istream& file, std::string path)
+const std::vector<lod::child>& lod::getChildren() const {
+	return _child;
+}
+
+std::size_t lod::readLOD(std::istream& file)
 {
-	basePath = path;
 	std::size_t dtlaSize;
-	std::size_t total = readFormHeader(file, "DTLA", dtlaSize);
+	std::size_t total = base::readFormHeader(file, "DTLA", dtlaSize);
 	dtlaSize += 12;
 	std::cout << "Found DTLA form: " << dtlaSize << " bytes\n";
 
 	std::size_t size;
 	std::string form, type;
-	total += readFormHeader(file, form, size, type);
+	total += base::readFormHeader(file, form, size, type);
 	if (form != "FORM")
 	{
 		std::cout << "Expected Form " << std::endl;
 		exit(0);
 	}
 
-	_version = base::tagToVersion(type);
-	if ((_version < 1) || (_version > 8)) {
+	_dtlaVersion = base::tagToVersion(type);
+	if ((_dtlaVersion < 1) || (_dtlaVersion > 8)) {
 		std::cout << "Expected type [0001..0008]: " << type << std::endl;
 		exit(0);
 	}
 	std::cout << "Found form of type: " << type << std::endl;
 
 	// Versions 4+...
-	if (_version >= 4) {
+	if (_dtlaVersion >= 4) {
 		// Read appearance...
-		total += _appearance.read(file);
+		total += appr::read(file);
 	}
 
 	// Versions 6+...
-	if (_version >= 6) {
+	if (_dtlaVersion >= 6) {
 		// Read PIVT...
 		total += base::readRecordHeader(file, "PIVT", size);
 		std::cout << "Found record PIVT: " << size << "\n";
@@ -93,7 +103,7 @@ std::size_t lod::readLOD(std::istream& file, std::string path)
 		std::cout << "LOD Flags: 0x" << std::hex << (int)_lodFlags << std::dec << "\n";
 		_usePivotPoint = (_lodFlags & 0x01) > 0;
 		std::cout << "Use pivot point: " << std::boolalpha << _usePivotPoint << "\n";
-		if (_version >= 8) {
+		if (_dtlaVersion >= 8) {
 			_disableLODCrossFade = (_lodFlags & 0x02) > 0;
 			std::cout << "Disable LOD cross fade: " << std::boolalpha << _disableLODCrossFade << "\n";
 		}
@@ -134,7 +144,13 @@ std::size_t lod::readLOD(std::istream& file, std::string path)
 				for (auto& c : _child) {
 					if (id == c.id) {
 						// If found, set child name...
-						c.name = std::string("appearance/") + name;
+						if (name.find("appearance/") == std::string::npos) {
+							// If appearance directory is not present prepend it...
+							c.name = std::string("appearance/") + name;
+						}
+						else {
+							c.name = name;
+						}
 					}
 				}
 			}
@@ -151,7 +167,7 @@ std::size_t lod::readLOD(std::istream& file, std::string path)
 	} // End entries...
 
 	// Versions 7+...
-	if (_version >= 7) {
+	if (_dtlaVersion >= 7) {
 		// Load Radar...
 		std::size_t radrSize;
 		total += base::readFormHeader(file, "RADR", radrSize);
@@ -174,7 +190,7 @@ std::size_t lod::readLOD(std::istream& file, std::string path)
 	}
 
 	// Versions 2+...
-	if (_version >= 2) {
+	if (_dtlaVersion >= 2) {
 		// Load test shape...
 		std::size_t testSize;
 		total += base::readFormHeader(file, "TEST", testSize);
@@ -218,7 +234,7 @@ std::size_t lod::readLOD(std::istream& file, std::string path)
 	}
 
 	// Versions 3 or 4
-	if ((3 == _version) || (5 == _version)) {
+	if ((3 == _dtlaVersion) || (5 == _dtlaVersion)) {
 		// Load floors...
 		std::cout << "Needs handled...\n";
 		exit(0);

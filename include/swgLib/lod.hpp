@@ -34,10 +34,10 @@
 
 namespace ml
 {
-	class lod : public base
+	class lod : public appr
 	{
 	public:
-		struct lodChild {
+		struct child {
 			int id;
 			float near;
 			float far;
@@ -47,41 +47,19 @@ namespace ml
 		lod();
 		~lod();
 
-		bool isRightType(std::istream& file)
-		{
-			return isOfType(file, "DTLA");
-		}
+		std::size_t readLOD(std::istream& file);
 
-		std::size_t readLOD(std::istream& file, std::string path = "");
-
-		uint32_t getNumLODs() const
-		{
-			return uint32_t(_child.size());
-		}
+		uint32_t getNumChildren() const;
 
 		// Can be .msh or .cmp
-		bool getChild(int32_t id, struct lodChild& requestedChild) const;
+		bool getChild(int32_t id, struct child& requestedChild) const;
 
-		void getBoundingSphere( vector3& center, float& radius ) const
-		{
-			_appearance.getBoundingSphere(center, radius);
-		}
-
-		void getBoundingBox( vector3& corner1, vector3& corner2 )
-		{
-			_appearance.getBoundingBox(corner1, corner2);
-		}
-
-		const std::vector<lodChild>& getChildren() const {
-			return _child;
-		}
+		const std::vector<child>& getChildren() const;
 
 	protected:
 
 	private:
-		uint8_t _version;
-
-		appr _appearance;
+		uint8_t _dtlaVersion;
 
 		// DTLA Version 6+
 		uint8_t _lodFlags;
@@ -89,7 +67,7 @@ namespace ml
 
 		bool _disableLODCrossFade;
 
-		std::vector<lodChild> _child;
+		std::vector<child> _child;
 
 		// Radar shape...
 		bool _hasRadar;
