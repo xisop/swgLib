@@ -99,6 +99,7 @@ std::size_t cmp::readCMP(std::istream& file)
 		std::cout << "Failed in reading CMPA\n"
 			<< "Read " << total << " out of " << cmpSize
 			<< "\n";
+		exit(0);
 	}
 
 	return total;
@@ -134,8 +135,8 @@ std::size_t cmp::readPART0001(std::istream& file)
 	else
 	{
 		std::cout << "FAILED in reading PART\n"
-			<< "Read " << total << " out of " << partSize
-			<< "\n";
+			<< "Read " << total << " out of " << partSize << "\n";
+		exit(0);
 	}
 
 	return total;
@@ -167,8 +168,8 @@ std::size_t cmp::readPART(std::istream& file)
 	else
 	{
 		std::cout << "FAILED in reading PART\n"
-			<< "Read " << total << " out of " << partSize
-			<< "\n";
+			<< "Read " << total << " out of " << partSize << "\n";
+		exit(0);
 	}
 
 	return total;
@@ -178,6 +179,7 @@ std::size_t cmp::readRADR(std::istream& file)
 {
 	std::size_t radrSize;
 	std::size_t total = base::readFormHeader(file, "RADR", radrSize);
+	total -= 8;
 
 	std::size_t size;
 	total += base::readRecordHeader(file, "INFO", size);
@@ -196,8 +198,8 @@ std::size_t cmp::readRADR(std::istream& file)
 	}
 	else {
 		std::cout << "Failed in reading RADR\n"
-			<< "Read " << total << " out of " << radrSize
-			<< "\n";
+			<< "Read " << total << " out of " << radrSize << "\n";
+		exit(0);
 	}
 
 	return total;
