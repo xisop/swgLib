@@ -22,88 +22,85 @@
  along with swgLib; if not, write to the Free Software
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include <swgLib/base.hpp>
 
-#include <fstream>
+#include <istream>
 #include <string>
-#include <vector>
 
 #ifndef SHOT_HPP
-#define SHOT_HPP
+#define SHOT_HPP 1
 
 namespace ml
 {
-  class shot : public base
-  {
-  public:
-    shot();
-    ~shot();
-    bool isRightType( std::istream &file )
-    {
-      return isOfType( file, "SHOT" );
-    }
-    unsigned int readSHOT( std::istream &file );
-    void print() const;
-  
-    void setAppearanceFilename( const std::string &filename )
-    {
-      appearanceFilename = filename;
-    }
-  
-    const std::string &getAppearanceFilename() const
-    {
-      return appearanceFilename;
-    }
-  
-    void setPortalLayoutFilename( const std::string &filename )
-    {
-      portalLayoutFilename = filename;
-    }
-  
-    const std::string &getPortalLayoutFilename() const
-    {
-      return portalLayoutFilename;
-    }
+	class shot
+	{
+	public:
+		shot();
+		virtual ~shot();
 
-    const std::string &getBaseObjectFilename() const {
-      return shotBaseObjectFilename;
-    }
+		std::size_t readSHOT(std::istream& file);
+		void print() const;
 
-  protected:
-    unsigned int readDERV( std::istream &file, std::string &filename );
-    unsigned int readPCNT( std::istream &file, unsigned int &num );
-    unsigned int readXXXX( std::istream &file );
-  
-    unsigned int numAttributes;
-    std::string shotBaseObjectFilename;
+		void setAppearanceFilename(const std::string& filename)
+		{
+			_appearanceFilename = filename;
+		}
 
-    std::vector<std::string> objectName;
-    std::vector<std::string> detailedDescription;
-    std::vector<std::string> lookAtText;
-    unsigned char snapToTerrain;
-    unsigned char containerType;
-    unsigned char containerVolumeLimit;
-    unsigned char tintPalette;
-    std::string slotDescriptorFilename;
-    std::string arrangementDescriptorFilename;
-    std::string appearanceFilename;
-    std::string portalLayoutFilename;
-    std::string clientDataFile;
-    unsigned short collisionMaterialFlags;
-    unsigned short collisionMaterialPassFlags;
-    unsigned short collisionMaterialBlockFlags;
-    unsigned short collisionActionFlags;
-    unsigned short collisionActionPassFlags;
-    unsigned short collisionActionBlockFlags;
-    unsigned short scale;
-    unsigned short gameObjectType;
-    unsigned char  sendToClient;
-    unsigned short scaleThresholdBeforeExtentTest;
-    unsigned short clearFloraRadius;
-    unsigned int   surfaceType;
-    unsigned short noBuildRadius;
-    unsigned char  onlyVisibleInTools;
+		const std::string& getAppearanceFilename() const
+		{
+			return _appearanceFilename;
+		}
 
-  };
+		void setPortalLayoutFilename(const std::string& filename)
+		{
+			_portalLayoutFilename = filename;
+		}
+
+		const std::string& getPortalLayoutFilename() const
+		{
+			return _portalLayoutFilename;
+		}
+
+		const std::string& getBaseObjectFilename() const {
+			return _baseObjectFilename;
+		}
+
+	protected:
+		std::size_t readDERV(std::istream& file, std::string& filename);
+		static std::size_t readPCNT(std::istream& file, int32_t& numParameters);
+		std::size_t readSHOTParameter(std::istream& file);
+
+		std::string _baseObjectFilename;
+
+		int8_t      _shotVersion;
+
+		std::string _objectName;
+		std::string _detailedDescription;
+		std::string _lookAtText;
+		bool        _snapToTerrain;
+		int32_t     _containerType;
+		int32_t     _containerVolumeLimit;
+		std::string _tintPalette;
+		std::string _slotDescriptorFilename;
+		std::string _arrangementDescriptorFilename;
+		std::string _appearanceFilename;
+		std::string _portalLayoutFilename;
+		std::string _clientDataFile;
+		int32_t     _collisionMaterialFlags;
+		int32_t     _collisionMaterialPassFlags;
+		int32_t     _collisionMaterialBlockFlags;
+		int32_t     _collisionActionFlags;
+		int32_t     _collisionActionPassFlags;
+		int32_t     _collisionActionBlockFlags;
+		float       _scale;
+		int32_t     _gameObjectType;
+		bool        _sendToClient;
+		float       _scaleThresholdBeforeExtentTest;
+		float       _clearFloraRadius;
+		int32_t     _surfaceType;
+		float       _noBuildRadius;
+		bool        _onlyVisibleInTools;
+		float       _locationReservationRadius;
+		bool        _forceNoCollision;
+	};
 }
 #endif
