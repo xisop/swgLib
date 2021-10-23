@@ -80,21 +80,8 @@ std::size_t shot::readSHOT(std::istream& file)
 	shotSize += 8;
 	std::cout << "Found SHOT form: " << shotSize << "\n";
 
-#if 1
 	total += readDERV(file, _baseObjectFilename);
 	std::cout << "SHOT Base object filename: " << _baseObjectFilename << "\n";
-#else
-	std::size_t dervSize;
-	total += base::readFormHeader(file, "DERV", dervSize);
-	std::cout << "Found DERV form: " << dervSize << "\n";
-
-	std::size_t xxxxSize;
-	total += base::readRecordHeader(file, "XXXX", xxxxSize);
-	std::cout << "Found XXXX record:" << xxxxSize << "\n";
-
-	total += base::read(file, _baseObjectFilename);
-	std::cout << "Base object filename: " << _baseObjectFilename << "\n";
-#endif
 
 	std::string type;
 	std::size_t size;
@@ -131,7 +118,6 @@ std::size_t shot::readDERV(std::istream& file, std::string& filename)
 	std::size_t dervSize;
 	std::size_t total = base::readFormHeader(file, "DERV", dervSize);
 	dervSize += 8;
-	std::cout << "Found DERV form" << std::endl;
 
 	std::size_t xxxxSize;
 	total += base::readRecordHeader(file, "XXXX", xxxxSize);
@@ -139,11 +125,7 @@ std::size_t shot::readDERV(std::istream& file, std::string& filename)
 	total += base::read(file, filename);
 	//std::cout << "Filename: " << filename << std::endl;
 
-	if (dervSize == total)
-	{
-		std::cout << "Finished reading DERV" << std::endl;
-	}
-	else
+	if (dervSize != total)
 	{
 		std::cout << "FAILED in reading DERV" << std::endl;
 		std::cout << "Read " << total << " out of " << dervSize
@@ -154,8 +136,7 @@ std::size_t shot::readDERV(std::istream& file, std::string& filename)
 	return total;
 }
 
-
-void shot::print() const
+void shot::print(std::ostream &os) const
 {
 }
 

@@ -24,6 +24,7 @@
 */
 
 #include <istream>
+#include <ostream>
 #include <string>
 
 #ifndef SHOT_HPP
@@ -38,7 +39,7 @@ namespace ml
 		virtual ~shot();
 
 		std::size_t readSHOT(std::istream& file);
-		void print() const;
+		void print(std::ostream& os) const;
 
 		void setAppearanceFilename(const std::string& filename)
 		{
