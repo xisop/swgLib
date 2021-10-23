@@ -22,37 +22,29 @@
  along with swgLib; if not, write to the Free Software
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include <swgLib/base.hpp>
 
-#include <fstream>
+#include <istream>
 #include <string>
 
 #ifndef APT_HPP
-#define APT_HPP
+#define APT_HPP 1
 
 namespace ml
 {
-	class apt : public base
+	class apt
 	{
 	public:
 		apt();
 		~apt();
-		bool isRightType(std::istream& file)
-		{
-			return isOfType(file, "APT ");
-		}
+
 		std::size_t readAPT(std::istream& file);
 		void print() const;
-		std::string getChildFilename() const
-		{
-			return childFilename;
-		}
+		std::string getFilename() const;
 
 	protected:
-		std::size_t readNAME(std::istream& file, std::string& filename);
 
 	private:
-		std::string childFilename;
+		std::string _filename;
 	};
 }
 

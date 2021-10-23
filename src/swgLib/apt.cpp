@@ -23,10 +23,6 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-/**
-   This class still needs work.
- */
-
 #include <swgLib/base.hpp>
 #include <swgLib/apt.hpp>
 
@@ -45,75 +41,27 @@ apt::~apt()
 
 std::size_t apt::readAPT(std::istream& file)
 {
-	std::size_t total = 0;
-	std::string form;
 	std::size_t aptSize;
-	std::string type;
-
-	total += readFormHeader(file, form, aptSize, type);
+	std::size_t total = base::readFormHeader(file, "APT ", aptSize);
 	aptSize += 8;
-	if (form != "FORM" || type != "APT ")
-	{
-		std::cout << "Expected Form of type APT: " << type << std::endl;
-		exit(0);
-	}
-	std::cout << "Found APT form" << std::endl;
+	std::cout << "Found form APT: " << aptSize << "\n";
 
-	std::size_t size;
-	total += readFormHeader(file, form, size, type);
-	if (form != "FORM")
-	{
-		std::cout << "Expected Form" << std::endl;
-		exit(0);
-	}
-	std::cout << "Found form of type: " << type << std::endl;
-
-	total += readNAME(file, childFilename);
-
-	if (aptSize == total)
-	{
-		std::cout << "Finished reading APT" << std::endl;
-	}
-	else
-	{
-		std::cout << "FAILED in reading APT" << std::endl;
-		std::cout << "Read " << total << " out of " << aptSize
-			<< std::endl;
-	}
-
-	return total;
-}
-
-std::size_t apt::readNAME(std::istream& file, std::string& filename)
-{
-	std::size_t total = 0;
-	std::string form;
-	std::string type;
+	total += base::readFormHeader(file, "0000", aptSize);
 
 	std::size_t nameSize;
-	total += readRecordHeader(file, type, nameSize);
+	total += base::readRecordHeader(file, "NAME", nameSize);
 	nameSize += 8;
-	if (type != "NAME")
-	{
-		std::cout << "Expected record of type NAME: " << type << std::endl;
+
+	total += base::read(file, _filename);
+	std::cout << "Name: " << _filename << "\n";
+
+	if (aptSize == total) {
+		std::cout << "Finished reading APT\n";
+	}
+	else {
+		std::cout << "FAILED in reading APT\n"
+			<< "Read " << total << " out of " << aptSize << "\n";
 		exit(0);
-	}
-	std::cout << "Found " << type << std::endl;
-
-	char temp[255];
-	file.getline(temp, 255, 0);
-	filename = temp;
-	total += filename.size() + 1;
-
-	if (nameSize == total)
-	{
-		std::cout << "Finished reading NAME" << std::endl;
-	}
-	else
-	{
-		std::cout << "FAILED in reading NAME" << std::endl;
-		std::cout << "Read " << total << " out of " << nameSize
-			<< std::endl;
 	}
 
 	return total;
@@ -123,3 +71,6 @@ void apt::print() const
 {
 }
 
+std::string apt::getFilename() const {
+	return _filename;
+}
