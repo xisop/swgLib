@@ -88,6 +88,7 @@ namespace ml
 		static std::size_t write(std::ostream& file, const unsigned int& data);
 		static std::size_t read(std::istream& file, float& data);
 		static std::size_t write(std::ostream& file, const float& data);
+		static std::size_t read(std::istream& file, std::string& data, const std::size_t &length);
 		static std::size_t read(std::istream& file, std::string& data);
 		static std::size_t write(std::ostream& file, const std::string& data);
 		static std::size_t read(std::istream& file, vector3& mat);

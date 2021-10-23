@@ -464,6 +464,16 @@ std::size_t base::write(std::ostream& file, const float& data)
 }
 
 // **************************************************
+std::size_t base::read(std::istream& file, std::string& data, const std::size_t &length) {
+	char temp[255];
+	file.read(temp, length);
+	for (uint32_t i = 0; i < length; ++i) {
+		if (0 == temp[i]) { temp[i] = ' '; }
+	}
+	temp[length-1] = 0;
+	data = temp;
+	return length;
+}
 
 std::size_t base::read(std::istream& file, std::string& data)
 {
