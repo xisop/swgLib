@@ -162,6 +162,11 @@ int main(int argc, char** argv)
 			ml::mlod misc;
 			misc.readMLOD(infile);
 		}
+		else if ("NRND" == fileType)
+		{
+			// No render
+			std::cout << "No Render Template (empty file)\n";
+		}
 		else if ("PEFT" == fileType)
 		{
 			// Particle effect
