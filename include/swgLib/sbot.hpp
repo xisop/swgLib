@@ -25,6 +25,7 @@
 #include <swgLib/stot.hpp>
 
 #include <istream>
+#include <ostream>
 #include <string>
 
 #ifndef SBOT_HPP
@@ -40,21 +41,18 @@ namespace ml
 
     std::size_t readSBOT( std::istream &file );
 
-    std::string getInteriorLayoutFilename() const
-    {
-      return interiorLayoutFilename;
-    }
+    const std::string& getTerrainModificationFilename() const;
+    const std::string& getInteriorLayoutFilename() const;
 
-    void print() const;
+    void print(std::ostream &os) const;
 
   protected:
-    std::size_t readSBOTXXXX( std::istream &file );
+    std::size_t readSBOTParameter( std::istream &file );
 
-    std::string sbotBaseObjectFilename;
-    std::string terrainModificationFilename;
-    std::string interiorLayoutFilename;
-    unsigned int numNodes;
-
+    int8_t _sbotVersion;
+    std::string _sbotBaseObjectFilename;
+    std::string _terrainModificationFileName;
+    std::string _interiorLayoutFileName;
   };
 }
 #endif

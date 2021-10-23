@@ -35,33 +35,35 @@
 
 using namespace ml;
 
-sbot::sbot()
-{
+sbot::sbot() :
+	_sbotVersion(0),
+	_sbotBaseObjectFilename(""),
+	_terrainModificationFileName(""),
+	_interiorLayoutFileName("") {
 }
 
-sbot::~sbot()
-{
+sbot::~sbot() {
 }
 
-std::size_t sbot::readSBOT(std::istream& file)
-{
+std::size_t sbot::readSBOT(std::istream& file) {
 	std::size_t sbotSize;
 	std::size_t total = base::readFormHeader(file, "SBOT", sbotSize);
 	sbotSize += 8;
-	std::cout << "Found SBOT form" << std::endl;
+	std::cout << "Found SBOT form: " << sbotSize << "\n";
 
-	total += readDERV(file, sbotBaseObjectFilename);
+	total += readDERV(file, _sbotBaseObjectFilename);
 
-	std::size_t size0001;
-	total += base::readFormHeader(file, "0001", size0001);
-	size0001 += 8;
-	std::cout << "Found 0001 form" << std::endl;
+	std::string type;
+	std::size_t size;
+	total += base::readFormHeader(file, type, size);
+	_sbotVersion = base::tagToVersion(type);
+	std::cout << "SBOT version: " << (int)_sbotVersion << "\n";
 
 	int32_t numParameters;
 	total += readPCNT(file, numParameters);
 	for (int32_t i = 0; i < numParameters; ++i)
 	{
-		total += readSBOTXXXX(file);
+		total += readSBOTParameter(file);
 	}
 
 	total += readSTOT(file);
@@ -81,12 +83,82 @@ std::size_t sbot::readSBOT(std::istream& file)
 	return total;
 }
 
-void sbot::print() const
-{
+const std::string& sbot::getTerrainModificationFilename() const {
+	return _terrainModificationFileName;
 }
 
-std::size_t sbot::readSBOTXXXX(std::istream& file)
-{
+const std::string& sbot::getInteriorLayoutFilename() const {
+	return _interiorLayoutFileName;
+}
+
+void sbot::print(std::ostream& os) const {
+#if 0
+	os << "Terrain modification filename: " << _terrainModificationFileName << "\n"
+		<< "Interior layout filename: " << _interiorLayoutFileName << "\n";
+#endif
+}
+
+std::size_t sbot::readSBOTParameter(std::istream& file) {
+#if 1
+	std::size_t xxxxSize;
+	std::size_t total = base::readRecordHeader(file, "XXXX", xxxxSize);
+	xxxxSize += 8;
+	std::string parameter;
+	total += base::read(file, parameter);
+	//std::cout << "Parameter: " << parameter << std::endl;
+
+	// 0 - None
+	// 1 - Single
+	// 2 - Weighted list (count(int32), weight(int32), value)
+	// 3 - Range [min, max]
+	// 4 - Die Roll [numDice(int32), dieSides(int32), base(int32)
+	int8_t dataType;
+	total += base::read(file, dataType);
+
+#if 0
+	std::cout << "Parameter data type: ";
+	switch (dataType) {
+	case 1: std::cout << "Single"; break;
+	case 2: std::cout << "Weighted list"; break;
+	case 3: std::cout << "Range"; break;
+	case 4: std::cout << "Die Roll"; break;
+	default: std::cout << "None:" << (int)dataType;
+	}
+	//std::cout << " not handled\n";
+	std::cout << "\n";
+#endif
+
+	const std::size_t valueSize(xxxxSize - total);
+	//std::cout << "Value size: " << valueSize << "\n";
+	if (parameter == "terrainModificationFileName")
+	{
+		if (1 == dataType) {
+			total += base::read(file, _terrainModificationFileName);
+			std::cout << "Terrain modification filename: " << _terrainModificationFileName << "\n";
+		}
+	}
+	else if (parameter == "interiorLayoutFileName")
+	{
+		if (1 == dataType) {
+			total += base::read(file, _interiorLayoutFileName);
+			std::cout << "Interior layout filename: " << _interiorLayoutFileName << "\n";
+		}
+	}
+	else
+	{
+		std::cout << "Unknown: " << parameter << std::endl;
+		exit(0);
+	}
+
+	if (xxxxSize != total) {
+		std::cout << "FAILED in reading XXXX" << std::endl;
+		std::cout << "Read " << total << " out of " << xxxxSize
+			<< std::endl;
+		exit(0);
+	}
+
+	return total;
+#else
 	std::size_t xxxxSize;
 	std::string type;
 	std::size_t total = base::readRecordHeader(file, type, xxxxSize);
@@ -157,4 +229,5 @@ std::size_t sbot::readSBOTXXXX(std::istream& file)
 	}
 
 	return total;
+#endif
 }
