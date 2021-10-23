@@ -35,7 +35,12 @@
 
 using namespace ml;
 
-stot::stot()
+stot::stot() :
+	shot(),
+	_stotBaseObjectFilename(""),
+	_stotVersion(0),
+	_paletteColorCustomizationVariables(),
+	_rangedIntCustomizationVariables()
 {
 }
 
@@ -83,148 +88,10 @@ std::size_t stot::readSTOT(std::istream& file)
 	return total;
 }
 
-void stot::print() const
+void stot::print(std::ostream& os) const
 {
 }
 
-#if 1
-std::size_t stot::readSTOTParameter(std::istream& file)
-{
-	std::size_t xxxxSize;
-	std::string type;
-	std::size_t total = base::readRecordHeader(file, type, xxxxSize);
-	if (type != "XXXX")
-	{
-		std::cout << "Expected record of type XXXX: " << type << std::endl;
-		exit(0);
-	}
-	std::cout << "Found " << type << std::endl;
-
-	std::string property;
-	total += base::read(file, property);
-	std::cout << "Property: " << property << std::endl;
-
-	unsigned char enabled;
-	if (property == "paletteColorCustomizationVariables")
-	{
-		total += base::read(file, enabled);
-		if (enabled > 0) {
-			unsigned char junk1, junk2, junk3, junk4;
-			total += base::read(file, junk1);
-			total += base::read(file, junk2);
-			total += base::read(file, junk3);
-			total += base::read(file, junk4);
-		}
-	}
-	else if (property == "rangedIntCustomizationVariables")
-	{
-		total += base::read(file, enabled);
-		if (enabled > 0) {
-			unsigned char junk1, junk2, junk3, junk4;
-			total += base::read(file, junk1);
-			total += base::read(file, junk2);
-			total += base::read(file, junk3);
-			total += base::read(file, junk4);
-		}
-	}
-	else if (property == "constStringCustomizationVariables")
-	{
-		total += base::read(file, enabled);
-		if (enabled > 0) {
-			unsigned char junk1, junk2, junk3, junk4;
-			total += base::read(file, junk1);
-			total += base::read(file, junk2);
-			total += base::read(file, junk3);
-			total += base::read(file, junk4);
-		}
-	}
-	else if (property == "socketDestinations")
-	{
-		total += base::read(file, enabled);
-		if (enabled > 0) {
-			unsigned char junk1, junk2, junk3, junk4;
-			total += base::read(file, junk1);
-			total += base::read(file, junk2);
-			total += base::read(file, junk3);
-			total += base::read(file, junk4);
-		}
-	}
-	else if (property == "structureFootprintFileName")
-	{
-		total += base::read(file, enabled);
-		if (enabled > 0) {
-			unsigned char junk1, junk2, junk3, junk4;
-			total += base::read(file, junk1);
-			total += base::read(file, junk2);
-			total += base::read(file, junk3);
-			total += base::read(file, junk4);
-		}
-	}
-	else if (property == "useStructureFootprintOutline")
-	{
-		total += base::read(file, enabled);
-		if (enabled > 0) {
-			unsigned char junk1, junk2, junk3, junk4;
-			total += base::read(file, junk1);
-			total += base::read(file, junk2);
-			total += base::read(file, junk3);
-			total += base::read(file, junk4);
-		}
-	}
-	else if (property == "targetable")
-	{
-		total += base::read(file, enabled);
-		if (enabled > 0) {
-			unsigned char junk1, junk2, junk3, junk4;
-			total += base::read(file, junk1);
-			total += base::read(file, junk2);
-			total += base::read(file, junk3);
-			total += base::read(file, junk4);
-		}
-	}
-	else if (property == "certificationsRequired")
-	{
-		total += base::read(file, enabled);
-		if (enabled > 0) {
-			unsigned char junk1, junk2, junk3, junk4;
-			total += base::read(file, junk1);
-			total += base::read(file, junk2);
-			total += base::read(file, junk3);
-			total += base::read(file, junk4);
-		}
-	}
-	else if (property == "customizationVariableMapping")
-	{
-		total += base::read(file, enabled);
-		if (enabled > 0) {
-			unsigned char junk1, junk2, junk3, junk4;
-			total += base::read(file, junk1);
-			total += base::read(file, junk2);
-			total += base::read(file, junk3);
-			total += base::read(file, junk4);
-		}
-	}
-	else
-	{
-		std::cout << "Unknown: " << property << std::endl;
-		exit(0);
-	}
-
-	if (xxxxSize == (total - 8))
-	{
-		std::cout << "Finished reading XXXX" << std::endl;
-	}
-	else
-	{
-		std::cout << "FAILED in reading XXXX" << std::endl;
-		std::cout << "Read " << total << " out of " << xxxxSize
-			<< std::endl;
-		exit(0);
-	}
-
-	return total;
-}
-#else
 std::size_t stot::readSTOTParameter(std::istream& file)
 {
 	std::size_t xxxxSize;
@@ -243,6 +110,7 @@ std::size_t stot::readSTOTParameter(std::istream& file)
 	int8_t dataType;
 	total += base::read(file, dataType);
 
+#if 0
 	std::cout << "Parameter data type: ";
 	switch (dataType) {
 	case 1: std::cout << "Single"; break;
@@ -251,234 +119,110 @@ std::size_t stot::readSTOTParameter(std::istream& file)
 	case 4: std::cout << "Die Roll"; break;
 	default: std::cout << "None:" << (int)dataType;
 	}
-	std::cout << " not handled\n";
+	//std::cout << " not handled\n";
+	std::cout << "\n";
+#endif
 
 	const std::size_t valueSize(xxxxSize - total);
 	//std::cout << "Value size: " << valueSize << "\n";
 	if (parameter == "paletteColorCustomizationVariables")
 	{
 		if (1 == dataType) {
-			//total += base::read(file, _paletteColorCustomizationVariables, valueSize);
-			//std::cout << "Palette color customization variables: '" << _paletteColorCustomizationVariables << "'\n";
+			int32_t numPCCV;
+			total += base::read(file, numPCCV);
+			std::cout << "Num PCCV records: " << numPCCV << "\n";
+			for (auto i = 0; i < numPCCV; ++i) {
+				pccv newPCCV;
+				total += newPCCV.read(file);
+				_paletteColorCustomizationVariables.push_back(newPCCV);
+				std::cout << "Palette color customization variable: \n";
+				newPCCV.print(std::cout);
+			}
 		}
 	}
-	else if (parameter == "detailedDescription")
+	else if (parameter == "rangedIntCustomizationVariables")
 	{
 		if (1 == dataType) {
-			total += base::read(file, _detailedDescription, valueSize);
-			std::cout << "Detailed description: " << _detailedDescription << "\n";
+			int32_t numRICV;
+			total += base::read(file, numRICV);
+			std::cout << "Num RICV records: " << numRICV << "\n";
+			for (auto i = 0; i < numRICV; ++i) {
+				ricv newRICV;
+				total += newRICV.read(file);
+				_rangedIntCustomizationVariables.push_back(newRICV);
+				std::cout << "Ranged int customization variable: \n";
+				newRICV.print(std::cout);
+			}
 		}
 	}
-	else if (parameter == "lookAtText")
+	else if (parameter == "constStringCustomizationVariables")
 	{
 		if (1 == dataType) {
-			total += base::read(file, _lookAtText, valueSize);
-			std::cout << "Detailed description: " << _lookAtText << "\n";
+			int32_t numCSCV;
+			total += base::read(file, numCSCV);
+			std::cout << "Num CSCV records: " << numCSCV << "\n";
+			for (auto i = 0; i < numCSCV; ++i) {
+				cscv newCSCV;
+				total += newCSCV.read(file);
+				_constStringCustomizationVariables.push_back(newCSCV);
+				std::cout << "Const string customization variable: \n";
+				newCSCV.print(std::cout);
+			}
 		}
 	}
-	else if (parameter == "snapToTerrain")
-	{
+	else if (parameter == "socketDestinations") {
 		if (1 == dataType) {
-			total += base::read(file, _snapToTerrain);
-			std::cout << "Snap to terrain: " << std::boolalpha << _snapToTerrain << "\n";
+			int32_t socketDest;
+			total += base::read(file, socketDest);
+			_socketDestinations.push_back(socketDest);
+			std::cout << "Socket destination: " << socketDest << "\n";
 		}
 	}
-	else if (parameter == "containerType")
-	{
-		int8_t dataDeltaType;
-		total += base::read(file, dataDeltaType);
+	else if (parameter == "structureFootprintFileName") {
 		if (1 == dataType) {
-			total += base::read(file, _containerType);
-			std::cout << "Container type: " << _containerType << "\n";
+			total += base::read(file, _structureFootprintFileName);
+			std::cout << "Structure footprint filename: " << _structureFootprintFileName << "\n";
 		}
 	}
-	else if (parameter == "containerVolumeLimit")
-	{
-		int8_t dataDeltaType;
-		total += base::read(file, dataDeltaType);
+	else if (parameter == "useStructureFootprintOutline") {
 		if (1 == dataType) {
-			total += base::read(file, _containerVolumeLimit);
-			std::cout << "Container volume limit: " << _containerVolumeLimit << "\n";
+			total += base::read(file, _useStructureFootprintOutline);
+			std::cout << "Use structure footprint outline: " << std::boolalpha << _useStructureFootprintOutline << "\n";
 		}
 	}
-	else if (parameter == "tintPalette")
-	{
+	else if (parameter == "targetable") {
 		if (1 == dataType) {
-			total += base::read(file, _tintPalette, valueSize);
-			std::cout << "Tint palette: '" << _tintPalette << "'\n";
+			total += base::read(file, _targetable);
+			std::cout << "Targetable: " << std::boolalpha << _targetable << "\n";
 		}
 	}
-	else if (parameter == "slotDescriptorFilename")
-	{
+#if 0
+	else if (parameter == "certificationsRequired") {
 		if (1 == dataType) {
-			total += base::read(file, _slotDescriptorFilename, valueSize);
-			std::cout << "Slot descriptor filename: '" << _slotDescriptorFilename << "'\n";
+			//total += base::read(file, _targetable);
+			//std::cout << "Targetable: " << std::boolalpha << _targetable << "\n";
 		}
 	}
-	else if (parameter == "arrangementDescriptorFilename")
+#endif
+	else if (parameter == "customizationVariableMapping")
 	{
 		if (1 == dataType) {
-			total += base::read(file, _arrangementDescriptorFilename, valueSize);
-			std::cout << "Arrangement descriptor filename: '" << _arrangementDescriptorFilename << "'\n";
+			int32_t numCVM;
+			total += base::read(file, numCVM);
+			std::cout << "Num CVM records: " << numCVM << "\n";
+			for (auto i = 0; i < numCVM; ++i) {
+				cvm newCVM;
+				total += newCVM.read(file);
+				_customizationVariableMapping.push_back(newCVM);
+				std::cout << "Customization variable mapping: \n";
+				newCVM.print(std::cout);
+			}
 		}
 	}
-	else if (parameter == "appearanceFilename")
-	{
+	else if (parameter == "clientVisabilityFlag") {
 		if (1 == dataType) {
-			total += base::read(file, _appearanceFilename, valueSize);
-			std::cout << "Appearance filename: '" << _appearanceFilename << "'\n";
-		}
-	}
-	else if (parameter == "portalLayoutFilename")
-	{
-		if (1 == dataType) {
-			total += base::read(file, _portalLayoutFilename, valueSize);
-			std::cout << "Portal layout filename: '" << _portalLayoutFilename << "'\n";
-		}
-	}
-	else if (parameter == "clientDataFile")
-	{
-		if (1 == dataType) {
-			total += base::read(file, _clientDataFile, valueSize);
-			std::cout << "Client data file: '" << _clientDataFile << "'\n";
-		}
-	}
-	else if (parameter == "collisionMaterialFlags")
-	{
-		int8_t dataDeltaType;
-		total += base::read(file, dataDeltaType);
-		if (1 == dataType) {
-			total += base::read(file, _collisionMaterialFlags);
-			std::cout << "Collision material flags: 0x" << std::hex << _collisionMaterialFlags << std::dec << "\n";
-		}
-	}
-	else if (parameter == "collisionMaterialPassFlags")
-	{
-		int8_t dataDeltaType;
-		total += base::read(file, dataDeltaType);
-		if (1 == dataType) {
-			total += base::read(file, _collisionMaterialPassFlags);
-			std::cout << "Collision material pass flags: 0x" << std::hex << _collisionMaterialPassFlags << std::dec << "\n";
-		}
-	}
-	else if (parameter == "collisionMaterialBlockFlags")
-	{
-		int8_t dataDeltaType;
-		total += base::read(file, dataDeltaType);
-		if (1 == dataType) {
-			total += base::read(file, _collisionMaterialBlockFlags);
-			std::cout << "Collision material block flags: 0x" << std::hex << _collisionMaterialBlockFlags << std::dec << "\n";
-		}
-	}
-	else if (parameter == "collisionActionFlags")
-	{
-		int8_t dataDeltaType;
-		total += base::read(file, dataDeltaType);
-		if (1 == dataType) {
-			total += base::read(file, _collisionActionFlags);
-			std::cout << "Collision action flags: 0x" << std::hex << _collisionActionFlags << std::dec << "\n";
-		}
-	}
-	else if (parameter == "collisionActionPassFlags")
-	{
-		int8_t dataDeltaType;
-		total += base::read(file, dataDeltaType);
-		if (1 == dataType) {
-			total += base::read(file, _collisionActionPassFlags);
-			std::cout << "Collision action pass flags: 0x" << std::hex << _collisionActionPassFlags << std::dec << "\n";
-		}
-	}
-	else if (parameter == "collisionActionBlockFlags")
-	{
-		int8_t dataDeltaType;
-		total += base::read(file, dataDeltaType);
-		if (1 == dataType) {
-			total += base::read(file, _collisionActionBlockFlags);
-			std::cout << "Collision action block flags: 0x" << std::hex << _collisionActionBlockFlags << std::dec << "\n";
-		}
-	}
-	else if (parameter == "scale")
-	{
-		int8_t dataDeltaType;
-		total += base::read(file, dataDeltaType);
-		if (1 == dataType) {
-			total += base::read(file, _scale);
-			std::cout << "Scale: " << _scale << "\n";
-		}
-	}
-	else if (parameter == "gameObjectType")
-	{
-		int8_t dataDeltaType;
-		total += base::read(file, dataDeltaType);
-		if (1 == dataType) {
-			total += base::read(file, _gameObjectType);
-			std::cout << "Game object type: " << _gameObjectType << "\n";
-		}
-	}
-	else if (parameter == "sendToClient")
-	{
-		if (1 == dataType) {
-			total += base::read(file, _sendToClient);
-			std::cout << "Send to client: " << std::boolalpha << _sendToClient << "\n";
-		}
-	}
-	else if (parameter == "scaleThresholdBeforeExtentTest")
-	{
-		int8_t dataDeltaType;
-		total += base::read(file, dataDeltaType);
-		if (1 == dataType) {
-			total += base::read(file, _scaleThresholdBeforeExtentTest);
-			std::cout << "Scale threshold before extent test: " << _scaleThresholdBeforeExtentTest << "\n";
-		}
-	}
-	else if (parameter == "clearFloraRadius")
-	{
-		int8_t dataDeltaType;
-		total += base::read(file, dataDeltaType);
-		if (1 == dataType) {
-			total += base::read(file, _clearFloraRadius);
-			std::cout << "Clear flora radius: " << _clearFloraRadius << "\n";
-		}
-	}
-	else if (parameter == "surfaceType")
-	{
-		int8_t dataDeltaType;
-		total += base::read(file, dataDeltaType);
-		if (1 == dataType) {
-			total += base::read(file, _surfaceType);
-			std::cout << "Surface type: " << _surfaceType << "\n";
-		}
-	}
-	else if (parameter == "noBuildRadius")
-	{
-		int8_t dataDeltaType;
-		total += base::read(file, dataDeltaType);
-		if (1 == dataType) {
-			total += base::read(file, _noBuildRadius);
-			std::cout << "No build radius: " << _noBuildRadius << "\n";
-		}
-	}
-	else if (parameter == "onlyVisibleInTools")
-	{
-		if (1 == dataType) {
-			total += base::read(file, _onlyVisibleInTools);
-			std::cout << "Only visible in tools: " << std::boolalpha << _onlyVisibleInTools << "\n";
-		}
-	}
-	else if (parameter == "locationReservationRadius")
-	{
-		int8_t dataDeltaType;
-		total += base::read(file, dataDeltaType);
-		if (1 == dataType) {
-			total += base::read(file, _locationReservationRadius);
-			std::cout << "Location reservation radius: " << _locationReservationRadius << "\n";
-		}
-	}
-	else if (parameter == "forceNoCollision")
-	{
-		if (1 == dataType) {
-			total += base::read(file, _forceNoCollision);
-			std::cout << "Force no collision: " << std::boolalpha << _forceNoCollision << "\n";
+			total += base::read(file, _clientVisabilityFlag);
+			std::cout << "Client visability flag: 0x" << std::hex << _clientVisabilityFlag << std::dec << "\n";
 		}
 	}
 	else
@@ -495,6 +239,98 @@ std::size_t stot::readSTOTParameter(std::istream& file)
 	}
 
 	return total;
+		}
+
+// ********** Ranged Int Customization Variable (RICV) **********
+stot::ricv::ricv(const std::string& variableName,
+	const int32_t& minValueInclusive,
+	const int32_t& defaultValue,
+	const int32_t& maxValueExclusive) :
+	_variableName(variableName),
+	_minValueInclusive(minValueInclusive),
+	_defaultValue(defaultValue),
+	_maxValueExclusive(maxValueExclusive)
+{
 }
 
-#endif
+stot::ricv::~ricv() {}
+
+size_t stot::ricv::read(std::istream& file) {
+	size_t total = base::read(file, _variableName);
+	total += base::read(file, _minValueInclusive);
+	total += base::read(file, _defaultValue);
+	total += base::read(file, _maxValueExclusive);
+	return total;
+}
+
+void stot::ricv::print(std::ostream& os) const {
+	os << "      Variable name: " << _variableName << "\n"
+		<< "Min value inclusive: " << _minValueInclusive << "\n"
+		<< "      Default value: " << _defaultValue << "\n"
+		<< "Max value Exclusive: " << _maxValueExclusive << "\n";
+}
+
+// ********** Palette Color Customization Variable (PCCV) **********
+stot::pccv::pccv(const std::string& variableName,
+	const std::string& palettePathName,
+	const int32_t& defaultPaletteIndex) :
+	_variableName(variableName),
+	_palettePathName(palettePathName),
+	_defaultPaletteIndex(defaultPaletteIndex)
+{
+}
+
+stot::pccv::~pccv() {}
+
+size_t stot::pccv::read(std::istream& file) {
+	size_t total = base::read(file, _variableName);
+	total += base::read(file, _palettePathName);
+	total += base::read(file, _defaultPaletteIndex);
+	return total;
+}
+
+void stot::pccv::print(std::ostream& os) const {
+	os << "        Variable name: " << _variableName << "\n"
+		<< "    Palette path name: " << _palettePathName << "\n"
+		<< "Default palette index: " << _defaultPaletteIndex << "\n";
+}
+
+// ********** Const String Customization Variable (CSCV) **********
+stot::cscv::cscv(const std::string& variableName,
+	const std::string& constValue) :
+	_variableName(variableName),
+	_constValue(constValue)
+{
+}
+
+stot::cscv::~cscv() {}
+
+size_t stot::cscv::read(std::istream& file) {
+	size_t total = base::read(file, _variableName);
+	total += base::read(file, _constValue);
+	return total;
+}
+
+void stot::cscv::print(std::ostream& os) const {
+	os << "Variable name: " << _variableName << "\n"
+		<< "  Const value: " << _constValue << "\n";
+}
+
+// ********** Customization Variable Mapping (CVM) **********
+stot::cvm::cvm(const std::string& sourceVariable,
+	const std::string& dependentVariable) :
+	_sourceVariable(sourceVariable),
+	_dependentVariable(dependentVariable)
+{}
+
+stot::cvm::~cvm() {}
+
+size_t stot::cvm::read(std::istream& file) {
+	size_t total = base::read(file, _sourceVariable);
+	total += base::read(file, _dependentVariable);
+	return total;
+}
+void stot::cvm::print(std::ostream& os) const {
+	os << "   Source variable: " << _sourceVariable << "\n"
+		<< "Dependent variable: " << _dependentVariable << "\n";
+}

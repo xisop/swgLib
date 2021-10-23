@@ -25,6 +25,8 @@
 #include <swgLib/shot.hpp>
 
 #include <istream>
+#include <ostream>
+#include <vector>
 #include <string>
 
 #ifndef STOT_HPP
@@ -39,13 +41,91 @@ namespace ml
 		~stot();
 
 		std::size_t readSTOT(std::istream& file);
-		void print() const;
+		void print(std::ostream& os) const;
+
+	public:
+		// Ranged Int Customization Variable (RICV)
+		class ricv {
+		public:
+			ricv( const std::string &variableName="",
+				const int32_t &minValueInclusive=0,
+				const int32_t &defaultValue=0,
+				const int32_t &maxValueExclusive=0);
+			~ricv();
+
+			size_t read(std::istream& file);
+			void print(std::ostream& os) const;
+
+		protected:
+			std::string _variableName;
+			int32_t     _minValueInclusive;
+			int32_t     _defaultValue;
+			int32_t     _maxValueExclusive;
+		};
+
+		// Palette Color Customization Variable (PCCV)
+		class pccv {
+		public:
+			pccv( const std::string &variableName="",
+				const std::string &palettePathName="",
+				const int32_t &defaultPaletteIndex=0);
+			~pccv();
+
+			size_t read(std::istream& file);
+			void print(std::ostream& os) const;
+
+		protected:
+			std::string _variableName;
+			std::string _palettePathName;
+			int32_t     _defaultPaletteIndex;
+		};
+
+		// Const String Customization Variable (CSCV)
+		class cscv {
+		public:
+			cscv( const std::string &variableName="",
+				const std::string &constValue="");
+			~cscv();
+
+			size_t read(std::istream& file);
+			void print(std::ostream& os) const;
+
+		protected:
+			std::string _variableName;
+			std::string _constValue;
+		};
+
+		// Customization Variable Mapping (CVM)
+		class cvm {
+		public:
+			cvm( const std::string &sourceVariable="",
+				const std::string &dependentVariable="");
+			~cvm();
+
+			size_t read(std::istream& file);
+			void print(std::ostream& os) const;
+
+		protected:
+			std::string _sourceVariable;
+			std::string _dependentVariable;
+		};
 
 	protected:
 		std::size_t readSTOTParameter(std::istream& file);
 
 		std::string _stotBaseObjectFilename;
 		int8_t _stotVersion;
+
+		std::vector<pccv>        _paletteColorCustomizationVariables;
+		std::vector<ricv>        _rangedIntCustomizationVariables;
+		std::vector<cscv>        _constStringCustomizationVariables;
+		std::vector<int32_t>     _socketDestinations;
+		std::string              _structureFootprintFileName;
+		bool                     _useStructureFootprintOutline;
+		bool                     _targetable;
+		std::vector<std::string> _certificationsRequired;
+		std::vector<cvm>         _customizationVariableMapping;
+		int32_t                  _clientVisabilityFlag;
 	};
 }
 #endif
