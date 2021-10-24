@@ -46,11 +46,10 @@ std::size_t apt::readAPT(std::istream& file)
 	aptSize += 8;
 	std::cout << "Found form APT: " << aptSize << "\n";
 
-	total += base::readFormHeader(file, "0000", aptSize);
+	std::size_t size;
+	total += base::readFormHeader(file, "0000", size);
 
-	std::size_t nameSize;
-	total += base::readRecordHeader(file, "NAME", nameSize);
-	nameSize += 8;
+	total += base::readRecordHeader(file, "NAME", size);
 
 	total += base::read(file, _filename);
 	std::cout << "Name: " << _filename << "\n";
