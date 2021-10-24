@@ -22,31 +22,144 @@
  along with swgLib; if not, write to the Free Software
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include <swgLib/shot.hpp>
-
 #include <istream>
+#include <ostream>
 #include <string>
+#include <vector>
 
 #ifndef STAT_HPP
 #define STAT_HPP 1
 
 namespace ml
 {
-  class stat : public shot
-  {
-  public:
-    stat();
-    ~stat();
+	// Space Terrain Appearance Template (STAT)
+	class stat
+	{
+	public:
+		stat();
+		~stat();
 
-    std::size_t readSTAT( std::istream &file );
-    void print() const;
+		std::size_t readSTAT(std::istream& file);
+		void print() const;
 
-  protected:
-    
-  private:
-      std::size_t readSTATParameter(std::istream& file);
+	public:
+		class light {
+		public:
+			light();
+			~light();
 
-    std::string statBaseObjectFilename;
-  };
+			std::size_t read(std::istream& file);
+			void print(std::ostream& os) const;
+
+		protected:
+			// DOT3 bump mapping
+			bool _lightDOT3;
+
+			// Light diffuse color
+			float _lightDiffuseAlpha;
+			float _lightDiffuseRed;
+			float _lightDiffuseGreen;
+			float _lightDiffuseBlue;
+
+			// Light specular color
+			float _lightSpecularAlpha;
+			float _lightSpecularRed;
+			float _lightSpecularGreen;
+			float _lightSpecularBlue;
+
+			// Light direction 
+			float _lightDirX;
+			float _lightDirY;
+			float _lightDirZ;
+		};
+
+		class celestial {
+		public:
+			celestial();
+			~celestial();
+
+			std::size_t read(std::istream& file);
+			void print(std::ostream& os) const;
+
+		protected:
+			std::string _backShaderTemplateName;
+			float _backSize;
+			std::string _frontShaderTemplateName;
+			float _frontSize;
+			float _directionX;
+			float _directionY;
+			float _directionZ;
+		};
+
+		class distance {
+		public:
+			distance();
+			~distance();
+
+			std::size_t readDIST(std::istream& file);
+			std::size_t readPLAN(std::istream& file);
+			void print(std::ostream& os) const;
+
+		protected:
+			std::string _templateName;
+			float _directionX;
+			float _directionY;
+			float _directionZ;
+			float _orienationYaw;
+			float _orienationPitch;
+			float _orienationRoll;
+			float _haloRoll;
+			float _haloScale;
+			bool _infiniteDistance;
+		};
+
+	private:
+		std::size_t readSTATParameter(std::istream& file);
+
+		float _mapWidthInMeters;
+
+		// Clear color
+		float _clearColorRed;
+		float _clearColorGreen;
+		float _clearColorBlue;
+
+		// Ambient color
+		float _ambientAlpha;
+		float _ambientRed;
+		float _ambientGreen;
+		float _ambientBlue;
+
+		// List of lights
+		std::vector<light> _light;
+
+		std::string _environmentTextureName;
+
+		// Fog information
+		bool _fogEnabled;
+		float _fogAlpha;
+		float _fogRed;
+		float _fogGreen;
+		float _fogBlue;
+		float _fogDensity;
+
+		// Star information
+		std::string _starColorRampName;
+		int32_t _numberOfStars;
+
+		// Dust information
+		int32_t _numberOfDust;
+		float _dustRadius;
+
+		// SkyBox information
+		bool _skyboxCubeMap;
+		std::string _skyboxTextureName;
+
+		// Distant objects and planets
+		std::vector<distance> _distance;
+
+		// Celestial information
+		std::vector<celestial> _celestial;
+
+	};
 }
 #endif
