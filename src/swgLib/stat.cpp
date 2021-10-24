@@ -23,10 +23,6 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-/**
-   This class still needs work.
- */
-
 #include <swgLib/base.hpp>
 #include <swgLib/stat.hpp>
 
