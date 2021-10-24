@@ -123,8 +123,10 @@ std::size_t stot::readSTOTParameter(std::istream& file)
 	std::cout << "\n";
 #endif
 
+#if 0
 	const std::size_t valueSize(xxxxSize - total);
-	//std::cout << "Value size: " << valueSize << "\n";
+	std::cout << "Value size: " << valueSize << "\n";
+#endif
 	if (parameter == "paletteColorCustomizationVariables")
 	{
 		if (1 == dataType) {
