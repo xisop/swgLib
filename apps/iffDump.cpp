@@ -833,6 +833,16 @@ std::size_t readRecord(
 		ml::base::readFormHeader(file, group, size, type);
 		std::cout << "Type: " << type << " (Shader stage)" << std::endl;
 		}
+		else if (type == "SHOT") // Shared Object Template
+		{
+		ml::base::readFormHeader(file, group, size, type);
+		std::cout << "Type: " << type << " (Shared Object Template)" << std::endl;
+		}
+		else if (type == "STOT") // Shared Tangible Object Template
+		{
+		ml::base::readFormHeader(file, group, size, type);
+		std::cout << "Type: " << type << " (Shared Tangible Object Template)" << std::endl;
+		}
 		else if (type == "STAT") // Space Terrain Appearance Template
 		{
 		ml::base::readFormHeader(file, group, size, type);
@@ -2270,6 +2280,11 @@ std::size_t readRecord(
 			return size + 8; // Size of data plus 8 bytes of header
 		}
 		if ("CNT " == group)
+		{
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
+		}
+		if ("PCNT" == group)
 		{
 			ml::base::readUnknown(file, size);
 			return size + 8; // Size of data plus 8 bytes of header
