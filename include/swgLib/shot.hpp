@@ -41,29 +41,36 @@ namespace ml
 		std::size_t readSHOT(std::istream& file);
 		void print(std::ostream& os) const;
 
-		void setAppearanceFilename(const std::string& filename)
-		{
-			_appearanceFilename = filename;
-		}
+		const std::string& getBaseObjectFilename() const;
 
-		const std::string& getAppearanceFilename() const
-		{
-			return _appearanceFilename;
-		}
-
-		void setPortalLayoutFilename(const std::string& filename)
-		{
-			_portalLayoutFilename = filename;
-		}
-
-		const std::string& getPortalLayoutFilename() const
-		{
-			return _portalLayoutFilename;
-		}
-
-		const std::string& getBaseObjectFilename() const {
-			return _baseObjectFilename;
-		}
+		const std::string& getObjectName() const;
+		const std::string& getDetailedDescription() const;
+		const std::string& getLookAtText() const;
+		bool isSnapToTerrain() const;
+		const int32_t& getContainerType() const;
+		const int32_t& getContainerVolumeLimit() const;
+		const std::string& getTintPalette() const;
+		const std::string& getSlotDescriptorFilename() const;
+		const std::string& getArrangementDescriptorFilename() const;
+		const std::string& getAppearanceFilename() const;
+		const std::string& getPortalLayoutFilename() const;
+		const std::string& getClientDataFile() const;
+		const int32_t& getCollisionMaterialFlags() const;
+		const int32_t& getCollisionMaterialPassFlags() const;
+		const int32_t& getCollisionMaterialBlockFlags() const;
+		const int32_t& getCollisionActionFlags() const;
+		const int32_t& getCollisionActionPassFlags() const;
+		const int32_t& getCollisionActionBlockFlags() const;
+		const float& getScale() const;
+		const int32_t& getGameObjectType() const;
+		bool isSendToClient() const;
+		const float& getScaleThresholdBeforeExtentTest() const;
+		const float& getClearFloraRadius() const;
+		const int32_t& getSurfaceType() const;
+		const float& getNoBuildRadius() const;
+		bool isOnlyVisibleInTools() const;
+		const float& getLocationReservationRadius() const;
+		bool isForceNoCollision() const;
 
 	protected:
 		std::size_t readDERV(std::istream& file, std::string& filename);

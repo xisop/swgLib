@@ -141,6 +141,64 @@ void shot::print(std::ostream& os) const
 {
 }
 
+const std::string& shot::getBaseObjectFilename() const { return _baseObjectFilename; }
+
+const std::string& shot::getObjectName() const { return _objectName; }
+
+const std::string& shot::getDetailedDescription() const { return _detailedDescription; }
+
+const std::string& shot::getLookAtText() const { return _lookAtText; }
+
+bool shot::isSnapToTerrain() const { return _snapToTerrain; }
+
+const int32_t& shot::getContainerType() const { return _containerType; }
+
+const int32_t& shot::getContainerVolumeLimit() const { return _containerVolumeLimit; }
+
+const std::string& shot::getTintPalette() const { return _tintPalette; }
+
+const std::string& shot::getSlotDescriptorFilename() const { return _slotDescriptorFilename; }
+
+const std::string& shot::getArrangementDescriptorFilename() const { return _arrangementDescriptorFilename; }
+
+const std::string& shot::getAppearanceFilename() const { return _appearanceFilename; }
+
+const std::string& shot::getPortalLayoutFilename() const { return _portalLayoutFilename; }
+
+const std::string& shot::getClientDataFile() const { return _clientDataFile; }
+
+const int32_t& shot::getCollisionMaterialFlags() const { return _collisionMaterialFlags; }
+
+const int32_t& shot::getCollisionMaterialPassFlags() const { return _collisionMaterialPassFlags; }
+
+const int32_t& shot::getCollisionMaterialBlockFlags() const { return _collisionMaterialBlockFlags; }
+
+const int32_t& shot::getCollisionActionFlags() const { return _collisionActionFlags; }
+
+const int32_t& shot::getCollisionActionPassFlags() const { return _collisionActionPassFlags; }
+
+const int32_t& shot::getCollisionActionBlockFlags() const { return _collisionActionBlockFlags; }
+
+const float& shot::getScale() const { return _scale; }
+
+const int32_t& shot::getGameObjectType() const { return _gameObjectType; }
+
+bool shot::isSendToClient() const { return _sendToClient; }
+
+const float& shot::getScaleThresholdBeforeExtentTest() const { return _scaleThresholdBeforeExtentTest; }
+
+const float& shot::getClearFloraRadius() const { return _clearFloraRadius; }
+
+const int32_t& shot::getSurfaceType() const { return _surfaceType; }
+
+const float& shot::getNoBuildRadius() const { return _noBuildRadius; }
+
+bool shot::isOnlyVisibleInTools() const { return _onlyVisibleInTools; }
+
+const float& shot::getLocationReservationRadius() const { return _locationReservationRadius; }
+
+bool shot::isForceNoCollision() const { return _forceNoCollision; }
+
 std::size_t shot::readPCNT(std::istream& file, int32_t& numParameters)
 {
 	std::size_t pcntSize;
