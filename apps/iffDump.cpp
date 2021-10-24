@@ -833,6 +833,66 @@ std::size_t readRecord(
 		ml::base::readFormHeader(file, group, size, type);
 		std::cout << "Type: " << type << " (Shader stage)" << std::endl;
 		}
+		else if (type == "STAT") // Space Terrain Appearance Template
+		{
+		ml::base::readFormHeader(file, group, size, type);
+		std::cout << "Type: " << type << " (Space Terrain Appearance Template)" << std::endl;
+		}
+		else if (type == "CLEA") // Clear color
+		{
+		ml::base::readFormHeader(file, group, size, type);
+		std::cout << "Type: " << type << " (Clear Color)" << std::endl;
+		}
+		else if (type == "ENVI") // Environment texture
+		{
+		ml::base::readFormHeader(file, group, size, type);
+		std::cout << "Type: " << type << " (Environment Texture)" << std::endl;
+		}
+		else if (type == "PARA") // Light parameters
+		{
+		ml::base::readFormHeader(file, group, size, type);
+		std::cout << "Type: " << type << " (Light Parameters)" << std::endl;
+		}
+		else if (type == "AMBI") // Ambient light color
+		{
+		ml::base::readFormHeader(file, group, size, type);
+		std::cout << "Type: " << type << " (Ambient Light Color)" << std::endl;
+		}
+		else if (type == "SKYB") // Skybox Texture
+		{
+		ml::base::readFormHeader(file, group, size, type);
+		std::cout << "Type: " << type << " (Skybox Texture)" << std::endl;
+		}
+		else if (type == "STAR") // Star color/number
+		{
+		ml::base::readFormHeader(file, group, size, type);
+		std::cout << "Type: " << type << " (Star information)" << std::endl;
+		}
+		else if (type == "DUST") // Dust information
+		{
+		ml::base::readFormHeader(file, group, size, type);
+		std::cout << "Type: " << type << " (Dust information)" << std::endl;
+		}
+		else if (type == "DIST") // Distant appearance information
+		{
+		ml::base::readFormHeader(file, group, size, type);
+		std::cout << "Type: " << type << " (Distant appearance information)" << std::endl;
+		}
+		else if (type == "PLAN") // Planet information?
+		{
+		ml::base::readFormHeader(file, group, size, type);
+		std::cout << "Type: " << type << " (Planet information?)" << std::endl;
+		}
+		else if (type == "CELE") // Celestial information
+		{
+		ml::base::readFormHeader(file, group, size, type);
+		std::cout << "Type: " << type << " (Celestial information)" << std::endl;
+		}
+		else if (type == "FOG ") // Fog information
+		{
+		ml::base::readFormHeader(file, group, size, type);
+		std::cout << "Type: " << type << " (Fog information)" << std::endl;
+		}
 		else if (type == "IDTL")
 		{
 			ml::base::readFormHeader(file, group, size, type);
