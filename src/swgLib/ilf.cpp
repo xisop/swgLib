@@ -23,6 +23,7 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#include <swgLib/base.hpp>
 #include <swgLib/ilf.hpp>
 #include <iostream>
 #include <cstdlib>
@@ -37,38 +38,21 @@ ilf::~ilf()
 {
 }
 
-bool ilf::getNode(const unsigned int& index,
-	std::string& fileName,
-	std::string& zoneName,
-	matrix3x4& transformMatrix,
-	vector3& translateVector
-) const
-{
-	if (index >= nodeFilename.size())
-	{
-		return false;
-	}
-
-	fileName = nodeFilename[index];
-	zoneName = nodeZone[index];
-	transformMatrix = nodeMatrix[index];
-	translateVector = nodeVector[index];
-
-	return true;
+const ilf::node& ilf::getNode(const uint32_t& index) const {
+	return _nodes.at(index);
 }
 
-
-unsigned int ilf::createILF(std::istream& infile, std::ofstream& outfile)
+std::size_t ilf::createILF(std::istream& infile, std::ofstream& outfile)
 {
 	std::size_t total = 0;
 	char temp[512];
 
 	// Write form with dummy size
-	unsigned int form0Position = outfile.tellp();
-	writeFormHeader(outfile, 0, "INLY");
+	uint32_t form0Position = (uint32_t)outfile.tellp();
+	base::writeFormHeader(outfile, 0, "INLY");
 	// Write form with dummy size
-	unsigned int form1Position = outfile.tellp();
-	writeFormHeader(outfile, 0, "0000");
+	uint32_t form1Position = (uint32_t)outfile.tellp();
+	base::writeFormHeader(outfile, 0, "0000");
 
 	while (!infile.eof())
 	{
@@ -106,7 +90,7 @@ unsigned int ilf::createILF(std::istream& infile, std::ofstream& outfile)
 		// Blank line
 		infile.getline(temp, 512);
 
-		total += writeRecordHeader(outfile, "NODE", nodeSize);
+		total += base::writeRecordHeader(outfile, "NODE", nodeSize);
 		outfile.write(objectFilename.c_str(),
 			static_cast<unsigned int>(objectFilename.size() + 1)
 		);
@@ -119,37 +103,24 @@ unsigned int ilf::createILF(std::istream& infile, std::ofstream& outfile)
 
 	// Rewrite form with proper size.
 	outfile.seekp(form1Position, std::ios_base::beg);
-	total += writeFormHeader(outfile, total + 4, "0000");
+	total += base::writeFormHeader(outfile, total + 4, "0000");
 
 	// Rewrite form with proper size.
 	outfile.seekp(form0Position, std::ios_base::beg);
-	total += writeFormHeader(outfile, total + 4, "INLY");
+	total += base::writeFormHeader(outfile, total + 4, "INLY");
 
 	return total;
 }
 
-unsigned int ilf::readILF(std::istream& file)
+std::size_t ilf::readILF(std::istream& file)
 {
 	std::size_t ilfSize;
-	std::size_t total = readFormHeader(file, "INLY", ilfSize);
+	std::size_t total = base::readFormHeader(file, "INLY", ilfSize);
 	ilfSize += 8;
-	std::cout << "Found INLY form"
-		<< ": " << ilfSize - 12 << " bytes"
-		<< std::endl;
+	std::cout << "Found INLY form: " << ilfSize << "\n";
 
 	std::size_t size;
-	std::string form, type;
-	total += readFormHeader(file, form, size, type);
-	if (form != "FORM")
-	{
-		std::cout << "Expected FORM: " << form << std::endl;
-		exit(0);
-	}
-#ifdef DEBUG
-	std::cout << "Found " << form << " " << type
-		<< ": " << size - 4 << " bytes"
-		<< std::endl;
-#endif
+	total += base::readFormHeader(file, "0000", size);
 
 	while (total < ilfSize)
 	{
@@ -158,79 +129,70 @@ unsigned int ilf::readILF(std::istream& file)
 
 	if (ilfSize == total)
 	{
-#ifdef DEBUG
-		sd::cout << "Finished reading ILF" << std::endl;
-#endif
+		std::cout << "Finished reading ILF\n";
 	}
 	else
 	{
-		std::cout << "FAILED in reading ILF" << std::endl;
-		std::cout << "Read " << total << " out of " << ilfSize
-			<< std::endl;
+		std::cout << "FAILED in reading ILF\n"
+			<< "Read " << total << " out of " << ilfSize << "\n";
+		exit(0);
 	}
 
 	return total;
 }
 
-
-unsigned int ilf::readNODE(std::istream& file)
+std::size_t ilf::readNODE(std::istream& file)
 {
 	std::size_t nodeSize;
-	std::string type;
-	std::size_t total = readRecordHeader(file, type, nodeSize);
+	std::size_t total = base::readRecordHeader(file, "NODE", nodeSize);
 	nodeSize += 8;
-	if (type != "NODE")
-	{
-		std::cout << "Expected record of type NODE: " << type << std::endl;
-		exit(0);
-	}
-	std::cout << "Found NODE record"
-		<< ": " << nodeSize - 8 << " bytes"
-		<< std::endl;
 
-	std::string objectFilename;
-	total += base::read(file, objectFilename);
-	nodeFilename.push_back(objectFilename);
-
-	std::string objectZone;
-	total += base::read(file, objectZone);
-	nodeZone.push_back(objectZone);
-
-	std::cout << "Object Filename: " << objectFilename << std::endl;
-	std::cout << "Object Zone: " << objectZone << std::endl;
-
-	std::cout << "Transform matrix: " << std::endl;
-
-	matrix3x4 mat;
-	//vector3 vec;
-	total += model::readTransformMatrix(file, mat);
-
-	std::cout << "Matrix: \n" << mat << "\n";
-
-	//std::cout << "Position: ";
-	//vec.print();
-
-	nodeMatrix.push_back(mat);
-	//nodeVector.push_back( vec );
-
-
-	while (total < nodeSize)
-	{
-		total += readNODE(file);
-	}
+	node newNode;
+	total += newNode.read(file);
+	newNode.print(std::cout);
+	_nodes.push_back(newNode);
 
 	if (nodeSize == total)
 	{
-#ifdef DEBUG
-		std::cout << "Finished reading NODE" << std::endl;
-#endif
+		std::cout << "Finished reading NODE\n";
 	}
 	else
 	{
-		std::cout << "FAILED in reading NODE" << std::endl;
-		std::cout << "Read " << total << " out of " << nodeSize
-			<< std::endl;
+		std::cout << "FAILED in reading NODE\n"
+			<< "Read " << total << " out of " << nodeSize << "\n";
+		exit(0);
 	}
 
 	return total;
+}
+
+ilf::node::node() :
+	_objectFilename(""),
+	_cellName(""),
+	_transform() {
+}
+
+ilf::node::~node() {
+}
+
+std::size_t ilf::node::read(std::istream& file) {
+	std::size_t total = base::read(file, _objectFilename);
+	total += base::read(file, _cellName);
+	total += base::read(file, _transform);
+	return total;
+}
+
+std::size_t ilf::node::write(std::ostream& file) const {
+	std::size_t total = base::write(file, _objectFilename);
+	total += base::write(file, _cellName);
+	total += base::write(file, _transform);
+	return total;
+}
+
+void ilf::node::print(std::ostream& os) const {
+	os << "Object filename: " << _objectFilename << "\n"
+		<< "Cell name: " << _cellName << "\n"
+		<< "Transform:\n";
+	_transform.print(os);
+	os << "\n\n";
 }

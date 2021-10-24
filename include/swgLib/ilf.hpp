@@ -23,10 +23,11 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include <swgLib/model.hpp>
 #include <swgLib/matrix3.hpp>
 #include <swgLib/vector3.hpp>
 
+#include <istream>
+#include <ostream>
 #include <fstream>
 #include <vector>
 #include <string>
@@ -36,39 +37,45 @@
 
 namespace ml
 {
-	class ilf : public model
+	// Interior Layout File
+	class ilf
 	{
+	public:
+		class node {
+		public:
+			node();
+			~node();
+
+			std::size_t read(std::istream &file);
+			std::size_t write(std::ostream &file) const;
+			void print(std::ostream& os) const;
+
+		protected:
+			std::string _objectFilename;
+			std::string _cellName;
+			matrix3x4   _transform;
+		};
+
 	public:
 		ilf();
 		~ilf();
-		bool isRightType(std::istream& file)
-		{
-			return isOfType(file, "INLY");
-		}
-		unsigned int createILF(std::istream& infile, std::ofstream& outfile);
-		unsigned int readILF(std::istream& file);
+
+		std::size_t createILF(std::istream& infile, std::ofstream& outfile);
+		std::size_t readILF(std::istream& file);
 		bool canWrite() const { return true; }
 
 		uint32_t getNumNodes() const
 		{
-			return uint32_t(nodeFilename.size());
+			return uint32_t(_nodes.size());
 		}
 
-		bool getNode(const unsigned int& index,
-			std::string& fileName,
-			std::string& zoneName,
-			matrix3x4& transformMatrix,
-			vector3& translateVector
-		) const;
+		const node& getNode(const uint32_t& index) const;
 
 	protected:
-		unsigned int readNODE(std::istream& file);
+		std::size_t readNODE(std::istream& file);
 
+		std::vector<node> _nodes;
 
-		std::vector<std::string> nodeFilename;
-		std::vector<std::string> nodeZone;
-		std::vector<matrix3x4> nodeMatrix;
-		std::vector<vector3> nodeVector;
 	private:
 
 	};
