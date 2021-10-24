@@ -31,6 +31,7 @@
 
 namespace ml
 {
+	// Appearance Template List
 	class apt
 	{
 	public:
