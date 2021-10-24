@@ -47,6 +47,7 @@
 #include <swgLib/sbot.hpp>
 #include <swgLib/sd2d.hpp>
 #include <swgLib/sd3d.hpp>
+#include <swgLib/shot.hpp>
 #include <swgLib/sht.hpp>
 #include <swgLib/sktm.hpp>
 #include <swgLib/skmg.hpp>
@@ -197,6 +198,12 @@ int main(int argc, char** argv)
 			ml::sd3d misc;
 			misc.readSD3D(infile);
 			misc.print();
+		}
+		else if ("SHOT" == fileType)
+		{
+		ml::shot misc;
+		misc.readSHOT(infile);
+		misc.print(std::cout);
 		}
 		else if ("SPAM" == fileType)
 		{
