@@ -1,6 +1,6 @@
 /** -*-c++-*-
- *  \class  stat
- *  \file   stat.cpp
+ *  \class  spaceTerrain
+ *  \file   spaceTerrain.cpp
  *  \author Ken Sewell
 
  swgLib is used for the parsing and exporting SWG models.
@@ -28,14 +28,14 @@
  */
 
 #include <swgLib/base.hpp>
-#include <swgLib/stat.hpp>
+#include <swgLib/spaceTerrain.hpp>
 
 #include <iostream>
 #include <cstdlib>
 
 using namespace ml;
 
-ml::stat::stat() :
+ml::spaceTerrain::spaceTerrain() :
 	_mapWidthInMeters(0.0f),
 	_clearColorRed(0.0f),
 	_clearColorGreen(0.0f),
@@ -63,24 +63,35 @@ ml::stat::stat() :
 {
 }
 
-ml::stat::~stat()
+ml::spaceTerrain::~spaceTerrain()
 {
 }
 
-std::size_t ml::stat::readSTAT(std::istream& file)
+std::size_t ml::spaceTerrain::read(std::istream& file)
 {
-	std::size_t statSize;
-	std::size_t total = base::readFormHeader(file, "STAT", statSize);
-	statSize += 8;
+  std::size_t streamStart = file.tellg();
+  
+	std::size_t spaceTerrainSize;
+	std::size_t total = base::readFormHeader(file, "STAT", spaceTerrainSize);
+	spaceTerrainSize += 8;
 	std::cout << "Found STAT form" << std::endl;
 
+	std::string form, type;
 	std::size_t size0000;
-	total += base::readFormHeader(file, "0000", size0000);
+	total += base::readFormHeader(file, form, size0000, type);
 	size0000 += 8;
 
-	std::string form, type;
+	if( "0000" != type ) {
+	  std::cout << "Space Terrain (STAT) file not detected\n";
+	  if("DERV" == type) {
+	  std::cout << "File appears to be Shared Static Object Template (STAT) type.\n";
+	  }
+	  std::cout << "Resetting file pointer\n";
+	  file.seekg(streamStart);
+	}
+	
 	std::size_t size;
-	while (total < statSize) {
+	while (total < spaceTerrainSize) {
 		base::peekHeader(file, form, size, type);
 
 		if ("INFO" == type) {
@@ -207,14 +218,14 @@ std::size_t ml::stat::readSTAT(std::istream& file)
 		}
 	}
 
-	if (statSize == total)
+	if (spaceTerrainSize == total)
 	{
 		std::cout << "Finished reading STAT\n";
 	}
 	else
 	{
 		std::cout << "FAILED in reading STAT\n"
-			<< "Read " << total << " out of " << statSize
+			<< "Read " << total << " out of " << spaceTerrainSize
 			<< "\n";
 		exit(0);
 	}
@@ -222,19 +233,13 @@ std::size_t ml::stat::readSTAT(std::istream& file)
 	return total;
 }
 
-void ml::stat::print() const
+void ml::spaceTerrain::print() const
 {
-}
-
-std::size_t ml::stat::readSTATParameter(std::istream& file) {
-	std::cout << "readSTATParameter not implemented\n";
-	exit(0);
-	return 0;
 }
 
 //*****************************************************************************
 
-ml::stat::light::light() :
+ml::spaceTerrain::light::light() :
 	_lightDOT3(false),
 	_lightDiffuseAlpha(0.0f),
 	_lightDiffuseRed(0.0f),
@@ -250,10 +255,10 @@ ml::stat::light::light() :
 {
 }
 
-ml::stat::light::~light() {
+ml::spaceTerrain::light::~light() {
 }
 
-std::size_t ml::stat::light::read(std::istream& file) {
+std::size_t ml::spaceTerrain::light::read(std::istream& file) {
 	std::size_t total = base::read(file, _lightDOT3);
 	total += base::read(file, _lightDiffuseAlpha);
 	total += base::read(file, _lightDiffuseRed);
@@ -270,7 +275,7 @@ std::size_t ml::stat::light::read(std::istream& file) {
 	return total;
 }
 
-void ml::stat::light::print(std::ostream& os) const {
+void ml::spaceTerrain::light::print(std::ostream& os) const {
 	os << "Normal map: " << std::boolalpha << _lightDOT3 << "\n"
 		<< "Diffuse color (rgba): "
 		<< _lightDiffuseRed << ", "
@@ -290,7 +295,7 @@ void ml::stat::light::print(std::ostream& os) const {
 
 //*****************************************************************************
 
-ml::stat::celestial::celestial() :
+ml::spaceTerrain::celestial::celestial() :
 	_backShaderTemplateName(""),
 	_backSize(0.0f),
 	_frontShaderTemplateName(""),
@@ -301,11 +306,11 @@ ml::stat::celestial::celestial() :
 {
 }
 
-ml::stat::celestial::~celestial() {
+ml::spaceTerrain::celestial::~celestial() {
 
 }
 
-std::size_t ml::stat::celestial::read(std::istream& file) {
+std::size_t ml::spaceTerrain::celestial::read(std::istream& file) {
 	std::size_t total = base::read(file, _backShaderTemplateName);
 	total += base::read(file, _backSize);
 	total += base::read(file, _frontShaderTemplateName);
@@ -316,7 +321,7 @@ std::size_t ml::stat::celestial::read(std::istream& file) {
 	return total;
 }
 
-void ml::stat::celestial::print(std::ostream& os) const {
+void ml::spaceTerrain::celestial::print(std::ostream& os) const {
 	os << "Back shader: " << _backShaderTemplateName << "\n"
 		<< "Back size: " << _backSize << "\n"
 		<< "Front shader: " << _frontShaderTemplateName << "\n"
@@ -329,7 +334,7 @@ void ml::stat::celestial::print(std::ostream& os) const {
 
 //*****************************************************************************
 
-ml::stat::distance::distance() :
+ml::spaceTerrain::distance::distance() :
 	_templateName(""),
 	_directionX(0.0f),
 	_directionY(0.0f),
@@ -343,10 +348,10 @@ ml::stat::distance::distance() :
 {
 }
 
-ml::stat::distance::~distance() {
+ml::spaceTerrain::distance::~distance() {
 }
 
-std::size_t ml::stat::distance::readDIST(std::istream& file) {
+std::size_t ml::spaceTerrain::distance::readDIST(std::istream& file) {
 	std::size_t total = base::read(file, _templateName);
 	total += base::read(file, _directionX);
 	total += base::read(file, _directionY);
@@ -360,7 +365,7 @@ std::size_t ml::stat::distance::readDIST(std::istream& file) {
 	return total;
 }
 
-std::size_t ml::stat::distance::readPLAN(std::istream& file) {
+std::size_t ml::spaceTerrain::distance::readPLAN(std::istream& file) {
 	std::size_t total = base::read(file, _templateName);
 	total += base::read(file, _directionX);
 	total += base::read(file, _directionY);
@@ -374,7 +379,7 @@ std::size_t ml::stat::distance::readPLAN(std::istream& file) {
 	return total;
 }
 
-void ml::stat::distance::print(std::ostream& os) const {
+void ml::spaceTerrain::distance::print(std::ostream& os) const {
 	os << "Template name: " << _templateName << "\n"
 		<< "Direction vector: "
 		<< _directionX << ", "

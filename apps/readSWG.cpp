@@ -52,8 +52,9 @@
 #include <swgLib/skmg.hpp>
 #include <swgLib/slod.hpp>
 #include <swgLib/smat.hpp>
+#include <swgLib/spaceTerrain.hpp>
 #include <swgLib/spam.hpp>
-#include <swgLib/stat.hpp>
+//#include <swgLib/stat.hpp>
 #include <swgLib/ster.hpp>
 #include <swgLib/stot.hpp>
 #include <swgLib/str.hpp>
@@ -234,9 +235,17 @@ int main(int argc, char** argv)
 		}
 		else if ("STAT" == fileType)
 		{
-			ml::stat misc;
-			misc.readSTAT(infile);
-			misc.print();
+		  // Could be Space Terrain Appearance Template
+		  // or
+		  // Shared Static Object Template
+		  ml::spaceTerrain space;
+		  if( 0 < space.read(infile) ) {
+		    space.print();
+		  } else {
+		    //ml::stat misc;
+		    //misc.readSTAT(infile);
+		    //misc.print();
+		  }
 		}
 		else if ("STER" == fileType)
 		{

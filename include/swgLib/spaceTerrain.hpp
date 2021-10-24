@@ -1,6 +1,6 @@
 /** -*-c++-*-
- *  \class  stat
- *  \file   stat.hpp
+ *  \class  spaceTerrain
+ *  \file   spaceTerrain.hpp
  *  \author Ken Sewell
 
  swgLib is used for the parsing and exporting SWG models.
@@ -27,19 +27,19 @@
 #include <string>
 #include <vector>
 
-#ifndef STAT_HPP
-#define STAT_HPP 1
+#ifndef SPACETERRAIN_HPP
+#define SPACETERRAIN_HPP 1
 
 namespace ml
 {
-	// Space Terrain Appearance Template (STAT)
-	class stat
+	// Space Terrain Appearance Template (SPACETERRAIN)
+	class spaceTerrain
 	{
 	public:
-		stat();
-		~stat();
+		spaceTerrain();
+		~spaceTerrain();
 
-		std::size_t readSTAT(std::istream& file);
+		std::size_t read(std::istream& file);
 		void print() const;
 
 	public:
@@ -114,8 +114,6 @@ namespace ml
 		};
 
 	private:
-		std::size_t readSTATParameter(std::istream& file);
-
 		float _mapWidthInMeters;
 
 		// Clear color
