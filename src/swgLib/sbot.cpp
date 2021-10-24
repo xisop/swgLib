@@ -48,6 +48,7 @@ std::size_t sbot::readSBOT(std::istream& file) {
 	std::cout << "Found SBOT form: " << sbotSize << "\n";
 
 	total += readDERV(file, _sbotBaseObjectFilename);
+	std::cout << "SBOT Base object filename: " << _sbotBaseObjectFilename << "\n";
 
 	std::string type;
 	std::size_t size;
@@ -77,6 +78,10 @@ std::size_t sbot::readSBOT(std::istream& file) {
 	}
 
 	return total;
+}
+
+const std::string& sbot::getBaseObjectFilename() const {
+	return _sbotBaseObjectFilename;
 }
 
 const std::string& sbot::getTerrainModificationFilename() const {

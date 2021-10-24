@@ -33,26 +33,28 @@
 
 namespace ml
 {
-  class sbot : public stot
-  {
-  public:
-    sbot();
-    ~sbot();
+	// Shared Building Object Template (SBOT)
+	class sbot : public stot
+	{
+	public:
+		sbot();
+		~sbot();
 
-    std::size_t readSBOT( std::istream &file );
+		std::size_t readSBOT(std::istream& file);
 
-    const std::string& getTerrainModificationFilename() const;
-    const std::string& getInteriorLayoutFilename() const;
+		const std::string& getBaseObjectFilename() const;
+		const std::string& getTerrainModificationFilename() const;
+		const std::string& getInteriorLayoutFilename() const;
 
-    void print(std::ostream &os) const;
+		void print(std::ostream& os) const;
 
-  protected:
-    std::size_t readSBOTParameter( std::istream &file );
+	protected:
+		std::size_t readSBOTParameter(std::istream& file);
 
-    int8_t _sbotVersion;
-    std::string _sbotBaseObjectFilename;
-    std::string _terrainModificationFileName;
-    std::string _interiorLayoutFileName;
-  };
+		int8_t _sbotVersion;
+		std::string _sbotBaseObjectFilename;
+		std::string _terrainModificationFileName;
+		std::string _interiorLayoutFileName;
+	};
 }
 #endif
