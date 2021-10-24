@@ -31,6 +31,7 @@
 #include <swgLib/cach.hpp>
 #include <swgLib/cclt.hpp>
 #include <swgLib/ckat.hpp>
+#include <swgLib/cldf.hpp>
 #include <swgLib/cmp.hpp>
 #include <swgLib/cshd.hpp>
 #include <swgLib/cstb.hpp>
@@ -113,6 +114,11 @@ int main(int argc, char** argv)
 		{
 			ml::ckat misc;
 			misc.readCKAT(infile);
+		}
+		else if ("CLDF" == fileType)
+		{
+			ml::cldf misc;
+			misc.read(infile);
 		}
 		else if ("CMPA" == fileType)
 		{
