@@ -54,7 +54,7 @@
 #include <swgLib/smat.hpp>
 #include <swgLib/spaceTerrain.hpp>
 #include <swgLib/spam.hpp>
-//#include <swgLib/stat.hpp>
+#include <swgLib/stat.hpp>
 #include <swgLib/ster.hpp>
 #include <swgLib/stot.hpp>
 #include <swgLib/str.hpp>
@@ -242,9 +242,9 @@ int main(int argc, char** argv)
 		  if( 0 < space.read(infile) ) {
 		    space.print();
 		  } else {
-		    //ml::stat misc;
-		    //misc.readSTAT(infile);
-		    //misc.print();
+		    ml::stat misc;
+		    misc.readSTAT(infile);
+		    misc.print(std::cout);
 		  }
 		}
 		else if ("STER" == fileType)
