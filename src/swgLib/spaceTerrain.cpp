@@ -69,8 +69,9 @@ ml::spaceTerrain::~spaceTerrain()
 
 std::size_t ml::spaceTerrain::read(std::istream& file)
 {
-  std::size_t streamStart = file.tellg();
-  
+	// Remember start of stream in case type is wrong...
+	std::size_t streamStart = file.tellg();
+
 	std::size_t spaceTerrainSize;
 	std::size_t total = base::readFormHeader(file, "STAT", spaceTerrainSize);
 	spaceTerrainSize += 8;
@@ -81,15 +82,16 @@ std::size_t ml::spaceTerrain::read(std::istream& file)
 	total += base::readFormHeader(file, form, size0000, type);
 	size0000 += 8;
 
-	if( "0000" != type ) {
-	  std::cout << "Space Terrain (STAT) file not detected\n";
-	  if("DERV" == type) {
-	  std::cout << "File appears to be Shared Static Object Template (STAT) type.\n";
-	  }
-	  std::cout << "Resetting file pointer\n";
-	  file.seekg(streamStart);
+	if ("0000" != type) {
+		std::cout << "Space Terrain (STAT) file not detected\n";
+		if ("DERV" == type) {
+			std::cout << "File appears to be Shared Static Object Template (STAT) type.\n";
+		}
+		std::cout << "Resetting file pointer\n";
+		file.seekg(streamStart);
+		return 0;
 	}
-	
+
 	std::size_t size;
 	while (total < spaceTerrainSize) {
 		base::peekHeader(file, form, size, type);
