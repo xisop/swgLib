@@ -25,21 +25,20 @@
 
 #include <swgLib/matrix3.hpp>
 #include <cstring> // memcpy
+#include <iomanip> // setprecision()
 
 using namespace ml;
 
 matrix3x3::matrix3x3()
 {
-	for (unsigned int i = 0; i < 9; ++i)
-	{
+	for (unsigned int i = 0; i < 9; ++i) {
 		v[i] = 0.0f;
 	}
 }
 
 matrix3x3::matrix3x3(const matrix3x3& m)
 {
-	for (unsigned int i = 0; i < 9; ++i)
-	{
+	for (unsigned int i = 0; i < 9; ++i) {
 		v[i] = m.v[i];
 	}
 }
@@ -61,8 +60,7 @@ std::size_t matrix3x3::write(std::ostream& file) const {
 	return(sizeof(float) * 9);
 }
 
-float matrix3x3::get(int index) const
-{
+float matrix3x3::get(int index) const {
 	if (index < 9) { return v[index]; }
 	else { return 0.0f; }
 }
@@ -74,30 +72,33 @@ void matrix3x3::set(const float* V) { memcpy(v, V, sizeof(float) * 9); }
 void matrix3x3::set(const matrix3x3& m) { memcpy(v, m.v, sizeof(float) * 9); }
 
 void matrix3x3::print(std::ostream& os) const {
-	os << v[0] << ", " << v[1] << ", " << v[2] << "\n"
-		<< v[3] << ", " << v[4] << ", " << v[5] << "\n"
-		<< v[6] << ", " << v[7] << ", " << v[8];
+	os << std::fixed << std::setprecision(4)
+		<< std::setw(9) << v[0] << ", "
+		<< std::setw(9) << v[1] << ", "
+		<< std::setw(9) << v[2] << "\n"
+		<< std::setw(9) << v[3] << ", "
+		<< std::setw(9) << v[4] << ", "
+		<< std::setw(9) << v[5] << "\n"
+		<< std::setw(9) << v[6] << ", "
+		<< std::setw(9) << v[7] << ", "
+		<< std::setw(9) << v[8];
 }
 
-
-matrix3x4::matrix3x4()
-{
+matrix3x4::matrix3x4() {
 	for (unsigned int i = 0; i < 12; ++i)
 	{
 		v[i] = 0.0f;
 	}
 }
 
-matrix3x4::matrix3x4(const matrix3x4& m)
-{
+matrix3x4::matrix3x4(const matrix3x4& m) {
 	for (unsigned int i = 0; i < 12; ++i)
 	{
 		v[i] = m.v[i];
 	}
 }
 
-matrix3x4::matrix3x4(const float* V)
-{
+matrix3x4::matrix3x4(const float* V) {
 	memcpy(v, V, sizeof(float) * 12);
 }
 
@@ -113,8 +114,7 @@ std::size_t matrix3x4::write(std::ostream& file) const {
 	return(sizeof(float) * 12);
 }
 
-float matrix3x4::get(int index) const
-{
+float matrix3x4::get(int index) const {
 	if (index < 12)
 	{
 		return v[index];
@@ -125,28 +125,34 @@ float matrix3x4::get(int index) const
 	}
 }
 
-std::size_t matrix3x4::get(float* V) const
-{
+std::size_t matrix3x4::get(float* V) const {
 	memcpy(V, v, sizeof(float) * 12);
 	return std::size_t(12);
 }
 
-std::size_t matrix3x4::set(const float* V)
-{
+std::size_t matrix3x4::set(const float* V) {
 	memcpy(v, V, sizeof(float) * 12);
 	return std::size_t(12);
 }
 
-void matrix3x4::set(const matrix3x4& m)
-{
+void matrix3x4::set(const matrix3x4& m) {
 	memcpy(v, m.v, sizeof(float) * 12);
 }
 
-void matrix3x4::print(std::ostream& os) const
-{
-	os << v[0] << ", " << v[1] << ", " << v[2] << ", " << v[3] << "\n"
-		<< v[4] << ", " << v[5] << ", " << v[6] << ", " << v[7] << "\n"
-		<< v[8] << ", " << v[9] << ", " << v[10] << ", " << v[11];
+void matrix3x4::print(std::ostream& os) const {
+	os << std::fixed << std::setprecision(4)
+		<< std::setw(9) << v[0] << ", "
+		<< std::setw(9) << v[1] << ", "
+		<< std::setw(9) << v[2] << ", "
+		<< std::setw(9) << v[3] << "\n"
+		<< std::setw(9) << v[4] << ", "
+		<< std::setw(9) << v[5] << ", "
+		<< std::setw(9) << v[6] << ", "
+		<< std::setw(9) << v[7] << "\n"
+		<< std::setw(9) << v[8] << ", "
+		<< std::setw(9) << v[9] << ", "
+		<< std::setw(9) << v[10] << ", "
+		<< std::setw(9) << v[11];
 }
 
 std::ostream& operator<<(std::ostream& os, const ml::matrix3x3& m) {
@@ -158,4 +164,3 @@ std::ostream& operator<<(std::ostream& os, const ml::matrix3x4& m) {
 	m.print(os);
 	return os;
 }
-
