@@ -80,11 +80,16 @@ std::size_t shot::readSHOT(std::istream& file)
 	shotSize += 8;
 	std::cout << "Found SHOT form: " << shotSize << "\n";
 
-	total += readDERV(file, _baseObjectFilename);
-	std::cout << "SHOT Base object filename: " << _baseObjectFilename << "\n";
-
-	std::string type;
+	std::string form, type;
 	std::size_t size;
+	base::peekHeader(file, form, size, type);
+
+	// Optional
+	if ("DERV" == type) {
+		total += readDERV(file, _baseObjectFilename);
+		std::cout << "SHOT Base object filename: " << _baseObjectFilename << "\n";
+	}
+
 	total += base::readFormHeader(file, type, size);
 	_shotVersion = base::tagToVersion(type);
 	std::cout << "SHOT version: " << (int)_shotVersion << "\n";
@@ -136,11 +141,11 @@ std::size_t shot::readDERV(std::istream& file, std::string& filename)
 	return total;
 }
 
-void shot::print(std::ostream &os) const
+void shot::print(std::ostream& os) const
 {
 }
 
-std::size_t shot::readPCNT(std::istream& file, int32_t &numParameters)
+std::size_t shot::readPCNT(std::istream& file, int32_t& numParameters)
 {
 	std::size_t pcntSize;
 	std::size_t total = base::readRecordHeader(file, "PCNT", pcntSize);
