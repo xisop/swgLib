@@ -42,6 +42,10 @@ const ilf::node& ilf::getNode(const uint32_t& index) const {
 	return _nodes.at(index);
 }
 
+const std::vector<ilf::node>& ilf::getNodes() const {
+	return _nodes;
+}
+
 std::size_t ilf::createILF(std::istream& infile, std::ofstream& outfile)
 {
 	std::size_t total = 0;
@@ -195,4 +199,16 @@ void ilf::node::print(std::ostream& os) const {
 		<< "Transform:\n";
 	_transform.print(os);
 	os << "\n\n";
+}
+
+const std::string& ilf::node::getObjectFilename() const {
+	return _objectFilename;
+}
+
+const std::string& ilf::node::getCellName() const {
+	return _cellName;
+}
+
+const matrix3x4& ilf::node::getTransform() const {
+	return _transform;
 }

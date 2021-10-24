@@ -24,7 +24,6 @@
 */
 
 #include <swgLib/matrix3.hpp>
-#include <swgLib/vector3.hpp>
 
 #include <istream>
 #include <ostream>
@@ -50,6 +49,10 @@ namespace ml
 			std::size_t write(std::ostream &file) const;
 			void print(std::ostream& os) const;
 
+			const std::string& getObjectFilename() const;
+			const std::string& getCellName() const;
+			const matrix3x4& getTransform() const;
+
 		protected:
 			std::string _objectFilename;
 			std::string _cellName;
@@ -70,6 +73,7 @@ namespace ml
 		}
 
 		const node& getNode(const uint32_t& index) const;
+		const std::vector<node>& getNodes() const;
 
 	protected:
 		std::size_t readNODE(std::istream& file);
