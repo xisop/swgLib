@@ -34,6 +34,7 @@
 
 namespace ml
 {
+	// Shared Tangible Object Template
 	class stot : public shot
 	{
 	public:
