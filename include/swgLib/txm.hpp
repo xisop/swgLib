@@ -73,19 +73,24 @@ namespace ml
 		int8_t getMagFilterMode() const;
 
 	protected:
+		std::size_t readV0(std::istream& file);
+		std::size_t readV1(std::istream& file);
+		std::size_t readV2(std::istream& file);
+
 		uint8_t _version;
 
 		bool _placeHolder;
 		tag _nameTag;
 		std::string _textureName;
 
-		int8_t _uWrapMode;
-		int8_t _vWrapMode;
-		int8_t _wWrapMode;
+		uint8_t _uWrapMode;
+		uint8_t _vWrapMode;
+		uint8_t _wWrapMode;
 
-		int8_t _mipFilterMode;
-		int8_t _minFilterMode;
-		int8_t _magFilterMode;
+		uint8_t  _mipFilterMode;
+		uint8_t  _minFilterMode;
+		uint8_t  _magFilterMode;
+		uint8_t _maxAnisotropy;
 
 	private:
 	};

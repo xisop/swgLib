@@ -48,50 +48,101 @@ std::size_t txm::read(std::istream& file) {
 	txmSize += 8; // Include Form/Size from header...
 	std::cout << "Found record TXM : " << txmSize << " bytes\n";
 
-	std::string type;
+	std::string form, type;
 	std::size_t size;
-	total += base::readFormHeader(file, type, size);
-	_version = base::tagToVersion(type);
+	base::peekHeader(file, form, size, type);
 
-	if (_version > 2) {
-		std::cout << "Expected version 0000, 0001, or 0002. Found: " << type << "\n";
+	if ("0000" == type) {
+		total += readV0(file);
+	}
+	else if ("0001" == type) {
+		total += readV1(file);
+	}
+	else if ("0002" == type) {
+		total += readV2(file);
+	}
+	else {
+		std::cout << "Unhandled TXM version: " << (int)_version << "\n";
 		exit(0);
 	}
-	std::cout << "Found FORM " << type << ": " << size << " bytes\n";
+
+	if (txmSize == total)
+	{
+		std::cout << "Finished reading txm\n";
+	}
+	else
+	{
+		std::cout << "FAILED in reading txm\n";
+		std::cout << "Read " << total << " out of " << txmSize << "\n";
+		exit(0);
+	}
+
+	return total;
+}
+
+std::size_t txm::readV0(std::istream& file) {
+	std::size_t size;
+	std::size_t total = base::readFormHeader(file, "0000", size);
+	_version = 0;
 
 	total += base::readRecordHeader(file, "DATA", size);
 	std::cout << "Found record DATA: " << size << " bytes\n";
 
-	if (0 == _version) {
-		total += base::read(file, _placeHolder);
-		std::cout << "Placeholder: " << std::boolalpha << _placeHolder << "\n";
-	}
+	total += base::read(file, _placeHolder);
+	std::cout << "Placeholder: " << std::boolalpha << _placeHolder << "\n";
 
 	total += base::read(file, _nameTag);
 	std::cout << "Name: " << _nameTag << "\n";
 
-	if (_version != 0) {
-		total += base::read(file, _placeHolder);
-		std::cout << "Placeholder: " << std::boolalpha << _placeHolder << "\n";
+	if ("ENVM" == _nameTag.str()) { _placeHolder = true; }
 
-		// Read U texture wrap mode...
-		total += base::read(file, _uWrapMode);
+	if (!_placeHolder) {
+		total += base::readRecordHeader(file, "NAME", size);
+		std::cout << "Found record NAME: " << size << " bytes\n";
 
-		// Read V texture wrap mode...
-		total += base::read(file, _vWrapMode);
-
-		// Read W texture wrap mode...
-		total += base::read(file, _wWrapMode);
-
-		// Read map address Mip
-		total += base::read(file, _mipFilterMode);
-
-		// Read map address Min
-		total += base::read(file, _minFilterMode);
-
-		// Read map address Mag
-		total += base::read(file, _magFilterMode);
+		total += base::read(file, _textureName);
+		base::fixSlash(_textureName);
+		std::cout << "Texture name: " << _textureName << "\n";
 	}
+
+	return total;
+}
+
+std::size_t txm::readV1(std::istream& file) {
+	std::size_t size;
+	std::size_t total = base::readFormHeader(file, "0001", size);
+	_version = 1;
+
+	total += base::readRecordHeader(file, "DATA", size);
+	std::cout << "Found record DATA: " << size << " bytes\n";
+
+	total += base::read(file, _nameTag);
+	std::cout << "Name: " << _nameTag << "\n";
+
+	total += base::read(file, _placeHolder);
+	std::cout << "Placeholder: " << std::boolalpha << _placeHolder << "\n";
+
+	if ("ENVM" == _nameTag.str()) { _placeHolder = true; }
+
+	// Read U texture wrap mode...
+	total += base::read(file, _uWrapMode);
+
+	// Read V texture wrap mode...
+	total += base::read(file, _vWrapMode);
+
+	// Read W texture wrap mode...
+	total += base::read(file, _wWrapMode);
+
+	// Read map address Mip
+	total += base::read(file, _mipFilterMode);
+
+	// Read map address Min
+	total += base::read(file, _minFilterMode);
+
+	// Read map address Mag
+	total += base::read(file, _magFilterMode);
+
+	_maxAnisotropy = 1;
 
 	std::cout << "U texture wrap mode: " << getWrapModeStr(_uWrapMode) << "\n";
 	std::cout << "V texture wrap mode: " << getWrapModeStr(_vWrapMode) << "\n";
@@ -110,15 +161,63 @@ std::size_t txm::read(std::istream& file) {
 		std::cout << "Texture name: " << _textureName << "\n";
 	}
 
-	if (txmSize == total)
-	{
-		std::cout << "Finished reading txm\n";
-	}
-	else
-	{
-		std::cout << "FAILED in reading txm\n";
-		std::cout << "Read " << total << " out of " << txmSize << "\n";
-		exit(0);
+	return total;
+}
+
+std::size_t txm::readV2(std::istream& file) {
+	std::size_t size;
+	std::size_t total = base::readFormHeader(file, "0002", size);
+	_version = 2;
+
+	total += base::readRecordHeader(file, "DATA", size);
+	std::cout << "Found record DATA: " << size << " bytes\n";
+
+	total += base::read(file, _nameTag);
+	std::cout << "Name: " << _nameTag << "\n";
+
+	total += base::read(file, _placeHolder);
+	std::cout << "Placeholder: " << std::boolalpha << _placeHolder << "\n";
+
+	if ("ENVM" == _nameTag.str()) { _placeHolder = true; }
+
+	// Read U texture wrap mode...
+	total += base::read(file, _uWrapMode);
+
+	// Read V texture wrap mode...
+	total += base::read(file, _vWrapMode);
+
+	// Read W texture wrap mode...
+	total += base::read(file, _wWrapMode);
+
+	// Read map address Mip
+	total += base::read(file, _mipFilterMode);
+
+	// Read map address Min
+	total += base::read(file, _minFilterMode);
+
+	// Read map address Mag
+	total += base::read(file, _magFilterMode);
+
+	// Read max anisotropy
+	total += base::read(file, _maxAnisotropy);
+
+	std::cout << "U texture wrap mode: " << getWrapModeStr(_uWrapMode) << "\n";
+	std::cout << "V texture wrap mode: " << getWrapModeStr(_vWrapMode) << "\n";
+	std::cout << "W texture wrap mode: " << getWrapModeStr(_wWrapMode) << "\n";
+
+	std::cout << "Mip texture filter mode: " << getFilterModeStr(_mipFilterMode) << "\n";
+	std::cout << "Min texture filter mode: " << getFilterModeStr(_minFilterMode) << "\n";
+	std::cout << "Mag texture filter mode: " << getFilterModeStr(_magFilterMode) << "\n";
+
+	std::cout << "Max anisotrophy: " << (int)_maxAnisotropy << "\n";
+
+	if (!_placeHolder) {
+		total += base::readRecordHeader(file, "NAME", size);
+		std::cout << "Found record NAME: " << size << " bytes\n";
+
+		total += base::read(file, _textureName);
+		base::fixSlash(_textureName);
+		std::cout << "Texture name: " << _textureName << "\n";
 	}
 
 	return total;
