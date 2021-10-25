@@ -70,7 +70,7 @@ ml::spaceTerrain::~spaceTerrain()
 std::size_t ml::spaceTerrain::read(std::istream& file)
 {
 	// Remember start of stream in case type is wrong...
-	std::size_t streamStart = file.tellg();
+	std::streampos streamStart = file.tellg();
 
 	std::size_t spaceTerrainSize;
 	std::size_t total = base::readFormHeader(file, "STAT", spaceTerrainSize);

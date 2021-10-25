@@ -43,7 +43,7 @@ ml::stat::~stat()
 std::size_t ml::stat::readSTAT(std::istream& file)
 {
 	// Remember start of stream in case type is wrong...
-	std::size_t streamStart = file.tellg();
+	std::streampos streamStart = file.tellg();
 
 	std::size_t statSize;
 	std::size_t total = base::readFormHeader(file, "STAT", statSize);
