@@ -26,6 +26,7 @@
 #include <swgLib/appr.hpp>
 #include <swgLib/exbx.hpp>
 #include <swgLib/base.hpp>
+#include <swgLib/collisionUtil.hpp>
 
 using namespace ml;
 
@@ -56,18 +57,7 @@ std::size_t appr::read(std::istream& file) {
 	total += readEXBX(file);
 
 	if (3 == _apprVersion) {
-		std::string form;
-		base::peekHeader(file, form, size, type);
-		std::cout << "Peek: " << form << ", " << type << ", " << size << "\n";
-		if ("CMSH" == type) {
-			// Load collision extents...
-			total += _collisionMesh.read(file);
-		}
-		else {
-			// Skip NULL
-			file.seekg(8 + size, std::ios_base::cur);
-			total += 8 + size;
-		}
+		total += collisionUtil::read(file, _collisionPtr);
 	}
 
 	// Load hard points

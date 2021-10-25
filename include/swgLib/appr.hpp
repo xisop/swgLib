@@ -26,6 +26,7 @@
 #include <swgLib/vector3.hpp>
 #include <swgLib/matrix3.hpp>
 #include <swgLib/cmsh.hpp>
+#include <swgLib/baseCollision.hpp>
 
 #include <istream>
 #include <vector>
@@ -59,7 +60,7 @@ namespace ml
 		vector3 _exbxCorner1;
 		vector3 _exbxCorner2;
 
-		cmsh _collisionMesh;
+		baseCollisionPtr _collisionPtr;
 
 		std::vector<matrix3x4> _hardpointTransform;
 		std::vector<std::string> _hardpointName;
