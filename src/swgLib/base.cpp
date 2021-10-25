@@ -125,7 +125,7 @@ bool base::isOfType(std::istream& file, const std::string& Type)
 	std::string type;
 
 	// Get current file position...
-	std::streampos position = file.tellg();
+	const std::streampos position = file.tellg();
 
 	// Read first FORM
 	readFormHeader(file, form, size, type);
@@ -176,7 +176,7 @@ void base::peekHeader(std::istream& file,
 	std::string& type)
 {
 	// Peek at next record, but keep file at same place.
-	std::streampos position = file.tellg();
+	const std::streampos position = file.tellg();
 	readFormHeader(file, form, size, type);
 	file.seekg(position, std::ios_base::beg);
 }
