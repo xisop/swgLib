@@ -31,138 +31,92 @@
 #include <string>
 
 #ifndef WS_HPP
-#define WS_HPP
+#define WS_HPP 1
 
 namespace ml
 {
-  class wsNode
-  {
-  public:
-    std::string getObjectFilename() const
-    {
-      return objectFilename;
-    }
 
-    float getX() const
-    {
-      return x;
-    }
+	class ws
+	{
+	public:
+		class node
+		{
+		public:
+			node();
+			~node();
 
-    float getY() const
-    {
-      return y;
-    }
+			std::size_t read(std::istream& file);
+			//std::size_t write(std::ofstream& file) const;
+			void print(std::ostream& os) const;
 
-    float getZ() const
-    {
-      return z;
-    }
+			std::string getObjectFilename() const;
+			void setObjectFilename(const std::string& name);
 
-    float getQuatX() const
-    {
-      return qx;
-    }
+			const float& getPositionX() const;
+			const float& getPositionY() const;
+			const float& getPositionZ() const;
 
-    float getQuatY() const
-    {
-      return qy;
-    }
+			const float& getQuatW() const;
+			const float& getQuatX() const;
+			const float& getQuatY() const;
+			const float& getQuatZ() const;
 
-    float getQuatZ() const
-    {
-      return qz;
-    }
+			const int32_t& getID() const;
+			const int32_t& getParentID() const;
+			const int32_t& getObjectNameIndex() const;
+			const int32_t& getPositionInParent() const;
 
-    float getQuatW() const
-    {
-      return qw;
-    }
+			protected:
+			int32_t _nodeID;
+			int32_t _parentNodeID;
+			int32_t _objectNameIndex;
+			int32_t _cellIndex;
 
-    unsigned int getID() const
-    {
-      return nodeID;
-    }
+			float _qw;
+			float _qx;
+			float _qy;
+			float _qz;
 
-    unsigned int getParentID() const
-    {
-      return parentNodeID;
-    }
+			float _positionX;
+			float _positionY;
+			float _positionZ;
 
-    unsigned int getObjectIndex() const
-    {
-      return objectIndex;
-    }
+			float _radius;
 
-    unsigned int getPositionInParent() const
-    {
-      return positionInParent;
-    }
+			unsigned int _crc;
 
-    //protected:
-  
-    unsigned int read( std::istream &file );
-    unsigned int write( std::ofstream &file );
-    void print();
-  
-    unsigned int nodeID;
-    unsigned int parentNodeID;
-    unsigned int objectIndex;
-    unsigned int positionInParent;
-  
-    float qx;
-    float qy;
-    float qz;
-    float qw;
-  
-    float x;
-    float y;
-    float z;
-  
-    unsigned int u2;
-  
-    unsigned int crc;
-  
-    std::string objectFilename;
-  
-    // Not stored in record, readSWG use only
-    unsigned int level;
-  };
+			// Object filename
+			std::string _objectFilename;
+		};
 
-  class ws : public base
-  {
-  public:
-    ws();
-    ~ws();
-    bool isRightType( std::istream &file )
-    {
-      return isOfType( file, "WSNP" );
-    }
-    unsigned int readWS( std::istream &file );
-    unsigned int readMetaFile( std::istream &infile );
-    unsigned int createWS( std::ofstream &outfile );
-    bool canWrite() const { return true; }
+	public:
+		ws();
+		~ws();
 
-    uint32_t getNumObjectNodes() const
-    {
-      return uint32_t(nodes.size());
-    }
+		std::size_t read(std::istream& file);
+		//std::size_t create(std::ofstream& outfile);
+//		std::size_t readMetaFile(std::istream& infile);
 
-    wsNode &getObjectNode( unsigned int i );
+		bool canWrite() const { return true; }
 
-  protected:
-    unsigned int readNODS( std::istream &file );
-    unsigned int readNODE( std::istream &file, unsigned int level );
-    unsigned int readOTNL( std::istream &file );
-	
-    unsigned int writeNODS( std::ofstream &outfile );
-    unsigned int writeNODE( std::ofstream &outfile );
-    unsigned int writeOTNL( std::ofstream &outfile );
-	
-    std::vector< wsNode > nodes;
-    std::vector< std::string > objectNames;
-  private:
-    std::vector< wsNode >::iterator currentNode;
-    unsigned int maxObjectIndex;
-  };
+		uint32_t getNumNodes() const;
+		const ws::node& getNode(const uint32_t& i) const;
+
+		const std::string& getName(const uint32_t& i) const;
+	protected:
+		std::size_t readNODS(std::istream& file);
+		std::size_t readOTNL(std::istream& file);
+
+#if 0
+		std::size_t writeNODS(std::ofstream& outfile);
+		std::size_t writeNODE(std::ofstream& outfile);
+		std::size_t writeOTNL(std::ofstream& outfile);
+#endif
+
+	private:
+		uint8_t _version;
+		std::vector< node > _nodes;
+		std::vector< std::string > _names;
+	};
 }
 #endif

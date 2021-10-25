@@ -33,188 +33,33 @@
 
 using namespace ml;
 
-ws::ws()
-{
+ws::ws() :
+	_version(0) {
 }
 
-ws::~ws()
-{
+ws::~ws() {
 }
 
-unsigned int ws::readMetaFile(std::istream& infile)
+std::size_t ws::read(std::istream& file)
 {
-	char temp[512];
-	maxObjectIndex = 0;
-
-	while (!infile.eof())
-	{
-		wsNode node;
-
-		// Node ID
-		infile.getline(temp, 512, ':');
-		if (infile.eof()) { break; };
-		infile >> node.nodeID;
-		//std::cout << node.nodeID << std::endl;
-
-		// Parent Node ID
-		infile.getline(temp, 512, ':');
-		if (infile.eof()) { break; };
-		infile >> node.parentNodeID;
-		//std::cout << node.parentNodeID << std::endl;
-
-		// Object Index
-		infile.getline(temp, 512, ':');
-		if (infile.eof()) { break; };
-		infile >> node.objectIndex;
-		//std::cout << node.objectIndex << std::endl;
-
-		// Object filename
-		infile.getline(temp, 512, ':');
-		if (infile.eof()) { break; };
-		infile >> node.objectFilename;
-		//std::cout << node.objectFilename << std::endl;
-
-		// Position in parent
-		infile.getline(temp, 512, ':');
-		if (infile.eof()) { break; };
-		infile >> node.positionInParent;
-		//std::cout << node.positionInParent << std::endl;
-
-		// qx
-		infile.getline(temp, 512, ':');
-		if (infile.eof()) { break; };
-		infile >> node.qx;
-		//std::cout << node.rx << std::endl;
-
-		// qy
-		infile.getline(temp, 512, ':');
-		if (infile.eof()) { break; };
-		infile >> node.qy;
-		//std::cout << node.qy << std::endl;
-
-		// qz
-		infile.getline(temp, 512, ':');
-		if (infile.eof()) { break; };
-		infile >> node.qz;
-		//std::cout << node.qz << std::endl;
-
-		// qw
-		infile.getline(temp, 512, ':');
-		if (infile.eof()) { break; };
-		infile >> node.qw;
-		//std::cout << node.qw << std::endl;
-
-		// x
-		infile.getline(temp, 512, ':');
-		if (infile.eof()) { break; };
-		infile >> node.x;
-		//std::cout << node.x << std::endl;
-
-		// y
-		infile.getline(temp, 512, ':');
-		if (infile.eof()) { break; };
-		infile >> node.y;
-		//std::cout << node.y << std::endl;
-
-		// z
-		infile.getline(temp, 512, ':');
-		if (infile.eof()) { break; };
-		infile >> node.z;
-		//std::cout << node.z << std::endl;
-
-		// Unknown 2
-		infile.getline(temp, 512, ':');
-		if (infile.eof()) { break; };
-		infile >> node.u2;
-		//std::cout << node.u2 << std::endl;
-
-		// Unknown 3
-		infile.getline(temp, 512, ':');
-		if (infile.eof()) { break; };
-		infile >> node.crc;
-		//std::cout << node.crc << std::endl;
-
-		// level
-		infile.getline(temp, 512, ':');
-		if (infile.eof()) { break; };
-		infile >> node.level;
-		//std::cout << node.level << std::endl;
-
-		if (node.objectIndex > maxObjectIndex)
-		{
-			maxObjectIndex = node.objectIndex;
-		}
-
-		nodes.push_back(node);
-	}
-
-	return 0;
-}
-
-unsigned int ws::createWS(std::ofstream& outfile)
-{
-
-	unsigned int total = 0;
-
-	// Write form with dummy size
-	unsigned int form0Position = outfile.tellp();
-	writeFormHeader(outfile, 0, "WSNP");
-	// Write form with dummy size
-	unsigned int form1Position = outfile.tellp();
-	writeFormHeader(outfile, 0, "0001");
-
-	total += writeNODS(outfile);
-	total += writeOTNL(outfile);
-
-	// Rewrite form with proper size.
-	outfile.seekp(form1Position, std::ios_base::beg);
-	total += writeFormHeader(outfile, total + 4, "0001");
-
-	// Rewrite form with proper size.
-	outfile.seekp(form0Position, std::ios_base::beg);
-	total += writeFormHeader(outfile, total + 4, "WSNP");
-
-	return total;
-}
-
-unsigned int ws::readWS(std::istream& file)
-{
-	std::string form;
 	std::size_t wsSize;
-	std::string type;
-
-	std::size_t total = readFormHeader(file, "WSNP", wsSize);
+	std::size_t total = base::readFormHeader(file, "WSNP", wsSize);
 	wsSize += 8;
-#ifdef DEBUG
-	std::cout << "Found WSNP form"
-		<< ": " << wsSize - 12 << " bytes"
-		<< std::endl;
-#endif
-	std::cout << "File type: " << type << std::endl;
 
 	std::size_t size;
-	total += readFormHeader(file, form, size, type);
-	if (form != "FORM")
-	{
-		std::cout << "Expected FORM: " << form << std::endl;
-		exit(0);
-	}
-#ifdef DEBUG
-	std::cout << "Found " << form << " " << type
-		<< ": " << size - 4 << " bytes"
-		<< std::endl;
-#endif
+	total += base::readFormHeader(file, "0001", size);
+	_version = 1;
 
 	total += readNODS(file);
 	total += readOTNL(file);
 
-	std::vector< wsNode >::iterator node;
-	for (node = nodes.begin(); node != nodes.end(); ++node)
-	{
-		node->objectFilename = objectNames[node->objectIndex];
-		node->print();
+	for (auto& n : _nodes) {
+		n.setObjectFilename( this->getName(n.getObjectNameIndex()));
+		n.print(std::cout);
 	}
 
+	std::cout << "Num nodes: " << _nodes.size() << "\n";
+	std::cout << "Num names: " << _names.size() << "\n";
 
 	if (wsSize == total)
 	{
@@ -224,26 +69,166 @@ unsigned int ws::readWS(std::istream& file)
 	}
 	else
 	{
-		std::cout << "FAILED in reading WS" << std::endl;
-		std::cout << "Read " << total << " out of " << wsSize
-			<< std::endl;
+		std::cout << "FAILED in reading WS\n"
+			<< "Read " << total << " out of " << wsSize << "\n";
+		exit(0);
 	}
 
 	return total;
 }
 
-unsigned int ws::writeNODS(std::ofstream& outfile)
+#if 0
+std::size_t ws::create(std::ofstream& outfile)
+{
+	std::size_t total = 0;
+
+	// Write form with dummy size
+	const std::streampos form0Position = outfile.tellp();
+	base::writeFormHeader(outfile, 0, "WSNP");
+	// Write form with dummy size
+	const std::streampos form1Position = outfile.tellp();
+	base::writeFormHeader(outfile, 0, "0001");
+
+	total += writeNODS(outfile);
+	total += writeOTNL(outfile);
+
+	// Rewrite form with proper size.
+	outfile.seekp(form1Position, std::ios_base::beg);
+	total += base::writeFormHeader(outfile, total + 4, "0001");
+
+	// Rewrite form with proper size.
+	outfile.seekp(form0Position, std::ios_base::beg);
+	total += base::writeFormHeader(outfile, total + 4, "WSNP");
+
+	return total;
+}
+#endif
+
+#if 0
+std::size_t ws::readMetaFile(std::istream& infile)
+{
+	char temp[512];
+	maxObjectIndex = 0;
+
+	while (!infile.eof())
+	{
+		ws::node node;
+
+		// Node ID
+		infile.getline(temp, 512, ':');
+		if (infile.eof()) { break; };
+		infile >> node._nodeID;
+		//std::cout << node.nodeID << std::endl;
+
+		// Parent Node ID
+		infile.getline(temp, 512, ':');
+		if (infile.eof()) { break; };
+		infile >> node._parentNodeID;
+		//std::cout << node.parentNodeID << std::endl;
+
+		// Object Index
+		infile.getline(temp, 512, ':');
+		if (infile.eof()) { break; };
+		infile >> node._objectIndex;
+		//std::cout << node.objectIndex << std::endl;
+
+		// Object filename
+		infile.getline(temp, 512, ':');
+		if (infile.eof()) { break; };
+		infile >> node._objectFilename;
+		//std::cout << node.objectFilename << std::endl;
+
+		// Position in parent
+		infile.getline(temp, 512, ':');
+		if (infile.eof()) { break; };
+		infile >> node._cellIndex;
+		//std::cout << node.positionInParent << std::endl;
+
+		// qx
+		infile.getline(temp, 512, ':');
+		if (infile.eof()) { break; };
+		infile >> node._qx;
+		//std::cout << node.rx << std::endl;
+
+		// qy
+		infile.getline(temp, 512, ':');
+		if (infile.eof()) { break; };
+		infile >> node._qy;
+		//std::cout << node.qy << std::endl;
+
+		// qz
+		infile.getline(temp, 512, ':');
+		if (infile.eof()) { break; };
+		infile >> node._qz;
+		//std::cout << node.qz << std::endl;
+
+		// qw
+		infile.getline(temp, 512, ':');
+		if (infile.eof()) { break; };
+		infile >> node._qw;
+		//std::cout << node.qw << std::endl;
+
+		// x
+		infile.getline(temp, 512, ':');
+		if (infile.eof()) { break; };
+		infile >> node._x;
+		//std::cout << node.x << std::endl;
+
+		// y
+		infile.getline(temp, 512, ':');
+		if (infile.eof()) { break; };
+		infile >> node._y;
+		//std::cout << node.y << std::endl;
+
+		// z
+		infile.getline(temp, 512, ':');
+		if (infile.eof()) { break; };
+		infile >> node._z;
+		//std::cout << node.z << std::endl;
+
+		// Unknown 2
+		infile.getline(temp, 512, ':');
+		if (infile.eof()) { break; };
+		infile >> node._radius;
+		//std::cout << node.u2 << std::endl;
+
+		// Unknown 3
+		infile.getline(temp, 512, ':');
+		if (infile.eof()) { break; };
+		infile >> node._crc;
+		//std::cout << node.crc << std::endl;
+
+		// level
+		infile.getline(temp, 512, ':');
+		if (infile.eof()) { break; };
+		infile >> node._level;
+		//std::cout << node.level << std::endl;
+
+		if (node._objectIndex > maxObjectIndex)
+		{
+			maxObjectIndex = node._objectIndex;
+		}
+
+		_nodes.push_back(node);
+	}
+
+	return 0;
+}
+#endif
+
+#if 0
+std::size_t ws::writeNODS(std::ofstream& outfile)
 {
 	std::size_t total = 0;
 
 	//FORM NODS
 	// Write form with dummy size
 	std::size_t form0Position = outfile.tellp();
-	writeFormHeader(outfile, 0, "NODS");
+	base::writeFormHeader(outfile, 0, "NODS");
 
 	// Start writing nodes from beginning of list
-	currentNode = nodes.begin();
-	while (currentNode != nodes.end())
+	_currentNode = _nodes.begin();
+	while (_currentNode != _nodes.end())
 	{
 		total += writeNODE(outfile);
 	}
@@ -252,17 +237,18 @@ unsigned int ws::writeNODS(std::ofstream& outfile)
 
 	//FORM NODS
 	outfile.seekp(form0Position, std::ios_base::beg);
-	total += writeFormHeader(outfile, total + 4, "NODS");
+	total += base::writeFormHeader(outfile, total + 4, "NODS");
 
 	outfile.seekp(nodeEndPosition, std::ios_base::beg);
 
 	return total;
 }
+#endif
 
-unsigned int ws::readNODS(std::istream& file)
+std::size_t ws::readNODS(std::istream& file)
 {
 	std::size_t nodsSize;
-	std::size_t total = readFormHeader(file, "NODS", nodsSize);
+	std::size_t total = base::readFormHeader(file, "NODS", nodsSize);
 	nodsSize += 8;
 #ifdef DEBUG
 	std::cout << "Found NODS form"
@@ -271,9 +257,12 @@ unsigned int ws::readNODS(std::istream& file)
 #endif
 
 	unsigned int numNodes = 0;
+	_nodes.clear();
 	while (total < nodsSize)
 	{
-		total += readNODE(file, 0);
+		ws::node newNode;
+		total += newNode.read(file);
+		_nodes.push_back(newNode);
 		++numNodes;
 	}
 
@@ -289,37 +278,38 @@ unsigned int ws::readNODS(std::istream& file)
 	}
 	else
 	{
-		std::cout << "FAILED in reading NODS" << std::endl;
-		std::cout << "Read " << total << " out of " << nodsSize
-			<< std::endl;
+		std::cout << "FAILED in reading NODS\n"
+			<< "Read " << total << " out of " << nodsSize << "\n";
+		exit(0);
 	}
 
 	return total;
 }
 
-unsigned int ws::writeNODE(std::ofstream& outfile)
+#if 0
+std::size_t ws::writeNODE(std::ofstream& outfile)
 {
 	std::size_t total = 0;
 
 	// FORM NODE
 	// Write form with dummy size
 	std::size_t form0Position = outfile.tellp();
-	writeFormHeader(outfile, 0, "NODE");
+	base::writeFormHeader(outfile, 0, "NODE");
 
 	// FORM 0000
 	// Write form with dummy size
 	std::size_t form1Position = outfile.tellp();
-	writeFormHeader(outfile, 0, "0000");
+	base::writeFormHeader(outfile, 0, "0000");
 
-	total += writeRecordHeader(outfile, "DATA", 52);
-	currentNode->print();
-	total += currentNode->write(outfile);
-	unsigned int thisLevel = currentNode->level;
-	++currentNode;
+	total += base::writeRecordHeader(outfile, "DATA", 52);
+	_currentNode->print(std::cout);
+	total += _currentNode->write(outfile);
+	unsigned int thisLevel = _currentNode->_level;
+	++_currentNode;
 
-	if (currentNode != nodes.end())
+	if (_currentNode != _nodes.end())
 	{
-		while (currentNode->level > thisLevel)
+		while (_currentNode->_level > thisLevel)
 		{
 			total += writeNODE(outfile);
 		}
@@ -330,104 +320,36 @@ unsigned int ws::writeNODE(std::ofstream& outfile)
 	// FORM 0000
 	// Rewrite form with proper size.
 	outfile.seekp(form1Position, std::ios_base::beg);
-	total += writeFormHeader(outfile, total + 4, "0000");
+	total += base::writeFormHeader(outfile, total + 4, "0000");
 
 	// FORM NODE
 	// Rewrite form with proper size.
 	outfile.seekp(form0Position, std::ios_base::beg);
-	total += writeFormHeader(outfile, total + 4, "NODE");
+	total += base::writeFormHeader(outfile, total + 4, "NODE");
 
 	outfile.seekp(nodeEndPosition, std::ios_base::beg);
 
 	return total;
 }
 
-unsigned int ws::readNODE(std::istream& file, unsigned int level)
-{
-	std::size_t nodeSize;
-	std::string type;
-
-	// FORM NODE
-	std::size_t total = readFormHeader(file, "NODE", nodeSize);
-	nodeSize += 8;
-#ifdef DEBUG
-	std::cout << "Found NODE form"
-		<< ": " << nodeSize - 12 << " bytes"
-		<< std::endl;
-#endif
-
-	// FORM 0000
-	std::size_t size;
-	total += readFormHeader(file, "0000", size);
-	size += 8;
-#ifdef DEBUG
-	std::cout << "Found 0000 form"
-		<< ": " << size - 12 << " bytes"
-		<< std::endl;
-#endif
-
-	total += readRecordHeader(file, type, size);
-	if (type != "DATA")
-	{
-		std::cout << "Expected record of type DATA: " << type << std::endl;
-		exit(0);
-	}
-#ifdef DEBUG
-	std::cout << "Found DATA record"
-		<< ": " << size << " bytes"
-		<< std::endl;
-#endif
-
-	if (size != 52)
-	{
-		std::cout << "Expected size of 52: " << size << std::endl;
-		exit(0);
-	}
-
-	wsNode node;
-	total += node.read(file);
-	node.level = level;
-	nodes.push_back(node);
-
-	while (total < nodeSize)
-	{
-		total += readNODE(file, level + 1);
-	}
-
-	if (nodeSize == total)
-	{
-#ifdef DEBUG
-		std::cout << "Finished reading NODE" << std::endl;
-#endif
-	}
-	else
-	{
-		std::cout << "FAILED in reading NODE" << std::endl;
-		std::cout << "Read " << total << " out of " << nodeSize
-			<< std::endl;
-	}
-
-	return total;
-}
-
-unsigned int ws::writeOTNL(std::ofstream& outfile)
+std::size_t ws::writeOTNL(std::ofstream& outfile)
 {
 	++maxObjectIndex;
 	std::cout << "Resizing vector to " << maxObjectIndex << std::endl;
-	objectNames.resize(maxObjectIndex);
-	for (currentNode = nodes.begin(); currentNode != nodes.end();
-		++currentNode)
+	_objectNames.resize(maxObjectIndex);
+	for (_currentNode = _nodes.begin(); _currentNode != _nodes.end();
+		++_currentNode)
 	{
-		objectNames[currentNode->objectIndex] = currentNode->objectFilename;
+		_objectNames[_currentNode->_objectIndex] = _currentNode->_objectFilename;
 	}
 
 	std::size_t total = 0;
 
 	// Write form with dummy size
 	std::size_t position = outfile.tellp();
-	writeRecordHeader(outfile, "OTNL", total);
+	base::writeRecordHeader(outfile, "OTNL", total);
 
-	unsigned int numObjects = objectNames.size();
+	uint32_t numObjects = (uint32_t)_objectNames.size();
 	outfile.write((char*)&numObjects, sizeof(numObjects));
 	total += sizeof(numObjects);
 
@@ -435,52 +357,35 @@ unsigned int ws::writeOTNL(std::ofstream& outfile)
 	for (unsigned int i = 0; i < numObjects; ++i)
 	{
 		outfile.write(
-			objectNames[i].c_str(),
-			static_cast<unsigned int>(objectNames[i].size() + 1)
+			_objectNames[i].c_str(),
+			static_cast<unsigned int>(_objectNames[i].size() + 1)
 		);
-		total += objectNames[i].size() + 1;
+		total += _objectNames[i].size() + 1;
 	}
 
 	std::size_t nodeEndPosition = outfile.tellp();
 
 	// Rewrite form with proper size.
 	outfile.seekp(position, std::ios_base::beg);
-	total += writeRecordHeader(outfile, "OTNL", total);
+	total += base::writeRecordHeader(outfile, "OTNL", total);
 
 	outfile.seekp(nodeEndPosition, std::ios_base::beg);
 
 	return total;
 }
+#endif
 
-unsigned int ws::readOTNL(std::istream& file)
+std::size_t ws::readOTNL(std::istream& file)
 {
 	std::size_t otnlSize;
-	std::string type;
-
-	unsigned int total = readRecordHeader(file, type, otnlSize);
+	std::size_t total = base::readRecordHeader(file, "OTNL", otnlSize);
 	otnlSize += 8;
-	if (type != "OTNL")
-	{
-		std::cout << "Expected record of type OTNL: " << type << std::endl;
-		exit(0);
-	}
-#ifdef DEBUG
-	std::cout << "Found OTNL record"
-		<< ": " << otnlSize << " bytes"
-		<< std::endl;
-#endif
 
-	unsigned int numObjects;
+	uint32_t numObjects;
 	total += base::read(file, numObjects);
-#ifdef DEBUG
-	std::cout << "Num objects: " << numObjects << std::endl;
-#endif
-
-	for (unsigned int i = 0; i < numObjects; ++i)
-	{
-		std::string objectName;
-		total += base::read(file, objectName);
-		objectNames.push_back(objectName);
+	_names.resize(numObjects);
+	for (auto& name : _names) {
+		total += base::read(file, name);
 	}
 
 	if (otnlSize == total)
@@ -491,107 +396,147 @@ unsigned int ws::readOTNL(std::istream& file)
 	}
 	else
 	{
-		std::cout << "FAILED in reading OTNL" << std::endl;
-		std::cout << "Read " << total << " out of " << otnlSize
-			<< std::endl;
+		std::cout << "FAILED in reading OTNL\n"
+			<< "Read " << total << " out of " << otnlSize
+			<< "\n";
+		exit(0);
 	}
 
 	return total;
 }
 
-unsigned int wsNode::read(std::istream& file)
+//*****************************************************************************
+
+ws::node::node() {
+}
+
+ws::node::~node() {
+}
+
+std::size_t ws::node::read(std::istream& file)
 {
-	std::size_t total = base::read(file, nodeID);
-	total += base::read(file, parentNodeID);
-	total += base::read(file, objectIndex);
-	total += base::read(file, positionInParent);
-	total += base::read(file, qx);
-	total += base::read(file, qy);
-	total += base::read(file, qz);
-	total += base::read(file, qw);
-	total += base::read(file, x);
-	total += base::read(file, y);
-	total += base::read(file, z);
-	total += base::read(file, u2);
-	total += base::read(file, crc);
+	std::size_t nodeSize, size;
+	std::size_t total = base::readFormHeader(file, "NODE", nodeSize);
+	total += base::readFormHeader(file, "0000", size);
+	total += base::readRecordHeader(file, "DATA", size);
+
+	total += base::read(file, _nodeID);
+	total += base::read(file, _parentNodeID);
+	total += base::read(file, _objectNameIndex);
+	total += base::read(file, _cellIndex);
+	total += base::read(file, _qw);
+	total += base::read(file, _qx);
+	total += base::read(file, _qy);
+	total += base::read(file, _qz);
+	total += base::read(file, _positionX);
+	total += base::read(file, _positionY);
+	total += base::read(file, _positionZ);
+	total += base::read(file, _radius);
+	total += base::read(file, _crc);
 
 	return total;
 }
 
-unsigned int wsNode::write(std::ofstream& file)
+#if 0
+std::size_t ws::node::write(std::ofstream& file)
 {
 	std::size_t total = 0;
 
-	file.write((char*)&nodeID, sizeof(nodeID));
-	total += sizeof(nodeID);
+	file.write((char*)&_nodeID, sizeof(_nodeID));
+	total += sizeof(_nodeID);
 
-	file.write((char*)&parentNodeID, sizeof(parentNodeID));
-	total += sizeof(parentNodeID);
+	file.write((char*)&_parentNodeID, sizeof(_parentNodeID));
+	total += sizeof(_parentNodeID);
 
-	file.write((char*)&objectIndex, sizeof(objectIndex));
-	total += sizeof(objectIndex);
+	file.write((char*)&_objectIndex, sizeof(_objectIndex));
+	total += sizeof(_objectIndex);
 
-	file.write((char*)&positionInParent, sizeof(positionInParent));
-	total += sizeof(positionInParent);
+	file.write((char*)&_cellIndex, sizeof(_cellIndex));
+	total += sizeof(_cellIndex);
 
-	file.write((char*)&qx, sizeof(qx));
-	total += sizeof(qx);
+	file.write((char*)&_qx, sizeof(_qx));
+	total += sizeof(_qx);
 
-	file.write((char*)&qy, sizeof(qy));
-	total += sizeof(qy);
+	file.write((char*)&_qy, sizeof(_qy));
+	total += sizeof(_qy);
 
-	file.write((char*)&qz, sizeof(qz));
-	total += sizeof(qz);
+	file.write((char*)&_qz, sizeof(_qz));
+	total += sizeof(_qz);
 
-	file.write((char*)&qw, sizeof(qw));
-	total += sizeof(qw);
+	file.write((char*)&_qw, sizeof(_qw));
+	total += sizeof(_qw);
 
-	file.write((char*)&x, sizeof(x));
-	total += sizeof(x);
+	file.write((char*)&_x, sizeof(_x));
+	total += sizeof(_x);
 
-	file.write((char*)&y, sizeof(y));
-	total += sizeof(y);
+	file.write((char*)&_y, sizeof(_y));
+	total += sizeof(_y);
 
-	file.write((char*)&z, sizeof(z));
-	total += sizeof(z);
+	file.write((char*)&_z, sizeof(_z));
+	total += sizeof(_z);
 
-	file.write((char*)&u2, sizeof(u2));
-	total += sizeof(u2);
+	file.write((char*)&_radius, sizeof(_radius));
+	total += sizeof(_radius);
 
-	file.write((char*)&crc, sizeof(crc));
-	total += sizeof(crc);
+	file.write((char*)&_crc, sizeof(_crc));
+	total += sizeof(_crc);
 
 	return total;
 }
+#endif
 
-void wsNode::print()
+void ws::node::print(std::ostream& os) const
 {
-	std::cout << "Node ID: " << nodeID << std::endl;
-	std::cout << "Parent node ID: " << parentNodeID << std::endl;
-	std::cout << "Object index: " << objectIndex << std::endl;
-	std::cout << "Object filename: " << objectFilename << std::endl;
-	std::cout << "Position in parent: " << positionInParent << std::endl;
-	std::cout << "Rotation Quaternion X: " << qx << std::endl;
-	std::cout << "Rotation Quaternion Y: " << qy << std::endl;
-	std::cout << "Rotation Quaternion Z: " << qz << std::endl;
-	std::cout << "Rotation Quaternion W: " << qw << std::endl;
-	std::cout << "X(m): " << x << std::endl;
-	std::cout << "Y(m): " << y << std::endl;
-	std::cout << "Z(m): " << z << std::endl;
-	std::cout << "Unknown 2: 0x" << std::hex << u2 << std::endl;
-	std::cout << "CRC: 0x" << std::hex << crc << std::dec << std::endl;
-	std::cout << "level: " << level << std::endl;
-	std::cout << std::endl;
+	std::cout << "Node ID: " << _nodeID << "\n"
+		"Parent node ID: " << _parentNodeID << "\n"
+		"Object name index: " << _objectNameIndex << "\n"
+		"Object filename: " << _objectFilename << "\n"
+		"Position in parent: " << _cellIndex << "\n"
+		"Rotation Quaternion W: " << _qw << "\n"
+		"Rotation Quaternion X: " << _qx << "\n"
+		"Rotation Quaternion Y: " << _qy << "\n"
+		"Rotation Quaternion Z: " << _qz << "\n"
+		"Position X: " << _positionX << "\n"
+		"Position Y: " << _positionY << "\n"
+		"Position Z: " << _positionZ << "\n"
+		"Radius: " << _radius << "\n"
+		"CRC: 0x" << std::hex << _crc << std::dec << "\n"
+		"\n";
 }
 
-wsNode& ws::getObjectNode(unsigned int i)
+uint32_t ws::getNumNodes() const
 {
-	if (i < nodes.size())
-	{
-		return nodes[i];
-	}
-	else
-	{
-		return nodes[nodes.size() - 1];
-	}
+	return uint32_t(_nodes.size());
 }
+
+const ws::node& ws::getNode(const uint32_t& i) const
+{
+	return _nodes.at(i);
+}
+
+const std::string& ws::getName(const uint32_t& i) const {
+	return _names.at(i);
+}
+
+std::string ws::node::getObjectFilename() const
+{
+	return _objectFilename;
+}
+
+void ws::node::setObjectFilename(const std::string& name) {
+	_objectFilename = name;
+}
+
+const float& ws::node::getPositionX() const { return _positionX; }
+const float& ws::node::getPositionY() const { return _positionY; }
+const float& ws::node::getPositionZ() const { return _positionZ; }
+
+const float& ws::node::getQuatW() const { return _qw; }
+const float& ws::node::getQuatX() const { return _qx; }
+const float& ws::node::getQuatY() const { return _qy; }
+const float& ws::node::getQuatZ() const { return _qz; }
+
+const int32_t& ws::node::getID() const { return _nodeID; }
+const int32_t& ws::node::getParentID() const { return _parentNodeID; }
+const int32_t& ws::node::getObjectNameIndex() const { return _objectNameIndex; }
+const int32_t& ws::node::getPositionInParent() const { return _cellIndex; }
