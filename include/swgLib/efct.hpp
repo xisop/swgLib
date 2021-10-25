@@ -43,18 +43,6 @@ namespace ml
 		std::size_t readEFCT(std::istream& file);
 
 	protected:
-		/*
-		unsigned int readIMPL(std::istream& file);
-		unsigned int readPASS(std::istream& file);
-		unsigned int readPVSH(std::istream& file);
-		unsigned int readPPSH(std::istream& file);
-		unsigned int readPFFP(std::istream& file);
-		unsigned int readSTAG(std::istream& file);
-		unsigned int readPTXM(std::istream& file);
-		unsigned int readSCAP(std::istream& file);
-		unsigned int readOPTN(std::istream& file);
-		unsigned int readIMPLDATA(std::istream& file);
-		*/
 
 	private:
 		uint8_t _version;
