@@ -805,103 +805,103 @@ std::size_t readRecord(
 		}
 		else if (type == "PASS")
 		{
-		ml::base::readFormHeader(file, group, size, type);
-		std::cout << "Type: " << type << " (Shader pass)" << std::endl;
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Shader pass)" << std::endl;
 		}
 		else if (type == "PVSH")
 		{
-		ml::base::readFormHeader(file, group, size, type);
-		std::cout << "Type: " << type << " (Vertex shader)" << std::endl;
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Vertex shader)" << std::endl;
 		}
 		else if (type == "PPSH")
 		{
-		ml::base::readFormHeader(file, group, size, type);
-		std::cout << "Type: " << type << " (Pixel shader)" << std::endl;
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Pixel shader)" << std::endl;
 		}
 		else if (type == "PTXM")
 		{
-		ml::base::readFormHeader(file, group, size, type);
-		std::cout << "Type: " << type << " (Texture sampler)" << std::endl;
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Texture sampler)" << std::endl;
 		}
 		else if (type == "PFFP")
 		{
-		ml::base::readFormHeader(file, group, size, type);
-		std::cout << "Type: " << type << " (Fixed function pipeline)" << std::endl;
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Fixed function pipeline)" << std::endl;
 		}
 		else if (type == "STAG")
 		{
-		ml::base::readFormHeader(file, group, size, type);
-		std::cout << "Type: " << type << " (Shader stage)" << std::endl;
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Shader stage)" << std::endl;
 		}
 		else if (type == "SHOT") // Shared Object Template
 		{
-		ml::base::readFormHeader(file, group, size, type);
-		std::cout << "Type: " << type << " (Shared Object Template)" << std::endl;
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Shared Object Template)" << std::endl;
 		}
 		else if (type == "STOT") // Shared Tangible Object Template
 		{
-		ml::base::readFormHeader(file, group, size, type);
-		std::cout << "Type: " << type << " (Shared Tangible Object Template)" << std::endl;
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Shared Tangible Object Template)" << std::endl;
 		}
 		else if (type == "STAT") // Space Terrain Appearance Template
 		{
-		ml::base::readFormHeader(file, group, size, type);
-		std::cout << "Type: " << type << " (Space Terrain Appearance Template)" << std::endl;
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Space Terrain Appearance Template)" << std::endl;
 		}
 		else if (type == "CLEA") // Clear color
 		{
-		ml::base::readFormHeader(file, group, size, type);
-		std::cout << "Type: " << type << " (Clear Color)" << std::endl;
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Clear Color)" << std::endl;
 		}
 		else if (type == "ENVI") // Environment texture
 		{
-		ml::base::readFormHeader(file, group, size, type);
-		std::cout << "Type: " << type << " (Environment Texture)" << std::endl;
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Environment Texture)" << std::endl;
 		}
 		else if (type == "PARA") // Light parameters
 		{
-		ml::base::readFormHeader(file, group, size, type);
-		std::cout << "Type: " << type << " (Light Parameters)" << std::endl;
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Light Parameters)" << std::endl;
 		}
 		else if (type == "AMBI") // Ambient light color
 		{
-		ml::base::readFormHeader(file, group, size, type);
-		std::cout << "Type: " << type << " (Ambient Light Color)" << std::endl;
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Ambient Light Color)" << std::endl;
 		}
 		else if (type == "SKYB") // Skybox Texture
 		{
-		ml::base::readFormHeader(file, group, size, type);
-		std::cout << "Type: " << type << " (Skybox Texture)" << std::endl;
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Skybox Texture)" << std::endl;
 		}
 		else if (type == "STAR") // Star color/number
 		{
-		ml::base::readFormHeader(file, group, size, type);
-		std::cout << "Type: " << type << " (Star information)" << std::endl;
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Star information)" << std::endl;
 		}
 		else if (type == "DUST") // Dust information
 		{
-		ml::base::readFormHeader(file, group, size, type);
-		std::cout << "Type: " << type << " (Dust information)" << std::endl;
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Dust information)" << std::endl;
 		}
 		else if (type == "DIST") // Distant appearance information
 		{
-		ml::base::readFormHeader(file, group, size, type);
-		std::cout << "Type: " << type << " (Distant appearance information)" << std::endl;
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Distant appearance information)" << std::endl;
 		}
 		else if (type == "PLAN") // Planet information?
 		{
-		ml::base::readFormHeader(file, group, size, type);
-		std::cout << "Type: " << type << " (Planet information?)" << std::endl;
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Planet information?)" << std::endl;
 		}
 		else if (type == "CELE") // Celestial information
 		{
-		ml::base::readFormHeader(file, group, size, type);
-		std::cout << "Type: " << type << " (Celestial information)" << std::endl;
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Celestial information)" << std::endl;
 		}
 		else if (type == "FOG ") // Fog information
 		{
-		ml::base::readFormHeader(file, group, size, type);
-		std::cout << "Type: " << type << " (Fog information)" << std::endl;
+			ml::base::readFormHeader(file, group, size, type);
+			std::cout << "Type: " << type << " (Fog information)" << std::endl;
 		}
 		else if (type == "IDTL")
 		{
@@ -1169,10 +1169,10 @@ std::size_t readRecord(
 
 		if ("INDX" == group)
 		{
-		        uint32_t numIndices;
+			uint32_t numIndices;
 			ml::base::read(file, numIndices);
 
-			bool index16( ((size - 4) / 2) == numIndices );
+			bool index16(((size - 4) / 2) == numIndices);
 
 			const uint32_t numTriangles(numIndices / 3);
 			if (index16) {
@@ -1612,6 +1612,7 @@ std::size_t readRecord(
 		}
 		if ("SIDX" == group)
 		{
+#if 0
 			unsigned int num;
 			file.read((char*)&num, sizeof(num));
 			std::cout << "Num: " << num << std::endl;
@@ -1637,6 +1638,9 @@ std::size_t readRecord(
 				}
 				std::cout << std::endl;
 			}
+#endif
+			ml::base::readUnknown(file, size);
+			return size + 8; // Size of data plus 8 bytes of header
 		}
 		if ("MSGN" == group)
 		{
@@ -1873,7 +1877,7 @@ std::size_t readRecord(
 #else
 			ml::base::readUnknown(file, size);
 #endif
-			}
+		}
 		if ("PSTR" == group)
 		{
 			ml::base::readUnknown(file, size);
@@ -2301,11 +2305,11 @@ std::size_t readRecord(
 			std::cout << tagName << "\n";
 			return size + 8; // Size of data plus 8 bytes of header
 		}
-		}
+	}
 
 	std::cout << "Unknown KEYWORD: " << group << std::endl;
 	exit(0);
-	}
+}
 
 
 int main(int argc, char** argv)
