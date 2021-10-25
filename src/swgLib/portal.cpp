@@ -45,24 +45,9 @@ std::size_t portal::read(std::istream& file) {
 	std::size_t size;
 	std::string type;
 	total += base::readRecordHeader(file, type, size);
+	_version = base::tagToVersion(type);
 
-	_version = 0;
-	if ("0001" == type) {
-		_version = 1;
-	}
-	else if ("0002" == type) {
-		_version = 2;
-	}
-	else if ("0003" == type) {
-		_version = 3;
-	}
-	else if ("0004" == type) {
-		_version = 4;
-	}
-	else if ("0005" == type) {
-		_version = 5;
-	}
-	else {
+	if ((_version < 1) || (_version > 5)) {
 		std::cout << "Expected record of type 0001, 0002, 0003, 0004, or 0005: " << type << "\n";
 		exit(0);
 	}
@@ -83,13 +68,13 @@ std::size_t portal::read(std::istream& file) {
 	total += base::read(file, _geometryIndex);
 	std::cout << "Geometry index: " << _geometryIndex << "\n";
 
-	total += base::read(file, _geometryWindClockwise	);
+	total += base::read(file, _geometryWindClockwise);
 	std::cout << "Geometry wind clockwise: " << std::boolalpha << _geometryWindClockwise << "\n";
 
 	// Portal Geometry...
 	//... getPortalGeometry(int portalIndex, int cell, int cellPortalIndex, bool clockwise) 
 
-	total += base::read(file, _targetCellIndex );
+	total += base::read(file, _targetCellIndex);
 	std::cout << "Target cell index: " << _targetCellIndex << "\n";
 
 	if (2 < _version) {
@@ -97,7 +82,7 @@ std::size_t portal::read(std::istream& file) {
 		std::cout << "Door style: " << _doorStyle << "\n";
 	}
 
-	if( 3 < _version){
+	if (3 < _version) {
 		total += base::read(file, _hasDoorHardpoint);
 		std::cout << "Has door hardpoint: " << std::boolalpha << _hasDoorHardpoint << "\n";
 		total += base::read(file, _doorHardpointTransform);
@@ -106,12 +91,12 @@ std::size_t portal::read(std::istream& file) {
 
 	if (prtlSize == total)
 	{
-		std::cout << "Finished reading PRTL" << std::endl;
+		std::cout << "Finished reading PRTL\n";
 	}
 	else
 	{
-		std::cout << "FAILED in reading PRTL" << std::endl;
-		std::cout << "Read " << total << " out of " << prtlSize << "\n";
+		std::cout << "FAILED in reading PRTL\n"
+			<< "Read " << total << " out of " << prtlSize << "\n";
 	}
 	return total;
 }
@@ -119,16 +104,16 @@ std::size_t portal::read(std::istream& file) {
 //void setPortalID(const unsigned int& id);
 //unsigned int getPortalID() const;
 
-void portal::setDisabled(bool disabled ) { _disabled = disabled; }
+void portal::setDisabled(bool disabled) { _disabled = disabled; }
 bool portal::isDisabled() const { return _disabled; }
 
-void portal::setPassable(bool passable ) { _passable = passable; }
+void portal::setPassable(bool passable) { _passable = passable; }
 bool portal::isPassable() const { return _passable; }
 
 void portal::setGeometryIndex(const int32_t& geomIndex) { _geometryIndex = geomIndex; }
 const int32_t& portal::getGeometryIndex() const { return _geometryIndex; }
 
-void portal::setGeometryClockwise(bool clockwise ) { _geometryWindClockwise = clockwise; }
+void portal::setGeometryClockwise(bool clockwise) { _geometryWindClockwise = clockwise; }
 bool portal::isGeometryClockwise() const { return _geometryWindClockwise; }
 
 void portal::setTargetCellIndex(const int32_t& index) { _targetCellIndex = index; }
@@ -137,7 +122,7 @@ const int32_t& portal::getTargetCellIndex() const { return _targetCellIndex; }
 void portal::setDoorStyle(const std::string& doorStyle) { _doorStyle = doorStyle; }
 const std::string& portal::getDoorStyle() const { return _doorStyle; }
 
-void portal::setHasDoorHardpoint(bool hasDoorHardpoint ) { _hasDoorHardpoint = hasDoorHardpoint; }
+void portal::setHasDoorHardpoint(bool hasDoorHardpoint) { _hasDoorHardpoint = hasDoorHardpoint; }
 bool portal::hasDoorHardpoint() const { return _hasDoorHardpoint; }
 
 void portal::setDoorHardpointTransform(const matrix3x4& matrix) { _doorHardpointTransform = matrix; }
