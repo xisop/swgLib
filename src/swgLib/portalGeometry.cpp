@@ -47,6 +47,8 @@ std::size_t portalGeometry::read(std::istream& file) {
 	std::cout << "Num vertices: " << _numVertex << "\n";
 	_vertex.resize(_numVertex);
 
+	// TODO: Create idtl and with Triangle fan centered at vertex[0]...
+
 	for (auto &v : _vertex) {
 		total += base::read(file, v);
 		std::cout << "Vertex: " << v << "\n";
