@@ -24,6 +24,7 @@
 */
 
 #include <istream>
+#include <memory>
 
 #ifndef BASECOLLISION_HPP
 #define BASECOLLISION_HPP 1
