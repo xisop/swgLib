@@ -1,10 +1,10 @@
 /** -*-c++-*-
- *  \class  cmsh
- *  \file   cmsh.hpp
+ *  \class  exsp
+ *  \file   exsp.hpp
  *  \author Ken Sewell
 
  swgLib is used for the parsing and exporting SWG models.
- Copyright (C) 2006-2021 Ken Sewell
+ Copyright (C) 2009-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -24,31 +24,38 @@
 */
 
 #include <swgLib/baseCollision.hpp>
-#include <swgLib/idtl.hpp>
+#include <swgLib/vector3.hpp>
 
 #include <istream>
-#include <memory>
 
-#ifndef CMSH_HPP
-#define CMSH_HPP 1
+#ifndef EXSP_HPP
+#define EXSP_HPP 1
 
 namespace ml
 {
-	class cmsh : public baseCollision
+	class exsp : public baseCollision
 	{
 	public:
-		cmsh();
-		~cmsh();
+		exsp();
+		~exsp();
 
 		std::size_t read(std::istream& file) override;
 
+		static std::size_t read(std::istream& file,
+			vector3 &exspCenter,
+			float &exspRadius,
+			vector3& boxCorner1,
+			vector3& boxCorner2);
+
 	protected:
-		idtl _idtl;
+		uint8_t _exspVersion;
+		vector3 _exspCenter;
+		float   _exspRadius;
 
 	private:
 	};
 }
 
-typedef std::shared_ptr<ml::cmsh> cmshPtr;
+typedef std::shared_ptr<ml::exsp> exspPtr;
 
 #endif

@@ -23,7 +23,7 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include <swgLib/base.hpp>
+#include <swgLib/exsp.hpp>
 #include <swgLib/vector3.hpp>
 
 #include <istream>
@@ -33,11 +33,14 @@
 
 namespace ml
 {
-	class exbx : public base
+	class exbx : public exsp
 	{
 	public:
 		exbx();
 		~exbx();
+
+		std::size_t read(std::istream& file) override;
+
 		static std::size_t read(std::istream& file,
 			vector3 &exspCenter,
 			float &exspRadius,
@@ -45,9 +48,14 @@ namespace ml
 			vector3& boxCorner2);
 
 	protected:
+		uint8_t _exbxVersion;
+		vector3 _exbxMax;
+		vector3 _exbxMin;
 
 	private:
 	};
 }
+
+typedef std::shared_ptr<ml::exbx> exbxPtr;
 
 #endif

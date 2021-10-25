@@ -1,6 +1,6 @@
 /** -*-c++-*-
- *  \class  cmsh
- *  \file   cmsh.hpp
+ *  \class  cmpt
+ *  \file   cmpt.cpp
  *  \author Ken Sewell
 
  swgLib is used for the parsing and exporting SWG models.
@@ -23,32 +23,39 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include <swgLib/baseCollision.hpp>
-#include <swgLib/idtl.hpp>
+#include <swgLib/cmpt.hpp>
+#include <swgLib/base.hpp>
 
-#include <istream>
-#include <memory>
+using namespace ml;
 
-#ifndef CMSH_HPP
-#define CMSH_HPP 1
-
-namespace ml
-{
-	class cmsh : public baseCollision
-	{
-	public:
-		cmsh();
-		~cmsh();
-
-		std::size_t read(std::istream& file) override;
-
-	protected:
-		idtl _idtl;
-
-	private:
-	};
+cmpt::cmpt() {
 }
 
-typedef std::shared_ptr<ml::cmsh> cmshPtr;
+cmpt::~cmpt() {
+}
 
-#endif
+std::size_t cmpt::read(std::istream& file) {
+	std::size_t cmptSize;
+	std::size_t total = base::readFormHeader(file, "CMPT", cmptSize);
+	cmptSize += 8;
+	std::cout << "Found FORM CMPT: " << cmptSize - 12 << " bytes\n";
+
+	std::size_t size;
+	total += base::readFormHeader(file, "0000", size);
+	std::cout << "Found FORM 0000: " << size - 4 << " bytes\n";
+
+	total += cpst::read(file);
+
+	if (cmptSize == total)
+	{
+		std::cout << "Finished reading CMPT\n";
+	}
+	else
+	{
+		std::cout << "FAILED in reading CMPT\n"
+			<< "Read " << total << " out of " << cmptSize << "\n";
+		exit(0);
+	}
+
+	return total;
+}

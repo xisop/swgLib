@@ -1,6 +1,6 @@
 /** -*-c++-*-
- *  \class  cmsh
- *  \file   cmsh.hpp
+ *  \class  collisionUtil
+ *  \file   collisionUtil.hpp
  *  \author Ken Sewell
 
  swgLib is used for the parsing and exporting SWG models.
@@ -23,32 +23,24 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include <swgLib/baseCollision.hpp>
-#include <swgLib/idtl.hpp>
-
 #include <istream>
-#include <memory>
+#include <swgLib/baseCollision.hpp>
 
-#ifndef CMSH_HPP
-#define CMSH_HPP 1
+#ifndef COLLISIONUTIL_HPP
+#define COLLISIONUTIL_HPP 1
 
 namespace ml
 {
-	class cmsh : public baseCollision
+	class collisionUtil
 	{
 	public:
-		cmsh();
-		~cmsh();
+		collisionUtil();
+		~collisionUtil();
 
-		std::size_t read(std::istream& file) override;
-
-	protected:
-		idtl _idtl;
+		static std::size_t read(std::istream& file, baseCollisionPtr &collisionPtr);
 
 	private:
 	};
 }
-
-typedef std::shared_ptr<ml::cmsh> cmshPtr;
 
 #endif

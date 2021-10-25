@@ -1,10 +1,10 @@
 /** -*-c++-*-
- *  \class  cmsh
- *  \file   cmsh.hpp
+ *  \class  dtal
+ *  \file   dtal.hpp
  *  \author Ken Sewell
 
  swgLib is used for the parsing and exporting SWG models.
- Copyright (C) 2006-2021 Ken Sewell
+ Copyright (C) 2009-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -23,32 +23,30 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include <swgLib/baseCollision.hpp>
-#include <swgLib/idtl.hpp>
+#include <swgLib/cpst.hpp>
+#include <swgLib/vector3.hpp>
 
 #include <istream>
-#include <memory>
 
-#ifndef CMSH_HPP
-#define CMSH_HPP 1
+#ifndef DTAL_HPP
+#define DTAL_HPP 1
 
 namespace ml
 {
-	class cmsh : public baseCollision
+	class dtal : public cpst
 	{
 	public:
-		cmsh();
-		~cmsh();
+		dtal();
+		~dtal();
 
 		std::size_t read(std::istream& file) override;
 
 	protected:
-		idtl _idtl;
 
 	private:
 	};
 }
 
-typedef std::shared_ptr<ml::cmsh> cmshPtr;
+typedef std::shared_ptr<ml::dtal> dtalPtr;
 
 #endif

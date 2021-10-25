@@ -1,6 +1,6 @@
 /** -*-c++-*-
- *  \class  cmsh
- *  \file   cmsh.hpp
+ *  \class  cmpt
+ *  \file   cmpt.hpp
  *  \author Ken Sewell
 
  swgLib is used for the parsing and exporting SWG models.
@@ -23,32 +23,31 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include <swgLib/baseCollision.hpp>
+#include <swgLib/cpst.hpp>
 #include <swgLib/idtl.hpp>
 
 #include <istream>
 #include <memory>
 
-#ifndef CMSH_HPP
-#define CMSH_HPP 1
+#ifndef CMPT_HPP
+#define CMPT_HPP 1
 
 namespace ml
 {
-	class cmsh : public baseCollision
+	class cmpt : public cpst
 	{
 	public:
-		cmsh();
-		~cmsh();
+		cmpt();
+		~cmpt();
 
 		std::size_t read(std::istream& file) override;
 
 	protected:
-		idtl _idtl;
 
 	private:
 	};
 }
 
-typedef std::shared_ptr<ml::cmsh> cmshPtr;
+typedef std::shared_ptr<ml::cmpt> cmptPtr;
 
 #endif

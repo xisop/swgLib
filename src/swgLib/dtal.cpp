@@ -1,10 +1,10 @@
 /** -*-c++-*-
- *  \class  cmsh
- *  \file   cmsh.hpp
+ *  \class  dtal
+ *  \file   dtal.cpp
  *  \author Ken Sewell
 
  swgLib is used for the parsing and exporting SWG models.
- Copyright (C) 2006-2021 Ken Sewell
+ Copyright (C) 2009-2021 Ken Sewell
 
  This file is part of swgLib.
 
@@ -23,32 +23,38 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include <swgLib/baseCollision.hpp>
-#include <swgLib/idtl.hpp>
+#include <swgLib/dtal.hpp>
+#include <swgLib/base.hpp>
 
-#include <istream>
-#include <memory>
+using namespace ml;
 
-#ifndef CMSH_HPP
-#define CMSH_HPP 1
-
-namespace ml
-{
-	class cmsh : public baseCollision
-	{
-	public:
-		cmsh();
-		~cmsh();
-
-		std::size_t read(std::istream& file) override;
-
-	protected:
-		idtl _idtl;
-
-	private:
-	};
+dtal::dtal() :
+	cpst() {
 }
 
-typedef std::shared_ptr<ml::cmsh> cmshPtr;
+dtal::~dtal() {}
 
-#endif
+std::size_t dtal::read(std::istream& file) {
+	std::size_t dtalSize;
+	std::size_t total = base::readFormHeader(file, "DTAL", dtalSize);
+	dtalSize += 8;
+	std::cout << "Found DTAL form: " << dtalSize - 12 << " bytes\n";
+
+	std::size_t size;
+	total += base::readFormHeader(file, "0000", size);
+
+	total += cpst::read(file);
+
+	if (total == dtalSize)
+	{
+		std::cout << "Finished reading DTAL.\n";
+	}
+	else
+	{
+		std::cout << "Error reading DTAL!\n"
+			<< "Read " << total << " out of " << dtalSize << "\n";
+		exit(0);
+	}
+
+	return total;
+}
