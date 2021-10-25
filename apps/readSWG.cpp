@@ -283,7 +283,7 @@ int main(int argc, char** argv)
 		{
 			// World snapshot
 			ml::ws snapshot;
-			snapshot.readWS(infile);
+			snapshot.read(infile);
 		}
 		else
 		{
@@ -319,6 +319,7 @@ int main(int argc, char** argv)
 
 			outfile.close();
 		}
+#if 0
 		else if ("WSNP" == type)
 		{
 			std::ofstream outfile(argv[3], std::ios_base::binary);
@@ -334,6 +335,7 @@ int main(int argc, char** argv)
 
 			outfile.close();
 		}
+#endif
 		else
 		{
 			std::cout << "Cannot write files of type: " << type << std::endl;
