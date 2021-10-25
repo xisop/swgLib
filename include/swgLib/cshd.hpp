@@ -40,14 +40,14 @@ namespace ml
 		cshd();
 		~cshd();
 
-		unsigned int readCSHD(std::istream& file, std::string path = "");
+		std::size_t readCSHD(std::istream& file);
 
 	protected:
-		unsigned int readTFAC(std::istream& file);
-		unsigned int readPAL(std::istream& file);
-		unsigned int readTXTR(std::istream& file);
-		unsigned int readCUST(std::istream& file);
-		unsigned int readTX1D(std::istream& file);
+		std::size_t readTFAC(std::istream& file);
+		std::size_t readPAL(std::istream& file);
+		std::size_t readTXTR(std::istream& file);
+		std::size_t readCUST(std::istream& file);
+		std::size_t readTX1D(std::istream& file);
 
 	private:
 

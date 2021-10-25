@@ -38,9 +38,8 @@ cshd::~cshd()
 {
 }
 
-unsigned int cshd::readCSHD(std::istream& file, std::string path)
+std::size_t cshd::readCSHD(std::istream& file)
 {
-	std::string basePath = path;
 	std::size_t cshdSize;
 	std::size_t total = base::readFormHeader(file, "CSHD", cshdSize);
 	cshdSize += 8;
@@ -65,7 +64,7 @@ unsigned int cshd::readCSHD(std::istream& file, std::string path)
 		{
 			if (type == "SSHT")
 			{
-				total += this->readSHT(file, path);
+				total += this->readSHT(file);
 			}
 			else if (type == "TFAC")
 			{
@@ -102,7 +101,7 @@ unsigned int cshd::readCSHD(std::istream& file, std::string path)
 	return total;
 }
 
-unsigned int cshd::readTFAC(std::istream& file)
+std::size_t cshd::readTFAC(std::istream& file)
 {
 	std::size_t tfacSize;
 	std::size_t total = base::readFormHeader(file, "TFAC", tfacSize);
@@ -128,7 +127,7 @@ unsigned int cshd::readTFAC(std::istream& file)
 	return total;
 }
 
-unsigned int cshd::readPAL(std::istream& file)
+std::size_t cshd::readPAL(std::istream& file)
 {
 	std::size_t palSize;
 	std::string type;
@@ -156,7 +155,7 @@ unsigned int cshd::readPAL(std::istream& file)
 	return total;
 }
 
-unsigned int cshd::readTXTR(std::istream& file)
+std::size_t cshd::readTXTR(std::istream& file)
 {
 	std::size_t txtrSize;
 	std::size_t total = base::readFormHeader(file, "TXTR", txtrSize);
@@ -202,7 +201,7 @@ unsigned int cshd::readTXTR(std::istream& file)
 	return total;
 }
 
-unsigned int cshd::readCUST(std::istream& file)
+std::size_t cshd::readCUST(std::istream& file)
 {
 	std::size_t custSize;
 	std::size_t total = base::readFormHeader(file, "CUST", custSize);
@@ -229,7 +228,7 @@ unsigned int cshd::readCUST(std::istream& file)
 	return total;
 }
 
-unsigned int cshd::readTX1D(std::istream& file)
+std::size_t cshd::readTX1D(std::istream& file)
 {
 	std::size_t tx1dSize;
 	std::string type;
