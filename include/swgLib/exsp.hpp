@@ -41,12 +41,6 @@ namespace ml
 
 		std::size_t read(std::istream& file) override;
 
-		static std::size_t read(std::istream& file,
-			vector3 &exspCenter,
-			float &exspRadius,
-			vector3& boxCorner1,
-			vector3& boxCorner2);
-
 	protected:
 		uint8_t _exspVersion;
 		vector3 _exspCenter;
