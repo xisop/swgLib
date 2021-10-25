@@ -25,6 +25,7 @@
 
 #include <swgLib/cell.hpp>
 #include <swgLib/base.hpp>
+#include <swgLib/collisionUtil.hpp>
 
 using namespace ml;
 
@@ -44,16 +45,14 @@ std::size_t cell::read(std::istream& file) {
 	std::size_t size;
 	std::string type;
 	total += base::readFormHeader(file, type, size);
-
 	_version = base::tagToVersion(type);
+	std::cout << "CELL version: " << (int)_version << "\n";
+
 	if ((_version < 1) || (_version > 5))
 	{
 		std::cout << "Expected FORM of type 0001, 0002, 0003, 0004, or 0005. Found: " << type << "\n";
 		exit(0);
 	}
-
-	std::cout << "Found FORM " << type
-		<< ": " << size - 4 << " bytes\n";
 
 	total += base::readRecordHeader(file, "DATA", size);
 
@@ -82,7 +81,8 @@ std::size_t cell::read(std::istream& file) {
 
 	// Only present in versions 5+
 	if (4 < _version) {
-		total += _collisionMesh.read(file);
+		// Read collision primitive...
+		total += collisionUtil::read(file, _collisionPtr);
 	}
 
 	// Read portals...

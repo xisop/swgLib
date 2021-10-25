@@ -23,11 +23,12 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include <swgLib/cmsh.hpp>
+#include <swgLib/baseCollision.hpp>
 #include <swgLib/portal.hpp>
 #include <swgLib/lght.hpp>
-#include <vector>
+
 #include <string>
+#include <vector>
 
 #ifndef CELL_HPP
 #define CELL_HPP 1
@@ -41,22 +42,7 @@ namespace ml
 		~cell();
 
 		std::size_t read(std::istream& file);
-		/*
-		void setUnknown1(unsigned char u1);
-		unsigned char getUnknown1() const;
 
-		void setName(const std::string& name);
-		const std::string& getName() const;
-
-		void setModelFilename(const std::string& filename);
-		const std::string& getModelFilename() const;
-
-		void setHasFloor(bool floor);
-		bool hasFloor() const;
-
-		void setFloorFilename(const std::string& filename);
-		const std::string& getFloorFilename() const;
-		*/
 	protected:
 		uint8_t _version; // 0001, 0002, 0003, 0004, 0005
 		int32_t _numPortals;
@@ -66,7 +52,7 @@ namespace ml
 		bool _hasFloor;
 		std::string _floorName;
 
-		cmsh _collisionMesh;
+		baseCollisionPtr _collisionPtr;
 		std::vector<portal> _portals;
 
 		int32_t _numLights;
