@@ -25,13 +25,8 @@
 #include <swgLib/appr.hpp>
 #include <swgLib/sps.hpp>
 
-#include <swgLib/model.hpp>
 #include <swgLib/cshd.hpp>
 #include <swgLib/sht.hpp>
-/*
-#include <swgLib/mshVertexData.hpp>
-#include <swgLib/mshVertexIndex.hpp>
-*/
 
 #include <fstream>
 #include <string>
@@ -46,7 +41,7 @@ namespace ml
 		MAX_TEXTURES = 8
 	};
 
-	class mesh //: public model
+	class mesh : public appr
 	{
 	public:
 		mesh();
@@ -56,101 +51,14 @@ namespace ml
 
 		const sps& getSPS() const;
 
-		/*
-		uint32_t getNumIndexTables() const
-		{
-			return uint32_t(indexData.size());
-		}
-
-		uint32_t getNumVertexSets() const
-		{
-			return uint32_t(vertexData.size());
-		}
-
-		unsigned int getBytesPerVertex(const unsigned int& index) const
-		{
-			return vertexData[index]->getBytesPerVertex();
-		}
-
-		bool getIndex(
-			unsigned int indexNum,
-			mshVertexData** vData,
-			mshVertexIndex** iData,
-			std::string& shaderFilename
-		);
-		bool getMeshIndex(unsigned int indexNum,
-			unsigned int& dataSet,
-			mshVertexIndex** iData
-		);
-
-		bool getIndex(
-			unsigned int indexNum,
-			mshVertexData** vData,
-			std::string& shaderFilename
-		);
-
-		uint32_t getNumshaders() const
-		{
-			return uint32_t(shaderList.size());
-		}
-
-		std::string getShader(unsigned int index) const
-		{
-			if (index < shaderList.size())
-			{
-				return shaderList[index];
-			}
-			else
-			{
-				return std::string("");
-			}
-		}
-		
-		void getBoundingSphere(float& centerX, float& centerY, float& centerZ,
-			float& Radius)
-		{
-			centerX = cx;
-			centerY = cy;
-			centerZ = cz;
-			Radius = radius;
-		}
-
-		void getBoundingBox(float& X1, float& Y1, float& Z1,
-			float& X2, float& Y2, float& Z2)
-		{
-			X1 = x1;
-			Y1 = y1;
-			Z1 = z1;
-			X2 = x2;
-			Y2 = y2;
-			Z2 = z2;
-		}
-		*/
 	protected:
 		int8_t _version;
 
-		appr _appearance;
 		sps _sps;
 
-		unsigned int readD3DFVF(std::istream& file,
-			unsigned int& codes,
-			unsigned int& numTextures);
-
 	private:
-		/*
-		std::vector<bool> isSHT;
-		std::vector<std::string> shaderList;
-
-		std::vector<mshVertexData*> vertexData;
-		std::vector<mshVertexIndex*> indexData;
-
-		// Bounding sphere center and radius
-		float cx, cy, cz, radius;
-
-		// 2 xyz points defining bounding box
-		float x1, y1, z1;
-		float x2, y2, z2;
-		*/
+		std::size_t readV2V3(std::istream& file, bool skipSIDX = false);
+		std::size_t readV4V5(std::istream& file, bool skipSIDX = false);
 	};
 }
 #endif
