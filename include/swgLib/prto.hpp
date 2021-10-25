@@ -23,7 +23,6 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include <swgLib/base.hpp>
 #include <swgLib/cell.hpp>
 #include <swgLib/portalGeometry.hpp>
 #include <swgLib/pgrf.hpp>
@@ -35,15 +34,13 @@
 
 namespace ml
 {
-	class prto : public base
+	class prto
 	{
 	public:
 		prto();
 		~prto();
 
-		bool isRightType(std::istream& file);
-
-		std::size_t readPRTO(std::istream& file, std::string path = "");
+		std::size_t readPRTO(std::istream& file);
 
 		const int32_t &getNumCells() const;
 		const int32_t &getNumPortals() const;
