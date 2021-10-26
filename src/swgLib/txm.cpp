@@ -53,9 +53,11 @@ std::size_t txm::read(std::istream& file) {
 	base::peekHeader(file, form, size, type);
 
 	if ("0000" == type) {
+		std::cout << "TXM version: 0\n";
 		total += readV0(file);
 	}
 	else if ("0001" == type) {
+		std::cout << "TXM version: 1\n";
 		total += readV1(file);
 	}
 	else if ("0002" == type) {
@@ -122,7 +124,7 @@ std::size_t txm::readV1(std::istream& file) {
 	total += base::read(file, _placeHolder);
 	std::cout << "Placeholder: " << std::boolalpha << _placeHolder << "\n";
 
-	if ("ENVM" == _nameTag.str()) { _placeHolder = true; }
+	//if ("ENVM" == _nameTag.str()) { _placeHolder = true; }
 
 	// Read U texture wrap mode...
 	total += base::read(file, _uWrapMode);
