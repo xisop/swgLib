@@ -129,7 +129,6 @@ std::size_t sht::readV0(std::istream& file) {
 
 	// Load effect...
 	base::peekHeader(file, form, size, type);
-	std::cout << "Peek: " << form << ":" << type << "\n";
 	if ("NAME" == form) {
 		total += base::readRecordHeader(file, "NAME", size);
 		std::cout << "Found record NAME: " << size << "\n";
@@ -155,14 +154,14 @@ std::size_t sht::readV1(std::istream& file) {
 	// Load effect...
 	std::string form, type;
 	base::peekHeader(file, form, size, type);
-	if ("NAME" == type) {
+	if ("NAME" == form) {
 		total += base::readRecordHeader(file, "NAME", size);
 		std::cout << "Found record NAME: " << size << "\n";
 		total += base::read(file, _effectName);
 		base::fixSlash(_effectName);
 		std::cout << "Effect: " << _effectName << "\n";
 	}
-	else if ("EFCT" == type) {
+	else if ("EFCT" == form) {
 		total += _effect.readEFCT(file);
 	}
 	else {
