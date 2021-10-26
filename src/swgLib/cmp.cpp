@@ -50,46 +50,32 @@ const std::vector<cmp::part>& cmp::getParts() const {
 	return _parts;
 }
 
-std::size_t cmp::readCMP(std::istream& file)
+std::size_t cmp::read(std::istream& file)
 {
 	std::size_t cmpSize;
 	std::size_t total = base::readFormHeader(file, "CMPA", cmpSize);
+	cmpSize += 8;
 	std::cout << "Found form CMPA: " << cmpSize << "\n";
-	cmpSize -= 8;
 
-	std::string type;
+	std::string form, type;
 	std::size_t size;
-	total += base::readFormHeader(file, type, size);
-	std::cout << "Found FORM " << type << ": " << size << " bytes\n";
-
+	base::peekHeader(file, form, size, type);
 	_cmpVersion = base::tagToVersion(type);
 	if ((_cmpVersion < 1) || (_cmpVersion > 5)) {
 		std::cout << "Expected FORM of type 0001, 0002, 0003, 0004, or 0005. Found: " << type << "\n";
 		exit(0);
 	}
+	std::cout << "CMPA version: " << (int)_cmpVersion << "\n";
 
-	if (_cmpVersion > 2) {
-		total += appr::read(file);
-	}
-
-	if (_cmpVersion > 4) {
-		// Radar
-		total += readRADR(file);
-	}
-
-	while (total < cmpSize)
-	{
-		if (1 == _cmpVersion) {
-			total += readPART0001(file);
-		}
-		else {
-			total += readPART(file);
-		}
-	}
-
-	if (_cmpVersion > 3) {
-		// Create test shape...
-		// TODO...
+	switch (_cmpVersion) {
+	case 1: total += readCMPv1(file); break;
+	case 2: total += readCMPv2(file); break;
+	case 3: total += readCMPv3(file); break;
+	case 4: total += readCMPv4(file); break;
+	case 5: total += readCMPv5(file); break;
+	default:
+		std::cout << "Unhandled CMPA version: " << (int)_cmpVersion << "\n";
+		exit(0);
 	}
 
 	if (cmpSize == total) {
@@ -106,37 +92,136 @@ std::size_t cmp::readCMP(std::istream& file)
 	return total;
 }
 
-std::size_t cmp::readPART0001(std::istream& file)
+std::size_t cmp::readCMPv1(std::istream& file)
 {
-	std::size_t partSize;
-	base::readRecordHeader(file, "PART", partSize);
+	std::size_t size0001;
+	std::size_t total = base::readFormHeader(file, "0001", size0001);
+	size0001 += 8;
 
-	std::size_t total = 0;
+	// Load all parts
+	while (total < size0001) {
+		std::size_t size;
+		total += base::readRecordHeader(file, "PART", size);
+		std::cout << "********** Not fully supported yet. Transform matrix is invalid! **********\n";
+		part newPart;
+		total += base::read(file, newPart.filename);
+		newPart.filename = std::string("appearance/") + newPart.filename;
+		std::cout << "Part: " << newPart.filename << std::endl;
 
-	std::cout << "********** Not supported yet. Transform matrix is invalid! **********\n";
+		vector3 position;
+		total += base::read(file, position);
 
-	part newPart;
+		vector3 yawPitchRoll; // In degrees
+		total += base::read(file, yawPitchRoll);
 
-	total += base::read(file, newPart.filename);
-	newPart.filename = std::string("appearance/") + newPart.filename;
-	std::cout << "Part: " << newPart.filename << std::endl;
-
-	vector3 position;
-	total += position.read(file);
-
-	vector3 yawPitchRoll; // In degrees
-	total += yawPitchRoll.read(file);
-
-	_parts.push_back(newPart);
-
-	if (partSize == total)
-	{
-		std::cout << "Finished reading PART" << std::endl;
+		// TODO: Convert vector/orientation into transform matrix...
 	}
-	else
-	{
-		std::cout << "FAILED in reading PART\n"
-			<< "Read " << total << " out of " << partSize << "\n";
+
+	if (size0001 != total) {
+		std::cout << "Failed in reading 0001\n"
+			<< "Read " << total << " out of " << size0001
+			<< "\n";
+		exit(0);
+	}
+
+	return total;
+}
+
+std::size_t cmp::readCMPv2(std::istream& file)
+{
+	std::size_t size0002;
+	std::size_t total = base::readFormHeader(file, "0002", size0002);
+	size0002 += 8;
+
+	// Load all parts
+	while (total < size0002) {
+		total += readPART(file);
+	}
+
+	if (size0002 != total) {
+		std::cout << "Failed in reading 0002\n"
+			<< "Read " << total << " out of " << size0002
+			<< "\n";
+		exit(0);
+	}
+
+	return total;
+}
+
+std::size_t cmp::readCMPv3(std::istream& file)
+{
+	std::size_t size0003;
+	std::size_t total = base::readFormHeader(file, "0003", size0003);
+	size0003 += 8;
+
+	// Load base appearance...
+	total += appr::read(file);
+
+	// Load all parts
+	while (total < size0003) {
+		total += readPART(file);
+	}
+
+	if (size0003 != total) {
+		std::cout << "Failed in reading 0003\n"
+			<< "Read " << total << " out of " << size0003
+			<< "\n";
+		exit(0);
+	}
+
+	return total;
+}
+
+std::size_t cmp::readCMPv4(std::istream& file)
+{
+	std::size_t size0004;
+	std::size_t total = base::readFormHeader(file, "0004", size0004);
+	size0004 += 8;
+
+	// Load base appearance...
+	total += appr::read(file);
+
+	// Load all parts
+	while (total < size0004) {
+		total += readPART(file);
+	}
+
+	// TODO: Create test shape?
+
+	if (size0004 != total) {
+		std::cout << "Failed in reading 0004\n"
+			<< "Read " << total << " out of " << size0004
+			<< "\n";
+		exit(0);
+	}
+
+	return total;
+}
+
+std::size_t cmp::readCMPv5(std::istream& file)
+{
+	std::size_t size0005;
+	std::size_t total = base::readFormHeader(file, "0005", size0005);
+	size0005 += 8;
+
+	// Load base appearance...
+	total += appr::read(file);
+
+	// Load radar shape...
+	total += readRADR(file);
+
+	// Load all parts
+	while (total < size0005) {
+		std::cout << total << " out of " << size0005 << "\n";
+		total += readPART(file);
+	}
+
+	// TODO: Create test shape?
+
+	if (size0005 != total) {
+		std::cout << "Failed in reading 0005\n"
+			<< "Read " << total << " out of " << size0005
+			<< "\n";
 		exit(0);
 	}
 
@@ -146,28 +231,22 @@ std::size_t cmp::readPART0001(std::istream& file)
 std::size_t cmp::readPART(std::istream& file)
 {
 	std::size_t partSize;
-	base::readRecordHeader(file, "PART", partSize);
-
-	std::size_t total = 0;
+	std::size_t total = base::readRecordHeader(file, "PART", partSize);
+	partSize += 8;
 
 	part newPart;
 
 	total += base::read(file, newPart.filename);
 	newPart.filename = std::string("appearance/") + newPart.filename;
-	std::cout << "Part: " << newPart.filename << std::endl;
+	std::cout << "Part: " << newPart.filename << "\n";
 
 	// Read 3x4 transform matrix
 	total += newPart.transform.read(file);
-	std::cout << "Matrix: \n" << newPart.transform << std::endl;
+	std::cout << "Matrix: \n" << newPart.transform << "\n";
 
 	_parts.push_back(newPart);
 
-	if (partSize == total)
-	{
-		std::cout << "Finished reading PART" << std::endl;
-	}
-	else
-	{
+	if (partSize != total) {
 		std::cout << "FAILED in reading PART\n"
 			<< "Read " << total << " out of " << partSize << "\n";
 		exit(0);
@@ -180,7 +259,7 @@ std::size_t cmp::readRADR(std::istream& file)
 {
 	std::size_t radrSize;
 	std::size_t total = base::readFormHeader(file, "RADR", radrSize);
-	total -= 8;
+	radrSize += 8;
 
 	std::size_t size;
 	total += base::readRecordHeader(file, "INFO", size);

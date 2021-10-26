@@ -124,7 +124,7 @@ int main(int argc, char** argv)
 		{
 			// Component
 			ml::cmp misc;
-			misc.readCMP(infile);
+			misc.read(infile);
 		}
 		else if ("CSHD" == fileType)
 		{

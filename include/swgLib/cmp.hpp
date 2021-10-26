@@ -36,22 +36,22 @@
 
 namespace ml
 {
-
+	// Component Appearance
 	class cmp : public appr
 	{
 	public:
 		struct part {
 			std::string filename;
 			matrix3x4 transform;
-			float yaw;
-			float pitch;
-			float roll;
+			//float yaw;
+			//float pitch;
+			//float roll;
 		};
 
 		cmp();
 		~cmp();
 
-		std::size_t readCMP(std::istream& file);
+		std::size_t read(std::istream& file);
 
 		uint32_t getNumParts() const;
 
@@ -59,7 +59,11 @@ namespace ml
 		const std::vector<part>& getParts() const;
 
 	protected:
-		std::size_t readPART0001(std::istream& file);
+		std::size_t readCMPv1(std::istream& file);
+		std::size_t readCMPv2(std::istream& file);
+		std::size_t readCMPv3(std::istream& file);
+		std::size_t readCMPv4(std::istream& file);
+		std::size_t readCMPv5(std::istream& file);
 		std::size_t readPART(std::istream& file);
 		std::size_t readRADR(std::istream& file);
 
