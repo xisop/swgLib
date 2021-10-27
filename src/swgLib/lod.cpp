@@ -73,20 +73,15 @@ std::size_t lod::readLOD(std::istream& file)
 	std::cout << "Found DTLA form: " << dtlaSize << " bytes\n";
 
 	std::size_t size;
-	std::string form, type;
-	total += base::readFormHeader(file, form, size, type);
-	if (form != "FORM")
-	{
-		std::cout << "Expected Form " << std::endl;
-		exit(0);
-	}
+	std::string type;
+	total += base::readFormHeader(file, type, size);
 
 	_dtlaVersion = base::tagToVersion(type);
 	if ((_dtlaVersion < 1) || (_dtlaVersion > 8)) {
 		std::cout << "Expected type [0001..0008]: " << type << std::endl;
 		exit(0);
 	}
-	std::cout << "Found form of type: " << type << std::endl;
+	std::cout << "DTLA version: " << (int)_dtlaVersion << "\n";
 
 	// Versions 4+...
 	if (_dtlaVersion >= 4) {
