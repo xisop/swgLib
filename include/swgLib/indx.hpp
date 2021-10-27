@@ -37,6 +37,7 @@ namespace ml
 		indx();
 		~indx();
 
+		std::size_t readRaw(std::istream& file, const uint32_t& numIndices, bool index16=false);
 		std::size_t read(std::istream& file, bool index16=false);
 
 		const uint32_t getNumIndices() const;
