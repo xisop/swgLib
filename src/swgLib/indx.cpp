@@ -34,7 +34,7 @@ indx::indx() {
 indx::~indx() {
 }
 
-std::size_t indx::readRaw(std::istream& file, const uint32_t &numIndices, bool index16) {
+std::size_t indx::readRaw(std::istream& file, const uint32_t& numIndices, bool index16) {
 	_numIndices = numIndices;
 	std::cout << "Number of indices: " << _numIndices << "\n";
 
@@ -68,34 +68,7 @@ std::size_t indx::readRaw(std::istream& file, const uint32_t &numIndices, bool i
 
 std::size_t indx::read(std::istream& file, bool index16) {
 	std::size_t total = base::read(file, _numIndices);
-#if 0
-	std::cout << "Number of indices: " << _numIndices << "\n";
-	if (index16) {
-		// 16-bits per index...
-		const std::size_t indexDataSize(_numIndices * 2);
-
-		// Read data...
-		std::vector<uint16_t> tempIndex(_numIndices);
-		file.read((char*)(tempIndex.data()), indexDataSize);
-
-		_index.resize(_numIndices);
-		for (uint32_t i = 0; i < _numIndices; ++i) {
-			_index[i] = tempIndex[i];
-		}
-		total += indexDataSize;
-	}
-	else {
-		// 32-bits per index...
-		const std::size_t indexDataSize(_numIndices * 4);
-		// Read data...
-		_index.resize(_numIndices);
-		file.read((char*)(_index.data()), indexDataSize);
-
-		total += indexDataSize;
-	}
-#else
 	total += readRaw(file, _numIndices, index16);
-#endif
 	return total;
 }
 
@@ -114,4 +87,13 @@ const std::vector<int32_t>& indx::getIndices() const {
 
 const int32_t indx::getIndex(const uint32_t& i) const {
 	return _index.at(i);
+}
+
+void indx::reverseTriangleList() {
+	const uint32_t numTriangles = (uint32_t)_index.size() / 3;
+
+	for (uint32_t t = 0; t < numTriangles; ++t) {
+		const uint32_t i = t * 3;
+		std::swap(_index[i], _index[i + 2]);
+	}
 }

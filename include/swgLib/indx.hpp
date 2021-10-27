@@ -47,6 +47,8 @@ namespace ml
 
 		const int32_t getIndex( const uint32_t &i) const;
 
+		void reverseTriangleList();
+
 	protected:
 		uint32_t _numIndices;
 		std::vector<int32_t> _index;
