@@ -74,6 +74,7 @@ std::size_t collisionUtil::read(std::istream& file, baseCollisionPtr& collisionP
 			collisionPtr = xcylPtr(new ml::xcyl);
 		}
 		else if ("XOCL" == type) {
+			collisionPtr = xoclPtr(new ml::xocl);
 		}
 		else if ("NULL" == type) {
 			// Consume NULL record...
