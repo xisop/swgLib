@@ -43,23 +43,14 @@ namespace ml
 		~appr();
 
 		std::size_t read(std::istream& file);
-		std::size_t readEXBX(std::istream& file);
 		std::size_t readHPTS(std::istream& file);
-
-		void getBoundingSphere(vector3& center, float& radius) const;
-		void getBoundingBox(vector3& corner1, vector3& corner2);
 
 	protected:
 		uint8_t _apprVersion;
 
 		std::size_t readFLOR(std::istream& file);
 
-		vector3 _exspCenter;
-		float   _exspRadius;
-
-		vector3 _exbxCorner1;
-		vector3 _exbxCorner2;
-
+		baseCollisionPtr _boundingPtr;
 		baseCollisionPtr _collisionPtr;
 
 		std::vector<matrix3x4> _hardpointTransform;

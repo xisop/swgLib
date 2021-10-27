@@ -54,7 +54,7 @@ std::size_t appr::read(std::istream& file) {
 	std::cout << "Found form of type: " << type << std::endl;
 
 	// Load extents (box/sphere/mesh)...
-	total += readEXBX(file);
+	total += collisionUtil::read(file, _boundingPtr);
 
 	if (3 == _apprVersion) {
 		total += collisionUtil::read(file, _collisionPtr);
@@ -78,10 +78,6 @@ std::size_t appr::read(std::istream& file) {
 	}
 
 	return total;
-}
-
-std::size_t appr::readEXBX(std::istream& file) {
-	return exbx::read(file, _exspCenter, _exspRadius, _exbxCorner1, _exbxCorner2);
 }
 
 std::size_t appr::readHPTS(std::istream& file) {
@@ -149,16 +145,3 @@ std::size_t appr::readFLOR(std::istream& file) {
 
 	return total;
 }
-
-void appr::getBoundingSphere(vector3& center, float& radius) const
-{
-	center = _exspCenter;
-	radius = _exspRadius;
-}
-
-void appr::getBoundingBox(vector3& corner1, vector3& corner2)
-{
-	corner1 = _exbxCorner1;
-	corner2 = _exbxCorner2;
-}
-
