@@ -34,6 +34,47 @@ shaderPrimitive::shaderPrimitive() {
 shaderPrimitive::~shaderPrimitive() {
 }
 
+std::size_t shaderPrimitive::readOld(std::istream& file, bool skipSIDX) {
+	std::size_t spSize;
+	std::string type;
+	std::size_t total = base::readFormHeader(file, type, spSize);
+	spSize += 8;
+	int32_t spNumber = base::typeToNumber(type);
+	std::cout << "Shader primitive type: " << spNumber << "\n";
+
+	// Read Shader filename
+	std::size_t size;
+	total += base::readRecordHeader(file, "NAME", size);
+	total += base::read(file, _name);
+	base::fixSlash(_name);
+	std::cout << "  name: " << _name << "\n";
+
+	// Read Shader filename
+	total += base::readRecordHeader(file, "INFO", size);
+
+	// Read number of primitives...
+	int32_t numberOfPrimitives = 0;
+	total += base::read(file, numberOfPrimitives);
+	std::cout << "Number of primitives: " << numberOfPrimitives << "\n";
+	_primitives.resize(numberOfPrimitives);
+
+	for (auto& p : _primitives) {
+		total += p.readOld(file, skipSIDX);
+	}
+
+	if (spSize == total)
+	{
+		std::cout << "Finished reading shaderPrimitive\n";
+	}
+	else
+	{
+		std::cout << "FAILED in reading shaderPrimitive\n";
+		std::cout << "Read " << total << " out of " << spSize << "\n";
+		exit(0);
+	}
+	return total;
+}
+
 std::size_t shaderPrimitive::read(std::istream& file, bool skipSIDX) {
 	std::size_t spSize;
 	std::string type;

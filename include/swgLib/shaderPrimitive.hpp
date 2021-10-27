@@ -39,7 +39,9 @@ namespace ml
 		shaderPrimitive();
 		~shaderPrimitive();
 
-		std::size_t read(std::istream& file, bool skipSIDX=false);
+		std::size_t readOld(std::istream& file, bool skipSIDX = false);
+		std::size_t read(std::istream& file, bool skipSIDX = false);
+
 		const std::string& getName() const;
 		const std::vector<primitive>& getPrimitives() const;
 		const primitive& getPrimitive(const std::size_t& p) const;
