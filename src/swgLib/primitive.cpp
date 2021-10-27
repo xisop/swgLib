@@ -71,6 +71,11 @@ std::size_t primitive::readOld(std::istream& file, bool skipSIDX) {
 		}
 
 		total += indxRead + 8;
+
+		if (IndexedTriangleList == _primitiveType) {
+			//Reverse winding order of vertices
+			_index.reverseTriangleList();
+		}
 	}
 	else {
 		std::cout << "       Has indices: false\n";
@@ -141,6 +146,11 @@ std::size_t primitive::read(std::istream& file, bool skipSIDX) {
 		}
 
 		total += indxRead + 8;
+
+		if (IndexedTriangleList == _primitiveType) {
+			//Reverse winding order of vertices
+			_index.reverseTriangleList();
+		}
 	}
 
 	if (_hasSortedIndices) {
