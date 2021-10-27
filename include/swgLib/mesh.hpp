@@ -23,10 +23,10 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include <swgLib/appr.hpp>
-#include <swgLib/sps.hpp>
-
 #include <swgLib/cshd.hpp>
+#include <swgLib/exsp.hpp>
 #include <swgLib/sht.hpp>
+#include <swgLib/sps.hpp>
 
 #include <fstream>
 #include <string>
@@ -56,9 +56,8 @@ namespace ml
 
 		sps _sps;
 
-	private:
-		std::size_t readV2V3(std::istream& file, bool skipSIDX = false);
-		std::size_t readV4V5(std::istream& file, bool skipSIDX = false);
+		// Bounding sphere
+		exsp _boundSphere;
 	};
 }
 #endif

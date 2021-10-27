@@ -48,6 +48,7 @@ std::size_t mesh::readMESH(std::istream& file, bool skipSIDX)
 {
 	std::size_t meshSize;
 	std::size_t total = base::readFormHeader(file, "MESH", meshSize);
+	meshSize += 8;
 	std::cout << "Found form MESH: " << meshSize << "\n";
 
 	std::string type;
@@ -62,17 +63,34 @@ std::size_t mesh::readMESH(std::istream& file, bool skipSIDX)
 	}
 
 	if (_version < 4) {
-		total += readV2V3(file, skipSIDX);
+		// Load shader primitive set...
+		total += _sps.read(file, skipSIDX);
+
+		// Load bounding sphere...
+		total += _boundSphere.readOld(file);
+
+		// Load extents (box/sphere/mesh)...
+		total += collisionUtil::read(file, _boundingPtr);
+
+		if (total < meshSize) {
+			// Load hardpoints...
+			total += appr::readHPTS(file);
+		}
 	}
 	else {
-		total += readV4V5(file, skipSIDX);
+		total += appr::read(file);
+		// TODO: Copy bounding sphere data from APPR to _boundSphere
+		total += _sps.read(file, skipSIDX);
 	}
 
-	if (meshSize == (total - 8)) {
-		std::cout << "Finished reading MESH\n";
+	if (total == meshSize)
+	{
+		std::cout << "Finished reading MESH.\n";
 	}
-	else {
-		std::cout << "Failed in reading MESH\n";
+	else
+	{
+		std::cout << "Error reading MESH!\n"
+			<< "Read " << total << " out of " << meshSize << "\n";
 		exit(0);
 	}
 
@@ -80,32 +98,3 @@ std::size_t mesh::readMESH(std::istream& file, bool skipSIDX)
 }
 
 const sps& mesh::getSPS() const { return _sps; }
-
-std::size_t mesh::readV2V3(std::istream& file, bool skipSIDX) {
-	// Load shader primitive set...
-	std::size_t total = _sps.read(file, skipSIDX);
-
-	// Load bounding sphere...
-	std::size_t size;
-	total += base::readRecordHeader(file, "CNTR", size);
-	total += base::read(file, _exspCenter);
-	total += base::readRecordHeader(file, "RADI", size);
-	total += base::read(file, _exspRadius);
-
-	// Load extents...
-	total += collisionUtil::read(file, _collisionPtr);
-
-	// Load hardpoints...
-	total += appr::readHPTS(file);
-
-	return total;
-}
-
-std::size_t mesh::readV4V5(std::istream& file, bool skipSIDX) {
-	// Load APPR...
-	std::size_t total = appr::read(file);
-
-	total += _sps.read(file, skipSIDX);
-
-	return total;
-}
