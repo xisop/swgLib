@@ -96,7 +96,6 @@ std::size_t stot::readSTOTParameter(std::istream& file)
 
 	std::string parameter;
 	total += base::read(file, parameter);
-	//std::cout << "Parameter: " << parameter << std::endl;
 
 	// 0 - None
 	// 1 - Single
@@ -107,6 +106,7 @@ std::size_t stot::readSTOTParameter(std::istream& file)
 	total += base::read(file, dataType);
 
 #if 0
+	std::cout << "Parameter: " << parameter << std::endl;
 	std::cout << "Parameter data type: ";
 	switch (dataType) {
 	case 1: std::cout << "Single"; break;
@@ -117,18 +117,16 @@ std::size_t stot::readSTOTParameter(std::istream& file)
 	}
 	//std::cout << " not handled\n";
 	std::cout << "\n";
-#endif
 
-#if 0
 	const std::size_t valueSize(xxxxSize - total);
 	std::cout << "Value size: " << valueSize << "\n";
 #endif
 	if (parameter == "paletteColorCustomizationVariables")
 	{
+		int32_t numPCCV;
+		total += base::read(file, numPCCV);
+		std::cout << "Num PCCV records: " << numPCCV << "\n";
 		if (1 == dataType) {
-			int32_t numPCCV;
-			total += base::read(file, numPCCV);
-			std::cout << "Num PCCV records: " << numPCCV << "\n";
 			for (auto i = 0; i < numPCCV; ++i) {
 				pccv newPCCV;
 				total += newPCCV.read(file);
@@ -140,10 +138,10 @@ std::size_t stot::readSTOTParameter(std::istream& file)
 	}
 	else if (parameter == "rangedIntCustomizationVariables")
 	{
+		int32_t numRICV;
+		total += base::read(file, numRICV);
+		std::cout << "Num RICV records: " << numRICV << "\n";
 		if (1 == dataType) {
-			int32_t numRICV;
-			total += base::read(file, numRICV);
-			std::cout << "Num RICV records: " << numRICV << "\n";
 			for (auto i = 0; i < numRICV; ++i) {
 				ricv newRICV;
 				total += newRICV.read(file);
@@ -155,10 +153,10 @@ std::size_t stot::readSTOTParameter(std::istream& file)
 	}
 	else if (parameter == "constStringCustomizationVariables")
 	{
+		int32_t numCSCV;
+		total += base::read(file, numCSCV);
+		std::cout << "Num CSCV records: " << numCSCV << "\n";
 		if (1 == dataType) {
-			int32_t numCSCV;
-			total += base::read(file, numCSCV);
-			std::cout << "Num CSCV records: " << numCSCV << "\n";
 			for (auto i = 0; i < numCSCV; ++i) {
 				cscv newCSCV;
 				total += newCSCV.read(file);
@@ -169,11 +167,11 @@ std::size_t stot::readSTOTParameter(std::istream& file)
 		}
 	}
 	else if (parameter == "socketDestinations") {
+		int32_t socketDest;
+		total += base::read(file, socketDest);
+		std::cout << "Socket destination: " << socketDest << "\n";
 		if (1 == dataType) {
-			int32_t socketDest;
-			total += base::read(file, socketDest);
 			_socketDestinations.push_back(socketDest);
-			std::cout << "Socket destination: " << socketDest << "\n";
 		}
 	}
 	else if (parameter == "structureFootprintFileName") {
@@ -194,20 +192,26 @@ std::size_t stot::readSTOTParameter(std::istream& file)
 			std::cout << "Targetable: " << std::boolalpha << _targetable << "\n";
 		}
 	}
-#if 0
 	else if (parameter == "certificationsRequired") {
+		int32_t numCert;
+		total += base::read(file, numCert);
+		std::cout << "Num Certification records: " << numCert << "\n";
 		if (1 == dataType) {
+			std::cout << "****************** certificationsRequired not finished ******************\n";
+			exit(0);
+			for (auto i = 0; i < numCert; ++i) {
+			}
+
 			//total += base::read(file, _targetable);
 			//std::cout << "Targetable: " << std::boolalpha << _targetable << "\n";
 		}
 	}
-#endif
 	else if (parameter == "customizationVariableMapping")
 	{
+		int32_t numCVM;
+		total += base::read(file, numCVM);
+		std::cout << "Num CVM records: " << numCVM << "\n";
 		if (1 == dataType) {
-			int32_t numCVM;
-			total += base::read(file, numCVM);
-			std::cout << "Num CVM records: " << numCVM << "\n";
 			for (auto i = 0; i < numCVM; ++i) {
 				cvm newCVM;
 				total += newCVM.read(file);
