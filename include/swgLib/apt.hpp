@@ -40,7 +40,7 @@ namespace ml
 
 		std::size_t readAPT(std::istream& file);
 		void print() const;
-		std::string getFilename() const;
+		const std::string &getFilename() const;
 
 	protected:
 

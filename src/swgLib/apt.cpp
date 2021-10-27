@@ -70,6 +70,6 @@ void apt::print() const
 {
 }
 
-std::string apt::getFilename() const {
+const std::string &apt::getFilename() const {
 	return _filename;
 }
