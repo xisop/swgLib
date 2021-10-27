@@ -45,12 +45,10 @@ std::size_t sps::read(std::istream& file, bool skipSIDX) {
 	total += base::readFormHeader(file, type, size);
 
 	_version = base::tagToVersion(type);
-	if (_version > 1)
-	{
+	if (_version > 1) {
 		std::cout << "Expected FORM of type 0000 or 0001. Found: " << type << "\n";
 		exit(0);
 	}
-	std::cout << "Found form " << type << "\n";
 	std::cout << "SPS version " << (int)_version << "\n";
 
 	total += base::readRecordHeader(file, "CNT ", size);
@@ -58,9 +56,13 @@ std::size_t sps::read(std::istream& file, bool skipSIDX) {
 	_shaderPrimitives.resize(_numberOfShaders);
 	std::cout << "Number of shaders: " << _numberOfShaders << "\n";
 
-	for (auto &sp : _shaderPrimitives ) {
-
-		total += sp.read(file, skipSIDX);
+	for (auto& sp : _shaderPrimitives) {
+		if (0 == _version) {
+			total += sp.readOld(file, skipSIDX);
+		}
+		else {
+			total += sp.read(file, skipSIDX);
+		}
 	}
 
 	if (total == spsSize)
