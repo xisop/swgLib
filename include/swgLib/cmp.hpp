@@ -42,10 +42,10 @@ namespace ml
 	public:
 		struct part {
 			std::string filename;
+			bool validTransform;
 			matrix3x4 transform;
-			//float yaw;
-			//float pitch;
-			//float roll;
+			vector3 position;
+			vector3 yawPitchRoll;
 		};
 
 		cmp();

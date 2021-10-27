@@ -102,19 +102,16 @@ std::size_t cmp::readCMPv1(std::istream& file)
 	while (total < size0001) {
 		std::size_t size;
 		total += base::readRecordHeader(file, "PART", size);
-		std::cout << "********** Not fully supported yet. Transform matrix is invalid! **********\n";
 		part newPart;
 		total += base::read(file, newPart.filename);
 		newPart.filename = std::string("appearance/") + newPart.filename;
 		std::cout << "Part: " << newPart.filename << std::endl;
 
-		vector3 position;
-		total += base::read(file, position);
-
-		vector3 yawPitchRoll; // In degrees
-		total += base::read(file, yawPitchRoll);
-
-		// TODO: Convert vector/orientation into transform matrix...
+		newPart.validTransform = false;
+		total += base::read(file, newPart.position);
+		total += base::read(file, newPart.yawPitchRoll);
+		std::cout << "Position: " << newPart.position << "\n"
+			<< "Yaw, Pitch, Roll: " << newPart.yawPitchRoll << "\n";
 	}
 
 	if (size0001 != total) {
@@ -212,7 +209,6 @@ std::size_t cmp::readCMPv5(std::istream& file)
 
 	// Load all parts
 	while (total < size0005) {
-		std::cout << total << " out of " << size0005 << "\n";
 		total += readPART(file);
 	}
 
@@ -241,6 +237,7 @@ std::size_t cmp::readPART(std::istream& file)
 	std::cout << "Part: " << newPart.filename << "\n";
 
 	// Read 3x4 transform matrix
+	newPart.validTransform = true;
 	total += newPart.transform.read(file);
 	std::cout << "Matrix: \n" << newPart.transform << "\n";
 
