@@ -37,12 +37,31 @@ namespace ml
 	class primitive
 	{
 	public:
+		enum {
+			PointList = 0,
+			LineList = 1,
+			LineStrip = 2,
+			TriangleList = 3,
+			TriangleStrip = 4,
+			TriangleFan = 5,
+			IndexedPointList = 6,
+			IndexedLineList = 7,
+			IndexedLineStrip = 8,
+			IndexedTriangleList = 9,
+			IndexedTriangleStrip = 10,
+			IndexedTriangleFan = 11
+		};
+
+	public:
 		primitive();
 		~primitive();
 
-		std::size_t read(std::istream& file, bool skipSIDX=false);
+		std::size_t readOld(std::istream& file, bool skipSIDX = false);
+		std::size_t read(std::istream& file, bool skipSIDX = false);
 
 		const int32_t& getPrimitiveType() const;
+		static std::string shaderPrimitiveTypeToString(const int32_t& type);
+
 		bool hasIndices() const;
 		bool hasSortedIndices() const;
 
