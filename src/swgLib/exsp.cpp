@@ -35,11 +35,20 @@ exsp::exsp() :
 
 exsp::~exsp() {}
 
+std::size_t exsp::readOld(std::istream& file) {
+	std::size_t size;
+	std::size_t	total = base::readRecordHeader(file, "CNTR", size);
+		total += base::read(file, _exspCenter);
+		total += base::readRecordHeader(file, "RADI", size);
+		total += base::read(file, _exspRadius);
+	return total;
+}
+
 std::size_t exsp::read(std::istream& file) {
 	std::size_t exspSize;
-	std::size_t total = base::readFormHeader(file, "exsp", exspSize);
+	std::size_t total = base::readFormHeader(file, "EXSP", exspSize);
 	exspSize += 8;
-	std::cout << "Found exsp form: " << exspSize - 12 << " bytes\n";
+	std::cout << "Found EXSP form: " << exspSize - 12 << " bytes\n";
 
 	std::string form, type;
 	std::size_t size;
@@ -53,10 +62,7 @@ std::size_t exsp::read(std::istream& file) {
 	std::cout << "Found form " << type << "\n";
 
 	if (0 == _exspVersion) {
-		total += base::readRecordHeader(file, "CNTR", size);
-		total += base::read(file, _exspCenter);
-		total += base::readRecordHeader(file, "RADI", size);
-		total += base::read(file, _exspRadius);
+		total += readOld(file);
 	}
 	else {
 		total += base::readRecordHeader(file, "SPHR", size);

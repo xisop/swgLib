@@ -39,6 +39,7 @@ namespace ml
 		exsp();
 		~exsp();
 
+		std::size_t readOld(std::istream& file);
 		std::size_t read(std::istream& file) override;
 
 	protected:
