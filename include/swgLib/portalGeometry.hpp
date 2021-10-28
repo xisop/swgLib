@@ -26,6 +26,7 @@
 #include <swgLib/vector3.hpp>
 
 #include <istream>
+#include <ostream>
 #include <vector>
 
 #ifndef PORTALGEOMETRY_HPP
@@ -41,7 +42,9 @@ namespace ml
 
 		std::size_t read(std::istream& file);
 
-		void print() const;
+		void print(std::ostream &os) const;
+
+		const std::vector<vector3>& getVertex() const;
 
 	protected:
 

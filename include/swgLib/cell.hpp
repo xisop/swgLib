@@ -43,6 +43,14 @@ namespace ml
 
 		std::size_t read(std::istream& file);
 
+		const bool canSeeParentCell() const;
+		const std::string& getName() const;
+		const std::string& getAppearanceFilename() const;
+		const bool hasFloor() const;
+		const std::string& getFloorFilename() const;
+		const std::vector<portal>& getPortals() const;
+		const std::vector<lght>& getLights() const;
+
 	protected:
 		uint8_t _version; // 0001, 0002, 0003, 0004, 0005
 		int32_t _numPortals;

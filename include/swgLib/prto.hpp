@@ -45,6 +45,9 @@ namespace ml
 		const int32_t &getNumCells() const;
 		const int32_t &getNumPortals() const;
 
+		const std::vector<portalGeometry>& getPortalGeometry() const;
+		const std::vector<cell> &getCells() const;
+
 	protected:
 		uint8_t _version;
 		int32_t _numPortals;

@@ -56,3 +56,10 @@ std::size_t portalGeometry::read(std::istream& file) {
 
 	return total;
 }
+
+void portalGeometry::print(std::ostream &os) const {
+}
+
+const std::vector<vector3>& portalGeometry::getVertex() const {
+	return _vertex;
+}

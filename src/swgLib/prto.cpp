@@ -52,6 +52,14 @@ const int32_t& prto::getNumPortals() const
 	return _numPortals;
 }
 
+const std::vector<portalGeometry>& prto::getPortalGeometry() const {
+	return _portalGeometry;
+}
+
+const std::vector<cell>& prto::getCells() const {
+	return _cells;
+}
+
 std::size_t prto::readPRTO(std::istream& file)
 {
 	std::size_t prtoSize;

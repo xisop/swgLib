@@ -119,3 +119,31 @@ std::size_t cell::read(std::istream& file) {
 
 	return total;
 }
+
+const bool cell::canSeeParentCell() const {
+	return _canSeeParentCell;
+}
+
+const std::string& cell::getName() const {
+	return _name;
+}
+
+const std::string& cell::getAppearanceFilename() const {
+	return _appearanceName;
+}
+
+const bool cell::hasFloor() const {
+	return _hasFloor;
+}
+
+const std::string& cell::getFloorFilename() const {
+	return _floorName;
+}
+
+const std::vector<portal>& cell::getPortals() const {
+	return _portals;
+}
+
+const std::vector<lght>& cell::getLights() const {
+	return _lights;
+}
