@@ -47,7 +47,7 @@ namespace ml
 
 		void get(float* V) const;
 
-		void getTransposed4x4(float* V) const;
+		void getTransposed4x4(float* dest) const;
 
 		void set(const float* V);
 
@@ -76,7 +76,7 @@ namespace ml
 
 		std::size_t get(float* V) const;
 
-		void getTransposed4x4(float* V) const;
+		void getTransposed4x4(float* dest) const;
 
 		std::size_t  set(const float* V);
 

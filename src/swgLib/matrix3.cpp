@@ -75,23 +75,16 @@ void matrix3x3::getRow(const uint32_t& row, float& v1, float& v2, float& v3) con
 
 void matrix3x3::get(float* V) const { memcpy(V, v, sizeof(float) * 9); }
 
-void matrix3x3::getTransposed4x4(float* V) const {
-	V[0] = v[0];
-	V[4] = v[1];
-	V[8] = v[2];
-	V[12] = 0.0f;
-	V[1] = v[3];
-	V[5] = v[4];
-	V[9] = v[5];
-	V[13] = 0.0f;
-	V[2] = v[6];
-	V[6] = v[7];
-	V[10] = v[8];
-	V[14] = 0.0f;
-	V[3] = 0.0f;
-	V[7] = 0.0f;
-	V[11] = 0.0f;
-	V[15] = 1.0f;
+void matrix3x3::getTransposed4x4(float* dest) const {
+	dest[0] = v[0];
+	dest[4] = v[1];
+	dest[8] = v[2];
+	dest[1] = v[3];
+	dest[5] = v[4];
+	dest[9] = v[5];
+	dest[2] = v[6];
+	dest[6] = v[7];
+	dest[10] = v[8];
 }
 
 void matrix3x3::set(const float* V) { memcpy(v, V, sizeof(float) * 9); }
@@ -157,23 +150,19 @@ std::size_t matrix3x4::get(float* V) const {
 	return std::size_t(12);
 }
 
-void matrix3x4::getTransposed4x4(float* V) const {
-	V[0] = v[0];
-	V[4] = v[1];
-	V[8] = v[2];
-	V[12] = v[3];
-	V[1] = v[4];
-	V[5] = v[5];
-	V[9] = v[6];
-	V[13] = v[7];
-	V[2] = v[8];
-	V[6] = v[9];
-	V[10] = v[10];
-	V[14] = v[11];
-	V[3] = 0.0f;
-	V[7] = 0.0f;
-	V[11] = 0.0f;
-	V[15] = 1.0f;
+void matrix3x4::getTransposed4x4(float* dest) const {
+	dest[0] = v[0];
+	dest[4] = v[1];
+	dest[8] = v[2];
+	dest[12] = v[3];
+	dest[1] = v[4];
+	dest[5] = v[5];
+	dest[9] = v[6];
+	dest[13] = v[7];
+	dest[2] = v[8];
+	dest[6] = v[9];
+	dest[10] = v[10];
+	dest[14] = v[11];
 }
 
 void matrix3x4::getRow(const uint32_t& row, float& v1, float& v2, float& v3, float& v4) const {
