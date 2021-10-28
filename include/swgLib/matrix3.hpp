@@ -43,7 +43,11 @@ namespace ml
 
 		float get(int index) const;
 
+		void getRow(const uint32_t &row, float &v1, float &v2, float &v3) const;
+
 		void get(float* V) const;
+
+		void getTransposed4x4(float* V) const;
 
 		void set(const float* V);
 
@@ -68,7 +72,11 @@ namespace ml
 
 		float get(int index) const;
 
+		void getRow(const uint32_t& row, float& v1, float& v2, float& v3, float& v4) const;
+
 		std::size_t get(float* V) const;
+
+		void getTransposed4x4(float* V) const;
 
 		std::size_t  set(const float* V);
 
