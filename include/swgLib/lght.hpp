@@ -37,10 +37,25 @@ namespace ml
 	class lght
 	{
 	public:
+		enum {
+			Ambient = 0,
+			Parallel = 1,
+			Point = 2
+		};
+
+	public:
 		lght();
 		~lght();
 
 		std::size_t read(std::istream& file);
+
+		const int8_t& getType() const;
+		const color4& getDiffuseColor() const;
+		const color4& getSpecularColor() const;
+		const matrix3x4& getTransform() const;
+		const float& getConstantAttenuation() const;
+		const float& getLinearAttenuation() const;
+		const float& getQuadraticAttentuation() const;
 
 	protected:
 		int8_t _type;
@@ -50,8 +65,6 @@ namespace ml
 		float _constantAttenuation;
 		float _linearAttenuation;
 		float _quadraticAttenuation;
-
-	private:
 	};
 }
 

@@ -40,9 +40,9 @@ std::size_t lght::read(std::istream& file) {
 	// Light type
 	std::size_t total = base::read(file, _type);
 	switch (_type) {
-	case 0: std::cout << "Light type: Ambient\n"; break;
-	case 1: std::cout << "Light type: Parallel\n"; break;
-	case 2: std::cout << "Light type: Point\n"; break;
+	case Ambient:  std::cout << "Light type: Ambient\n"; break;
+	case Parallel: std::cout << "Light type: Parallel\n"; break;
+	case Point:    std::cout << "Light type: Point\n"; break;
 	};
 
 	// Diffuse color (argb)
@@ -70,4 +70,32 @@ std::size_t lght::read(std::istream& file) {
 	std::cout << "Quadratic Attenuation: " << _quadraticAttenuation << "\n";
 
 	return total;
+}
+
+const int8_t& lght::getType() const {
+	return _type;
+}
+
+const color4& lght::getDiffuseColor() const {
+	return _diffuseColor;
+}
+
+const color4& lght::getSpecularColor() const {
+	return _specularColor;
+}
+
+const matrix3x4& lght::getTransform() const {
+	return _transform;
+}
+
+const float& lght::getConstantAttenuation() const {
+	return _constantAttenuation;
+}
+
+const float& lght::getLinearAttenuation() const {
+	return _linearAttenuation;
+}
+
+const float& lght::getQuadraticAttentuation() const {
+	return _quadraticAttenuation;
 }
