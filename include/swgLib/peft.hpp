@@ -22,43 +22,51 @@
  along with swgLib; if not, write to the Free Software
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include <swgLib/base.hpp>
+#include <swgLib/emgp.hpp>
+#include <swgLib/ptim.hpp>
 
-#include <fstream>
+#include <istream>
 #include <string>
-#include <map>
+#include <vector>
 
 #ifndef PEFT_HPP
-#define PEFT_HPP
+#define PEFT_HPP 1
 
 namespace ml
 {
-  class peft : public base
-  {
-  public:
-    peft();
-    ~peft();
-    bool isRightType( std::istream &file )
-    {
-      return isOfType( file, "PEFT" );
-    }
-    unsigned int readPEFT( std::istream &file, std::string path="" );
+	class peft
+	{
+	public:
+		peft();
+		~peft();
 
-  protected:
-    unsigned int readPTIM( std::istream &file );
-    unsigned int read0000( std::istream &file, unsigned int &num );
-    unsigned int readEMGP( std::istream &file );
-    unsigned int readEMTR( std::istream &file );
-    unsigned int readEMTR0000( std::istream &file );
-    unsigned int readWVFM( std::istream &file );
-    unsigned int readPTQD( std::istream &file );
-    unsigned int readPTCL( std::istream &file );
-    unsigned int readPTCL0002( std::istream &file );
-    unsigned int readCLRR( std::istream &file );
-    unsigned int readPTEX( std::istream &file );
-				
-  private:
-    std::string particleShader;
-  };
+		std::size_t readPEFT(std::istream& file);
+
+	protected:
+#if 0
+		std::size_t read0000(std::istream& file, uint32_t& num);
+		std::size_t readEMGP(std::istream& file);
+		std::size_t readEMTR(std::istream& file);
+		std::size_t readEMTR0000(std::istream& file);
+		std::size_t readWVFM(std::istream& file);
+		std::size_t readPTQD(std::istream& file);
+		std::size_t readPTCL(std::istream& file);
+		std::size_t readPTCL0002(std::istream& file);
+		std::size_t readCLRR(std::istream& file);
+		std::size_t readPTEX(std::istream& file);
+#endif
+
+	private:
+		uint32_t _version;
+
+		ptim _timing;
+		int32_t _numEmitterGroups;
+		float _initialPlaybackRate;
+		float _initialPlaybackRateTime;
+		float _playbackRate;
+		float _scale;
+		std::vector<emgp> _emitterGroups;
+
+	};
 }
 #endif

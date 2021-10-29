@@ -23,6 +23,7 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include <swgLib/peft.hpp>
+#include <swgLib/base.hpp>
 
 #include <iostream>
 #include <bitset>
@@ -38,65 +39,71 @@ peft::~peft()
 {
 }
 
-unsigned int peft::readPEFT(std::istream& file, std::string path)
+std::size_t peft::readPEFT(std::istream& file)
 {
-	basePath = path;
 	std::size_t peftSize;
-	std::size_t total = readFormHeader(file, "PEFT", peftSize);
+	std::size_t total = base::readFormHeader(file, "PEFT", peftSize);
 	peftSize += 8;
-	std::cout << "Found PEFT form"
-		<< ": " << peftSize - 12 << " bytes"
-		<< std::endl;
+	std::cout << "Found PEFT form: " << peftSize - 12 << " bytes\n";
 
 	std::size_t size;
 	std::string form, type;
-	total += readFormHeader(file, form, size, type);
-	if (form != "FORM")
-	{
-		std::cout << "Expected FORM: " << form << std::endl;
+	total += base::readFormHeader(file, form, size, type);
+	_version = base::tagToVersion(type);
+	if (_version > 2) {
+		std::cout << "Expected type [0000..0002]: " << type << "\n";
 		exit(0);
 	}
-	std::cout << "Found " << form << " " << type
-		<< ": " << size - 4 << " bytes"
-		<< std::endl;
+	std::cout << "Particle Effect Version: " << (int)_version << "\n";
 
-	total += readPTIM(file);
-	unsigned int numEmitterGroups;
-	total += read0000(file, numEmitterGroups);
+	if (_version > 0) {
+		total += _timing.read(file);
+	}
+	
+	total += base::readRecordHeader(file, "0000", size);
+	total += base::read(file, _numEmitterGroups);
 
-	std::cout << "Num emitters: " << numEmitterGroups << std::endl;
-
-	for (unsigned int i = 0; i < numEmitterGroups; ++i)
-	{
-		total += readEMGP(file);
+	if (_version > 1) {
+		total += base::read(file, _initialPlaybackRate);
+		total += base::read(file, _initialPlaybackRateTime);
+		total += base::read(file, _playbackRate);
+		total += base::read(file, _scale);
 	}
 
-	if (peftSize == total)
-	{
-		std::cout << "Finished reading EFCT" << std::endl;
+	std::cout << "Num Emitter Groups: " << _numEmitterGroups << "\n";
+
+
+
+	_emitterGroups.resize(_numEmitterGroups);
+	for (auto& eg : _emitterGroups) {
+		total += eg.read(file);
 	}
-	else
-	{
-		std::cout << "FAILED in reading EFCT" << std::endl;
-		std::cout << "Read " << total << " out of " << peftSize
-			<< std::endl;
+
+	if (peftSize == total) {
+		std::cout << "Finished reading PEFT\n";
+	}
+	else {
+		std::cout << "FAILED in reading PEFT\n"
+			<< "Read " << total << " out of " << peftSize << "\n";
+		exit(0);
 	}
 
 	return total;
 }
 
+#if 0
 
-unsigned int peft::readEMGP(std::istream& file)
+std::size_t peft::readEMGP(std::istream& file)
 {
 	std::size_t emgpSize;
-	std::size_t total = readFormHeader(file, "EMGP", emgpSize);
+	std::size_t total = base::readFormHeader(file, "EMGP", emgpSize);
 	emgpSize += 8;
 	std::cout << "Found FORM EMGP: " << emgpSize - 12 << " bytes"
 		<< std::endl;
 
 	std::size_t size;
 	std::string form, type;
-	total += readFormHeader(file, form, size, type);
+	total += base::readFormHeader(file, form, size, type);
 	if (form != "FORM")
 	{
 		std::cout << "Expected FORM: " << form << std::endl;
@@ -106,7 +113,8 @@ unsigned int peft::readEMGP(std::istream& file)
 		<< ": " << size - 4 << " bytes"
 		<< std::endl;
 
-	total += readPTIM(file);
+	total += _particleTiming.read(file);
+
 	unsigned int numEmitters;
 	total += read0000(file, numEmitters);
 	for (unsigned int i = 0; i < numEmitters; ++i)
@@ -128,17 +136,17 @@ unsigned int peft::readEMGP(std::istream& file)
 	return total;
 }
 
-unsigned int peft::readEMTR(std::istream& file)
+std::size_t peft::readEMTR(std::istream& file)
 {
 	std::size_t emtrSize;
-	std::size_t total = readFormHeader(file, "EMTR", emtrSize);
+	std::size_t total = base::readFormHeader(file, "EMTR", emtrSize);
 	emtrSize += 8;
 	std::cout << "Found FORM EMTR: " << emtrSize - 12 << " bytes"
 		<< std::endl;
 
 	std::size_t size;
 	std::string form, type;
-	total += readFormHeader(file, form, size, type);
+	total += base::readFormHeader(file, form, size, type);
 	if (form != "FORM")
 	{
 		std::cout << "Expected FORM: " << form << std::endl;
@@ -168,7 +176,7 @@ unsigned int peft::readEMTR(std::istream& file)
 	total += readEMTR0000(file);
 	total += readPTQD(file);
 
-	total += readUnknown(file, emtrSize - total);
+	total += base::readUnknown(file, emtrSize - total);
 
 	if (emtrSize == total)
 	{
@@ -184,58 +192,69 @@ unsigned int peft::readEMTR(std::istream& file)
 	return total;
 }
 
-unsigned int peft::readPTIM(std::istream& file)
+// Particle Timing
+std::size_t peft::readPTIM(std::istream& file)
 {
 	std::size_t ptimSize;
-	std::size_t total = readFormHeader(file, "PTIM", ptimSize);
+	std::size_t total = base::readFormHeader(file, "PTIM", ptimSize);
 	ptimSize += 8;
 	std::cout << "Found FORM PTIM: " << ptimSize - 12 << " bytes"
 		<< std::endl;
 
 	std::size_t size;
 	std::string type;
-	total += readRecordHeader(file, type, size);
-	if (type != "0001")
-	{
-		std::cout << "Expected record of type 0001: " << type << std::endl;
+	total += base::readRecordHeader(file, type, size);
+
+	_version = base::tagToVersion(type);
+	if (_version > 1) {
+		std::cout << "Expected type [0000..0001]: " << type << "\n";
 		exit(0);
 	}
-	std::cout << "Found record " << type
-		<< ": " << size << " bytes"
-		<< std::endl;
+	std::cout << "PTIM version: " << (int)_version << "\n";
 
-	int x;
-	for (unsigned int i = 0; i < 6; ++i)
-	{
-		total += base::read(file, x);
-		std::cout << x << std::endl;
+
+#if 1
+	total += 24;
+#else
+	total += base::read(file, _startDelayMin);
+	total += base::read(file, _startDelayMax);
+	total += base::read(file, _loopDelayMin);
+	total += base::read(file, _loopDelayMax);
+	total += base::read(file, _loopCountMin);
+	total += base::read(file, _loopCountMax);
+
+	if (0 == _ptimVersion) {
+		if (_loopCountMin <= -1) {
+			_loopCountMax = -1;
+		}
 	}
+#endif
+
 
 	if (ptimSize == total)
 	{
-		std::cout << "Finished reading PTIM" << std::endl;
+		std::cout << "Finished reading PTIM\n";
 	}
 	else
 	{
-		std::cout << "FAILED in reading PTIM" << std::endl;
-		std::cout << "Read " << total << " out of " << ptimSize
-			<< std::endl;
+		std::cout << "FAILED in reading PTIM\n"
+			<< "Read " << total << " out of " << ptimSize << "\n";
 	}
 
 	return total;
 }
 
-unsigned int peft::readWVFM(std::istream& file)
+std::size_t peft::readWVFM(std::istream& file)
 {
 	std::size_t wvfmSize;
-	std::size_t total = readFormHeader(file, "WVFM", wvfmSize);
+	std::size_t total = base::readFormHeader(file, "WVFM", wvfmSize);
 	wvfmSize += 8;
 	std::cout << "Found FORM WVFM: " << wvfmSize - 12 << " bytes"
 		<< std::endl;
 
 	std::size_t size;
 	std::string type;
-	total += readRecordHeader(file, type, size);
+	total += base::readRecordHeader(file, type, size);
 	if (type != "0001")
 	{
 		std::cout << "Expected record of type 0001: " << type << std::endl;
@@ -288,10 +307,10 @@ unsigned int peft::readWVFM(std::istream& file)
 	return total;
 }
 
-unsigned int peft::readPTQD(std::istream& file)
+std::size_t peft::readPTQD(std::istream& file)
 {
 	std::size_t ptqdSize;
-	std::size_t total = readFormHeader(file, "PTQD", ptqdSize);
+	std::size_t total = base::readFormHeader(file, "PTQD", ptqdSize);
 	ptqdSize += 8;
 	std::cout << "Found FORM PTQD: " << ptqdSize - 12 << " bytes"
 		<< std::endl;
@@ -299,7 +318,7 @@ unsigned int peft::readPTQD(std::istream& file)
 	total += readPTCL(file);
 
 	std::size_t size;
-	total += readFormHeader(file, "0001", size);
+	total += base::readFormHeader(file, "0001", size);
 	size += 8;
 	std::cout << "Found FORM 0001: " << size - 12 << " bytes"
 		<< std::endl;
@@ -310,7 +329,7 @@ unsigned int peft::readPTQD(std::istream& file)
 	total += readPTEX(file);
 
 	std::string type;
-	total += readRecordHeader(file, type, size);
+	total += base::readRecordHeader(file, type, size);
 	size += 8;
 	if (type != "0000")
 	{
@@ -339,17 +358,17 @@ unsigned int peft::readPTQD(std::istream& file)
 	return total;
 }
 
-unsigned int peft::readPTEX(std::istream& file)
+std::size_t peft::readPTEX(std::istream& file)
 {
 	std::size_t ptexSize;
-	std::size_t total = readFormHeader(file, "PTEX", ptexSize);
+	std::size_t total = base::readFormHeader(file, "PTEX", ptexSize);
 	ptexSize += 8;
 	std::cout << "Found FORM PTEX: " << ptexSize - 12 << " bytes"
 		<< std::endl;
 
 	std::string type;
 	std::size_t size;
-	total += readRecordHeader(file, type, size);
+	total += base::readRecordHeader(file, type, size);
 	size += 8;
 	if (type != "0000")
 	{
@@ -401,22 +420,22 @@ unsigned int peft::readPTEX(std::istream& file)
 	return total;
 }
 
-unsigned int peft::readPTCL(std::istream& file)
+std::size_t peft::readPTCL(std::istream& file)
 {
 	std::size_t ptclSize;
-	std::size_t total = readFormHeader(file, "PTCL", ptclSize);
+	std::size_t total = base::readFormHeader(file, "PTCL", ptclSize);
 	ptclSize += 8;
 	std::cout << "Found FORM PTCL: " << ptclSize - 12 << " bytes"
 		<< std::endl;
 
 	std::size_t size;
-	total += readFormHeader(file, "0002", size);
+	total += base::readFormHeader(file, "0002", size);
 	size += 8;
 	std::cout << "Found FORM 0002: " << size - 12 << " bytes"
 		<< std::endl;
 
 	std::string type;
-	total += readRecordHeader(file, type, size);
+	total += base::readRecordHeader(file, type, size);
 	size += 8;
 	if (type != "0000")
 	{
@@ -443,7 +462,7 @@ unsigned int peft::readPTCL(std::istream& file)
 	total += readWVFM(file);
 	total += readWVFM(file);
 
-	total += readUnknown(file, ptclSize - total);
+	total += base::readUnknown(file, ptclSize - total);
 
 	if (ptclSize == total)
 	{
@@ -459,10 +478,10 @@ unsigned int peft::readPTCL(std::istream& file)
 	return total;
 }
 
-unsigned int peft::readCLRR(std::istream& file)
+std::size_t peft::readCLRR(std::istream& file)
 {
 	std::size_t clrrSize;
-	std::size_t total = readFormHeader(file, "CLRR", clrrSize);
+	std::size_t total = base::readFormHeader(file, "CLRR", clrrSize);
 	clrrSize += 8;
 	std::cout << "Found FORM CLRR: " << clrrSize - 12 << " bytes"
 		<< std::endl;
@@ -504,11 +523,11 @@ unsigned int peft::readCLRR(std::istream& file)
 }
 
 
-unsigned int peft::read0000(std::istream& file, unsigned int& num)
+std::size_t peft::read0000(std::istream& file, unsigned int& num)
 {
 	std::size_t size;
 	std::string type;
-	std::size_t total = readRecordHeader(file, type, size);
+	std::size_t total = base::readRecordHeader(file, type, size);
 	size += 8;
 	if (type != "0000")
 	{
@@ -535,11 +554,11 @@ unsigned int peft::read0000(std::istream& file, unsigned int& num)
 	return total;
 }
 
-unsigned int peft::readEMTR0000(std::istream& file)
+std::size_t peft::readEMTR0000(std::istream& file)
 {
 	std::size_t size;
 	std::string type;
-	std::size_t total = readRecordHeader(file, type, size);
+	std::size_t total = base::readRecordHeader(file, type, size);
 	size += 8;
 	if (type != "0000")
 	{
@@ -704,7 +723,7 @@ unsigned int peft::readEMTR0000(std::istream& file)
 	total += base::read(file, u1);
 	std::cout << u1 << std::endl;
 
-	total += readUnknown(file, size - total);
+	total += base::readUnknown(file, size - total);
 
 	if (size == total)
 	{
@@ -721,3 +740,4 @@ unsigned int peft::readEMTR0000(std::istream& file)
 }
 
 
+#endif
