@@ -75,18 +75,6 @@ void matrix3x3::getRow(const uint32_t& row, float& v1, float& v2, float& v3) con
 
 void matrix3x3::get(float* V) const { memcpy(V, v, sizeof(float) * 9); }
 
-void matrix3x3::getTransposed4x4(float* dest) const {
-	dest[0] = v[0];
-	dest[4] = v[1];
-	dest[8] = v[2];
-	dest[1] = v[3];
-	dest[5] = v[4];
-	dest[9] = v[5];
-	dest[2] = v[6];
-	dest[6] = v[7];
-	dest[10] = v[8];
-}
-
 void matrix3x3::set(const float* V) { memcpy(v, V, sizeof(float) * 9); }
 
 void matrix3x3::set(const matrix3x3& m) { memcpy(v, m.v, sizeof(float) * 9); }
@@ -150,19 +138,19 @@ std::size_t matrix3x4::get(float* V) const {
 	return std::size_t(12);
 }
 
-void matrix3x4::getTransposed4x4(float* dest) const {
-	dest[0] = v[0];
-	dest[4] = v[1];
-	dest[8] = v[2];
-	dest[12] = v[3];
-	dest[1] = v[4];
-	dest[5] = v[5];
-	dest[9] = v[6];
-	dest[13] = v[7];
-	dest[2] = v[8];
-	dest[6] = v[9];
-	dest[10] = v[10];
-	dest[14] = v[11];
+void matrix3x4::getTranslation(float& tx, float& ty, float& tz) const {
+	tx = v[3];
+	ty = v[7];
+	tz = v[11];
+}
+
+void matrix3x4::getRotation(float& rx, float& ry, float& rz) const {
+	rx = std::atan2(-v[6], v[10]);
+	const float cosYangle = sqrt((v[0] * v[0]) + (v[1] * v[1]));
+	ry = std::atan2(v[2], cosYangle);
+	const float sinXangle = std::sin(rx);
+	const float cosXangle = std::cos(rx);
+	rz = std::atan2((cosXangle * v[4]) + (sinXangle * v[8]), (cosXangle * v[5]) + (sinXangle * v[9]));
 }
 
 void matrix3x4::getRow(const uint32_t& row, float& v1, float& v2, float& v3, float& v4) const {
