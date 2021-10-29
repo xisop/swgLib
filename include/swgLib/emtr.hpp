@@ -23,6 +23,8 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#include <swgLib/ptcl.hpp>
+#include <swgLib/ptqd.hpp>
 #include <swgLib/wvfm.hpp>
 
 #include <istream>
@@ -91,8 +93,10 @@ namespace ml
 		int32_t _emitterOneShotMin;
 		int32_t _emitterOneShotMax;
 		bool _particleRandomInitialRotation;
-		bool _particleOrientWithVelocity;
+		uint32_t _particleOrientation;
 		bool _particleVisible;
+
+		ptclPtr _ptcl;
 
 	private:
 	};
