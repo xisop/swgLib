@@ -77,7 +77,7 @@ namespace ml
 		std::size_t readV1(std::istream& file);
 		std::size_t readV2(std::istream& file);
 
-		uint8_t _version;
+		uint32_t _version;
 
 		bool _placeHolder;
 		tag _nameTag;

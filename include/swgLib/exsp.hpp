@@ -43,7 +43,7 @@ namespace ml
 		std::size_t read(std::istream& file) override;
 
 	protected:
-		uint8_t _exspVersion;
+		uint32_t _exspVersion;
 		vector3 _exspCenter;
 		float   _exspRadius;
 

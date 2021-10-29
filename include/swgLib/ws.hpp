@@ -114,7 +114,7 @@ namespace ml
 #endif
 
 	private:
-		uint8_t _version;
+		uint32_t _version;
 		std::vector< node > _nodes;
 		std::vector< std::string > _names;
 	};

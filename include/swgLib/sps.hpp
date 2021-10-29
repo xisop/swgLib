@@ -46,7 +46,7 @@ namespace ml
 		const shaderPrimitive& getShaderPrimitive(const std::size_t& sp) const;
 
 	protected:
-		uint8_t _version; // 0000 or 0001
+		uint32_t _version; // 0000 or 0001
 
 		int32_t _numberOfShaders;
 

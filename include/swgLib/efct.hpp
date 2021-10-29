@@ -45,7 +45,7 @@ namespace ml
 	protected:
 
 	private:
-		uint8_t _version;
+		uint32_t _version;
 		int8_t  _numImplementations;
 		bool    _precalcVertexLighting;
 

@@ -49,7 +49,7 @@ namespace ml
 		const std::vector<cell> &getCells() const;
 
 	protected:
-		uint8_t _version;
+		uint32_t _version;
 		int32_t _numPortals;
 		int32_t _numCells;
 

@@ -68,7 +68,7 @@ namespace ml
 		std::size_t readRADR(std::istream& file);
 
 	private:
-		uint8_t _cmpVersion; // Valid values: [0001-0005]
+		uint32_t _cmpVersion; // Valid values: [0001-0005]
 
 		std::vector<part> _parts;
 

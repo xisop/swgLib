@@ -45,7 +45,7 @@ namespace ml
 		void print(std::ostream& os) const;
 
 	protected:
-		int8_t _statVersion;
+		uint32_t _statVersion;
 		std::string _statBaseObjectFilename;
 	};
 }

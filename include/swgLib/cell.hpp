@@ -52,7 +52,7 @@ namespace ml
 		const std::vector<lght>& getLights() const;
 
 	protected:
-		uint8_t _version; // 0001, 0002, 0003, 0004, 0005
+		uint32_t _version; // 0001, 0002, 0003, 0004, 0005
 		int32_t _numPortals;
 		bool _canSeeParentCell;
 		std::string _name;

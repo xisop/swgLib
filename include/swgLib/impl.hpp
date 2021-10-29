@@ -44,7 +44,7 @@ namespace ml
 		std::size_t read(std::istream& file);
 
 	protected:
-		uint8_t _version; // 0000-0009
+		uint32_t _version; // 0000-0009
 		std::vector<int32_t> _shaderCapability;
 		std::vector<tag> _optionTag;
 

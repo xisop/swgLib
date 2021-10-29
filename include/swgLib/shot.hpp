@@ -79,7 +79,7 @@ namespace ml
 
 		std::string _baseObjectFilename;
 
-		int8_t      _shotVersion;
+		int32_t      _shotVersion;
 
 		std::string _objectName;
 		std::string _detailedDescription;

@@ -115,7 +115,7 @@ namespace ml
 		std::size_t readSTOTParameter(std::istream& file);
 
 		std::string _stotBaseObjectFilename;
-		int8_t _stotVersion;
+		uint32_t _stotVersion;
 
 		std::vector<pccv>        _paletteColorCustomizationVariables;
 		std::vector<ricv>        _rangedIntCustomizationVariables;

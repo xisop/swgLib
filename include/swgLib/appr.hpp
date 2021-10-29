@@ -46,7 +46,7 @@ namespace ml
 		std::size_t readHPTS(std::istream& file);
 
 	protected:
-		uint8_t _apprVersion;
+		uint32_t _apprVersion;
 
 		std::size_t readFLOR(std::istream& file);
 

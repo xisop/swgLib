@@ -40,7 +40,7 @@ namespace ml
 
 		std::size_t read(std::istream& file);
 	protected:
-		uint8_t _version; // 0000 or 0001
+		uint32_t _version; // 0000 or 0001
 
 		bool    _lighting;
 		bool    _lightingSpecularEnable;

@@ -52,7 +52,7 @@ namespace ml
 		const sps& getSPS() const;
 
 	protected:
-		int8_t _version;
+		int32_t _version;
 
 		sps _sps;
 

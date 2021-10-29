@@ -40,7 +40,7 @@ namespace ml
 
 		std::size_t read(std::istream& file);
 	protected:
-		uint8_t _version; // 0000, 0001, or 0002
+		uint32_t _version; // 0000, 0001, or 0002
 		int8_t _textureIndex;
 		tag    _textureTag;
 

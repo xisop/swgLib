@@ -51,7 +51,7 @@ namespace ml
 	protected:
 		std::size_t readSBOTParameter(std::istream& file);
 
-		int8_t _sbotVersion;
+		int32_t _sbotVersion;
 		std::string _sbotBaseObjectFilename;
 		std::string _terrainModificationFileName;
 		std::string _interiorLayoutFileName;

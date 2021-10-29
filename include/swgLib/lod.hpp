@@ -59,7 +59,7 @@ namespace ml
 	protected:
 
 	private:
-		uint8_t _dtlaVersion;
+		uint32_t _dtlaVersion;
 
 		// DTLA Version 6+
 		uint8_t _lodFlags;

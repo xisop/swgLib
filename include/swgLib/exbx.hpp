@@ -48,7 +48,7 @@ namespace ml
 			vector3& boxCorner2);
 
 	protected:
-		uint8_t _exbxVersion;
+		uint32_t _exbxVersion;
 		vector3 _exbxMax;
 		vector3 _exbxMin;
 

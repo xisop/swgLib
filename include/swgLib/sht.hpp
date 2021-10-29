@@ -70,7 +70,7 @@ namespace ml
 		std::size_t readARVS(std::istream& file);
 		std::size_t readSRVS(std::istream& file);
 
-		uint8_t _version;
+		uint32_t _version;
 
 		std::vector<matl> _material;
 		std::vector<txm>  _texture;

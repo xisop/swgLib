@@ -70,7 +70,7 @@ namespace ml
 		void print() const;
 
 	protected:
-		uint8_t _version;
+		uint32_t _version;
 		bool _disabled;
 		bool _passable;
 		int32_t _geometryIndex;
