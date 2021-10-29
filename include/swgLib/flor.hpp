@@ -22,34 +22,29 @@
  along with swgLib; if not, write to the Free Software
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include <swgLib/base.hpp>
-
 #include <fstream>
 #include <string>
 #include <vector>
 
 #ifndef FLOR_HPP
-#define FLOR_HPP
+#define FLOR_HPP 1
 
 namespace ml
 {
-  class flor : public base
-  {
-  public:
-    flor();
-    ~flor();
-    bool isRightType( std::istream &file )
-    {
-      return isOfType( file, "FLOR" );
-    }
-    unsigned int readFLOR( std::istream &file );
-    void print() const;
-    unsigned int readVERT( std::istream &file );
-    unsigned int readTRIS( std::istream &file );
+	class flor
+	{
+	public:
+		flor();
+		~flor();
 
-  protected:
-    std::vector<float> vertex;
-    std::vector<unsigned short> triangles;
-  };
+		std::size_t readFLOR(std::istream& file);
+		void print(std::ostream& os) const;
+		std::size_t readVERT(std::istream& file);
+		std::size_t readTRIS(std::istream& file);
+
+	protected:
+		std::vector<float> vertex;
+		std::vector<unsigned short> triangles;
+	};
 }
 #endif

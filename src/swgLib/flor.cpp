@@ -43,17 +43,17 @@ flor::~flor()
 {
 }
 
-unsigned int flor::readFLOR(std::istream& file)
+std::size_t flor::readFLOR(std::istream& file)
 {
 	std::size_t florSize;
 	std::string type;
 
-	std::size_t total = readFormHeader(file, "FLOR", florSize);
+	std::size_t total = base::readFormHeader(file, "FLOR", florSize);
 	florSize += 8;
 	std::cout << "Found FLOR form" << std::endl;
 
 	std::size_t size;
-	total += readFormHeader(file, "0006", size);
+	total += base::readFormHeader(file, "0006", size);
 	size += 8;
 	std::cout << "Found 0006 form" << std::endl;
 
@@ -77,12 +77,12 @@ unsigned int flor::readFLOR(std::istream& file)
 	return total;
 }
 
-unsigned int flor::readVERT(std::istream& file)
+std::size_t flor::readVERT(std::istream& file)
 {
 	std::size_t vertSize;
 	std::string type;
 
-	std::size_t total = readRecordHeader(file, type, vertSize);
+	std::size_t total = base::readRecordHeader(file, type, vertSize);
 	vertSize += 8;
 	if (type != "VERT")
 	{
@@ -92,7 +92,7 @@ unsigned int flor::readVERT(std::istream& file)
 	std::cout << "Found VERT record" << std::endl;
 
 	unsigned int numVerts;
-	total += read(file, numVerts);
+	total += base::read(file, numVerts);
 	std::cout << "Number of vertices: " << numVerts << std::endl;
 
 	vertex.resize(numVerts * 3);
@@ -122,12 +122,12 @@ unsigned int flor::readVERT(std::istream& file)
 	return total;
 }
 
-unsigned int flor::readTRIS(std::istream& file)
+std::size_t flor::readTRIS(std::istream& file)
 {
 	std::size_t trisSize;
 	std::string type;
 
-	std::size_t total = readRecordHeader(file, type, trisSize);
+	std::size_t total = base::readRecordHeader(file, type, trisSize);
 	trisSize += 8;
 	if (type != "TRIS")
 	{
@@ -138,56 +138,56 @@ unsigned int flor::readTRIS(std::istream& file)
 	std::cout << "Size: " << trisSize << std::endl;
 
 	unsigned int numTris;
-	total += read(file, numTris);
+	total += base::read(file, numTris);
 	std::cout << "Number of triangles: " << numTris << std::endl;
 
 	for (unsigned int i = 0; i < numTris; ++i)
 	{
 		int u1;
-		total += read(file, u1);
+		total += base::read(file, u1);
 		std::cout << u1 << std::endl;
 
-		total += read(file, u1);
+		total += base::read(file, u1);
 		std::cout << u1 << std::endl;
 
-		total += read(file, u1);
+		total += base::read(file, u1);
 		std::cout << u1 << std::endl;
 
-		total += read(file, u1);
+		total += base::read(file, u1);
 		std::cout << u1 << std::endl;
 
-		total += read(file, u1);
+		total += base::read(file, u1);
 		std::cout << u1 << std::endl;
 
-		total += read(file, u1);
+		total += base::read(file, u1);
 		std::cout << u1 << std::endl;
 
-		total += read(file, u1);
+		total += base::read(file, u1);
 		std::cout << u1 << std::endl;
 
 		float u2;
-		total += read(file, u2);
+		total += base::read(file, u2);
 		std::cout << u2 << std::endl;
 
-		total += read(file, u2);
+		total += base::read(file, u2);
 		std::cout << u2 << std::endl;
 
-		total += read(file, u2);
+		total += base::read(file, u2);
 		std::cout << u2 << std::endl;
 
-		total += read(file, u2);
+		total += base::read(file, u2);
 		std::cout << u2 << std::endl;
 
-		total += read(file, u1);
+		total += base::read(file, u1);
 		std::cout << u1 << std::endl;
 
-		total += read(file, u1);
+		total += base::read(file, u1);
 		std::cout << u1 << std::endl;
 
-		total += read(file, u1);
+		total += base::read(file, u1);
 		std::cout << u1 << std::endl;
 
-		total += read(file, u1);
+		total += base::read(file, u1);
 		std::cout << u1 << std::endl;
 
 		std::cout << std::endl;
