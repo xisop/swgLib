@@ -143,7 +143,7 @@ namespace ml
 
 		static bool fixSlash(std::string& filename);
 
-		static uint8_t tagToVersion(const std::string& tag);
+		static uint32_t tagToVersion(const std::string& tag);
 		static uint32_t typeToNumber(const std::string& type);
 
 	protected:
