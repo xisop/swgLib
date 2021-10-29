@@ -544,22 +544,13 @@ bool base::fixSlash(std::string& filename)
 	return true;
 }
 
-uint8_t base::tagToVersion(const std::string& tag) {
+uint32_t base::tagToVersion(const std::string& tag) {
 	if (tag.size() != 4) { return 0; }
 
-	if ("0000" == tag) { return 0; }
-	else if ("0001" == tag) { return  1; }
-	else if ("0002" == tag) { return  2; }
-	else if ("0003" == tag) { return  3; }
-	else if ("0004" == tag) { return  4; }
-	else if ("0005" == tag) { return  5; }
-	else if ("0006" == tag) { return  6; }
-	else if ("0007" == tag) { return  7; }
-	else if ("0008" == tag) { return  8; }
-	else if ("0009" == tag) { return  9; }
-	else if ("0010" == tag) { return 10; }
-
-	return 0;
+	std::istringstream istr(tag);
+	uint32_t version;
+	istr >> version;
+	return version;
 }
 
 uint32_t base::typeToNumber(const std::string& type) {
