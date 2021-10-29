@@ -105,7 +105,7 @@ std::size_t stot::readSTOTParameter(std::istream& file)
 	int8_t dataType;
 	total += base::read(file, dataType);
 
-#if 0
+#if 1
 	std::cout << "Parameter: " << parameter << std::endl;
 	std::cout << "Parameter data type: ";
 	switch (dataType) {
@@ -197,13 +197,12 @@ std::size_t stot::readSTOTParameter(std::istream& file)
 		total += base::read(file, numCert);
 		std::cout << "Num Certification records: " << numCert << "\n";
 		if (1 == dataType) {
-			std::cout << "****************** certificationsRequired not finished ******************\n";
-			exit(0);
 			for (auto i = 0; i < numCert; ++i) {
-			}
+				std::cout << "****************** certificationsRequired not finished ******************\n";
+				exit(0);
 
-			//total += base::read(file, _targetable);
-			//std::cout << "Targetable: " << std::boolalpha << _targetable << "\n";
+				//total += base::read(file, _);
+			}
 		}
 	}
 	else if (parameter == "customizationVariableMapping")
