@@ -40,9 +40,9 @@ namespace ml
 	{
 	public:
 		ptcl();
-		~ptcl();
+		virtual ~ptcl();
 
-		std::size_t read(std::istream& file);
+		virtual std::size_t read(std::istream& file);
 
 	protected:
 		uint32_t _version;
