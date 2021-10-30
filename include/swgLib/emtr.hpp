@@ -24,6 +24,8 @@
 */
 
 #include <swgLib/ptcl.hpp>
+#include <swgLib/ptim.hpp>
+#include <swgLib/ptmh.hpp>
 #include <swgLib/ptqd.hpp>
 #include <swgLib/wvfm.hpp>
 
@@ -62,7 +64,7 @@ namespace ml
 
 	protected:
 		uint32_t _version;
-
+		ptim _timing;
 		wvfm _emitterTranslationX;
 		wvfm _emitterTranslationY;
 		wvfm _emitterTranslationZ;
@@ -95,7 +97,7 @@ namespace ml
 		bool _particleRandomInitialRotation;
 		uint32_t _particleOrientation;
 		bool _particleVisible;
-
+		int32_t _particleType;
 		ptclPtr _ptcl;
 
 	private:

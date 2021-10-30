@@ -210,8 +210,208 @@ std::size_t emtr::readV1(std::istream& file)
 	_ptcl = ptqdPtr(new ptqd());
 
 	if (size0001 != total) {
-		std::cout << "FAILED in reading 0000\n"
+		std::cout << "FAILED in reading 0001\n"
 			<< "Read " << total << " out of " << size0001 << "\n";
+		exit(0);
+	}
+
+	return total;
+}
+
+std::size_t emtr::readV2(std::istream& file)
+{
+	std::size_t size0002;
+	std::size_t total = base::readFormHeader(file, "0002", size0002);
+	size0002 += 8;
+
+	total += _emitterTranslationX.read(file);
+	total += _emitterTranslationY.read(file);
+	total += _emitterTranslationZ.read(file);
+
+	total += _emitterRotationX.read(file);
+	total += _emitterRotationY.read(file);
+	total += _emitterRotationZ.read(file);
+
+	total += _emitterDistance.read(file);
+	total += _emitterShapeSize.read(file);
+	total += _emitterSpread.read(file);
+
+	total += _particleGenerationRate.read(file);
+	total += _particleEmitSpeed.read(file);
+	total += _particleInheritVelocityPercent.read(file);
+	total += _particleClusterCount.read(file);
+	total += _particleClusterRadius.read(file);
+	total += _particleLifeTime.read(file);
+	total += _particleWeight.read(file);
+
+	_particleWeight.scale(0.28f);
+
+	std::size_t size;
+	total += base::readRecordHeader(file, "0000", size);
+
+	total += base::read(file, _emitterEmitDirection);
+	total += base::read(file, _emitterShape);
+	total += base::read(file, _emitterLoopImmediately);
+	total += base::read(file, _emitterLifetimeMin);
+	_emitterLifetimeMax = _emitterLifetimeMin;
+	total += base::read(file, _emitterMaxParticles);
+	total += base::read(file, _emitterOneShot);
+	_emitterOneShotMin = int32_t(_emitterMaxParticles) - 1;
+	_emitterOneShotMax = int32_t(_emitterMaxParticles) - 1;
+	total += base::read(file, _particleRandomInitialRotation);
+	total += base::read(file, _particleOrientation);
+	if (3 == _particleOrientation) {
+		_particleOrientation = 2;
+	}
+	bool junk;
+	total += base::read(file, junk);
+	total += base::read(file, _particleVisible);
+	uint32_t junk2;
+	total += base::read(file, junk2);
+
+	//particle description quad
+	_ptcl = ptqdPtr(new ptqd());
+
+	if (size0002 != total) {
+		std::cout << "FAILED in reading 0002\n"
+			<< "Read " << total << " out of " << size0002 << "\n";
+		exit(0);
+	}
+
+	return total;
+}
+
+std::size_t emtr::readV3(std::istream& file)
+{
+	std::size_t size0003;
+	std::size_t total = base::readFormHeader(file, "0003", size0003);
+	size0003 += 8;
+
+	total += _timing.read(file);
+
+	total += _emitterTranslationX.read(file);
+	total += _emitterTranslationY.read(file);
+	total += _emitterTranslationZ.read(file);
+
+	total += _emitterRotationX.read(file);
+	total += _emitterRotationY.read(file);
+	total += _emitterRotationZ.read(file);
+
+	total += _emitterDistance.read(file);
+	total += _emitterShapeSize.read(file);
+	total += _emitterSpread.read(file);
+
+	total += _particleGenerationRate.read(file);
+	total += _particleEmitSpeed.read(file);
+	total += _particleInheritVelocityPercent.read(file);
+	total += _particleClusterCount.read(file);
+	total += _particleClusterRadius.read(file);
+	total += _particleLifeTime.read(file);
+	total += _particleWeight.read(file);
+
+	_particleWeight.scale(0.28f);
+
+	std::size_t size;
+	total += base::readRecordHeader(file, "0000", size);
+	std::string tempName;
+	total += base::read(file, tempName);
+	total += base::read(file, _emitterEmitDirection);
+	total += base::read(file, _emitterShape);
+	total += base::read(file, _emitterLoopImmediately);
+	total += base::read(file, _emitterLifetimeMin);
+	_emitterLifetimeMax = _emitterLifetimeMin;
+	total += base::read(file, _emitterMaxParticles);
+	total += base::read(file, _emitterOneShot);
+	_emitterOneShotMin = int32_t(_emitterMaxParticles) - 1;
+	_emitterOneShotMax = int32_t(_emitterMaxParticles) - 1;
+	total += base::read(file, _particleRandomInitialRotation);
+	total += base::read(file, _particleOrientation);
+	bool junk;
+	total += base::read(file, junk);
+	total += base::read(file, _particleVisible);
+	uint32_t junk2;
+	total += base::read(file, junk2);
+
+	//particle description quad
+	_ptcl = ptqdPtr(new ptqd());
+
+	if (size0003 != total) {
+		std::cout << "FAILED in reading 0003\n"
+			<< "Read " << total << " out of " << size0003 << "\n";
+		exit(0);
+	}
+
+	return total;
+}
+
+std::size_t emtr::readV4(std::istream& file)
+{
+	std::size_t size0004;
+	std::size_t total = base::readFormHeader(file, "0004", size0004);
+	size0004 += 8;
+
+	total += _timing.read(file);
+
+	total += _emitterTranslationX.read(file);
+	total += _emitterTranslationY.read(file);
+	total += _emitterTranslationZ.read(file);
+
+	total += _emitterRotationX.read(file);
+	total += _emitterRotationY.read(file);
+	total += _emitterRotationZ.read(file);
+
+	total += _emitterDistance.read(file);
+	total += _emitterShapeSize.read(file);
+	total += _emitterSpread.read(file);
+
+	total += _particleGenerationRate.read(file);
+	total += _particleEmitSpeed.read(file);
+	total += _particleInheritVelocityPercent.read(file);
+	total += _particleClusterCount.read(file);
+	total += _particleClusterRadius.read(file);
+	total += _particleLifeTime.read(file);
+	total += _particleWeight.read(file);
+
+	_particleWeight.scale(0.28f);
+
+	std::size_t size;
+	total += base::readRecordHeader(file, "0000", size);
+	std::string tempName;
+	total += base::read(file, tempName);
+	total += base::read(file, _emitterEmitDirection);
+	total += base::read(file, _emitterShape);
+	total += base::read(file, _emitterLoopImmediately);
+	total += base::read(file, _emitterLifetimeMin);
+	_emitterLifetimeMax = _emitterLifetimeMin;
+	total += base::read(file, _emitterMaxParticles);
+	total += base::read(file, _emitterOneShot);
+	_emitterOneShotMin = int32_t(_emitterMaxParticles) - 1;
+	_emitterOneShotMax = int32_t(_emitterMaxParticles) - 1;
+	total += base::read(file, _particleRandomInitialRotation);
+	total += base::read(file, _particleOrientation);
+	bool junk;
+	total += base::read(file, junk);
+	total += base::read(file, _particleVisible);
+	uint32_t junk2;
+	total += base::read(file, junk2);
+
+	total += base::read(file, _particleType);
+
+	//particle description quad
+	if (0 == _particleType) {
+		_ptcl = ptqdPtr(new ptqd());
+	}
+	else if (1 == _particleType) {
+		_ptcl = ptmhPtr(new ptmh());
+	}
+	else {
+		std::cout << "Unhandled particle type: " << _particleType << "\n";
+		exit(0);
+	}
+
+	if (size0004 != total) {
+		std::cout << "FAILED in reading 0004\n"
+			<< "Read " << total << " out of " << size0004 << "\n";
 		exit(0);
 	}
 
