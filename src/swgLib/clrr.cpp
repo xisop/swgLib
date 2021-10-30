@@ -92,7 +92,7 @@ const uint32_t& clrr::getSampleType() const {
 }
 
 const uint32_t& clrr::getNumPoints() const {
-	return (uint32_t)_points.size();
+  return _numPoints;
 }
 
 const std::vector<point>& clrr::getPoints() const {
