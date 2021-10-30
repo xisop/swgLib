@@ -900,8 +900,48 @@ std::size_t readRecord(
 		}
 		else if (type == "FOG ") // Fog information
 		{
-			ml::base::readFormHeader(file, group, size, type);
-			std::cout << "Type: " << type << " (Fog information)" << std::endl;
+		ml::base::readFormHeader(file, group, size, type);
+		std::cout << "Type: " << type << " (Fog information)" << std::endl;
+		}
+		else if (type == "PEFT") // Particle effect
+		{
+		ml::base::readFormHeader(file, group, size, type);
+		std::cout << "Type: " << type << " (Particle effect)" << std::endl;
+		}
+		else if (type == "EMGP") // Emitter group
+		{
+		ml::base::readFormHeader(file, group, size, type);
+		std::cout << "Type: " << type << " (Particle Emitter Group)" << std::endl;
+		}
+		else if (type == "EMTR") // Emitter description
+		{
+		ml::base::readFormHeader(file, group, size, type);
+		std::cout << "Type: " << type << " (Particle Emitter Description)" << std::endl;
+		}
+		else if (type == "WVFM") // Waveform
+		{
+		ml::base::readFormHeader(file, group, size, type);
+		std::cout << "Type: " << type << " (Waveform)" << std::endl;
+		}
+		else if (type == "PTCL") // Particle
+		{
+		ml::base::readFormHeader(file, group, size, type);
+		std::cout << "Type: " << type << " (Particle)" << std::endl;
+		}
+		else if (type == "PTQD") // Particle Quad
+		{
+		ml::base::readFormHeader(file, group, size, type);
+		std::cout << "Type: " << type << " (Particle Quad)" << std::endl;
+		}
+		else if (type == "PTMH") // Particle Mesh
+		{
+		ml::base::readFormHeader(file, group, size, type);
+		std::cout << "Type: " << type << " (Particle Mesh)" << std::endl;
+		}
+		else if (type == "CLRR") // Color ramp
+		{
+		ml::base::readFormHeader(file, group, size, type);
+		std::cout << "Type: " << type << " (Color ramp)" << std::endl;
 		}
 		else if (type == "IDTL")
 		{
