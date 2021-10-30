@@ -85,7 +85,9 @@ namespace ml
 		wvfm _particleLifeTime;
 		wvfm _particleWeight;
 
-		uint32_t _emitterEmitDirection;
+		std::string _emitterName;
+		int32_t _emitterEmitDirection;
+		int32_t _generationType;
 		uint32_t _emitterShape;
 		bool _emitterLoopImmediately;
 		float _emitterLifetimeMin;
@@ -98,6 +100,18 @@ namespace ml
 		uint32_t _particleOrientation;
 		bool _particleVisible;
 		int32_t _particleType;
+		std::string _soundPath;
+		bool _localSpaceParticles;
+		bool _particleGroundCollision;
+		float _particleCollisionHeightAboveGround;
+		float _particleForwardVelocityMaintainedMin;
+		float _particleForwardVelocityMaintainedMax;
+		float _particleUpVelocityMaintainedMin;
+		float _particleUpVelocityMaintainedMax;
+		float _windResistenceGlobalPercent;
+
+
+
 		ptclPtr _ptcl;
 
 	private:
