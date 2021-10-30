@@ -44,12 +44,11 @@ std::size_t wvfm::read(std::istream& file)
 	std::size_t wvfmSize;
 	std::size_t total = base::readFormHeader(file, "WVFM", wvfmSize);
 	wvfmSize += 8;
-	std::cout << "Found wvfm: " << wvfmSize - 12 << " bytes\n";
-
+	std::cout << "Found WVFM: " << wvfmSize - 12 << " bytes\n";
 
 	std::string type;
 	std::size_t size;
-	total += base::readFormHeader(file, type, size);
+	total += base::readRecordHeader(file, type, size);
 	_version = base::tagToVersion(type);
 	if (_version > 1) {
 		std::cout << "Expected type [0000..0002]: " << type << "\n";
@@ -58,25 +57,36 @@ std::size_t wvfm::read(std::istream& file)
 	std::cout << "Waveform Version: " << (int)_version << "\n";
 
 	total += base::read(file, _interpolationType);
+	std::cout << "Interpolation type: " << _interpolationType << "\n";
 
 	if (_version > 0) {
 		total += base::read(file, _sampleType);
+		std::cout << "Sample type: " << _sampleType << "\n";
 	}
 
 	if (_version > 1) {
 		total += base::read(file, _valueMin);
 		total += base::read(file, _valueMax);
+		std::cout << "Value range: [" << _valueMin << "..." << _valueMax << "]\n";
 	}
 
 	total += base::read(file, _controlPointCount);
+	std::cout << "Num control points: " << _controlPointCount << "\n";
 
 	_controlPoint.resize(_controlPointCount);
 
+	uint32_t cpNum = 0;
 	for (auto& cp : _controlPoint) {
 		total += base::read(file, cp._percent);
 		total += base::read(file, cp._value);
 		total += base::read(file, cp._randomMax);
 		total += base::read(file, cp._randomMin);
+		std::cout
+			<< "Control point " << cpNum++ << ": \n"
+			<< "       Percent: " << cp._percent << "\n"
+			<< "         Value: " << cp._value << "\n"
+			<< "    Random min: " << cp._randomMax << "\n"
+			<< "    Random max: " << cp._randomMin << "\n";
 	}
 
 	if (wvfmSize == total) {
