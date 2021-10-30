@@ -23,9 +23,6 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include <swgLib/ptcl.hpp>
-#include <swgLib/wvfm.hpp>
-
 #include <istream>
 #include <string>
 
@@ -34,7 +31,7 @@
 
 namespace ml
 {
-	class ptex : public ptcl
+	class ptex
 	{
 	public:
 		ptex();
