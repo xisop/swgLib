@@ -82,3 +82,19 @@ std::size_t emgp::read(std::istream& file)
 
 	return total;
 }
+
+const uint32_t& emgp::getVersion() const {
+	return _version;
+}
+
+const ptim& emgp::getTiming() const {
+	return _timing;
+}
+
+const int32_t& emgp::getNumEmitters() const {
+	return _numEmitterDescriptions;
+}
+
+const std::vector<emtr>& emgp::getEmitters() const {
+	return _emitterDescriptions;
+}

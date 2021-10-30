@@ -43,9 +43,15 @@ namespace ml
 
 		std::size_t read(std::istream& file) override;
 
-	protected:
-		uint32_t _version;
+		const wvfm& getRotation() const;
+		const wvfm& getLength() const;
+		const wvfm& getWidth() const;
+		const bool& particleTextureLoaded() const;
+		const std::string& getParticleTextureFilename() const;
+		const ptex& getParticleTexture() const;
+		const bool& aspectLocked() const;
 
+	protected:
 		wvfm _rotation;
 		wvfm _length;
 		wvfm _width;

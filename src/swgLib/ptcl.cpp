@@ -106,3 +106,19 @@ std::size_t ptcl::read(std::istream& file)
 
 	return total;
 }
+
+const uint32_t& ptcl::getVersion() const { return _version; }
+const std::string& ptcl::getName() const { return _name; }
+const bool& ptcl::randomRotationDirection() const { return _randomRotationDirection; }
+const int32_t& ptcl::getNumAttachments() const { return _numAttachments; }
+const clrr& ptcl::getColorRamp() const { return _colorRamp; }
+const wvfm& ptcl::getAlpha() const { return _alpha; }
+const wvfm& ptcl::getSpeedScale() const { return _speedScale; }
+
+const std::vector<patt>& ptcl::getAttachments() const { return _attachments; }
+
+const wvfm& ptcl::getParticleRelativeRotationX() const { return _particleRelativeRotationX; }
+const wvfm& ptcl::getParticleRelativeRotationY() const { return _particleRelativeRotationY; }
+const wvfm& ptcl::getParticleRelativeRotationZ() const { return _particleRelativeRotationZ; }
+
+const bool& ptcl::particleUsesRelativeRotation() const { return _particleUsesRelativeRotation; }

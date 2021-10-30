@@ -42,9 +42,13 @@ namespace ml
 
 		std::size_t read(std::istream& file) override;
 
-	protected:
-		uint32_t _version;
+		const std::string& getMeshPath() const;
+		const wvfm& getScale() const;
+		const wvfm& getRotationX() const;
+		const wvfm& getRotationY() const;
+		const wvfm& getRotationZ() const;
 
+	protected:
 		std::string _meshPath;
 		wvfm _scale;
 		wvfm _rotationX;

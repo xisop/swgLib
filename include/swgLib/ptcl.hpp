@@ -44,6 +44,22 @@ namespace ml
 
 		virtual std::size_t read(std::istream& file);
 
+		virtual const uint32_t& getVersion() const;
+		const std::string& getName() const;
+		const bool& randomRotationDirection() const;
+		const int32_t& getNumAttachments() const;
+		const clrr& getColorRamp() const;
+		const wvfm& getAlpha() const;
+		const wvfm& getSpeedScale() const;
+
+		const std::vector<patt>& getAttachments() const;
+
+		const wvfm& getParticleRelativeRotationX() const;
+		const wvfm& getParticleRelativeRotationY() const;
+		const wvfm& getParticleRelativeRotationZ() const;
+
+		const bool& particleUsesRelativeRotation() const;
+
 	protected:
 		uint32_t _version;
 		std::string _name;

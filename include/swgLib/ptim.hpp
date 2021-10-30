@@ -38,6 +38,14 @@ namespace ml
 
 		std::size_t read(std::istream& file);
 
+		const uint32_t& getVersion() const;
+		const float& getStartDelayMin() const;
+		const float& getStartDelayMax() const;
+		const float& getLoopDelayMin() const;
+		const float& getLoopDelayMax() const;
+		const int32_t& getLoopCountMin() const;
+		const int32_t& getLoopCountMax() const;
+
 	protected:
 		uint32_t _version;
 		float _startDelayMin;

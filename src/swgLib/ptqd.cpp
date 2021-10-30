@@ -141,3 +141,11 @@ std::size_t ptqd::read(std::istream& file)
 	}
 	return 0;
 }
+
+const wvfm& ptqd::getRotation() const { return _rotation; }
+const wvfm& ptqd::getLength() const { return _length; }
+const wvfm& ptqd::getWidth() const { return _width; }
+const bool& ptqd::particleTextureLoaded() const { return _particleTextureLoaded; }
+const std::string& ptqd::getParticleTextureFilename() const { return _particleTextureFilename; }
+const ptex& ptqd::getParticleTexture() const { return _particleTexture; }
+const bool& ptqd::aspectLocked() const { return _aspectLocked; }

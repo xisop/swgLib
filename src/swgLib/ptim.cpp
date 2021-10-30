@@ -92,3 +92,11 @@ std::size_t ptim::read(std::istream& file)
 
 	return total;
 }
+
+const uint32_t& ptim::getVersion() const { return _version; }
+const float& ptim::getStartDelayMin() const{ return _startDelayMin; }
+const float& ptim::getStartDelayMax() const{ return _startDelayMax; }
+const float& ptim::getLoopDelayMin() const{ return _loopDelayMin; }
+const float& ptim::getLoopDelayMax() const{ return _loopDelayMax; }
+const int32_t& ptim::getLoopCountMin() const{ return _loopCountMin; }
+const int32_t& ptim::getLoopCountMax() const{ return _loopCountMax; }

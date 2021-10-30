@@ -41,6 +41,11 @@ namespace ml
 
 		std::size_t read(std::istream& file);
 
+		const uint32_t& getVersion() const;
+		const ptim& getTiming() const;
+		const int32_t& getNumEmitters() const;
+		const std::vector<emtr>& getEmitters() const;
+
 	protected:
 		uint32_t _version;
 
@@ -48,8 +53,6 @@ namespace ml
 
 		int32_t _numEmitterDescriptions;
 		std::vector<emtr> _emitterDescriptions;
-
-	private:
 	};
 }
 #endif

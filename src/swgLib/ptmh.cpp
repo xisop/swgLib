@@ -60,7 +60,7 @@ std::size_t ptmh::read(std::istream& file)
 		total += base::readRecordHeader(file, "0000", size);
 		total += base::read(file, _meshPath);
 	}
-	
+
 	total += _scale.read(file);
 	total += _rotationX.read(file);
 	total += _rotationY.read(file);
@@ -77,3 +77,9 @@ std::size_t ptmh::read(std::istream& file)
 
 	return total;
 }
+
+const std::string& ptmh::getMeshPath() const { return _meshPath; }
+const wvfm& ptmh::getScale() const { return _scale; }
+const wvfm& ptmh::getRotationX() const { return _rotationX; }
+const wvfm& ptmh::getRotationY() const { return _rotationY; }
+const wvfm& ptmh::getRotationZ() const { return _rotationZ; }
