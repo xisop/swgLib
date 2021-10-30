@@ -25,7 +25,8 @@
 
 #include <swgLib/matrix3.hpp>
 #include <cstring> // memcpy
-#include <iomanip> // setprecision()
+#include <iomanip> // setprecision
+#include <cmath> // atan2
 
 using namespace ml;
 
