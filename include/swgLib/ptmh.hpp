@@ -40,7 +40,7 @@ namespace ml
 		ptmh();
 		~ptmh();
 
-		std::size_t read(std::istream& file);
+		std::size_t read(std::istream& file) override;
 
 	protected:
 		uint32_t _version;
