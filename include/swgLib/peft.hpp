@@ -42,21 +42,16 @@ namespace ml
 
 		std::size_t readPEFT(std::istream& file);
 
-	protected:
-#if 0
-		std::size_t read0000(std::istream& file, uint32_t& num);
-		std::size_t readEMGP(std::istream& file);
-		std::size_t readEMTR(std::istream& file);
-		std::size_t readEMTR0000(std::istream& file);
-		std::size_t readWVFM(std::istream& file);
-		std::size_t readPTQD(std::istream& file);
-		std::size_t readPTCL(std::istream& file);
-		std::size_t readPTCL0002(std::istream& file);
-		std::size_t readCLRR(std::istream& file);
-		std::size_t readPTEX(std::istream& file);
-#endif
+		const uint32_t& getVersion() const;
+		const ptim& getTiming() const;
+		const int32_t& getNumEmitterGroups() const;
+		const float& getInitialPlaybackRate() const;
+		const float& getInitialPlaybackRateTime() const;
+		const float& getPlaybackRate() const;
+		const float& getScale() const;
+		const std::vector<emgp>& getEmitterGroups() const;
 
-	private:
+	protected:
 		uint32_t _version;
 
 		ptim _timing;
@@ -66,7 +61,6 @@ namespace ml
 		float _playbackRate;
 		float _scale;
 		std::vector<emgp> _emitterGroups;
-
 	};
 }
 #endif
