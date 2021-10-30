@@ -31,8 +31,13 @@
 
 using namespace ml;
 
-wvfm::wvfm()
-{
+wvfm::wvfm() :
+	_version(0),
+	_interpolationType(0),
+	_sampleType(0),
+	_valueMin(0),
+	_valueMax(0),
+	_controlPointCount(0) {
 }
 
 wvfm::~wvfm()
