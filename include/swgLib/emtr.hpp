@@ -45,6 +45,73 @@ namespace ml
 
 		std::size_t read(std::istream& file);
 
+		const wvfm& getEmitterTranslationX() const;
+		const wvfm& getEmitterTranslationY() const;
+		const wvfm& getEmitterTranslationZ() const;
+
+		const wvfm& getEmitterRotationX() const;
+		const wvfm& getEmitterRotationY() const;
+		const wvfm& getEmitterRotationZ() const;
+
+		const wvfm& getEmitterDistance() const;
+		const wvfm& getEmitterShapeSize() const;
+		const wvfm& getEmitterSpread() const;
+
+		const wvfm &getParticleGenerationRate() const;
+		const wvfm &getParticleEmitSpeed() const;
+		const wvfm &getParticleInheritVelocityPercent() const;
+		const wvfm &getParticleClusterCount() const;
+		const wvfm &getParticleClusterRadius() const;
+		const wvfm &getParticleLifeTime() const;
+		const wvfm &getParticleWeight() const;
+
+		const std::string &getEmitterName() const;
+		const int32_t &getEmitterEmitDirection() const;
+		const int32_t &getGenerationType() const;
+		const uint32_t &getEmitterShape() const;
+		const bool &emitterLoopImmediately() const;
+		const float &getEmitterLifetimeMin() const;
+		const float &getEmitterLifetimeMax() const;
+		const float &getEmitterMaxParticles() const;
+		const bool &emitterOneShot() const;
+		const int32_t &getEmitterOneShotMin() const;
+		const int32_t &getEmitterOneShotMax() const;
+		const bool &particleRandomInitialRotation() const;
+		const uint32_t &getParticleOrientation() const;
+		const bool &particleVisible() const;
+		const int32_t &getParticleType() const;
+		const std::string &getSoundPath() const;
+		const bool &localSpaceParticles() const;
+		const bool &particleGroundCollision() const;
+		const bool &particleKillParticlesOnCollision() const;
+		const float &getParticleCollisionHeightAboveGround() const;
+		const float &getParticleForwardVelocityMaintainedMin() const;
+		const float &getParticleForwardVelocityMaintainedMax() const;
+		const float &getParticleUpVelocityMaintainedMin() const;
+		const float &getParticleUpVelocityMaintainedMax() const;
+		const float &getWindResistenceGlobalPercent() const;
+		const float &getEmitterLODDistanceMin() const;
+		const float &getEmitterLODDistanceMax() const;
+		const uint32_t &getFlockingType() const;
+		const float &getFlockingSeperationDistance() const;
+		const float &getFlockingAlignmentGain() const;
+		const float &getFlockingCohesionGain() const;
+		const float &getFlockingSeperationGain() const;
+		const float &getFlockingCageWidth() const;
+		const float &getFlockingCageHeight() const;
+		const int32_t &getFlockingCageShape() const;
+		const int32_t &getFlockingCageEdgeType() const;
+		const float &getFlockingHeadingChangeRadian() const;
+		const float &getFlockingHeadingChangeTime() const;
+		const float &getParticleTimeOfDayColorPercent() const;
+		const bool &particleSnapToTerrainOnCreation() const;
+		const bool &particleAlignToTerrainNormalOnCreation() const;
+		const float &getParticleSnapToTerrainOnCreationHeight() const;
+		const float &getParticleChangeDirectionRadian() const;
+		const float &getParticleChangeDirectionTime() const;
+		const bool &firstParticleImmediately() const;
+		const bool &usePriorityParticles() const;
+
 	protected:
 		std::size_t readV0(std::istream& file);
 		std::size_t readV1(std::istream& file);
@@ -103,14 +170,34 @@ namespace ml
 		std::string _soundPath;
 		bool _localSpaceParticles;
 		bool _particleGroundCollision;
+		bool _particleKillParticlesOnCollision;
 		float _particleCollisionHeightAboveGround;
 		float _particleForwardVelocityMaintainedMin;
 		float _particleForwardVelocityMaintainedMax;
 		float _particleUpVelocityMaintainedMin;
 		float _particleUpVelocityMaintainedMax;
 		float _windResistenceGlobalPercent;
-
-
+		float _emitterLODDistanceMin;
+		float _emitterLODDistanceMax;
+		uint32_t _flockingType;
+		float _flockingSeperationDistance;
+		float _flockingAlignmentGain;
+		float _flockingCohesionGain;
+		float _flockingSeperationGain;
+		float _flockingCageWidth;
+		float _flockingCageHeight;
+		int32_t	_flockingCageShape;
+		int32_t _flockingCageEdgeType;
+		float _flockingHeadingChangeRadian;
+		float _flockingHeadingChangeTime;
+		float _particleTimeOfDayColorPercent;
+		bool _particleSnapToTerrainOnCreation;
+		bool _particleAlignToTerrainNormalOnCreation;
+		float _particleSnapToTerrainOnCreationHeight;
+		float _particleChangeDirectionRadian;
+		float  _particleChangeDirectionTime;
+		bool _firstParticleImmediately;
+		bool _usePriorityParticles;
 
 		ptclPtr _ptcl;
 
