@@ -39,41 +39,105 @@ ptqd::~ptqd()
 
 std::size_t ptqd::read(std::istream& file)
 {
-	std::size_t ptqdSize;
-	std::size_t total = base::readFormHeader(file, "PTQD", ptqdSize);
-	ptqdSize += 8;
-	std::cout << "Found PTQD: " << ptqdSize - 12 << " bytes\n";
-
-	total += ptcl::read(file);
-
-	std::string type;
+	std::string form, type;
 	std::size_t size;
-	total += base::readFormHeader(file, type, size);
-	_version = base::tagToVersion(type);
-	if (_version > 3) {
-		std::cout << "Expected type [0000..0003]: " << type << "\n";
-		exit(0);
+	base::peekHeader(file, form, size, type);
+
+	if ("PTQD" == type) {
+		std::size_t ptqdSize;
+		std::size_t total = base::readFormHeader(file, "PTQD", ptqdSize);
+		ptqdSize += 8;
+		std::cout << "Found PTQD: " << ptqdSize - 12 << " bytes\n";
+
+		total += ptcl::read(file);
+
+		total += base::readFormHeader(file, type, size);
+		_version = base::tagToVersion(type);
+		if (_version > 3) {
+			std::cout << "Expected type [0000..0003]: " << type << "\n";
+			exit(0);
+		}
+		std::cout << "Particle Description Quad Version: " << _version << "\n";
+
+		total += _rotation.read(file);
+		total += _length.read(file);
+		total += _width.read(file);
+		total += _particleTexture.read(file);
+		_particleTextureLoaded = true;
+		_particleTextureFilename = "";
+
+
+		if (_version > 0) {
+			total += base::readRecordHeader(file, "0000", size);
+			total += base::read(file, _aspectLocked);
+		}
+
+		if (ptqdSize == total) {
+			std::cout << "Finished reading PTQD\n";
+		}
+		else {
+			std::cout << "FAILED in reading PTQD\n"
+				<< "Read " << total << " out of " << ptqdSize << "\n";
+			exit(0);
+		}
+
+		return total;
 	}
-	std::cout << "Particle Description Quad Version: " << _version << "\n";
+	else if ("PTCL" == type) {
+		std::size_t ptqdSize;
+		std::size_t total = base::readFormHeader(file, "PTCL", ptqdSize);
+		ptqdSize += 8;
+		std::cout << "Found PTCL Quad: " << ptqdSize - 12 << " bytes\n";
 
-	total += _rotation.read(file);
-	total += _length.read(file);
-	total += _width.read(file);
-	total += _particleTexture.read(file);
+		total += base::readFormHeader(file, type, size);
+		_version = base::tagToVersion(type);
+		if (_version > 1) {
+			std::cout << "Expected type [0000..0001]: " << type << "\n";
+			exit(0);
+		}
+		std::cout << "Particle Description Quad(old) Version: " << _version << "\n";
 
-	if (_version > 0) {
 		total += base::readRecordHeader(file, "0000", size);
-		total += base::read(file, _aspectLocked);
-	}
 
-	if (ptqdSize == total) {
-		std::cout << "Finished reading PTQD\n";
+		total += base::read(file, _name); // Name
+		if (0 == _version) {
+			total += base::read(file, _name); // Shader path overwrites name
+		}
+		total += base::read(file, _randomRotationDirection);
+
+		std::cout << "Name: " << _name << "\n";
+		std::cout << "Random rotation direction: " << _randomRotationDirection << "\n";
+
+		total += _rotation.read(file);
+		total += _length.read(file);
+		total += _width.read(file);
+		total += _colorRamp.read(file);
+		total += _alpha.read(file);
+		total += _speedScale.read(file);
+		if (0 == _version) {
+			_particleTextureLoaded = false;
+			_particleTextureFilename = _name;
+		}
+		else {
+			total += _particleTexture.read(file);
+			_particleTextureLoaded = true;
+			_particleTextureFilename = "";
+		}
+
+		if (ptqdSize == total) {
+			std::cout << "Finished reading PTCL Quad\n";
+		}
+		else {
+			std::cout << "FAILED in reading PTCL Quad\n"
+				<< "Read " << total << " out of " << ptqdSize << "\n";
+			exit(0);
+		}
+
+		return total;
 	}
 	else {
-		std::cout << "FAILED in reading PTQD\n"
-			<< "Read " << total << " out of " << ptqdSize << "\n";
+		std::cout << "Unhandled PTQD type: " << type << "\n";
 		exit(0);
 	}
-
-	return total;
+	return 0;
 }

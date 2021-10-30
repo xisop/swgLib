@@ -41,7 +41,7 @@ namespace ml
 		ptqd();
 		~ptqd();
 
-		std::size_t read(std::istream& file);
+		std::size_t read(std::istream& file) override;
 
 	protected:
 		uint32_t _version;
@@ -49,6 +49,8 @@ namespace ml
 		wvfm _rotation;
 		wvfm _length;
 		wvfm _width;
+		bool _particleTextureLoaded;
+		std::string _particleTextureFilename;
 		ptex _particleTexture;
 		bool _aspectLocked;
 
