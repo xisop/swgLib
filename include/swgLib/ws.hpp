@@ -62,7 +62,9 @@ namespace ml
 			const float& getQuatZ() const;
 
 			const int32_t& getID() const;
+			std::string getIDStr() const;
 			const int32_t& getParentID() const;
+			std::string getParentIDStr() const;
 			const int32_t& getObjectNameIndex() const;
 			const int32_t& getPositionInParent() const;
 

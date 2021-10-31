@@ -25,8 +25,9 @@
 
 #include <swgLib/ws.hpp>
 
-#include <iostream>
 #include <cstdlib>
+#include <iostream>
+#include <sstream>
 
 #define RAD2DEG (180.0/3.141592653589793116)
 #define DEG2RAD (3.141592653589793116/180.0)
@@ -54,7 +55,7 @@ std::size_t ws::read(std::istream& file)
 	total += readOTNL(file);
 
 	for (auto& n : _nodes) {
-		n.setObjectFilename( this->getName(n.getObjectNameIndex()));
+		n.setObjectFilename(this->getName(n.getObjectNameIndex()));
 		n.print(std::cout);
 	}
 
@@ -513,7 +514,7 @@ const std::vector<std::string>& ws::getNames() const { return _names; }
 
 std::string ws::node::getObjectFilename() const { return _objectFilename; }
 
-void ws::node::setObjectFilename(const std::string& name) {	_objectFilename = name; }
+void ws::node::setObjectFilename(const std::string& name) { _objectFilename = name; }
 
 const float& ws::node::getPositionX() const { return _positionX; }
 const float& ws::node::getPositionY() const { return _positionY; }
@@ -525,7 +526,17 @@ const float& ws::node::getQuatY() const { return _qy; }
 const float& ws::node::getQuatZ() const { return _qz; }
 
 const int32_t& ws::node::getID() const { return _nodeID; }
+std::string ws::node::getIDStr() const {
+	std::ostringstream ostr;
+	ostr << _nodeID;
+	return ostr.str();
+}
 const int32_t& ws::node::getParentID() const { return _parentNodeID; }
+std::string ws::node::getParentIDStr() const {
+	std::ostringstream ostr;
+	ostr << _parentNodeID;
+	return ostr.str();
+}
 const int32_t& ws::node::getObjectNameIndex() const { return _objectNameIndex; }
 const int32_t& ws::node::getPositionInParent() const { return _cellIndex; }
 
