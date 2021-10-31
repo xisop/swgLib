@@ -66,7 +66,9 @@ namespace ml
 			const int32_t& getObjectNameIndex() const;
 			const int32_t& getPositionInParent() const;
 
-			protected:
+			const float& getRadius() const;
+
+		protected:
 			int32_t _nodeID;
 			int32_t _parentNodeID;
 			int32_t _objectNameIndex;
@@ -95,12 +97,15 @@ namespace ml
 
 		std::size_t read(std::istream& file);
 		//std::size_t create(std::ofstream& outfile);
-//		std::size_t readMetaFile(std::istream& infile);
+		//std::size_t readMetaFile(std::istream& infile);
 
 		bool canWrite() const { return true; }
 
 		uint32_t getNumNodes() const;
 		const ws::node& getNode(const uint32_t& i) const;
+
+		const std::vector<node>& getNodes() const;
+		const std::vector<std::string>& getNames() const;
 
 		const std::string& getName(const uint32_t& i) const;
 	protected:

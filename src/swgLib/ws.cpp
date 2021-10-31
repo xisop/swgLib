@@ -63,9 +63,7 @@ std::size_t ws::read(std::istream& file)
 
 	if (wsSize == total)
 	{
-#ifdef DEBUG
-		sd::cout << "Finished reading WS" << std::endl;
-#endif
+		std::cout << "Finished reading WS\n";
 	}
 	else
 	{
@@ -504,28 +502,18 @@ void ws::node::print(std::ostream& os) const
 		"\n";
 }
 
-uint32_t ws::getNumNodes() const
-{
-	return uint32_t(_nodes.size());
-}
+uint32_t ws::getNumNodes() const { return uint32_t(_nodes.size()); }
 
-const ws::node& ws::getNode(const uint32_t& i) const
-{
-	return _nodes.at(i);
-}
+const ws::node& ws::getNode(const uint32_t& i) const { return _nodes.at(i); }
 
-const std::string& ws::getName(const uint32_t& i) const {
-	return _names.at(i);
-}
+const std::string& ws::getName(const uint32_t& i) const { return _names.at(i); }
 
-std::string ws::node::getObjectFilename() const
-{
-	return _objectFilename;
-}
+const std::vector<ws::node>& ws::getNodes() const { return _nodes; }
+const std::vector<std::string>& ws::getNames() const { return _names; }
 
-void ws::node::setObjectFilename(const std::string& name) {
-	_objectFilename = name;
-}
+std::string ws::node::getObjectFilename() const { return _objectFilename; }
+
+void ws::node::setObjectFilename(const std::string& name) {	_objectFilename = name; }
 
 const float& ws::node::getPositionX() const { return _positionX; }
 const float& ws::node::getPositionY() const { return _positionY; }
@@ -540,3 +528,5 @@ const int32_t& ws::node::getID() const { return _nodeID; }
 const int32_t& ws::node::getParentID() const { return _parentNodeID; }
 const int32_t& ws::node::getObjectNameIndex() const { return _objectNameIndex; }
 const int32_t& ws::node::getPositionInParent() const { return _cellIndex; }
+
+const float& ws::node::getRadius() const { return _radius; }
