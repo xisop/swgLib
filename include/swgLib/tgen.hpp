@@ -1,8 +1,9 @@
 /** -*-c++-*-
- *  \file   readTRN.cpp
+ *  \class  tgen
+ *  \file   tgen.hpp
  *  \author Ken Sewell
 
- swgLib is used for the parsing and exporting .trn models.
+ swgLib is used for the parsing and exporting SWG models.
  Copyright (C) 2006-2021 Ken Sewell
 
  This file is part of swgLib.
@@ -22,34 +23,37 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include <swgLib/ptat.hpp>
+#include <istream>
+#include <vector>
 
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <cstdlib>
+#include <swgLib/sgrp.hpp>
+#include <swgLib/fgrp.hpp>
+#include <swgLib/rgrp.hpp>
+#include <swgLib/egrp.hpp>
 
-int main(int argc, char** argv)
+#ifndef TGEN_HPP
+#define TGEN_HPP 1
+
+namespace ml
 {
-
-	if (2 != argc)
+	class tgen
 	{
-		std::cout << "readTRN <file>" << std::endl;
-		return 0;
-	}
+	public:
+		tgen();
+		~tgen();
 
-	std::ifstream terrainFile(argv[1], std::ios_base::binary);
+		std::size_t read(std::istream& file);
 
-	if (!terrainFile.is_open())
-	{
-		std::cout << "Unable to open file: " << argv[1] << std::endl;
-		exit(0);
-	}
+	protected:
+		uint32_t _tgenVersion;
 
-	ml::ptat terrain;
-	terrain.read(terrainFile);
+		sgrp _shaderGroup;
+		fgrp _floraGroup;
+		rgrp _radialGroup;
+		egrp _environmentGroup;
 
-	terrainFile.close();
-
-	return 0;
+	private:
+	};
 }
+
+#endif

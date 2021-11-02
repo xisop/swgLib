@@ -1,9 +1,9 @@
 /** -*-c++-*-
- *  \class  trn
- *  \file   trn.cpp
+ *  \class  ptat
+ *  \file   ptat.cpp
  *  \author Ken Sewell
 
- swgLib is used for the parsing and exporting .trn models.
+ swgLib is used for the parsing and exporting SWG models.
  Copyright (C) 2006-2021 Ken Sewell
 
  This file is part of swgLib.
@@ -23,7 +23,7 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include <swgLib/trn.hpp>
+#include <swgLib/ptat.hpp>
 
 #include <iostream>
 #include <bitset>
@@ -32,52 +32,164 @@
 
 using namespace ml;
 
-trn::trn()
+// Procedural Terrain Appearance
+ptat::ptat()
 {
 }
 
-trn::~trn()
+ptat::~ptat()
 {
 }
 
-unsigned int trn::readTRN(std::istream& file, const std::string& debugString)
+std::size_t ptat::read(std::istream& file)
 {
+	// PTAT or MPTA Form ( Level 0 )
+	std::string type;
 	std::size_t ptatSize;
-	// PTAT Form ( Level 0 )
-	std::size_t total = readFormHeader(file, "PTAT", ptatSize);
+	std::size_t total = base::readFormHeader(file, type, ptatSize);
 	ptatSize += 8;
-	std::cout << "Found PTAT form" << std::endl;
 
-	// Child form of PTAT ( Level 1 )
-	std::string form, type;
+	if (("MPTA" != type) && ("PTAT" != type)) {
+		std::cout << "Found form: " << type << ": expected type MPTA or PTAT\n";
+		exit(0);
+	}
+	std::cout << "Found " << type << " form\n";
+
 	std::size_t size;
-	total += readFormHeader(file, form, size, type);
-	std::cout << "Found form: " << form << std::endl;
+	total += base::readFormHeader(file, type, size);
+	_ptatVersion = base::tagToVersion(type);
+	if ((_ptatVersion < 13) || (15 < _ptatVersion)) {
+		std::cout << "Expected type [0013..0015]: " << type << std::endl;
+		exit(0);
+	}
+	std::cout << "Found form of type: " << type << std::endl;
+	std::cout << "PTAT version: " << _ptatVersion << "\n";
+	total += base::readRecordHeader(file, "DATA", size);
 
-	total += readTRNDATA(file, debugString);
+	total += base::read(file, _name);
+	total += base::read(file, _mapWidth);
+	total += base::read(file, _chunkWidth);
+	total += base::read(file, _tilesPerChunk);
+	int32_t useGWT_int;	total += base::read(file, useGWT_int);
+	_useGlobalWaterTable = (0 != useGWT_int);
+	total += base::read(file, _globalWaterTableHeight);
+	total += base::read(file, _globalWaterTableShaderSize);
+	total += base::read(file, _globalWaterTableShader);
+	total += base::read(file, _environmentCycleTime);
+
+	std::cout
+		<< "Terrain name: " << _name << "\n"
+		<< "Terrain Width: " << _mapWidth << "(m)\n"
+		<< "Chunk width: " << _chunkWidth << "(m)\n"
+		<< "Tiles per chunk: " << _tilesPerChunk << "\n"
+		<< "Use global water table: " << std::boolalpha << _useGlobalWaterTable << "\n"
+		<< "Global water table height: " << _globalWaterTableHeight << "\n"
+		<< "Global water table shader size: " << _globalWaterTableShaderSize << "\n"
+		<< "Global water table shader: " << _globalWaterTableShader << "\n"
+		<< "Environment cycle time: " << _environmentCycleTime << "\n";
+
+	if (13 == _ptatVersion) {
+		std::string junkStr;
+		float junkFloat;
+		int32_t junkInt32;
+		total += base::read(file, junkStr);
+		total += base::read(file, junkStr);
+		total += base::read(file, junkFloat);
+		total += base::read(file, junkStr);
+		total += base::read(file, junkFloat);
+		total += base::read(file, junkStr);
+		total += base::read(file, junkFloat);
+		total += base::read(file, junkStr);
+		total += base::read(file, junkFloat);
+		total += base::read(file, junkInt32);
+		total += base::read(file, junkStr);
+	}
+
+	total += base::read(file, _collidableMinDist);
+	total += base::read(file, _collidableMaxDist);
+	total += base::read(file, _collidableTileSize);
+	total += base::read(file, _collidableTileBorder);
+	total += base::read(file, _collidableSeed);
+
+	std::cout << "Collidable:\n"
+		<< "\t Min distance: " << _collidableMinDist << "\n"
+		<< "\t Max distance: " << _collidableMaxDist << "\n"
+		<< "\t    Tile size: " << _collidableTileSize << "\n"
+		<< "\t  Tile border: " << _collidableTileBorder << "\n"
+		<< "\t         Seed: " << _collidableSeed << "\n";
+
+	total += base::read(file, _nonCollidableMinDist);
+	total += base::read(file, _nonCollidableMaxDist);
+	total += base::read(file, _nonCollidableTileSize);
+	total += base::read(file, _nonCollidableTileBorder);
+	total += base::read(file, _nonCollidableSeed);
+
+	std::cout << "Non-collidable:\n"
+		<< "\t Min distance: " << _nonCollidableMinDist << "\n"
+		<< "\t Max distance: " << _nonCollidableMaxDist << "\n"
+		<< "\t    Tile size: " << _nonCollidableTileSize << "\n"
+		<< "\t  Tile border: " << _nonCollidableTileBorder << "\n"
+		<< "\t         Seed: " << _nonCollidableSeed << "\n";
+
+	total += base::read(file, _radialMinDist);
+	total += base::read(file, _radialMaxDist);
+	total += base::read(file, _radialTileSize);
+	total += base::read(file, _radialTileBorder);
+	total += base::read(file, _radialSeed);
+
+	std::cout << "Radial:\n"
+		<< "\t Min distance: " << _radialMinDist << "\n"
+		<< "\t Max distance: " << _radialMaxDist << "\n"
+		<< "\t    Tile size: " << _radialTileSize << "\n"
+		<< "\t  Tile border: " << _radialTileBorder << "\n"
+		<< "\t         Seed: " << _radialSeed << "\n";
+
+	total += base::read(file, _farRadialMinDist);
+	total += base::read(file, _farRadialMaxDist);
+	total += base::read(file, _farRadialTileSize);
+	total += base::read(file, _farRadialTileBorder);
+	total += base::read(file, _farRadialSeed);
+
+	std::cout << "Far Radial:\n"
+		<< "\t Min distance: " << _farRadialMinDist << "\n"
+		<< "\t Max distance: " << _farRadialMaxDist << "\n"
+		<< "\t    Tile size: " << _farRadialTileSize << "\n"
+		<< "\t  Tile border: " << _farRadialTileBorder << "\n"
+		<< "\t         Seed: " << _farRadialSeed << "\n";
+
+	if (_ptatVersion >= 15) {
+		total += base::read(file, _legacyMap);
+		std::cout << "Legacy map: " << std::boolalpha << _legacyMap << "\n";
+	}
+
+	_tgen.read(file);
+
+#if 0
+	total += readptatDATA(file);
 
 	// TGEN Form ( Level 2 )
-	total += readTGEN(file, debugString);
+	total += readTGEN(file);
 
 	// DATA before WMAP and SMAP
-	total += readMapDATA(file, debugString);
+	total += readMapDATA(file);
+#endif
 
 	if (ptatSize == total)
 	{
-		std::cout << "Finished reading PTAT" << std::endl;
+		std::cout << "Finished reading PTAT\n";
 	}
 	else
 	{
-		std::cout << "Failed in reading PTAT" << std::endl;
-		std::cout << "Read " << total << " out of " << ptatSize
-			<< std::endl;
+		std::cout << "Failed in reading PTAT\n"
+			<< "Read " << total << " out of " << ptatSize << "\n";
+		exit(0);
 	}
 
 	return total;
 }
 
-unsigned int trn::readTRNDATA(std::istream& file,
-	const std::string& debugString)
+#if 0
+std::size_t ptat::readptatDATA(std::istream& file)
 {
 	std::string dbgStr = debugString + "DATA: ";
 
@@ -222,7 +334,7 @@ unsigned int trn::readTRNDATA(std::istream& file,
 	return total;
 }
 
-unsigned int trn::readTGEN(std::istream& file, const std::string& debugString)
+std::size_t ptat::readTGEN(std::istream& file, const std::string& debugString)
 {
 	std::string dbgStr = debugString + "TGEN: ";
 	std::string form;
@@ -299,7 +411,7 @@ unsigned int trn::readTGEN(std::istream& file, const std::string& debugString)
 }
 
 // Water or weight maps?
-unsigned int trn::readWMAP(std::istream& file, const std::string& debugString)
+std::size_t ptat::readWMAP(std::istream& file, const std::string& debugString)
 {
 	std::string dbgStr = debugString + "WMAP: ";
 	std::string form;
@@ -350,7 +462,7 @@ unsigned int trn::readWMAP(std::istream& file, const std::string& debugString)
 }
 
 // Seed maps?
-unsigned int trn::readSMAP(std::istream& file, const std::string& debugString)
+std::size_t ptat::readSMAP(std::istream& file, const std::string& debugString)
 {
 	std::string dbgStr = debugString + "SMAP: ";
 	std::size_t smapSize;
@@ -400,7 +512,7 @@ unsigned int trn::readSMAP(std::istream& file, const std::string& debugString)
 	return total;
 }
 
-unsigned int trn::readSFAM(std::istream& file,
+std::size_t ptat::readSFAM(std::istream& file,
 	const std::string& debugString,
 	sfam& newSFAM)
 {
@@ -477,7 +589,7 @@ unsigned int trn::readSFAM(std::istream& file,
 	return total;
 }
 
-unsigned int trn::readMapDATA(std::istream& file,
+std::size_t ptat::readMapDATA(std::istream& file,
 	const std::string& debugString)
 {
 	std::string dbgStr = debugString + "DATA: ";
@@ -530,7 +642,7 @@ unsigned int trn::readMapDATA(std::istream& file,
 	return total;
 }
 
-unsigned int trn::readSGRP(std::istream& file, const std::string& debugString)
+std::size_t ptat::readSGRP(std::istream& file, const std::string& debugString)
 {
 	std::string dbgStr = debugString + "SGRP: ";
 	std::size_t sgrpSize;
@@ -569,7 +681,7 @@ unsigned int trn::readSGRP(std::istream& file, const std::string& debugString)
 	return total;
 }
 
-unsigned int trn::readFFAM(std::istream& file, const std::string& debugString)
+std::size_t ptat::readFFAM(std::istream& file, const std::string& debugString)
 {
 	std::string dbgStr = debugString + "FFAM: ";
 	std::size_t size;
@@ -657,7 +769,7 @@ unsigned int trn::readFFAM(std::istream& file, const std::string& debugString)
 	return total;
 }
 
-unsigned int trn::readFGRP(std::istream& file, const std::string& debugString)
+std::size_t ptat::readFGRP(std::istream& file, const std::string& debugString)
 {
 	std::string dbgStr = debugString + "FGRP: ";
 	std::size_t fgrpSize;
@@ -694,7 +806,7 @@ unsigned int trn::readFGRP(std::istream& file, const std::string& debugString)
 	return total;
 }
 
-unsigned int trn::readRFAM(std::istream& file,
+std::size_t ptat::readRFAM(std::istream& file,
 	const std::string& rgrpType,
 	const std::string& debugString)
 {
@@ -811,7 +923,7 @@ unsigned int trn::readRFAM(std::istream& file,
 	return total;
 }
 
-unsigned int trn::readRGRP(std::istream& file, const std::string& debugString)
+std::size_t ptat::readRGRP(std::istream& file, const std::string& debugString)
 {
 	std::string dbgStr = debugString + "RGRP: ";
 	std::string form;
@@ -855,7 +967,7 @@ unsigned int trn::readRGRP(std::istream& file, const std::string& debugString)
 	return total;
 }
 
-unsigned int trn::readEFAM(std::istream& file, const std::string& debugString)
+std::size_t ptat::readEFAM(std::istream& file, const std::string& debugString)
 {
 	std::string dbgStr = debugString + "EFAM: ";
 	std::size_t efamSize;
@@ -909,7 +1021,7 @@ unsigned int trn::readEFAM(std::istream& file, const std::string& debugString)
 	return total;
 }
 
-unsigned int trn::readEGRP(std::istream& file, const std::string& debugString)
+std::size_t ptat::readEGRP(std::istream& file, const std::string& debugString)
 {
 	std::string dbgStr = debugString + "EGRP: ";
 	std::string form;
@@ -953,7 +1065,7 @@ unsigned int trn::readEGRP(std::istream& file, const std::string& debugString)
 	return total;
 }
 
-unsigned int trn::readMFRC(std::istream& file, const std::string& debugString)
+std::size_t ptat::readMFRC(std::istream& file, const std::string& debugString)
 {
 	std::string dbgStr = debugString + "MFRC: ";
 	std::size_t mfrcSize;
@@ -1040,7 +1152,7 @@ unsigned int trn::readMFRC(std::istream& file, const std::string& debugString)
 	return total;
 }
 
-unsigned int trn::readMFAM(std::istream& file, const std::string& debugString)
+std::size_t ptat::readMFAM(std::istream& file, const std::string& debugString)
 {
 	std::string dbgStr = debugString + "MFAM: ";
 	std::size_t mfamSize;
@@ -1084,7 +1196,7 @@ unsigned int trn::readMFAM(std::istream& file, const std::string& debugString)
 	return total;
 }
 
-unsigned int trn::readMGRP(std::istream& file, const std::string& debugString)
+std::size_t ptat::readMGRP(std::istream& file, const std::string& debugString)
 {
 	std::string dbgStr = debugString + "MGRP: ";
 	std::size_t mgrpSize;
@@ -1126,7 +1238,7 @@ unsigned int trn::readMGRP(std::istream& file, const std::string& debugString)
 	return total;
 }
 
-unsigned int trn::readLYRS(std::istream& file, const std::string& debugString)
+std::size_t ptat::readLYRS(std::istream& file, const std::string& debugString)
 {
 	std::string dbgStr = debugString + "LYRS: ";
 	std::size_t lyrsSize;
@@ -1136,7 +1248,7 @@ unsigned int trn::readLYRS(std::istream& file, const std::string& debugString)
 
 	while (total < lyrsSize)
 	{
-		std::shared_ptr<trnLayer> newLayer(new trnLayer);
+		std::shared_ptr<ptatLayer> newLayer(new ptatLayer);
 		total += newLayer->read(file, dbgStr);
 		layerList.push_back(newLayer);
 	}
@@ -1155,7 +1267,7 @@ unsigned int trn::readLYRS(std::istream& file, const std::string& debugString)
 }
 
 
-bool trn::applyLayers(const float& originX,
+bool ptat::applyLayers(const float& originX,
 	const float& originY,
 	const float& spacingX,
 	const float& spacingY,
@@ -1163,7 +1275,7 @@ bool trn::applyLayers(const float& originX,
 	const unsigned int& numCols,
 	float* data) const
 {
-	for (std::list< std::shared_ptr<trnLayer> >::const_iterator
+	for (std::list< std::shared_ptr<ptatLayer> >::const_iterator
 		currentLayer = layerList.begin();
 		currentLayer != layerList.end();
 		++currentLayer)
@@ -1179,3 +1291,4 @@ bool trn::applyLayers(const float& originX,
 
 	return true;
 }
+#endif

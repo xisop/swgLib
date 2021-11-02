@@ -45,6 +45,7 @@
 #include <swgLib/mlod.hpp>
 #include <swgLib/peft.hpp>
 #include <swgLib/prto.hpp>
+#include <swgLib/ptat.hpp>
 #include <swgLib/sbot.hpp>
 #include <swgLib/sd2d.hpp>
 #include <swgLib/sd3d.hpp>
@@ -187,6 +188,12 @@ int main(int argc, char** argv)
 			ml::prto misc;
 			misc.readPRTO(infile);
 		}
+		else if ("PTAT" == fileType)
+		{
+			// Procedural Terrain Appearance
+			ml::ptat misc;
+			misc.read(infile);
+		}
 		else if ("SBOT" == fileType)
 		{
 			ml::sbot misc;
@@ -207,9 +214,9 @@ int main(int argc, char** argv)
 		}
 		else if ("SHOT" == fileType)
 		{
-		ml::shot misc;
-		misc.readSHOT(infile);
-		misc.print(std::cout);
+			ml::shot misc;
+			misc.readSHOT(infile);
+			misc.print(std::cout);
 		}
 		else if ("SPAM" == fileType)
 		{
@@ -248,17 +255,18 @@ int main(int argc, char** argv)
 		}
 		else if ("STAT" == fileType)
 		{
-		  // Could be Space Terrain Appearance Template
-		  // or
-		  // Shared Static Object Template
-		  ml::spaceTerrain space;
-		  if( 0 < space.read(infile) ) {
-		    space.print();
-		  } else {
-		    ml::stat misc;
-		    misc.readSTAT(infile);
-		    misc.print(std::cout);
-		  }
+			// Could be Space Terrain Appearance Template
+			// or
+			// Shared Static Object Template
+			ml::spaceTerrain space;
+			if (0 < space.read(infile)) {
+				space.print();
+			}
+			else {
+				ml::stat misc;
+				misc.readSTAT(infile);
+				misc.print(std::cout);
+			}
 		}
 		else if ("STER" == fileType)
 		{
