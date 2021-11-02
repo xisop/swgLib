@@ -146,12 +146,27 @@ void matrix3x4::getTranslation(float& tx, float& ty, float& tz) const {
 }
 
 void matrix3x4::getRotation(float& rx, float& ry, float& rz) const {
+#if 0
 	rx = std::atan2(-v[6], v[10]);
 	const float cosYangle = sqrt((v[0] * v[0]) + (v[1] * v[1]));
-	ry = std::atan2(v[2], cosYangle);
+	if (std::abs(ry) < 1.57079) { ry = -ry; }
 	const float sinXangle = std::sin(rx);
 	const float cosXangle = std::cos(rx);
 	rz = std::atan2((cosXangle * v[4]) + (sinXangle * v[8]), (cosXangle * v[5]) + (sinXangle * v[9]));
+#else
+	// Shifted original cols 0,1 into new cols 1,2
+	// then moved original col 2 into new col 0
+	// This seems to work so far...
+	const float T1 = std::atan2(v[5], v[9]);
+	const float C2 = std::sqrt((v[2] * v[2]) + (v[0] * v[0]));
+	const float T2 = std::atan2(-v[1], C2);
+	const float S1 = std::sin(T1);
+	const float C1 = std::cos(T1);
+	const float T3 = std::atan2(S1 * v[10] - C1 * v[6], C1 * v[4] - S1 * v[8]);
+	rx = 1.57079f-T1;
+	ry = -T2;
+	rz = 1.57079f-T3;
+#endif
 }
 
 void matrix3x4::getRow(const uint32_t& row, float& v1, float& v2, float& v3, float& v4) const {
