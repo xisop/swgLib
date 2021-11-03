@@ -63,7 +63,7 @@ std::size_t egrp::read(std::istream& file) {
 		std::cout << "Finished reading EGRP\n";
 	}
 	else {
-		std::cout << "Failed in reading egrp\n";
+		std::cout << "Failed in reading EGRP\n";
 		std::cout << "Read " << total << " out of " << egrpSize << "\n";
 		exit(0);
 	}

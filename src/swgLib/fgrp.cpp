@@ -103,6 +103,7 @@ std::size_t fgrp::readV1(std::istream& file) {
 		newFamily.children.resize(newFamily.numChildren);
 		for (auto& child : newFamily.children) {
 			total += base::read(file, child.appearanceName);
+			child.appearanceName = "appearance/" + child.appearanceName;
 			child.appearanceName += ".msh";
 			total += base::read(file, child.weight);
 		}
@@ -146,6 +147,7 @@ std::size_t fgrp::readV2(std::istream& file) {
 		newFamily.children.resize(newFamily.numChildren);
 		for (auto& child : newFamily.children) {
 			total += base::read(file, child.appearanceName);
+			child.appearanceName = "appearance/" + child.appearanceName;
 			child.appearanceName += ".msh";
 			total += base::read(file, child.weight);
 		}
@@ -189,6 +191,7 @@ std::size_t fgrp::readV3(std::istream& file) {
 		newFamily.children.resize(newFamily.numChildren);
 		for (auto& child : newFamily.children) {
 			total += base::read(file, child.appearanceName);
+			child.appearanceName = "appearance/" + child.appearanceName;
 			total += base::read(file, child.weight);
 		}
 	}
@@ -229,6 +232,7 @@ std::size_t fgrp::readV4(std::istream& file) {
 		newFamily.children.resize(newFamily.numChildren);
 		for (auto& child : newFamily.children) {
 			total += base::read(file, child.appearanceName);
+			child.appearanceName = "appearance/" + child.appearanceName;
 			total += base::read(file, child.weight);
 		}
 	}
@@ -269,6 +273,7 @@ std::size_t fgrp::readV5(std::istream& file) {
 		newFamily.children.resize(newFamily.numChildren);
 		for (auto& child : newFamily.children) {
 			total += base::read(file, child.appearanceName);
+			child.appearanceName = "appearance/" + child.appearanceName;
 			total += base::read(file, child.weight);
 			int32_t shouldSway; total += base::read(file, shouldSway);
 			child.shouldSway = (0 != shouldSway);
@@ -315,6 +320,7 @@ std::size_t fgrp::readV6(std::istream& file) {
 		newFamily.children.resize(newFamily.numChildren);
 		for (auto& child : newFamily.children) {
 			total += base::read(file, child.appearanceName);
+			child.appearanceName = "appearance/" + child.appearanceName;
 			total += base::read(file, child.weight);
 			int32_t shouldSway; total += base::read(file, shouldSway);
 			child.shouldSway = (0 != shouldSway);
@@ -362,6 +368,7 @@ std::size_t fgrp::readV7(std::istream& file) {
 		for (auto& child : newFamily.children) {
 			int32_t temp;
 			total += base::read(file, child.appearanceName);
+			child.appearanceName = "appearance/" + child.appearanceName;
 			total += base::read(file, child.weight);
 			total += base::read(file, temp); child.shouldSway = (0 != temp);
 			total += base::read(file, child.displacement);
@@ -415,6 +422,7 @@ std::size_t fgrp::readV8(std::istream& file) {
 		for (auto& child : newFamily.children) {
 			int32_t temp;
 			total += base::read(file, child.appearanceName);
+			child.appearanceName = "appearance/" + child.appearanceName;
 			total += base::read(file, child.weight);
 			total += base::read(file, temp); child.shouldSway = (0 != temp);
 			total += base::read(file, child.displacement);
@@ -432,8 +440,6 @@ std::size_t fgrp::readV8(std::istream& file) {
 				<< "Child should scale: " << std::boolalpha << child.shouldScale << "\n"
 				<< "Child min scale: " << child.minimumScale << "\n"
 				<< "Child max scale: " << child.maximumScale << "\n";
-
-
 		}
 	}
 
