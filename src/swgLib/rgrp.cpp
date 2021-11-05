@@ -86,10 +86,7 @@ std::size_t rgrp::readV0(std::istream& file) {
 	while (total < size0000) {
 		total += base::readRecordHeader(file, "RFAM", size);
 
-		// Increase family vector by one...
-		_family.resize(_family.size() + 1);
-		family& newFamily(_family.back());
-
+		family newFamily;
 		total += base::read(file, newFamily.familyId);
 		total += base::read(file, newFamily.name);
 		total += base::read(file, newFamily.red);
@@ -105,6 +102,8 @@ std::size_t rgrp::readV0(std::istream& file) {
 			total += base::read(file, child.minWidth); child.maxWidth = child.minWidth;
 			total += base::read(file, child.minHeight); child.maxHeight = child.minHeight;
 		}
+
+		_family.push_back(newFamily);
 	}
 
 	if (size0000 == total) {
