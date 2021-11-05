@@ -28,9 +28,6 @@
 #include <istream>
 #include <string>
 
-#include <swgLib/trnAffector.hpp>
-#include <swgLib/trnLayer.hpp>
-
 #ifndef PTAT_HPP
 #define PTAT_HPP 1
 
@@ -40,43 +37,11 @@ namespace ml
 	class ptat : public appr
 	{
 	public:
-		class sfam
-		{
-		public:
-			unsigned int familyNumber;
-			std::string name;
-			std::string abstract;
-			unsigned char rgb[3];
-			float u1;
-			float u2;
-
-			std::map< std::string, float > shaderMap;
-		};
-
 		ptat();
 		~ptat();
 
 		std::size_t read(std::istream& file);
 
-#if 0
-		const float& getTerrainSize() const
-		{
-			return terrainSize;
-		}
-
-		const float& getWaterTableHeight() const
-		{
-			return globalWaterTableHeight;
-		}
-
-		bool applyLayers(const float& originX,
-			const float& originY,
-			const float& spacingX,
-			const float& spacingY,
-			const unsigned int& numRows,
-			const unsigned int& numCols,
-			float* data) const;
-#endif
 	protected:
 		uint32_t _ptatVersion;
 

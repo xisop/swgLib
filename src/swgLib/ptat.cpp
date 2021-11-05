@@ -24,6 +24,7 @@
 */
 
 #include <swgLib/ptat.hpp>
+#include <swgLib/base.hpp>
 
 #include <iostream>
 #include <bitset>
@@ -162,7 +163,22 @@ std::size_t ptat::read(std::istream& file)
 		std::cout << "Legacy map: " << std::boolalpha << _legacyMap << "\n";
 	}
 
-	_tgen.read(file);
+	total += _tgen.read(file);
+
+	std::string form;
+	base::peekHeader(file, form, size, type);
+	std::cout << "Peek: " << form << ":" << type << "\n";
+	total += base::skip(file, size + 8);
+	//total += readWMAP
+	//total += readSMAP
+
+	if (_ptatVersion >= 15) {
+		base::peekHeader(file, form, size, type);
+		std::cout << "Peek: " << form << ":" << type << "\n";
+		//	total += base::skip(file, size + 8);
+				//total += base::read static collidable flora
+		//total += base::read static collidable flora height
+	}
 
 #if 0
 	total += readptatDATA(file);
