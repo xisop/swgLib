@@ -43,25 +43,27 @@ std::size_t mgrp::read(std::istream& file) {
 	std::size_t size;
 	std::string form, type;
 	total += base::readFormHeader(file, form, size, type);
-	_version = base::tagToVersion(type);
-	if (0 != _version) {
+	uint32_t version = base::tagToVersion(type);
+	if (0 != version) {
 		std::cout << "Expected type [0000]: " << type << "\n";
 		exit(0);
 	}
-	std::cout << "MultiFractal Group version: " << _version << "\n";
+	std::cout << "MultiFractal Group version: " << version << "\n";
 
 	while (total < mgrpSize) {
-		total += base::readFormHeader(file, "MFAM", size);
+		std::size_t mfamSize;
+		total += base::readFormHeader(file, "MFAM", mfamSize);
+		mfamSize += 8;
 		total += base::readRecordHeader(file, "DATA", size);
+		size += 8;
 
-		// Increase family vector by one...
-		_family.resize(_family.size() + 1);
-		family& newFamily(_family.back());
-
+		family newFamily;
 		total += base::read(file, newFamily.familyId);
 		total += base::read(file, newFamily.name);
 		std::cout << "Name: " << newFamily.name << "\n";
 		total += newFamily.multifractal.read(file);
+
+		_family.push_back(newFamily);
 	}
 
 	if (mgrpSize == total) {
@@ -75,3 +77,5 @@ std::size_t mgrp::read(std::istream& file) {
 
 	return total;
 }
+
+const std::vector<mgrp::family>& mgrp::getFamily() const { return _family; }

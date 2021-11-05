@@ -52,7 +52,6 @@ namespace ml
 		const std::vector<family>& getFamily() const;
 
 	protected:
-		uint32_t _version;
 		std::vector<family> _family;
 
 	private:
