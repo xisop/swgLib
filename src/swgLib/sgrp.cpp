@@ -89,9 +89,7 @@ std::size_t sgrp::readV0(std::istream& file) {
 	while (total < size0000) {
 		total += base::readRecordHeader(file, "SFAM", size);
 
-		// Increase family vector by one...
-		_family.resize(_family.size() + 1);
-		family& newFamily(_family.back());
+		family newFamily;
 
 		total += base::read(file, newFamily.familyId);
 		newFamily.name = "null";
@@ -109,6 +107,7 @@ std::size_t sgrp::readV0(std::istream& file) {
 			std::cout << "Child name: " << child.shaderName << "\n";
 			child.weight = 1.0f / float(newFamily.numChildren);
 		}
+		_family.push_back(newFamily);
 	}
 
 	if (size0000 == total) {
@@ -132,9 +131,7 @@ std::size_t sgrp::readV1(std::istream& file) {
 	while (total < size0001) {
 		total += base::readRecordHeader(file, "SFAM", size);
 
-		// Increase family vector by one...
-		_family.resize(_family.size() + 1);
-		family& newFamily(_family.back());
+		family newFamily;
 
 		total += base::read(file, newFamily.familyId);
 		total += base::read(file, newFamily.name);
@@ -143,7 +140,7 @@ std::size_t sgrp::readV1(std::istream& file) {
 		total += base::read(file, newFamily.blue);
 		newFamily.shaderSize = 2.0f;
 		total += base::read(file, newFamily.numChildren);
-		
+
 		newFamily.children.resize(newFamily.numChildren);
 		std::cout << "Num children: " << newFamily.numChildren << "\n";
 		for (auto& child : newFamily.children) {
@@ -155,6 +152,7 @@ std::size_t sgrp::readV1(std::istream& file) {
 
 			child.weight = 1.0f / float(newFamily.numChildren);
 		}
+		_family.push_back(newFamily);
 	}
 
 	if (size0001 == total) {
@@ -178,9 +176,7 @@ std::size_t sgrp::readV2(std::istream& file) {
 	while (total < size0002) {
 		total += base::readRecordHeader(file, "SFAM", size);
 
-		// Increase family vector by one...
-		_family.resize(_family.size() + 1);
-		family& newFamily(_family.back());
+		family newFamily;
 
 		total += base::read(file, newFamily.familyId);
 		total += base::read(file, newFamily.name);
@@ -201,6 +197,7 @@ std::size_t sgrp::readV2(std::istream& file) {
 
 			child.weight = 1.0f / float(newFamily.numChildren);
 		}
+		_family.push_back(newFamily);
 	}
 
 	if (size0002 == total) {
@@ -224,9 +221,7 @@ std::size_t sgrp::readV3(std::istream& file) {
 	while (total < size0003) {
 		total += base::readRecordHeader(file, "SFAM", size);
 
-		// Increase family vector by one...
-		_family.resize(_family.size() + 1);
-		family& newFamily(_family.back());
+		family newFamily;
 
 		total += base::read(file, newFamily.familyId);
 		total += base::read(file, newFamily.name);
@@ -248,6 +243,7 @@ std::size_t sgrp::readV3(std::istream& file) {
 
 			child.weight = 1.0f / float(newFamily.numChildren);
 		}
+		_family.push_back(newFamily);
 	}
 
 	if (size0003 == total) {
@@ -271,9 +267,7 @@ std::size_t sgrp::readV4(std::istream& file) {
 	while (total < size0004) {
 		total += base::readRecordHeader(file, "SFAM", size);
 
-		// Increase family vector by one...
-		_family.resize(_family.size() + 1);
-		family& newFamily(_family.back());
+		family newFamily;
 
 		total += base::read(file, newFamily.familyId);
 		total += base::read(file, newFamily.name);
@@ -295,6 +289,7 @@ std::size_t sgrp::readV4(std::istream& file) {
 
 			child.weight = 1.0f / float(newFamily.numChildren);
 		}
+		_family.push_back(newFamily);
 	}
 
 	if (size0004 == total) {
@@ -318,9 +313,7 @@ std::size_t sgrp::readV5(std::istream& file) {
 	while (total < size0005) {
 		total += base::readRecordHeader(file, "SFAM", size);
 
-		// Increase family vector by one...
-		_family.resize(_family.size() + 1);
-		family& newFamily(_family.back());
+		family newFamily;
 
 		total += base::read(file, newFamily.familyId);
 		total += base::read(file, newFamily.name);
@@ -343,6 +336,7 @@ std::size_t sgrp::readV5(std::istream& file) {
 
 			child.weight = 1.0f / float(newFamily.numChildren);
 		}
+		_family.push_back(newFamily);
 	}
 
 	if (size0005 == total) {
@@ -366,9 +360,7 @@ std::size_t sgrp::readV6(std::istream& file) {
 	while (total < size0006) {
 		total += base::readRecordHeader(file, "SFAM", size);
 
-		// Increase family vector by one...
-		_family.resize(_family.size() + 1);
-		family& newFamily(_family.back());
+		family newFamily;
 
 		total += base::read(file, newFamily.familyId);
 		total += base::read(file, newFamily.name);
@@ -391,6 +383,7 @@ std::size_t sgrp::readV6(std::istream& file) {
 
 			child.weight = 1.0f / float(newFamily.numChildren);
 		}
+		_family.push_back(newFamily);
 	}
 
 	if (size0006 == total) {
