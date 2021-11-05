@@ -89,9 +89,7 @@ std::size_t fgrp::readV1(std::istream& file) {
 	while (total < size0001) {
 		total += base::readRecordHeader(file, "FFAM", size);
 
-		// Increase family vector by one...
-		_family.resize(_family.size() + 1);
-		family& newFamily(_family.back());
+		family newFamily;
 
 		total += base::read(file, newFamily.familyId);
 		total += base::read(file, newFamily.name);
@@ -107,6 +105,8 @@ std::size_t fgrp::readV1(std::istream& file) {
 			child.appearanceName += ".msh";
 			total += base::read(file, child.weight);
 		}
+
+		_family.push_back(newFamily);
 	}
 
 	if (size0001 == total) {
@@ -130,9 +130,7 @@ std::size_t fgrp::readV2(std::istream& file) {
 	while (total < size0002) {
 		total += base::readRecordHeader(file, "FFAM", size);
 
-		// Increase family vector by one...
-		_family.resize(_family.size() + 1);
-		family& newFamily(_family.back());
+		family newFamily;
 
 		total += base::read(file, newFamily.familyId);
 		total += base::read(file, newFamily.name);
@@ -151,6 +149,7 @@ std::size_t fgrp::readV2(std::istream& file) {
 			child.appearanceName += ".msh";
 			total += base::read(file, child.weight);
 		}
+		_family.push_back(newFamily);
 	}
 
 	if (size0002 == total) {
@@ -174,9 +173,7 @@ std::size_t fgrp::readV3(std::istream& file) {
 	while (total < size0003) {
 		total += base::readRecordHeader(file, "FFAM", size);
 
-		// Increase family vector by one...
-		_family.resize(_family.size() + 1);
-		family& newFamily(_family.back());
+		family newFamily;
 
 		total += base::read(file, newFamily.familyId);
 		total += base::read(file, newFamily.name);
@@ -194,6 +191,7 @@ std::size_t fgrp::readV3(std::istream& file) {
 			child.appearanceName = "appearance/" + child.appearanceName;
 			total += base::read(file, child.weight);
 		}
+		_family.push_back(newFamily);
 	}
 
 	if (size0003 == total) {
@@ -217,9 +215,7 @@ std::size_t fgrp::readV4(std::istream& file) {
 	while (total < size0004) {
 		total += base::readRecordHeader(file, "FFAM", size);
 
-		// Increase family vector by one...
-		_family.resize(_family.size() + 1);
-		family& newFamily(_family.back());
+		family newFamily;
 
 		total += base::read(file, newFamily.familyId);
 		total += base::read(file, newFamily.name);
@@ -235,6 +231,7 @@ std::size_t fgrp::readV4(std::istream& file) {
 			child.appearanceName = "appearance/" + child.appearanceName;
 			total += base::read(file, child.weight);
 		}
+		_family.push_back(newFamily);
 	}
 
 	if (size0004 == total) {
@@ -258,9 +255,7 @@ std::size_t fgrp::readV5(std::istream& file) {
 	while (total < size0005) {
 		total += base::readRecordHeader(file, "FFAM", size);
 
-		// Increase family vector by one...
-		_family.resize(_family.size() + 1);
-		family& newFamily(_family.back());
+		family newFamily;
 
 		total += base::read(file, newFamily.familyId);
 		total += base::read(file, newFamily.name);
@@ -280,6 +275,7 @@ std::size_t fgrp::readV5(std::istream& file) {
 			total += base::read(file, child.displacement);
 			total += base::read(file, child.period);
 		}
+		_family.push_back(newFamily);
 	}
 
 	if (size0005 == total) {
@@ -303,9 +299,7 @@ std::size_t fgrp::readV6(std::istream& file) {
 	while (total < size0006) {
 		total += base::readRecordHeader(file, "FFAM", size);
 
-		// Increase family vector by one...
-		_family.resize(_family.size() + 1);
-		family& newFamily(_family.back());
+		family newFamily;
 
 		total += base::read(file, newFamily.familyId);
 		total += base::read(file, newFamily.name);
@@ -327,6 +321,7 @@ std::size_t fgrp::readV6(std::istream& file) {
 			total += base::read(file, child.displacement);
 			total += base::read(file, child.period);
 		}
+		_family.push_back(newFamily);
 	}
 
 	if (size0006 == total) {
@@ -350,9 +345,7 @@ std::size_t fgrp::readV7(std::istream& file) {
 	while (total < size0007) {
 		total += base::readRecordHeader(file, "FFAM", size);
 
-		// Increase family vector by one...
-		_family.resize(_family.size() + 1);
-		family& newFamily(_family.back());
+		family newFamily;
 
 		total += base::read(file, newFamily.familyId);
 		total += base::read(file, newFamily.name);
@@ -375,6 +368,7 @@ std::size_t fgrp::readV7(std::istream& file) {
 			total += base::read(file, child.period);
 			total += base::read(file, temp); child.alignToTerrain = (0 != temp);
 		}
+		_family.push_back(newFamily);
 	}
 
 	if (size0007 == total) {
@@ -398,9 +392,7 @@ std::size_t fgrp::readV8(std::istream& file) {
 	while (total < size0008) {
 		total += base::readRecordHeader(file, "FFAM", size);
 
-		// Increase family vector by one...
-		_family.resize(_family.size() + 1);
-		family& newFamily(_family.back());
+		family newFamily;
 
 		total += base::read(file, newFamily.familyId);
 		total += base::read(file, newFamily.name);
@@ -441,6 +433,7 @@ std::size_t fgrp::readV8(std::istream& file) {
 				<< "Child min scale: " << child.minimumScale << "\n"
 				<< "Child max scale: " << child.maximumScale << "\n";
 		}
+		_family.push_back(newFamily);
 	}
 
 	if (size0008 == total) {
