@@ -40,24 +40,45 @@ namespace ml
 
 		std::size_t read(std::istream& file);
 
+		void setSeed(const uint32_t& seed);
 		const uint32_t& getSeed() const;
 
+		void enableBias(bool enable = true);
 		bool usesBias() const;
+
+		void setBias(const float& bias);
 		const float& getBias() const;
 
+		void enableGain(bool enable = true);
 		bool usesGain() const;
+
+		void setGain(const float& gain);
 		const float& getGain() const;
 
+		void setNumOctaves(const int32_t& numOctaves);
 		const int32_t& getNumOctaves() const;
+
+		void setFrequency(const float& frequency);
 		const float& getFrequency() const;
+
+		void setAmplitude(const float& amplitude);
 		const float& getAmplitude() const;
 
+		void setScale(const float& scaleX, const float& scaleY);
+		void setScaleX(const float& scaleX);
 		const float& getScaleX() const;
+
+		void setScaleY(const float& scaleY);
 		const float& getScaleY() const;
 
+		void setOffset(const float& offsetX, const float& offsetY);
+		void setOffsetX(const float &offsetX);
 		const float& getOffsetX() const;
+
+		void setOffsetY(const float& offsetY);
 		const float& getOffsetY() const;
 
+		void setCombinationRule(const int32_t& rule);
 		const int32_t& getCombinationRule() const;
 
 	protected:
