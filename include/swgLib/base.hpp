@@ -100,6 +100,8 @@ namespace ml
 		static std::size_t read(std::istream& file, tag& t);
 		static std::size_t write(std::ostream& file, const tag& t);
 
+		static std::size_t skip(std::istream& file, const std::size_t& skipBytes);
+
 		static void peekHeader(std::istream& file,
 			std::string& form,
 			std::size_t& size,

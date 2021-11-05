@@ -24,10 +24,11 @@
 */
 
 #include <swgLib/base.hpp>
-#include <iostream>
-#include <sstream>
-#include <iomanip>
 #include <cstdlib>
+#include <iostream>
+#include <iomanip>
+#include <sstream>
+#include <string>
 
 using namespace ml;
 
@@ -168,6 +169,11 @@ std::size_t base::writeBigEndian(std::ostream& file,
 #endif
 
 	return size;
+}
+
+std::size_t base::skip(std::istream& file, const std::size_t& skipBytes) {
+	file.seekg(skipBytes, std::ios_base::cur);
+	return skipBytes;
 }
 
 void base::peekHeader(std::istream& file,
@@ -311,13 +317,7 @@ std::size_t base::readUnknown(std::istream& file,
 			std::cout << "\nUnexpected EOF\n";
 			exit(0);
 		}
-		if (
-			(data >= '.' && data <= '9') ||
-			(data >= 'A' && data <= 'Z') ||
-			(data >= 'a' && data <= 'z') ||
-			(data == '\\') ||
-			(data == '_')
-			)
+		if (data >= ' ' && data <= '~')
 		{
 			std::cout << data;
 		}
@@ -464,23 +464,28 @@ std::size_t base::write(std::ostream& file, const float& data)
 }
 
 // **************************************************
-std::size_t base::read(std::istream& file, std::string& data, const std::size_t &length) {
+std::size_t base::read(std::istream& file, std::string& data, const std::size_t& length) {
 	char temp[255];
 	file.read(temp, length);
 	for (uint32_t i = 0; i < length; ++i) {
 		if (0 == temp[i]) { temp[i] = ' '; }
 	}
-	temp[length-1] = 0;
+	temp[length - 1] = 0;
 	data = temp;
 	return length;
 }
 
 std::size_t base::read(std::istream& file, std::string& data)
 {
+#if 0
 	char temp[255];
 	file.getline(temp, 255, 0);
 	data = temp;
 	return(data.size() + 1);
+#else
+	std::getline(file, data, (char)0);
+	return data.size() + 1;
+#endif
 }
 
 std::size_t base::write(std::ostream& file, const std::string& data)
