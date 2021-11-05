@@ -81,9 +81,7 @@ std::size_t egrp::readV0(std::istream& file) {
 		total += base::readFormHeader(file, "EFAM", size);
 		total += base::readRecordHeader(file, "DATA", size);
 
-		// Increase family vector by one...
-		_family.resize(_family.size() + 1);
-		family& newFamily(_family.back());
+		family newFamily;
 
 		total += base::read(file, newFamily.familyId);
 		total += base::read(file, newFamily.name);
@@ -91,6 +89,7 @@ std::size_t egrp::readV0(std::istream& file) {
 		total += base::read(file, newFamily.green);
 		total += base::read(file, newFamily.blue);
 		total += base::read(file, newFamily.featherClamp);
+		_family.push_back(newFamily);
 	}
 
 	if (size0000 == total) {
@@ -115,9 +114,7 @@ std::size_t egrp::readV1(std::istream& file) {
 		total += base::readFormHeader(file, "EFAM", size);
 		total += base::readRecordHeader(file, "DATA", size);
 
-		// Increase family vector by one...
-		_family.resize(_family.size() + 1);
-		family& newFamily(_family.back());
+		family newFamily;
 
 		total += base::read(file, newFamily.familyId);
 		total += base::read(file, newFamily.name);
@@ -125,6 +122,7 @@ std::size_t egrp::readV1(std::istream& file) {
 		total += base::read(file, newFamily.green);
 		total += base::read(file, newFamily.blue);
 		total += base::read(file, newFamily.featherClamp);
+		_family.push_back(newFamily);
 	}
 
 	if (size0001 == total) {
@@ -149,9 +147,7 @@ std::size_t egrp::readV2(std::istream& file) {
 		total += base::readFormHeader(file, "EFAM", size);
 		total += base::readRecordHeader(file, "DATA", size);
 
-		// Increase family vector by one...
-		_family.resize(_family.size() + 1);
-		family& newFamily(_family.back());
+		family newFamily;
 
 		total += base::read(file, newFamily.familyId);
 		total += base::read(file, newFamily.name);
@@ -161,6 +157,7 @@ std::size_t egrp::readV2(std::istream& file) {
 		total += base::read(file, newFamily.featherClamp);
 
 		std::cout << "Family name: " << newFamily.name << "\n";
+		_family.push_back(newFamily);
 	}
 
 	if (size0002 == total) {
