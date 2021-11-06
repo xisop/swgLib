@@ -94,7 +94,6 @@ std::size_t tgen::read(std::istream& file) {
 			tgenLayer newLayer;
 			lyrsRead += newLayer.read(file);
 			_layers.push_back(newLayer);
-			return 0;
 		}
 		total += lyrsRead;
 	}
