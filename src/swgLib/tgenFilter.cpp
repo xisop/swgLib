@@ -97,6 +97,7 @@ filterHeight::~filterHeight() {
 std::size_t filterHeight::read(std::istream& file) {
 	std::size_t fhgtSize;
 	std::size_t total = base::readFormHeader(file, "FHGT", fhgtSize);
+	fhgtSize += 8;
 
 	std::size_t size;
 	std::string type;
@@ -107,6 +108,7 @@ std::size_t filterHeight::read(std::istream& file) {
 		std::cout << "Unexpected FHGT version: " << version << "\n";
 		exit(0);
 	}
+	std::cout << "FHGT version: " << version << "\n";
 
 	total += tgenBaseLayer::read(file);
 	total += base::readRecordHeader(file, "DATA", size);
@@ -149,6 +151,7 @@ filterFractal::~filterFractal() {
 std::size_t filterFractal::read(std::istream& file) {
 	std::size_t ffraSize;
 	std::size_t total = base::readFormHeader(file, "FFRA", ffraSize);
+	ffraSize += 8;
 
 	std::size_t size;
 	std::string form, type;
@@ -182,6 +185,7 @@ std::size_t filterFractal::read(std::istream& file) {
 std::size_t filterFractal::readV0(std::istream& file) {
 	std::size_t size0000;
 	std::size_t total = base::readFormHeader(file, "0000", size0000);
+	size0000 += 8;
 
 	total += tgenBaseLayer::read(file);
 	std::size_t size;
@@ -216,6 +220,7 @@ std::size_t filterFractal::readV0(std::istream& file) {
 std::size_t filterFractal::readV1(std::istream& file) {
 	std::size_t size0001;
 	std::size_t total = base::readFormHeader(file, "0001", size0001);
+	size0001 += 8;
 
 	total += tgenBaseLayer::read(file);
 	std::size_t size;
@@ -270,6 +275,7 @@ std::size_t filterFractal::readV1(std::istream& file) {
 std::size_t filterFractal::readV2(std::istream& file) {
 	std::size_t size0002;
 	std::size_t total = base::readFormHeader(file, "0002", size0002);
+	size0002 += 8;
 
 	total += tgenBaseLayer::read(file);
 	std::size_t size;
@@ -326,6 +332,7 @@ std::size_t filterFractal::readV2(std::istream& file) {
 std::size_t filterFractal::readV3(std::istream& file) {
 	std::size_t size0003;
 	std::size_t total = base::readFormHeader(file, "0003", size0003);
+	size0003 += 8;
 
 	total += tgenBaseLayer::read(file);
 	std::size_t size;
@@ -383,10 +390,11 @@ std::size_t filterFractal::readV3(std::istream& file) {
 std::size_t filterFractal::readV4(std::istream& file) {
 	std::size_t size0004;
 	std::size_t total = base::readFormHeader(file, "0004", size0004);
+	size0004 += 8;
 
 	total += tgenBaseLayer::read(file);
 	std::size_t size;
-	total += base::readRecordHeader(file, "DATA", size);
+	total += base::readFormHeader(file, "DATA", size);
 
 	total += _multifractal.read(file);
 
@@ -412,10 +420,11 @@ std::size_t filterFractal::readV4(std::istream& file) {
 std::size_t filterFractal::readV5(std::istream& file) {
 	std::size_t size0005;
 	std::size_t total = base::readFormHeader(file, "0005", size0005);
+	size0005 += 8;
 
 	total += tgenBaseLayer::read(file);
 	std::size_t size;
-	total += base::readRecordHeader(file, "DATA", size);
+	total += base::readFormHeader(file, "DATA", size);
 
 	total += base::readRecordHeader(file, "PARM", size);
 
@@ -449,6 +458,7 @@ filterSlope::~filterSlope() {
 std::size_t filterSlope::read(std::istream& file) {
 	std::size_t fslpSize;
 	std::size_t total = base::readFormHeader(file, "FSLP", fslpSize);
+	fslpSize += 8;
 
 	std::size_t size;
 	std::string type;
@@ -459,6 +469,7 @@ std::size_t filterSlope::read(std::istream& file) {
 		std::cout << "Unexpected FSLP version: " << version << "\n";
 		exit(0);
 	}
+	std::cout << "FSLP version: " << version << "\n";
 
 	total += tgenBaseLayer::read(file);
 	total += base::readRecordHeader(file, "DATA", size);
@@ -494,6 +505,7 @@ filterDirection::~filterDirection() {
 std::size_t filterDirection::read(std::istream& file) {
 	std::size_t fdirSize;
 	std::size_t total = base::readFormHeader(file, "FDIR", fdirSize);
+	fdirSize += 8;
 
 	std::size_t size;
 	std::string type;
@@ -504,6 +516,7 @@ std::size_t filterDirection::read(std::istream& file) {
 		std::cout << "Unexpected FDIR version: " << version << "\n";
 		exit(0);
 	}
+	std::cout << "FDIR version: " << version << "\n";
 
 	total += tgenBaseLayer::read(file);
 	total += base::readRecordHeader(file, "DATA", size);
@@ -534,6 +547,7 @@ filterShader::~filterShader() {
 std::size_t filterShader::read(std::istream& file) {
 	std::size_t fshdSize;
 	std::size_t total = base::readFormHeader(file, "FSHD", fshdSize);
+	fshdSize += 8;
 
 	std::size_t size;
 	std::string type;
@@ -544,6 +558,7 @@ std::size_t filterShader::read(std::istream& file) {
 		std::cout << "Unexpected FSHD version: " << version << "\n";
 		exit(0);
 	}
+	std::cout << "FSHD version: " << version << "\n";
 
 	total += tgenBaseLayer::read(file);
 	total += base::readRecordHeader(file, "DATA", size);

@@ -105,12 +105,17 @@ boundaryCircle::~boundaryCircle() {
 std::size_t boundaryCircle::read(std::istream& file) {
 	std::size_t bcirSize;
 	std::size_t total = base::readFormHeader(file, "BCIR", bcirSize);
+	bcirSize += 8;
 
 	std::size_t size;
 	std::string type;
 	total += base::readFormHeader(file, type, size);
 
 	uint32_t version = base::tagToVersion(type);
+	if (version > 2) {
+		std::cout << "Unexpected BCIR version: " << version << "\n";
+	}
+	std::cout << "BCIR version: " << version << "\n";
 
 	total += tgenBaseLayer::read(file);
 	total += base::readRecordHeader(file, "DATA", size);
@@ -167,12 +172,17 @@ boundaryRectangle::~boundaryRectangle() {
 std::size_t boundaryRectangle::read(std::istream& file) {
 	std::size_t brecSize;
 	std::size_t total = base::readFormHeader(file, "BREC", brecSize);
+	brecSize += 8;
 
 	std::size_t size;
 	std::string type;
 	total += base::readFormHeader(file, type, size);
 
 	uint32_t version = base::tagToVersion(type);
+	if (version > 4) {
+		std::cout << "Unexpected BREC version: " << version << "\n";
+	}
+	std::cout << "BREC version: " << version << "\n";
 
 	total += tgenBaseLayer::read(file);
 	total += base::readRecordHeader(file, "DATA", size);
@@ -257,12 +267,17 @@ boundaryPolygon::~boundaryPolygon() {
 std::size_t boundaryPolygon::read(std::istream& file) {
 	std::size_t bpolSize;
 	std::size_t total = base::readFormHeader(file, "BPOL", bpolSize);
+	bpolSize += 8;
 
 	std::size_t size;
 	std::string type;
 	total += base::readFormHeader(file, type, size);
 
 	uint32_t version = base::tagToVersion(type);
+	if (version > 7) {
+		std::cout << "Unexpected BPOL version: " << version << "\n";
+	}
+	std::cout << "BPOL version: " << version << "\n";
 
 	total += tgenBaseLayer::read(file);
 	total += base::readRecordHeader(file, "DATA", size);
@@ -375,14 +390,19 @@ boundaryPolyline::~boundaryPolyline() {
 }
 
 std::size_t boundaryPolyline::read(std::istream& file) {
-	std::size_t bpolSize;
-	std::size_t total = base::readFormHeader(file, "BPOL", bpolSize);
+	std::size_t bplnSize;
+	std::size_t total = base::readFormHeader(file, "BPLN", bplnSize);
+	bplnSize += 8;
 
 	std::size_t size;
 	std::string type;
 	total += base::readFormHeader(file, type, size);
 
 	uint32_t version = base::tagToVersion(type);
+	if (version > 2) {
+		std::cout << "Unexpected BPLN version: " << version << "\n";
+	}
+	std::cout << "BPLN version: " << version << "\n";
 
 	total += tgenBaseLayer::read(file);
 	total += base::readRecordHeader(file, "DATA", size);
@@ -400,7 +420,7 @@ std::size_t boundaryPolyline::read(std::istream& file) {
 			<< "                         Width: " << _width << "\n";
 
 		float x, y;
-		while (total < bpolSize) {
+		while (total < bplnSize) {
 			total += base::read(file, x);
 			total += base::read(file, y);
 
@@ -438,9 +458,9 @@ std::size_t boundaryPolyline::read(std::istream& file) {
 			<< "                         Width: " << _width << "\n";
 	}
 
-	if (bpolSize != total) {
-		std::cout << "Failed in reading BPOL\n";
-		std::cout << "Read " << total << " out of " << bpolSize << "\n";
+	if (bplnSize != total) {
+		std::cout << "Failed in reading BPLN\n";
+		std::cout << "Read " << total << " out of " << bplnSize << "\n";
 		exit(0);
 	}
 

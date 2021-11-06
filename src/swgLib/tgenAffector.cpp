@@ -149,6 +149,7 @@ affectorEnvironment::~affectorEnvironment() {
 std::size_t affectorEnvironment::read(std::istream& file) {
 	std::size_t aenvSize;
 	std::size_t total = base::readFormHeader(file, "AENV", aenvSize);
+	aenvSize += 8;
 
 	std::size_t size;
 	std::string type;
@@ -159,6 +160,7 @@ std::size_t affectorEnvironment::read(std::istream& file) {
 		std::cout << "Unexpected AENV version: " << version << "\n";
 		exit(0);
 	}
+	std::cout << "AENV version: " << version << "\n";
 
 	total += tgenBaseLayer::read(file);
 	total += base::readRecordHeader(file, "DATA", size);
@@ -188,6 +190,7 @@ affectorHeightTerrace::~affectorHeightTerrace() {
 std::size_t affectorHeightTerrace::read(std::istream& file) {
 	std::size_t ahtrSize;
 	std::size_t total = base::readFormHeader(file, "AHTR", ahtrSize);
+	ahtrSize += 8;
 
 	std::size_t size;
 	std::string type;
@@ -198,6 +201,7 @@ std::size_t affectorHeightTerrace::read(std::istream& file) {
 		std::cout << "Unexpected AHTR version: " << version << "\n";
 		exit(0);
 	}
+	std::cout << "AHTR version: " << version << "\n";
 
 	total += tgenBaseLayer::read(file);
 	total += base::readRecordHeader(file, "DATA", size);
@@ -234,6 +238,7 @@ affectorHeightConstant::~affectorHeightConstant() {
 std::size_t affectorHeightConstant::read(std::istream& file) {
 	std::size_t ahcnSize;
 	std::size_t total = base::readFormHeader(file, "AHCN", ahcnSize);
+	ahcnSize += 8;
 
 	std::size_t size;
 	std::string type;
@@ -244,6 +249,7 @@ std::size_t affectorHeightConstant::read(std::istream& file) {
 		std::cout << "Unexpected AHCN version: " << version << "\n";
 		exit(0);
 	}
+	std::cout << "AHCN version: " << version << "\n";
 
 	total += tgenBaseLayer::read(file);
 	total += base::readRecordHeader(file, "DATA", size);
@@ -272,6 +278,7 @@ affectorHeightFractal::~affectorHeightFractal() {
 std::size_t affectorHeightFractal::read(std::istream& file) {
 	std::size_t ahfrSize;
 	std::size_t total = base::readFormHeader(file, "AHFR", ahfrSize);
+	ahfrSize += 8;
 
 	std::size_t size;
 	std::string form, type;
@@ -303,6 +310,7 @@ std::size_t affectorHeightFractal::read(std::istream& file) {
 std::size_t affectorHeightFractal::readV0(std::istream& file) {
 	std::size_t size0000;
 	std::size_t total = base::readFormHeader(file, "0000", size0000);
+	size0000 += 8;
 
 	total += tgenBaseLayer::read(file);
 	std::size_t size;
@@ -337,6 +345,7 @@ std::size_t affectorHeightFractal::readV0(std::istream& file) {
 std::size_t affectorHeightFractal::readV1(std::istream& file) {
 	std::size_t size0001;
 	std::size_t total = base::readFormHeader(file, "0001", size0001);
+	size0001 += 8;
 
 	total += tgenBaseLayer::read(file);
 	std::size_t size;
@@ -390,10 +399,11 @@ std::size_t affectorHeightFractal::readV1(std::istream& file) {
 std::size_t affectorHeightFractal::readV2(std::istream& file) {
 	std::size_t size0002;
 	std::size_t total = base::readFormHeader(file, "0002", size0002);
+	size0002 += 8;
 
 	total += tgenBaseLayer::read(file);
 	std::size_t size;
-	total += base::readRecordHeader(file, "DATA", size);
+	total += base::readFormHeader(file, "DATA", size);
 
 	total += _multifractal.read(file);
 
@@ -415,10 +425,11 @@ std::size_t affectorHeightFractal::readV2(std::istream& file) {
 std::size_t affectorHeightFractal::readV3(std::istream& file) {
 	std::size_t size0003;
 	std::size_t total = base::readFormHeader(file, "0003", size0003);
+	size0003 += 8;
 
 	total += tgenBaseLayer::read(file);
 	std::size_t size;
-	total += base::readRecordHeader(file, "DATA", size);
+	total += base::readFormHeader(file, "DATA", size);
 
 	total += base::readRecordHeader(file, "PARM", size);
 
@@ -447,6 +458,7 @@ affectorColorConstant::~affectorColorConstant() {
 std::size_t affectorColorConstant::read(std::istream& file) {
 	std::size_t accnSize;
 	std::size_t total = base::readFormHeader(file, "ACCN", accnSize);
+	accnSize += 8;
 
 	std::size_t size;
 	std::string type;
@@ -457,6 +469,7 @@ std::size_t affectorColorConstant::read(std::istream& file) {
 		std::cout << "Unexpected ACCN version: " << version << "\n";
 		exit(0);
 	}
+	std::cout << "ACCN version: " << version << "\n";
 
 	total += tgenBaseLayer::read(file);
 	total += base::readRecordHeader(file, "DATA", size);
@@ -487,6 +500,7 @@ affectorColorRampHeight::~affectorColorRampHeight() {
 std::size_t affectorColorRampHeight::read(std::istream& file) {
 	std::size_t acrhSize;
 	std::size_t total = base::readFormHeader(file, "ACRH", acrhSize);
+	acrhSize += 8;
 
 	std::size_t size;
 	std::string type;
@@ -497,6 +511,7 @@ std::size_t affectorColorRampHeight::read(std::istream& file) {
 		std::cout << "Unexpected ACRH version: " << version << "\n";
 		exit(0);
 	}
+	std::cout << "ACRH version: " << version << "\n";
 
 	total += tgenBaseLayer::read(file);
 	total += base::readRecordHeader(file, "DATA", size);
@@ -527,6 +542,7 @@ affectorColorFractal::~affectorColorFractal() {
 std::size_t affectorColorFractal::read(std::istream& file) {
 	std::size_t acrfSize;
 	std::size_t total = base::readFormHeader(file, "ACRF", acrfSize);
+	acrfSize += 8;
 
 	std::size_t size;
 	std::string type;
@@ -537,18 +553,21 @@ std::size_t affectorColorFractal::read(std::istream& file) {
 		std::cout << "Unexpected ACRF version: " << version << "\n";
 		exit(0);
 	}
+	std::cout << "ACRF version: " << version << "\n";
 
 	total += tgenBaseLayer::read(file);
-	total += base::readRecordHeader(file, "DATA", size);
+	total += base::readFormHeader(file, "DATA", size);
 
 	if (0 == version) {
 		total += _multifractal.read(file);
 	}
-	else {
+
+	total += base::readRecordHeader(file, "PARM", size);
+
+	if (1 == version) {
 		total += base::read(file, _familyId);
 	}
 
-	total += base::readRecordHeader(file, "PARM", size);
 	total += base::read(file, _operation);
 	total += base::read(file, _imageName);
 
@@ -573,6 +592,7 @@ affectorShaderConstant::~affectorShaderConstant() {
 std::size_t affectorShaderConstant::read(std::istream& file) {
 	std::size_t ascnSize;
 	std::size_t total = base::readFormHeader(file, "ASCN", ascnSize);
+	ascnSize += 8;
 
 	std::size_t size;
 	std::string type;
@@ -583,6 +603,7 @@ std::size_t affectorShaderConstant::read(std::istream& file) {
 		std::cout << "Unexpected ASCN version: " << version << "\n";
 		exit(0);
 	}
+	std::cout << "ASCN version: " << version << "\n";
 
 	total += tgenBaseLayer::read(file);
 	total += base::readRecordHeader(file, "DATA", size);
@@ -612,6 +633,7 @@ affectorShaderReplace::~affectorShaderReplace() {
 std::size_t affectorShaderReplace::read(std::istream& file) {
 	std::size_t asrpSize;
 	std::size_t total = base::readFormHeader(file, "ASRP", asrpSize);
+	asrpSize += 8;
 
 	std::size_t size;
 	std::string type;
@@ -622,6 +644,7 @@ std::size_t affectorShaderReplace::read(std::istream& file) {
 		std::cout << "Unexpected ASRP version: " << version << "\n";
 		exit(0);
 	}
+	std::cout << "ASRP version: " << version << "\n";
 
 	total += tgenBaseLayer::read(file);
 	total += base::readRecordHeader(file, "DATA", size);
@@ -654,6 +677,7 @@ std::size_t affectorFloraSCC::read(std::istream& file) {
 	std::size_t fsccSize;
 	std::string fsccType;
 	std::size_t total = base::readFormHeader(file, fsccType, fsccSize);
+	fsccSize += 8;
 	if (("AFCN" != fsccType) && ("AFSC" != fsccType)) {
 		std::cout << "Expected types AFCN or AFSC. Found type: " << fsccType << "\n";
 		exit(0);
@@ -668,6 +692,7 @@ std::size_t affectorFloraSCC::read(std::istream& file) {
 		std::cout << "Unexpected AFCN or AFSC version: " << version << "\n";
 		exit(0);
 	}
+	std::cout << "AFCN version: " << version << "\n";
 
 	total += tgenBaseLayer::read(file);
 	total += base::readRecordHeader(file, "DATA", size);
@@ -714,6 +739,7 @@ affectorFloraSNCC::~affectorFloraSNCC() {
 std::size_t affectorFloraSNCC::read(std::istream& file) {
 	std::size_t afsnSize;
 	std::size_t total = base::readFormHeader(file, "AFSN", afsnSize);
+	afsnSize += 8;
 
 	std::size_t size;
 	std::string type;
@@ -724,6 +750,7 @@ std::size_t affectorFloraSNCC::read(std::istream& file) {
 		std::cout << "Unexpected AFSN version: " << version << "\n";
 		exit(0);
 	}
+	std::cout << "AFSN version: " << version << "\n";
 
 	total += tgenBaseLayer::read(file);
 	total += base::readRecordHeader(file, "DATA", size);
@@ -771,6 +798,7 @@ std::size_t affectorFDNC::read(std::istream& file) {
 	std::string fdncType;
 	std::size_t fdncSize;
 	std::size_t total = base::readFormHeader(file, fdncType, fdncSize);
+	fdncSize += 8;
 	if (("ARCN" != fdncType) && ("AFDN" != fdncType)) {
 		std::cout << "Expected types ARCN or AFDN. Found type: " << fdncType << "\n";
 		exit(0);
@@ -785,6 +813,7 @@ std::size_t affectorFDNC::read(std::istream& file) {
 		std::cout << "Unexpected ARCN or AFDN version: " << version << "\n";
 		exit(0);
 	}
+	std::cout << "ARCN/AFDN version: " << version << "\n";
 
 	total += tgenBaseLayer::read(file);
 	total += base::readRecordHeader(file, "DATA", size);
@@ -823,6 +852,7 @@ affectorFDFC::~affectorFDFC() {
 std::size_t affectorFDFC::read(std::istream& file) {
 	std::size_t afdfSize;
 	std::size_t total = base::readFormHeader(file, "AFDF", afdfSize);
+	afdfSize += 8;
 
 	std::size_t size;
 	std::string type;
@@ -833,6 +863,7 @@ std::size_t affectorFDFC::read(std::istream& file) {
 		std::cout << "Unexpected AFDF version: " << version << "\n";
 		exit(0);
 	}
+	std::cout << "AFDF version: " << version << "\n";
 
 	total += tgenBaseLayer::read(file);
 	total += base::readRecordHeader(file, "DATA", size);
@@ -870,6 +901,7 @@ affectorRibbon::~affectorRibbon() {
 std::size_t affectorRibbon::read(std::istream& file) {
 	std::size_t aribSize;
 	std::size_t total = base::readFormHeader(file, "ARIB", aribSize);
+	aribSize += 8;
 
 	std::size_t size;
 	std::string form, type;
@@ -880,6 +912,7 @@ std::size_t affectorRibbon::read(std::istream& file) {
 		std::cout << "Unexpected ARIB version: " << version << "\n";
 		exit(0);
 	}
+	std::cout << "ARIB version: " << version << "\n";
 
 	switch (version) {
 	case 0: total += readV0(file); break;
@@ -903,10 +936,11 @@ std::size_t affectorRibbon::readV0(std::istream& file) {
 
 	std::size_t size0000;
 	std::size_t total = base::readFormHeader(file, "0000", size0000);
+	size0000 += 8;
 
 	total += tgenBaseLayer::read(file);
 	std::size_t size;
-	total += base::readRecordHeader(file, "DATA", size);
+	total += base::readFormHeader(file, "DATA", size);
 
 	total += _heightData.read(file);
 
@@ -943,10 +977,11 @@ std::size_t affectorRibbon::readV1(std::istream& file) {
 
 	std::size_t size0001;
 	std::size_t total = base::readFormHeader(file, "0001", size0001);
+	size0001 += 8;
 
 	total += tgenBaseLayer::read(file);
 	std::size_t size;
-	total += base::readRecordHeader(file, "DATA", size);
+	total += base::readFormHeader(file, "DATA", size);
 
 	total += _heightData.read(file);
 
@@ -983,10 +1018,11 @@ std::size_t affectorRibbon::readV2(std::istream& file) {
 
 	std::size_t size0002;
 	std::size_t total = base::readFormHeader(file, "0002", size0002);
+	size0002 += 8;
 
 	total += tgenBaseLayer::read(file);
 	std::size_t size;
-	total += base::readRecordHeader(file, "DATA", size);
+	total += base::readFormHeader(file, "DATA", size);
 
 	total += _heightData.read(file);
 
@@ -1024,10 +1060,11 @@ std::size_t affectorRibbon::readV3(std::istream& file) {
 
 	std::size_t size0003;
 	std::size_t total = base::readFormHeader(file, "0003", size0003);
+	size0003 += 8;
 
 	total += tgenBaseLayer::read(file);
 	std::size_t size;
-	total += base::readRecordHeader(file, "DATA", size);
+	total += base::readFormHeader(file, "DATA", size);
 	total += base::readRecordHeader(file, "DATA", size);
 
 	int32_t count;
@@ -1061,10 +1098,11 @@ std::size_t affectorRibbon::readV4(std::istream& file) {
 
 	std::size_t size0004;
 	std::size_t total = base::readFormHeader(file, "0004", size0004);
+	size0004 += 8;
 
 	total += tgenBaseLayer::read(file);
 	std::size_t size;
-	total += base::readRecordHeader(file, "DATA", size);
+	total += base::readFormHeader(file, "DATA", size);
 	total += base::readRecordHeader(file, "DATA", size);
 
 	int32_t count;
@@ -1097,10 +1135,11 @@ std::size_t affectorRibbon::readV5(std::istream& file) {
 
 	std::size_t size0005;
 	std::size_t total = base::readFormHeader(file, "0005", size0005);
+	size0005 += 8;
 
 	total += tgenBaseLayer::read(file);
 	std::size_t size;
-	total += base::readRecordHeader(file, "DATA", size);
+	total += base::readFormHeader(file, "DATA", size);
 	total += base::readRecordHeader(file, "DATA", size);
 
 	int32_t count;
@@ -1142,6 +1181,7 @@ affectorExclude::~affectorExclude() {
 std::size_t affectorExclude::read(std::istream& file) {
 	std::size_t aexcSize;
 	std::size_t total = base::readFormHeader(file, "AEXC", aexcSize);
+	aexcSize += 8;
 
 	std::size_t size;
 	std::string type;
@@ -1152,6 +1192,7 @@ std::size_t affectorExclude::read(std::istream& file) {
 		std::cout << "Unexpected AEXC version: " << version << "\n";
 		exit(0);
 	}
+	std::cout << "AEXC version: " << version << "\n";
 
 	total += tgenBaseLayer::read(file);
 	total += base::readRecordHeader(file, "DATA", size);
@@ -1177,6 +1218,7 @@ affectorPassable::~affectorPassable() {
 std::size_t affectorPassable::read(std::istream& file) {
 	std::size_t apasSize;
 	std::size_t total = base::readFormHeader(file, "APAS", apasSize);
+	apasSize += 8;
 
 	std::size_t size;
 	std::string type;
@@ -1187,6 +1229,7 @@ std::size_t affectorPassable::read(std::istream& file) {
 		std::cout << "Unexpected APAS version: " << version << "\n";
 		exit(0);
 	}
+	std::cout << "APAS version: " << version << "\n";
 
 	total += tgenBaseLayer::read(file);
 	total += base::readRecordHeader(file, "DATA", size);
@@ -1214,6 +1257,7 @@ affectorRoad::~affectorRoad() {
 std::size_t affectorRoad::read(std::istream& file) {
 	std::size_t aroaSize;
 	std::size_t total = base::readFormHeader(file, "AROA", aroaSize);
+	aroaSize += 8;
 
 	std::size_t size;
 	std::string form, type;
@@ -1224,6 +1268,7 @@ std::size_t affectorRoad::read(std::istream& file) {
 		std::cout << "Unexpected AROA version: " << version << "\n";
 		exit(0);
 	}
+	std::cout << "AROA version: " << version << "\n";
 
 	switch (version) {
 	case 0: total += readV0(file); break;
@@ -1248,6 +1293,7 @@ std::size_t affectorRoad::readV0(std::istream& file) {
 
 	std::size_t size0000;
 	std::size_t total = base::readFormHeader(file, "0000", size0000);
+	size0000 += 8;
 
 	total += tgenBaseLayer::read(file);
 	std::size_t size;
@@ -1266,6 +1312,7 @@ std::size_t affectorRoad::readV1(std::istream& file) {
 
 	std::size_t size0001;
 	std::size_t total = base::readFormHeader(file, "0001", size0001);
+	size0001 += 8;
 
 	total += tgenBaseLayer::read(file);
 	std::size_t size;
@@ -1292,12 +1339,13 @@ std::size_t affectorRoad::readV2(std::istream& file) {
 
 	std::size_t size0002;
 	std::size_t total = base::readFormHeader(file, "0002", size0002);
+	size0002 += 8;
 
 	total += tgenBaseLayer::read(file);
 	std::size_t size;
-	total += base::readRecordHeader(file, "DATA", size);
+	total += base::readFormHeader(file, "DATA", size);
 
-	_heightData.read(file);
+	total += _heightData.read(file);
 
 	total += base::readRecordHeader(file, "DATA", size);
 
@@ -1322,12 +1370,13 @@ std::size_t affectorRoad::readV3(std::istream& file) {
 
 	std::size_t size0003;
 	std::size_t total = base::readFormHeader(file, "0003", size0003);
+	size0003 += 8;
 
 	total += tgenBaseLayer::read(file);
 	std::size_t size;
-	total += base::readRecordHeader(file, "DATA", size);
+	total += base::readFormHeader(file, "DATA", size);
 
-	_heightData.read(file);
+	total += _heightData.read(file);
 
 	total += base::readRecordHeader(file, "DATA", size);
 
@@ -1357,12 +1406,13 @@ std::size_t affectorRoad::readV4(std::istream& file) {
 
 	std::size_t size0004;
 	std::size_t total = base::readFormHeader(file, "0004", size0004);
+	size0004 += 8;
 
 	total += tgenBaseLayer::read(file);
 	std::size_t size;
-	total += base::readRecordHeader(file, "DATA", size);
+	total += base::readFormHeader(file, "DATA", size);
 
-	_heightData.read(file);
+	total += _heightData.read(file);
 
 	total += base::readRecordHeader(file, "DATA", size);
 
@@ -1394,12 +1444,13 @@ std::size_t affectorRoad::readV5(std::istream& file) {
 
 	std::size_t size0005;
 	std::size_t total = base::readFormHeader(file, "0005", size0005);
+	size0005 += 8;
 
 	total += tgenBaseLayer::read(file);
 	std::size_t size;
-	total += base::readRecordHeader(file, "DATA", size);
+	total += base::readFormHeader(file, "DATA", size);
 
-	_heightData.read(file);
+	total += _heightData.read(file);
 
 	total += base::readRecordHeader(file, "DATA", size);
 
@@ -1431,12 +1482,13 @@ std::size_t affectorRoad::readV6(std::istream& file) {
 
 	std::size_t size0006;
 	std::size_t total = base::readFormHeader(file, "0006", size0006);
+	size0006 += 8;
 
 	total += tgenBaseLayer::read(file);
 	std::size_t size;
-	total += base::readRecordHeader(file, "DATA", size);
+	total += base::readFormHeader(file, "DATA", size);
 
-	_heightData.read(file);
+	total += _heightData.read(file);
 
 	total += base::readRecordHeader(file, "DATA", size);
 
@@ -1483,6 +1535,7 @@ affectorRiver::~affectorRiver() {
 std::size_t affectorRiver::read(std::istream& file) {
 	std::size_t arivSize;
 	std::size_t total = base::readFormHeader(file, "ARIV", arivSize);
+	arivSize += 8;
 
 	std::size_t size;
 	std::string form, type;
@@ -1493,6 +1546,7 @@ std::size_t affectorRiver::read(std::istream& file) {
 		std::cout << "Unexpected ARIV version: " << version << "\n";
 		exit(0);
 	}
+	std::cout << "ARIV version: " << version << "\n";
 
 	switch (version) {
 	case 0: total += readV0(file); break;
@@ -1517,10 +1571,11 @@ std::size_t affectorRiver::readV0(std::istream& file) {
 
 	std::size_t size0000;
 	std::size_t total = base::readFormHeader(file, "0000", size0000);
+	size0000 += 8;
 
 	total += tgenBaseLayer::read(file);
 	std::size_t size;
-	total += base::readRecordHeader(file, "DATA", size);
+	total += base::readFormHeader(file, "DATA", size);
 
 	total += _heightData.read(file);
 
@@ -1551,10 +1606,11 @@ std::size_t affectorRiver::readV1(std::istream& file) {
 
 	std::size_t size0001;
 	std::size_t total = base::readFormHeader(file, "0001", size0001);
+	size0001 += 8;
 
 	total += tgenBaseLayer::read(file);
 	std::size_t size;
-	total += base::readRecordHeader(file, "DATA", size);
+	total += base::readFormHeader(file, "DATA", size);
 
 	total += _heightData.read(file);
 
@@ -1591,10 +1647,11 @@ std::size_t affectorRiver::readV2(std::istream& file) {
 
 	std::size_t size0002;
 	std::size_t total = base::readFormHeader(file, "0002", size0002);
+	size0002 += 8;
 
 	total += tgenBaseLayer::read(file);
 	std::size_t size;
-	total += base::readRecordHeader(file, "DATA", size);
+	total += base::readFormHeader(file, "DATA", size);
 
 	total += _heightData.read(file);
 
@@ -1635,10 +1692,11 @@ std::size_t affectorRiver::readV3(std::istream& file) {
 
 	std::size_t size0003;
 	std::size_t total = base::readFormHeader(file, "0003", size0003);
+	size0003 += 8;
 
 	total += tgenBaseLayer::read(file);
 	std::size_t size;
-	total += base::readRecordHeader(file, "DATA", size);
+	total += base::readFormHeader(file, "DATA", size);
 
 	total += _heightData.read(file);
 
@@ -1679,10 +1737,11 @@ std::size_t affectorRiver::readV4(std::istream& file) {
 
 	std::size_t size0004;
 	std::size_t total = base::readFormHeader(file, "0004", size0004);
+	size0004 += 8;
 
 	total += tgenBaseLayer::read(file);
 	std::size_t size;
-	total += base::readRecordHeader(file, "DATA", size);
+	total += base::readFormHeader(file, "DATA", size);
 
 	total += _heightData.read(file);
 
@@ -1725,10 +1784,11 @@ std::size_t affectorRiver::readV5(std::istream& file) {
 
 	std::size_t size0005;
 	std::size_t total = base::readFormHeader(file, "0005", size0005);
+	size0005 += 8;
 
 	total += tgenBaseLayer::read(file);
 	std::size_t size;
-	total += base::readRecordHeader(file, "DATA", size);
+	total += base::readFormHeader(file, "DATA", size);
 
 	total += _heightData.read(file);
 
@@ -1771,10 +1831,11 @@ std::size_t affectorRiver::readV6(std::istream& file) {
 
 	std::size_t size0006;
 	std::size_t total = base::readFormHeader(file, "0006", size0006);
+	size0006 += 8;
 
 	total += tgenBaseLayer::read(file);
 	std::size_t size;
-	total += base::readRecordHeader(file, "DATA", size);
+	total += base::readFormHeader(file, "DATA", size);
 
 	total += _heightData.read(file);
 

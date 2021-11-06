@@ -50,7 +50,7 @@ std::size_t tgenLayer::read(std::istream& file) {
 
 	uint32_t version = base::tagToVersion(type);
 	std::cout << "LAYR version: " << version << "\n";
-	return 0;
+
 	switch (version) {
 	case 0: total += readV0(file); break;
 	case 1: total += readV1(file); break;
@@ -77,6 +77,7 @@ std::size_t tgenLayer::read(std::istream& file) {
 std::size_t tgenLayer::readACTN(std::istream& file) {
 	std::size_t actnSize;
 	std::size_t total = base::readFormHeader(file, "ACTN", actnSize);
+	actnSize += 8;
 
 	std::string form, type;
 	std::size_t size;
@@ -105,6 +106,7 @@ std::size_t tgenLayer::readACTN(std::istream& file) {
 std::size_t tgenLayer::readV0(std::istream& file) {
 	std::size_t size0000;
 	std::size_t total = base::readFormHeader(file, "0000", size0000);
+	size0000 += 8;
 
 	total += tgenBaseLayer::read(file);
 
@@ -125,6 +127,7 @@ std::size_t tgenLayer::readV0(std::istream& file) {
 std::size_t tgenLayer::readV1(std::istream& file) {
 	std::size_t size0001;
 	std::size_t total = base::readFormHeader(file, "0001", size0001);
+	size0001 += 8;
 
 	total += tgenBaseLayer::read(file);
 
@@ -154,8 +157,17 @@ std::size_t tgenLayer::readV1(std::istream& file) {
 			_affectors.push_back(affectorPtr);
 		}
 		else {
-			std::cout << "Unsupported layer type\n";
-			exit(0);
+			std::string form, type;
+			std::size_t size;
+			base::peekHeader(file, form, size, type);
+			if (type == "LAYR") {
+				_sublayers.resize(_sublayers.size() + 1);
+				total += _sublayers.back().read(file);
+			}
+			else {
+				std::cout << "Unsupported layer type:" << type << "\n";
+				exit(0);
+			}
 		}
 
 	}
@@ -172,6 +184,7 @@ std::size_t tgenLayer::readV1(std::istream& file) {
 std::size_t tgenLayer::readV2(std::istream& file) {
 	std::size_t size0002;
 	std::size_t total = base::readFormHeader(file, "0002", size0002);
+	size0002 += 8;
 
 	total += tgenBaseLayer::read(file);
 
@@ -202,8 +215,17 @@ std::size_t tgenLayer::readV2(std::istream& file) {
 			_affectors.push_back(affectorPtr);
 		}
 		else {
-			std::cout << "Unsupported layer type\n";
-			exit(0);
+			std::string form, type;
+			std::size_t size;
+			base::peekHeader(file, form, size, type);
+			if (type == "LAYR") {
+				_sublayers.resize(_sublayers.size() + 1);
+				total += _sublayers.back().read(file);
+			}
+			else {
+				std::cout << "Unsupported layer type:" << type << "\n";
+				exit(0);
+			}
 		}
 	}
 
@@ -219,6 +241,7 @@ std::size_t tgenLayer::readV2(std::istream& file) {
 std::size_t tgenLayer::readV3(std::istream& file) {
 	std::size_t size0003;
 	std::size_t total = base::readFormHeader(file, "0003", size0003);
+	size0003 += 8;
 
 	total += tgenBaseLayer::read(file);
 
@@ -251,8 +274,17 @@ std::size_t tgenLayer::readV3(std::istream& file) {
 			_affectors.push_back(affectorPtr);
 		}
 		else {
-			std::cout << "Unsupported layer type\n";
-			exit(0);
+			std::string form, type;
+			std::size_t size;
+			base::peekHeader(file, form, size, type);
+			if (type == "LAYR") {
+				_sublayers.resize(_sublayers.size() + 1);
+				total += _sublayers.back().read(file);
+			}
+			else {
+				std::cout << "Unsupported layer type:" << type << "\n";
+				exit(0);
+			}
 		}
 	}
 
@@ -268,6 +300,7 @@ std::size_t tgenLayer::readV3(std::istream& file) {
 std::size_t tgenLayer::readV4(std::istream& file) {
 	std::size_t size0004;
 	std::size_t total = base::readFormHeader(file, "0004", size0004);
+	size0004 += 8;
 
 	total += tgenBaseLayer::read(file);
 
@@ -301,8 +334,17 @@ std::size_t tgenLayer::readV4(std::istream& file) {
 			_affectors.push_back(affectorPtr);
 		}
 		else {
-			std::cout << "Unsupported layer type\n";
-			exit(0);
+			std::string form, type;
+			std::size_t size;
+			base::peekHeader(file, form, size, type);
+			if (type == "LAYR") {
+				_sublayers.resize(_sublayers.size() + 1);
+				total += _sublayers.back().read(file);
+			}
+			else {
+				std::cout << "Unsupported layer type:" << type << "\n";
+				exit(0);
+			}
 		}
 	}
 
@@ -318,6 +360,7 @@ std::size_t tgenLayer::readV4(std::istream& file) {
 std::size_t tgenLayer::readACTNv0(std::istream& file) {
 	std::size_t size0000;
 	std::size_t total = base::readFormHeader(file, "0000", size0000);
+	size0000 += 8;
 
 	total += tgenBaseLayer::read(file);
 
@@ -341,8 +384,17 @@ std::size_t tgenLayer::readACTNv0(std::istream& file) {
 			_affectors.push_back(affectorPtr);
 		}
 		else {
-			std::cout << "Unsupported layer type\n";
-			exit(0);
+			std::string form, type;
+			std::size_t size;
+			base::peekHeader(file, form, size, type);
+			if (type == "LAYR") {
+				_sublayers.resize(_sublayers.size() + 1);
+				total += _sublayers.back().read(file);
+			}
+			else {
+				std::cout << "Unsupported layer type:" << type << "\n";
+				exit(0);
+			}
 		}
 	}
 
@@ -358,6 +410,7 @@ std::size_t tgenLayer::readACTNv0(std::istream& file) {
 std::size_t tgenLayer::readACTNv1(std::istream& file) {
 	std::size_t size0001;
 	std::size_t total = base::readFormHeader(file, "0001", size0001);
+	size0001 += 8;
 
 	total += tgenBaseLayer::read(file);
 	std::size_t size;
@@ -385,8 +438,17 @@ std::size_t tgenLayer::readACTNv1(std::istream& file) {
 			_affectors.push_back(affectorPtr);
 		}
 		else {
-			std::cout << "Unsupported layer type\n";
-			exit(0);
+			std::string form, type;
+			std::size_t size;
+			base::peekHeader(file, form, size, type);
+			if (type == "LAYR") {
+				_sublayers.resize(_sublayers.size() + 1);
+				total += _sublayers.back().read(file);
+			}
+			else {
+				std::cout << "Unsupported layer type:" << type << "\n";
+				exit(0);
+			}
 		}
 	}
 
@@ -402,6 +464,7 @@ std::size_t tgenLayer::readACTNv1(std::istream& file) {
 std::size_t tgenLayer::readACTNv2(std::istream& file) {
 	std::size_t size0002;
 	std::size_t total = base::readFormHeader(file, "0002", size0002);
+	size0002 += 8;
 
 	total += tgenBaseLayer::read(file);
 	std::size_t size;
@@ -430,8 +493,17 @@ std::size_t tgenLayer::readACTNv2(std::istream& file) {
 			_affectors.push_back(affectorPtr);
 		}
 		else {
-			std::cout << "Unsupported layer type\n";
-			exit(0);
+			std::string form, type;
+			std::size_t size;
+			base::peekHeader(file, form, size, type);
+			if (type == "LAYR") {
+				_sublayers.resize(_sublayers.size() + 1);
+				total += _sublayers.back().read(file);
+			}
+			else {
+				std::cout << "Unsupported layer type:" << type << "\n";
+				exit(0);
+			}
 		}
 	}
 
