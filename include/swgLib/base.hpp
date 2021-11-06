@@ -39,7 +39,22 @@ namespace ml
 {
 	class tag {
 	public:
-
+		enum {
+			TAG_0000 = 0x30303030, // '0000'
+			TAG_0001 = 0x30303031, // '0001'
+			TAG_0002 = 0x30303032, // '0002'
+			TAG_0003 = 0x30303033, // '0003'
+			TAG_0004 = 0x30303034, // '0004'
+			TAG_0005 = 0x30303035, // '0005'
+			TAG_0006 = 0x30303036, // '0006'
+			TAG_0007 = 0x30303037, // '0007'
+			TAG_0008 = 0x30303038, // '0008'
+			TAG_0009 = 0x30303039, // '0009'
+			TAG_DATA = 0x44415441, // 'DATA'
+			TAG_FORM = 0x464f524d, // 'FORM'
+			TAG_SMAP = 0x534d4150, // 'SMAP'
+			TAG_WMAP = 0x574d4150, // 'WMAP'
+		};
 	public:
 		tag();
 		~tag();
@@ -104,7 +119,7 @@ namespace ml
 
 		static std::size_t skip(std::istream& file, const std::size_t& skipBytes);
 
-		// String based
+		// ******************** String based Form headers ********************
 		static void peekHeader(std::istream& file,
 			std::string& form,
 			std::size_t& size,
@@ -123,11 +138,7 @@ namespace ml
 			const std::string& expectedType,
 			std::size_t& size);
 
-		static std::size_t readRecordHeader(std::istream& file,
-			std::string& type,
-			std::size_t& size);
-
-		// uint32 based
+		// ******************** uint32 based Form headers ********************
 		static void peekHeader(std::istream& file,
 			uint32_t& form,
 			std::size_t& size,
@@ -146,20 +157,11 @@ namespace ml
 			const uint32_t& expectedType,
 			std::size_t& size);
 
+		// ******************** String based Record headers ********************
+
 		static std::size_t readRecordHeader(std::istream& file,
-			uint32_t& type,
+			std::string& type,
 			std::size_t& size);
-
-
-
-
-
-		
-
-		static std::size_t writeFormHeader(std::ostream& file,
-			const std::size_t& size,
-			const std::string& type);
-
 
 		static std::size_t readRecordHeader(std::istream& file,
 			std::string& type);
@@ -170,6 +172,29 @@ namespace ml
 
 		static std::size_t readRecordHeader(std::istream& file,
 			const std::string& expectedType);
+
+		// ******************** uint32_t based Record headers ********************
+		static std::size_t readRecordHeader(std::istream& file,
+			uint32_t& type,
+			std::size_t& size);
+
+		static std::size_t readRecordHeader(std::istream& file,
+			uint32_t& type);
+
+		static std::size_t readRecordHeader(std::istream& file,
+			const uint32_t& expectedType,
+			std::size_t& size);
+
+		static std::size_t readRecordHeader(std::istream& file,
+			const uint32_t& expectedType);
+
+
+
+		
+
+		static std::size_t writeFormHeader(std::ostream& file,
+			const std::size_t& size,
+			const std::string& type);
 
 		static std::size_t writeRecordHeader(std::ostream& file,
 			const std::string& type,
@@ -186,6 +211,9 @@ namespace ml
 		static bool fixSlash(std::string& filename);
 
 		static uint32_t tagToVersion(const std::string& tag);
+		static uint32_t tagToVersion(const uint32_t& tag);
+		static std::string tagToStr(const uint32_t& tag);
+
 		static uint32_t typeToNumber(const std::string& type);
 
 	protected:

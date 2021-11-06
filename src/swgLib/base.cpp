@@ -219,7 +219,7 @@ std::size_t base::readRecordHeader(std::istream& file,
 	uint32_t& type,
 	std::size_t& size)
 {
-	file.read((char*)&type, sizeof(uint32_t));
+	readBigEndian(file, sizeof(type), (char*)&type);
 	uint32_t tempSize = 0;
 	readBigEndian(file, sizeof(tempSize), (char*)&tempSize);
 	size = tempSize;
@@ -261,6 +261,25 @@ std::size_t base::readRecordHeader(std::istream& file,
 }
 
 std::size_t base::readRecordHeader(std::istream& file,
+	const uint32_t& expectedType,
+	std::size_t& size)
+{
+	uint32_t type;
+	readBigEndian(file, sizeof(type), (char*)&type);
+	uint32_t tempSize = 0;
+	readBigEndian(file, sizeof(tempSize), (char*)&tempSize);
+	size = tempSize;
+
+	if (expectedType != type) {
+		std::cout << "Expected record type of " << tagToStr(expectedType)
+			<< ", found type of '" << tagToStr(type) << "'\n";
+		exit(0);
+	}
+
+	return 8;
+}
+
+std::size_t base::readRecordHeader(std::istream& file,
 	const std::string& expectedType)
 {
 	char tempType[5];
@@ -277,6 +296,23 @@ std::size_t base::readRecordHeader(std::istream& file,
 
 	return 8;
 }
+
+std::size_t base::readRecordHeader(std::istream& file,
+	const uint32_t& expectedType)
+{
+	uint32_t type;
+	readBigEndian(file, sizeof(type), (char*)&type);
+	file.seekg(sizeof(uint32_t), std::ios_base::cur);
+
+	if (expectedType != type) {
+		std::cout << "Expected record type of " << tagToStr(expectedType)
+			<< ", found type of '" << tagToStr(type) << "'\n";
+		exit(0);
+	}
+
+	return 8;
+}
+
 
 std::size_t base::writeRecordHeader(std::ostream& file,
 	const std::string& type,
@@ -313,11 +349,10 @@ std::size_t base::readFormHeader(std::istream& file,
 	std::size_t& size,
 	uint32_t& type)
 {
-	std::size_t total = readRecordHeader(file, form, size);
-	file.read((char*)&type, 4);
-	total += 4;
+	readRecordHeader(file, form, size);
+	readBigEndian(file, sizeof(type), (char*)&type);
 
-	return total;
+	return 12;
 }
 
 std::size_t base::writeFormHeader(std::ostream& file,
@@ -354,10 +389,10 @@ std::size_t base::readFormHeader(std::istream& file,
 	uint32_t& type,
 	std::size_t& size)
 {
-	std::size_t total = readRecordHeader(file, "FORM", size);
-	file.read((char*)&type, 4); total += 4;
+	readRecordHeader(file, (uint32_t)tag::TAG_FORM, size);
+	readBigEndian(file, sizeof(type), (char*)&type);
 
-	return total;
+	return 12;
 }
 
 std::size_t base::readFormHeader(std::istream& file,
@@ -386,10 +421,10 @@ std::size_t base::readFormHeader(std::istream& file,
 	const uint32_t& expectedType,
 	std::size_t& size)
 {
-	std::size_t total = readRecordHeader(file, "FORM", size);
+	readRecordHeader(file, tag::TAG_FORM, size);
 
 	uint32_t type;
-	file.read((char*)&type, 4); total += 4;
+	readBigEndian(file, sizeof(type), (char*)&type);
 
 	if (expectedType != type)
 	{
@@ -398,7 +433,7 @@ std::size_t base::readFormHeader(std::istream& file,
 		exit(0);
 	}
 
-	return total;
+	return 12;
 }
 
 std::size_t base::readUnknown(std::istream& file,
@@ -652,6 +687,19 @@ uint32_t base::tagToVersion(const std::string& tag) {
 	uint32_t version;
 	istr >> version;
 	return version;
+}
+
+uint32_t base::tagToVersion(const uint32_t& tag) {
+	if (tag < tag::TAG_0000) { return 0; }
+
+	return ( tag - tag::TAG_0000);
+}
+
+std::string base::tagToStr(const uint32_t& tag) {
+	const char* tagC((char*)&tag);
+	std::ostringstream ostr;
+	ostr << tagC[3] << tagC[2] << tagC[1] << tagC[0];
+	return ostr.str();
 }
 
 uint32_t base::typeToNumber(const std::string& type) {
