@@ -54,7 +54,7 @@ std::size_t hdta::read(std::istream& file) {
 		std::cout << "Expected type [0000..0001]: " << type << "\n";
 		exit(0);
 	}
-	std::cout << "Found form of type: " << type << "\n";
+	std::cout << "HDTA/ROAD version: " << version << "\n";
 
 	if (0 == version) {
 		while (total < hdtaSize) {
