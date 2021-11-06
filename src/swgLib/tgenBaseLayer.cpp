@@ -52,8 +52,6 @@ std::size_t tgenBaseLayer::read(std::istream& file) {
 		std::cout << "Expected type [0000...0001]: " << type << "\n";
 		exit(0);
 	}
-	std::cout << "Base Layer version: " << version << "\n";
-
 	total += base::readRecordHeader(file, "DATA", size);
 
 	int32_t temp;
