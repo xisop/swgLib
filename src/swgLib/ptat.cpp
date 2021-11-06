@@ -168,7 +168,9 @@ std::size_t ptat::read(std::istream& file)
 	std::string form;
 	base::peekHeader(file, form, size, type);
 	std::cout << "Peek: " << form << ":" << type << "\n";
-	total += base::skip(file, size + 8);
+	//total += base::skip(file, size + 8);
+
+	total += _wsMap.read(file);
 	//total += readWMAP
 	//total += readSMAP
 

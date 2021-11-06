@@ -24,6 +24,7 @@
 */
 #include <swgLib/appr.hpp>
 #include <swgLib/tgen.hpp>
+#include <swgLib/wsMap.hpp>
 
 #include <istream>
 #include <string>
@@ -82,6 +83,8 @@ namespace ml
 		bool _legacyMap;
 
 		tgen _tgen;
+
+		wsMap _wsMap;
 
 #if 0
 		std::size_t readTGEN(std::istream& file);
