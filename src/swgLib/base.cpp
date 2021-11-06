@@ -187,6 +187,17 @@ void base::peekHeader(std::istream& file,
 	file.seekg(position, std::ios_base::beg);
 }
 
+void base::peekHeader(std::istream& file,
+	uint32_t& form,
+	std::size_t& size,
+	uint32_t& type)
+{
+	// Peek at next record, but keep file at same place.
+	const std::streampos position = file.tellg();
+	readFormHeader(file, form, size, type);
+	file.seekg(position, std::ios_base::beg);
+}
+
 // **************************************************
 
 std::size_t base::readRecordHeader(std::istream& file,
@@ -200,6 +211,32 @@ std::size_t base::readRecordHeader(std::istream& file,
 	uint32_t tempSize = 0;
 	readBigEndian(file, sizeof(tempSize), (char*)&tempSize);
 	size = tempSize;
+
+	return 8;
+}
+
+std::size_t base::readRecordHeader(std::istream& file,
+	uint32_t& type,
+	std::size_t& size)
+{
+	file.read((char*)&type, sizeof(uint32_t));
+	uint32_t tempSize = 0;
+	readBigEndian(file, sizeof(tempSize), (char*)&tempSize);
+	size = tempSize;
+
+	return 8;
+}
+
+std::size_t base::readRecordHeader(std::istream& file,
+	std::string& type)
+{
+	char tempType[5];
+	file.read(tempType, 4);
+	tempType[4] = 0;
+	type = tempType;
+
+	// Skip over size field
+	file.seekg(sizeof(uint32_t), std::ios_base::cur);
 
 	return 8;
 }
@@ -219,6 +256,24 @@ std::size_t base::readRecordHeader(std::istream& file,
 	uint32_t tempSize = 0;
 	readBigEndian(file, sizeof(tempSize), (char*)&tempSize);
 	size = tempSize;
+
+	return 8;
+}
+
+std::size_t base::readRecordHeader(std::istream& file,
+	const std::string& expectedType)
+{
+	char tempType[5];
+	file.read(tempType, 4);
+	tempType[4] = 0;
+	if (expectedType != tempType) {
+		std::cout << "Expected record type of " << expectedType
+			<< ", found type of '" << tempType << "'\n";
+		exit(0);
+	}
+
+	// Skip over size field
+	file.seekg(sizeof(uint32_t), std::ios_base::cur);
 
 	return 8;
 }
@@ -249,6 +304,18 @@ std::size_t base::readFormHeader(std::istream& file,
 
 	tempType[4] = 0;
 	type = tempType;
+
+	return total;
+}
+
+std::size_t base::readFormHeader(std::istream& file,
+	uint32_t& form,
+	std::size_t& size,
+	uint32_t& type)
+{
+	std::size_t total = readRecordHeader(file, form, size);
+	file.read((char*)&type, 4);
+	total += 4;
 
 	return total;
 }
@@ -284,6 +351,16 @@ std::size_t base::readFormHeader(std::istream& file,
 }
 
 std::size_t base::readFormHeader(std::istream& file,
+	uint32_t& type,
+	std::size_t& size)
+{
+	std::size_t total = readRecordHeader(file, "FORM", size);
+	file.read((char*)&type, 4); total += 4;
+
+	return total;
+}
+
+std::size_t base::readFormHeader(std::istream& file,
 	const std::string& expectedType,
 	std::size_t& size)
 {
@@ -295,6 +372,25 @@ std::size_t base::readFormHeader(std::istream& file,
 	tempType[4] = 0;
 
 	std::string type(tempType);
+	if (expectedType != type)
+	{
+		std::cout << "Expected FORM of type " << expectedType
+			<< ", found: " << type << "\n";
+		exit(0);
+	}
+
+	return total;
+}
+
+std::size_t base::readFormHeader(std::istream& file,
+	const uint32_t& expectedType,
+	std::size_t& size)
+{
+	std::size_t total = readRecordHeader(file, "FORM", size);
+
+	uint32_t type;
+	file.read((char*)&type, 4); total += 4;
+
 	if (expectedType != type)
 	{
 		std::cout << "Expected FORM of type " << expectedType

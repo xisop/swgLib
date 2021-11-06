@@ -39,6 +39,8 @@ namespace ml
 {
 	class tag {
 	public:
+
+	public:
 		tag();
 		~tag();
 
@@ -88,7 +90,7 @@ namespace ml
 		static std::size_t write(std::ostream& file, const unsigned int& data);
 		static std::size_t read(std::istream& file, float& data);
 		static std::size_t write(std::ostream& file, const float& data);
-		static std::size_t read(std::istream& file, std::string& data, const std::size_t &length);
+		static std::size_t read(std::istream& file, std::string& data, const std::size_t& length);
 		static std::size_t read(std::istream& file, std::string& data);
 		static std::size_t write(std::ostream& file, const std::string& data);
 		static std::size_t read(std::istream& file, vector3& mat);
@@ -102,6 +104,7 @@ namespace ml
 
 		static std::size_t skip(std::istream& file, const std::size_t& skipBytes);
 
+		// String based
 		static void peekHeader(std::istream& file,
 			std::string& form,
 			std::size_t& size,
@@ -113,23 +116,60 @@ namespace ml
 			std::string& type);
 
 		static std::size_t readFormHeader(std::istream& file,
-			std::string& expectedType,
+			std::string& type,
 			std::size_t& size);
 
 		static std::size_t readFormHeader(std::istream& file,
 			const std::string& expectedType,
 			std::size_t& size);
 
+		static std::size_t readRecordHeader(std::istream& file,
+			std::string& type,
+			std::size_t& size);
+
+		// uint32 based
+		static void peekHeader(std::istream& file,
+			uint32_t& form,
+			std::size_t& size,
+			uint32_t& type);
+
+		static std::size_t readFormHeader(std::istream& file,
+			uint32_t& form,
+			std::size_t& size,
+			uint32_t& type);
+
+		static std::size_t readFormHeader(std::istream& file,
+			uint32_t& type,
+			std::size_t& size);
+
+		static std::size_t readFormHeader(std::istream& file,
+			const uint32_t& expectedType,
+			std::size_t& size);
+
+		static std::size_t readRecordHeader(std::istream& file,
+			uint32_t& type,
+			std::size_t& size);
+
+
+
+
+
+		
+
 		static std::size_t writeFormHeader(std::ostream& file,
 			const std::size_t& size,
 			const std::string& type);
 
+
 		static std::size_t readRecordHeader(std::istream& file,
-			std::string& type,
-			std::size_t& size);
+			std::string& type);
+
 		static std::size_t readRecordHeader(std::istream& file,
 			const std::string& expectedType,
 			std::size_t& size);
+
+		static std::size_t readRecordHeader(std::istream& file,
+			const std::string& expectedType);
 
 		static std::size_t writeRecordHeader(std::ostream& file,
 			const std::string& type,
