@@ -54,6 +54,15 @@ std::size_t wsMap::read(std::istream& file) {
 		total += base::read(file, _width);
 		total += base::read(file, _height);
 
+		std::cout
+			<< "  Map width: " << _mapWidth << "m\n"
+			<< "Chunk width: " << _chunkWidth << "m\n"
+			<< "      Width: " << _width << "\n"
+			<< "     Height: " << _height << "\n";
+		std::cout
+			<< "Calculated data:\n"
+			<< "Chunks horizontally: " << (_mapWidth / _chunkWidth) << "\n"
+			<< "  Chunks vertically: " << (_mapWidth / _chunkWidth) << "\n";
 		{
 			std::size_t wmapSize;
 			std::size_t wmapRead = base::readRecordHeader(file, tag::TAG_WMAP, wmapSize);
@@ -61,6 +70,7 @@ std::size_t wsMap::read(std::istream& file) {
 			file.read((char*)_waterMap.data(), (wmapSize));
 			wmapRead += wmapSize;
 			total += wmapRead;
+			std::cout << "WmapSize: " << wmapSize << "\n";
 		}
 
 		{
@@ -70,8 +80,9 @@ std::size_t wsMap::read(std::istream& file) {
 			file.read((char*)_slopeMap.data(), (smapSize));
 			smapRead += smapSize;
 			total += smapRead;
+			std::cout << "SmapSize: " << smapSize << "\n";
 		}
- 	}
+	}
 
 	if (wsMapSize == total) {
 		std::cout << "Finished reading wsMap\n";
